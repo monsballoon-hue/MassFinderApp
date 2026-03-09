@@ -62,6 +62,7 @@ window.toggleTemp = ui.toggleTemp;
 window.applyQuickFilter = ui.applyQuickFilter;
 window.verifyOk = more.verifyOk;
 window.renderSaved = saved.renderSaved;
+window.openCCC = ccc.openCCC;
 window.closeCCC = ccc.closeCCC;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;

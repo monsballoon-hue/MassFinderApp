@@ -67,8 +67,6 @@ function initMap() {
     var next = getNext(c, 'all');
     var dist = getDist(c, state.userLat, state.userLng);
 
-    var popupHtml = '<div class="popup-card" onclick="(function(){ var map = require(\'./src/map.js\'); map.closeMapPopup(); var render = require(\'./src/render.js\'); render.openDetail(\'' + c.id + '\'); })();">';
-
     // Build popup with inline onclick that uses lazy require
     popupHtml = '<div class="popup-card" data-church-id="' + c.id + '">';
     popupHtml += '<div class="popup-name">' + esc(displayName(c.name)) + '</div>';

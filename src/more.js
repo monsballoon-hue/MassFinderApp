@@ -567,7 +567,7 @@ function renderMore() {
       var num = m[1];
       el.addEventListener('click', function(ev) {
         ev.stopPropagation();
-        openCCC(num);
+        window.openCCC(num);
       });
     });
   }
@@ -596,12 +596,6 @@ function dismissMoreInstall() {
   document.cookie = 'pf_more_install_dismissed=1;expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
 }
 
-// ── openCCC ──
-function openCCC(numStr) {
-  var ccc = require('./ccc.js');
-  ccc.openCCC(numStr);
-}
-
 module.exports = {
   web3submit: web3submit,
   expressInterest: expressInterest,
@@ -617,7 +611,6 @@ module.exports = {
   renderMore: renderMore,
   renderGuide: renderGuide,
   dismissMoreInstall: dismissMoreInstall,
-  openCCC: openCCC,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,
   CORR_PLACEHOLDERS: CORR_PLACEHOLDERS,
 };
