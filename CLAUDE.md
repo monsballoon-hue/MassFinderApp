@@ -48,7 +48,7 @@ npm run precommit  # build + schema + validate
 - **CommonJS everywhere** — `var X = require('./x'); module.exports = { ... }`
 - **No arrow functions** — ES5-style `function` declarations for consistency
 - **Config is canonical** — service types, day types, languages all come from `src/config.js`
-- **One record per day** — no `weekday`/`daily` consolidation (see DATA_STANDARDS.md)
+- **One record per day** — no `weekday`/`daily` consolidation (see docs/DATA_STANDARDS.md)
 - **parish_data.json is the source of truth** — Supabase is for the editorial pipeline only, not for serving data to the app
 
 ## How to Add a New Service Type
@@ -78,3 +78,24 @@ npm run precommit  # build + schema + validate
 - `parish_data.json` — edit via bulletin pipeline or manually, never auto-generate
 - `events.json` — edit manually
 - `assets/` — icons, rarely change
+
+## Documentation Index
+
+| File | Purpose |
+|------|---------|
+| `CLAUDE.md` | This file — architecture, conventions, build commands (auto-loaded) |
+| `docs/DATA_STANDARDS.md` | Authoritative data rules — service types, day values, events |
+| `docs/FORK_GUIDE.md` | How to fork and deploy for another diocese |
+| `docs/STYLE_GUIDE.md` | Design system — tokens, components, layout rules |
+| `docs/TERMINOLOGY.md` | Domain knowledge — liturgical correctness, display names |
+| `docs/PERSONAS.md` | User personas (50+, millennial, Gen Z) and UX principles |
+| `docs/ANTI_PATTERNS.md` | Known gotchas — SW cache, overlays, Web3Forms |
+| `docs/ROADMAP.md` | 6-batch feature plan and long-term vision |
+| `docs/INTEGRATIONS.md` | External services — Supabase, Web3Forms, Leaflet, LitCal |
+| `docs/DEV_CHEATSHEET.md` | Quick reference for working with Claude Code |
+| `docs/CONTRIBUTING.md` | Contributor onboarding — setup, workflow, file map |
+| `docs/MassFinder_UX_Vision.md` | Product vision — feed, subscriptions, bulletin aggregation |
+| `docs/MassFinder_Feature_Discovery_Report.md` | Feature research — open source repos, build priorities |
+| `docs/MassFinder_UI_Toolkit_Report.md` | UI component evaluation — build vs. import decisions |
+| `docs/MassFinder_Open_Source_Guide.md` | GitHub community setup — issues, templates, outreach |
+| `docs/review/validation-checklist.md` | Per-parish bulletin validation checklist |

@@ -21,6 +21,8 @@ var SHELL_ASSETS = [
 // NETWORK_ONLY_HOSTS — always bypass cache for these
 var NETWORK_ONLY_HOSTS = [
   'massfinder-readings-api.vercel.app',
+  'litcal.johnromanodorazio.com',
+  'query.bibleget.io',
   'api.web3forms.com',
   'www.googletagmanager.com',
   'www.google-analytics.com',

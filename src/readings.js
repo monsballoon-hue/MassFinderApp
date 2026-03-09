@@ -38,6 +38,7 @@ function setLiturgicalSeason(events) {
     else if (s === 'EASTER' || s === 'EASTER_SEASON') season = 'easter';
     else if (s === 'CHRISTMAS') season = 'christmas';
   }
+  document.documentElement.setAttribute('data-season', season);
   var morePanel = document.getElementById('panelMore');
   if (morePanel) morePanel.setAttribute('data-season', season);
 }
@@ -76,7 +77,8 @@ function getLiturgicalEventsFromLitCal(events) {
   var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
 
   var upcoming = events.filter(function(e) {
-    var d = new Date(e.date);
+    // Use event's own month/day fields to avoid UTC→local timezone shift
+    var d = new Date(e.year || now.getFullYear(), (e.month || 1) - 1, e.day || 1);
     if (d < today || d > cutoff) return false;
     if (e.is_vigil_mass) return false;
     if (e.grade >= 4 && e.grade < 7) return true;
@@ -102,7 +104,8 @@ function getLiturgicalEventsFromLitCal(events) {
 
   return Object.keys(byDate).map(function(key) {
     var e = byDate[key];
-    var d = new Date(e.date);
+    // Use event's own month/day fields to avoid UTC→local timezone shift
+    var d = new Date(e.year || now.getFullYear(), (e.month || 1) - 1, e.day || 1);
     var diff = Math.round((d - today) / (1000 * 60 * 60 * 24));
     var typeLabel = e.holy_day_of_obligation ? 'Holy Day of Obligation' : (gradeLabels[e.grade] || '');
     if (e.grade_display) typeLabel = e.grade_display;
@@ -550,13 +553,29 @@ function formatReading(raw) {
 }
 
 // ── Export Liturgical Calendar ICS ──
-function exportLitCalICS() {
+function exportLitCalICS(preset) {
+  preset = preset || 'feasts';
+  var filterLabels = {
+    hdo: 'Holy Days of Obligation',
+    feasts: 'Solemnities\\, Feasts\\, and Holy Days of Obligation',
+    lent: 'Lent and Holy Week',
+    all: 'All Liturgical Observances'
+  };
+  var fileSuffixes = { hdo: '-holy-days', feasts: '-feasts', lent: '-lent', all: '-all' };
+
   var doExport = function() {
     var events = (window._litcalCache && window._litcalCache.events) || [];
     var year = new Date().getFullYear();
     var gradeLabels = { 3: 'Memorial', 4: 'Feast', 5: 'Feast of the Lord', 6: 'Solemnity', 7: 'Solemnity' };
     var items = events.filter(function(e) {
       if (e.is_vigil_mass) return false;
+      if (preset === 'hdo') return !!e.holy_day_of_obligation;
+      if (preset === 'lent') {
+        var s = (e.liturgical_season || '').toUpperCase();
+        return s === 'LENT' || s === 'HOLY_WEEK' || s === 'EASTER_TRIDUUM';
+      }
+      if (preset === 'all') return e.grade >= 3;
+      // default: feasts
       return e.grade >= 4 || e.holy_day_of_obligation;
     });
     var lines = [
@@ -564,17 +583,23 @@ function exportLitCalICS() {
       'PRODID:-//MassFinder//Catholic Liturgical Calendar//EN',
       'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
       'X-WR-CALNAME:Catholic Liturgical Calendar ' + year,
-      'X-WR-CALDESC:Solemnities\\, Feasts\\, and Holy Days of Obligation'
+      'X-WR-CALDESC:' + (filterLabels[preset] || filterLabels.feasts)
     ];
-    function icsDate(ms) {
-      var d = new Date(ms);
-      return String(d.getFullYear()) + (d.getMonth() + 1 < 10 ? '0' : '') + (d.getMonth() + 1) + (d.getDate() < 10 ? '0' : '') + d.getDate();
+    function icsDate(y, m, d) {
+      return String(y) + (m < 10 ? '0' : '') + m + (d < 10 ? '0' : '') + d;
+    }
+    function nextDay(y, m, d) {
+      var dt = new Date(y, m - 1, d + 1);
+      return icsDate(dt.getFullYear(), dt.getMonth() + 1, dt.getDate());
     }
     items.forEach(function(e) {
       var typeStr = e.holy_day_of_obligation ? 'Holy Day of Obligation' : (gradeLabels[e.grade] || '');
+      var y = e.year || year;
+      var m = e.month || 1;
+      var d = e.day || 1;
       lines.push('BEGIN:VEVENT');
-      lines.push('DTSTART;VALUE=DATE:' + icsDate(e.date));
-      lines.push('DTEND;VALUE=DATE:' + icsDate(e.date + 86400000));
+      lines.push('DTSTART;VALUE=DATE:' + icsDate(y, m, d));
+      lines.push('DTEND;VALUE=DATE:' + nextDay(y, m, d));
       lines.push('SUMMARY:' + (e.name || '').replace(/,/g, '\\,'));
       if (typeStr) lines.push('DESCRIPTION:' + typeStr.replace(/,/g, '\\,'));
       lines.push('END:VEVENT');
@@ -583,7 +608,7 @@ function exportLitCalICS() {
     var blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
-    a.href = url; a.download = 'liturgical-calendar-' + year + '.ics';
+    a.href = url; a.download = 'liturgical-calendar-' + year + (fileSuffixes[preset] || '') + '.ics';
     document.body.appendChild(a); a.click();
     document.body.removeChild(a); URL.revokeObjectURL(url);
   };

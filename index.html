@@ -162,8 +162,13 @@
       <div id="liturgicalContent"></div>
       <div class="ics-card">
         <div class="ics-card-title">Add to Your Calendar</div>
-        <div class="ics-card-body">Download solemnities, feasts, and Holy Days of Obligation for this year — ready to import into Apple Calendar, Google Calendar, or Outlook.</div>
-        <button class="ics-card-btn" onclick="exportLitCalICS()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Download .ics File</button>
+        <div class="ics-card-body">Download liturgical dates for this year — ready to import into Apple Calendar, Google Calendar, or Outlook.</div>
+        <div class="ics-btn-group">
+          <button class="ics-card-btn" onclick="exportLitCalICS('hdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Holy Days</button>
+          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('feasts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Feasts &amp; Solemnities</button>
+          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('lent')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lent &amp; Holy Week</button>
+          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('all')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>All Observances</button>
+        </div>
       </div>
     </div>
 

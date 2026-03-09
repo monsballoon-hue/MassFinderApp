@@ -11,7 +11,7 @@
 
 **Why:** The service worker caches `index.html` with a cache-first strategy. Returning users get the cached copy. The cache only invalidates when `CACHE_NAME` in `sw.js` changes.
 
-**Fix:** ALWAYS bump `CACHE_NAME` in `sw.js` when deploying code changes. Format: `massfinder-v2_YYYYMMDD_NN`.
+**Fix:** ALWAYS bump `CACHE_NAME` in `sw.js` when deploying code changes. Format: `massfinder-v3_YYYYMMDD_NN`.
 
 **Testing:** Use Chrome Incognito (bypasses SW entirely) as ground truth. If it works in incognito but not normal Chrome, it's a cache issue.
 

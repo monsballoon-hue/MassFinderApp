@@ -165,6 +165,9 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
 .no-results { text-align: center; padding: var(--space-12) var(--space-4); }
 
+/* YC BRAND COLOR LOCK — keeps gold regardless of liturgical season */
+.yc-chip,.yc-card,.yc-badge,.yc-cal-btn,.yc-section-count,.events-widget,.event-mini-card,.event-mini-date-badge,.saved-compact-yc,.evt-yc-badge,.community-events-header,.community-events-count,.ce-item,.card-soon-badge { --color-accent:#B8963F;--color-accent-text:#7D6520;--color-accent-light:#D4B05C;--color-accent-pale:#F5EDD8; }
+
 /* YC EVENT CARDS */
 .yc-chip { border-color: var(--color-accent); color: var(--color-accent-text); border-style: solid; }
 .yc-chip.active { background: var(--color-accent); color: white; border-color: var(--color-accent); }
@@ -658,12 +661,27 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .saint-card[data-lit-color="green"]  { border-left-color: #16A34A; }
 .saint-card[data-lit-color="rose"]   { border-left-color: #DB2777; }
 
-/* LITURGICAL SEASON — ambient accent color (scoped to More tab only) */
-#panelMore[data-season="lent"]     { --color-accent:#7C3AED;--color-accent-text:#5B21B6;--color-accent-light:#9C67F5;--color-accent-pale:#F3E8FF; }
-#panelMore[data-season="advent"]   { --color-accent:#7C3AED;--color-accent-text:#5B21B6;--color-accent-light:#9C67F5;--color-accent-pale:#F3E8FF; }
-#panelMore[data-season="easter"]   { --color-accent:#D97706;--color-accent-text:#B45309;--color-accent-light:#F59E0B;--color-accent-pale:#FEF3C7; }
-#panelMore[data-season="christmas"]{ --color-accent:#D97706;--color-accent-text:#B45309;--color-accent-light:#F59E0B;--color-accent-pale:#FEF3C7; }
-#panelMore[data-season="ordinary"] { --color-accent:#16A34A;--color-accent-text:#15803D;--color-accent-light:#4ADE80;--color-accent-pale:#DCFCE7; }
+/* LITURGICAL SEASON — ambient accent color (app-wide) */
+:root[data-season="lent"]     { --color-accent:#7C3AED;--color-accent-text:#5B21B6;--color-accent-light:#9C67F5;--color-accent-pale:#F3E8FF; }
+:root[data-season="advent"]   { --color-accent:#7C3AED;--color-accent-text:#5B21B6;--color-accent-light:#9C67F5;--color-accent-pale:#F3E8FF; }
+:root[data-season="easter"]   { --color-accent:#D97706;--color-accent-text:#B45309;--color-accent-light:#F59E0B;--color-accent-pale:#FEF3C7; }
+:root[data-season="christmas"]{ --color-accent:#D97706;--color-accent-text:#B45309;--color-accent-light:#F59E0B;--color-accent-pale:#FEF3C7; }
+:root[data-season="ordinary"] { --color-accent:#16A34A;--color-accent-text:#15803D;--color-accent-light:#4ADE80;--color-accent-pale:#DCFCE7; }
+
+/* LITURGICAL SEASON — ambient background wash */
+:root[data-season="lent"] body     { background:linear-gradient(180deg, #F8F7F4 0%, #F0ECF5 100%); }
+:root[data-season="advent"] body   { background:linear-gradient(180deg, #F8F7F4 0%, #F0ECF5 100%); }
+:root[data-season="easter"] body   { background:linear-gradient(180deg, #F8F7F4 0%, #F9F6ED 100%); }
+:root[data-season="christmas"] body{ background:linear-gradient(180deg, #F8F7F4 0%, #F9F6ED 100%); }
+
+/* LITURGICAL SEASON — accent bar below header */
+.top-header { position:relative; }
+.top-header::after { content:'';position:absolute;bottom:0;left:0;right:0;height:0;transition:height var(--transition-fast); }
+:root[data-season="lent"] .top-header::after     { height:1.5px;background:linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.45) 30%, rgba(124,58,237,0.45) 70%, transparent 100%); }
+:root[data-season="advent"] .top-header::after   { height:1.5px;background:linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.45) 30%, rgba(124,58,237,0.45) 70%, transparent 100%); }
+:root[data-season="easter"] .top-header::after   { height:1.5px;background:linear-gradient(90deg, transparent 0%, rgba(217,119,6,0.45) 30%, rgba(217,119,6,0.45) 70%, transparent 100%); }
+:root[data-season="christmas"] .top-header::after{ height:1.5px;background:linear-gradient(90deg, transparent 0%, rgba(217,119,6,0.45) 30%, rgba(217,119,6,0.45) 70%, transparent 100%); }
+:root[data-season="ordinary"] .top-header::after { height:0; }
 
 /* HOLY DAY OF OBLIGATION BANNER */
 .hdo-banner { background:var(--color-accent-pale);border:1px solid var(--color-accent-light);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-4); }
@@ -675,7 +693,9 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .ics-card { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);box-shadow:var(--shadow-card);margin-top:var(--space-3); }
 .ics-card-title { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-1); }
 .ics-card-body { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5;margin-bottom:var(--space-3); }
-.ics-card-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:#fff;font-size:var(--text-sm);font-weight:var(--weight-semibold);border:none;border-radius:var(--radius-full);cursor:pointer;font-family:var(--font-body);min-height:40px; }
+.ics-btn-group { display:flex;flex-wrap:wrap;gap:var(--space-2); }
+.ics-card-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);background:var(--color-primary);color:#fff;font-size:var(--text-xs);font-weight:var(--weight-semibold);border:none;border-radius:var(--radius-full);cursor:pointer;font-family:var(--font-body);min-height:36px;transition:background 0.15s,color 0.15s; }
+.ics-card-btn--outline { background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary); }
 
 /* CCC REFERENCE BOTTOM SHEET */
 .ccc-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:900;opacity:0;pointer-events:none;transition:opacity 0.35s ease; }

@@ -8,7 +8,7 @@
 
 ## PHILOSOPHY: BUILD VS. IMPORT
 
-MassFinder is a single-file PWA. Every kilobyte matters. Every CDN dependency is a potential failure point for an older parishioner on slow church WiFi.
+MassFinder is a lightweight PWA (CommonJS modules bundled via esbuild). Every kilobyte matters. Every CDN dependency is a potential failure point for an older parishioner on slow church WiFi.
 
 **The decision framework for each component:**
 - **< 50 lines of CSS/JS to build yourself?** → Build it. Inline it. Zero dependencies.
@@ -316,10 +316,10 @@ Several features need JSON data that shouldn't ship in the initial page load. St
 | Data File | Size (est.) | Load Strategy | Host |
 |-----------|------------|---------------|------|
 | `catechism.json` (CCC paragraphs) | ~2MB | Lazy-fetch on first CCC tap. Cache in `window._cccCache`. | Vercel static file in repo |
-| `rosary-mysteries.json` | ~8KB | Inline in `index.html` as `var ROSARY_MYSTERIES = {...}` | Inline |
-| `stations-meditations.json` | ~12KB | Inline in `index.html` | Inline |
-| `examination-questions.json` | ~15KB | Inline in `index.html` | Inline |
-| `novena-prayers.json` (4-5 novenas) | ~20KB | Inline in `index.html` | Inline |
+| `rosary-mysteries.json` | ~8KB | Inline in source module as `var ROSARY_MYSTERIES = {...}` | Inline |
+| `stations-meditations.json` | ~12KB | Inline in source module | Inline |
+| `examination-questions.json` | ~15KB | Inline in source module | Inline |
+| `novena-prayers.json` (4-5 novenas) | ~20KB | Inline in source module | Inline |
 | `saints-bios.json` (~100 entries) | ~40KB | Lazy-fetch. Cache in `window._saintsCache`. | Vercel static file |
 | `summa-excerpts.json` (curated 365) | ~60KB | Lazy-fetch. Cache in `window._summaCache`. | Vercel static file |
 
