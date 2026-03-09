@@ -11,6 +11,7 @@ var saved = require('./saved.js');
 var more = require('./more.js');
 var location_ = require('./location.js');
 var ccc = require('./ccc.js');
+var refs = require('./refs.js');
 
 var state = data.state;
 
@@ -72,6 +73,7 @@ window.openCCC = ccc.openCCC;
 window.closeCCC = ccc.closeCCC;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
+window._refTap = refs.handleRefTap;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';

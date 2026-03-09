@@ -138,7 +138,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Module change:** `src/ccc.js` fetch path changed from `/ccc-mini.json` to `/data/catechism.json`. Added 150ms crossfade navigation.
 - **Unlocks:** All CCC refs throughout app are now tappable at full depth. Devotional guides get unlimited CCC exploration.
 
-### DAT-02: openPrayers — Rosary, Stations, Saints JSON
+### ~~DAT-02: openPrayers — Rosary, Stations, Saints JSON~~ ✓ DONE
 - **Priority:** P0 — Phase 2 (rosary) and Phase 5 (stations)
 - **Effort:** 2 hours (normalize + add CCC/Scripture refs)
 - **Size impact:** ~12KB gzipped combined
@@ -245,7 +245,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 
 # CATEGORY 4: NEW APP MODULES (features to build)
 
-### MOD-01: `src/refs.js` — Universal Reference Resolver
+### ~~MOD-01: `src/refs.js` — Universal Reference Resolver~~ ✓ DONE
 - **Priority:** P0 — Phase 1 (foundation for everything)
 - **Effort:** 4 hours
 - **Size impact:** ~3KB in bundle
@@ -499,7 +499,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Priority:** Phase 1
 - **What:** Fetches full CCC from GitHub release, builds paragraph lookup + xref index, writes `data/catechism.json`.
 
-### BLD-02: `scripts/build-prayers.js`
+### ~~BLD-02: `scripts/build-prayers.js`~~ ✓ DONE
 - **Priority:** Phase 2
 - **What:** Fetches openPrayers JSON files, normalizes structure, merges with handwritten core prayers, adds CCC/Scripture refs, writes `data/prayers.json`.
 
