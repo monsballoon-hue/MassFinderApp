@@ -66,6 +66,16 @@ window.openCCC = ccc.openCCC;
 window.closeCCC = ccc.closeCCC;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
+window.toggleTheme = function() {
+  var html = document.documentElement;
+  var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('mf-theme', next);
+  var btn = document.getElementById('theme-toggle-btn');
+  if (btn) btn.textContent = next === 'dark' ? '\u2600\uFE0F Light Mode' : '\uD83C\uDF19 Dark Mode';
+  var meta = document.getElementById('metaThemeColor');
+  if (meta) meta.setAttribute('content', next === 'dark' ? '#1A1C22' : '#F8F7F4');
+};
 window.init = init;
 
 // ── Chip clicks ──

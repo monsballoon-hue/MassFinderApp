@@ -572,9 +572,14 @@ function renderMore() {
     });
   }
 
-  // Footer
+  // Footer with dark mode toggle
   var footer = document.getElementById('moreFooter');
-  if (footer) footer.innerHTML = 'MassFinder v2';
+  if (footer) {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    footer.innerHTML = '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
+      + (isDark ? '\u2600\uFE0F Light Mode' : '\uD83C\uDF19 Dark Mode')
+      + '</button><div>MassFinder v2</div>';
+  }
 
   // Trigger readings and saint card fetches independently
   fetchReadings();
