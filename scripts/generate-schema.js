@@ -16,6 +16,16 @@ if (fs.existsSync(templatePath)) {
   // Replace enum placeholders
   schema.definitions.service_type_enum.enum = config.SERVICE_TYPE_ENUM;
   schema.definitions.day_enum.oneOf[0].enum = config.DAY_ENUM;
+  // Replace regional constraints from config.REGION
+  schema.definitions.location.properties.state.enum = config.REGION.states;
+  schema.definitions.parish.properties.state.enum = config.REGION.states;
+  if (config.REGION.bounds) {
+    var b = config.REGION.bounds;
+    schema.definitions.location.properties.lat.oneOf[0].minimum = b.minLat;
+    schema.definitions.location.properties.lat.oneOf[0].maximum = b.maxLat;
+    schema.definitions.location.properties.lng.oneOf[0].minimum = b.minLng;
+    schema.definitions.location.properties.lng.oneOf[0].maximum = b.maxLng;
+  }
 } else {
   // Generate minimal schema
   console.warn('No template found — generating minimal schema');

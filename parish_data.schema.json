@@ -380,8 +380,7 @@
             "MA",
             "CT",
             "VT",
-            "NH",
-            "NY"
+            "NH"
           ]
         },
         "zip": {
@@ -403,7 +402,7 @@
           "$ref": "#/definitions/nullable_string"
         },
         "lat": {
-          "description": "Latitude — Western New England region",
+          "description": "Latitude — bounds set by REGION.bounds in config.js via generate-schema.js",
           "oneOf": [
             {
               "type": "number",
@@ -416,7 +415,7 @@
           ]
         },
         "lng": {
-          "description": "Longitude — Western New England region",
+          "description": "Longitude — bounds set by REGION.bounds in config.js via generate-schema.js",
           "oneOf": [
             {
               "type": "number",
@@ -514,8 +513,7 @@
             "MA",
             "CT",
             "VT",
-            "NH",
-            "NY"
+            "NH"
           ]
         },
         "zip": {

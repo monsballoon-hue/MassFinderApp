@@ -80,6 +80,7 @@ var REGION = {
   dioceseUrl: 'https://diospringfield.org',
   dioceseName: 'Diocese of Springfield',
   states: ['MA', 'CT', 'VT', 'NH'],
+  bounds: { minLat: 40.5, maxLat: 46.0, minLng: -74.5, maxLng: -70.5 },
 };
 
 // ── Clergy Roles ──

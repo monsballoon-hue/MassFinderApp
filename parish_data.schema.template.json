@@ -150,7 +150,7 @@
         },
         "address":              { "$ref": "#/definitions/nullable_string" },
         "city":                 { "$ref": "#/definitions/nullable_string" },
-        "state":                { "type": "string", "enum": ["MA", "CT", "VT", "NH", "NY"] },
+        "state":                { "type": "string", "enum": ["MA", "CT", "VT", "NH"] },
         "zip":                  { "$ref": "#/definitions/nullable_string" },
         "mailing":              { "$ref": "#/definitions/nullable_string" },
         "office_hours":         { "$ref": "#/definitions/nullable_string" },
@@ -158,14 +158,14 @@
         "accessibility_notes":  { "$ref": "#/definitions/nullable_string" },
         "notes":                { "$ref": "#/definitions/nullable_string" },
         "lat": {
-          "description": "Latitude — Western New England region",
+          "description": "Latitude — bounds set by REGION.bounds in config.js via generate-schema.js",
           "oneOf": [
             { "type": "number", "minimum": 40.5, "maximum": 46.0 },
             { "type": "null" }
           ]
         },
         "lng": {
-          "description": "Longitude — Western New England region",
+          "description": "Longitude — bounds set by REGION.bounds in config.js via generate-schema.js",
           "oneOf": [
             { "type": "number", "minimum": -74.5, "maximum": -70.5 },
             { "type": "null" }
@@ -217,7 +217,7 @@
         "name":          { "type": "string", "minLength": 1 },
         "town":          { "type": "string", "minLength": 1 },
         "county":        { "$ref": "#/definitions/nullable_string" },
-        "state":         { "type": "string", "enum": ["MA", "CT", "VT", "NH", "NY"] },
+        "state":         { "type": "string", "enum": ["MA", "CT", "VT", "NH"] },
         "zip":           { "$ref": "#/definitions/nullable_string" },
         "established":   { "$ref": "#/definitions/nullable_string" },
         "is_mission":    { "type": "boolean" },

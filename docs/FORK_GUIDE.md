@@ -14,14 +14,17 @@ Edit `src/config.js` and update the `REGION` object:
 
 ```javascript
 var REGION = {
-  name: 'Diocese of Your City',
-  shortName: 'Your Diocese',
+  name: 'Diocese of Your City',        // Full region name (used in UI)
+  tagline: 'Catholic Services Directory',
   mapCenter: [YOUR_LAT, YOUR_LNG],
   mapZoom: 10,
-  gaId: 'G-XXXXXXXXXX',           // Your Google Analytics ID (or null)
-  web3formsKey: 'your-key-here',   // Your Web3Forms key (or null)
-  diocese: 'Your Diocese Name',
-  states: ['ST'],                  // State abbreviations covered
+  gaId: 'G-XXXXXXXXXX',               // Your Google Analytics ID (or null)
+  web3FormsKey: 'your-key-here',       // Your Web3Forms key (or null)
+  readingsApiUrl: 'https://your-readings-api.vercel.app/api/readings', // or null
+  dioceseUrl: 'https://your-diocese.org',
+  dioceseName: 'Diocese of Your City',
+  states: ['ST'],                      // State abbreviations covered
+  bounds: { minLat: 0, maxLat: 0, minLng: 0, maxLng: 0 }, // Lat/lng validation bounds
 };
 ```
 
@@ -91,6 +94,4 @@ If you want to use the bulletin parsing pipeline:
 
 ## Location Bounds
 
-Update the schema template (`parish_data.schema.template.json`) to match your region's latitude/longitude bounds in the `location` definition. The default is set for Western New England (lat 40.5–46.0, lng -74.5 to -70.5).
-
-Also update the `state` enum in the `location` and `parish` definitions to match your states.
+The schema validates lat/lng and state values automatically from your `REGION` config. Set `bounds` and `states` in the `REGION` object in `src/config.js`, then run `npm run schema` — the generated `parish_data.schema.json` will reflect your region. You do not need to edit the schema template manually.
