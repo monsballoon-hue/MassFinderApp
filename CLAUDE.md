@@ -51,6 +51,20 @@ npm run precommit  # build + schema + validate
 - **One record per day** — no `weekday`/`daily` consolidation (see docs/DATA_STANDARDS.md)
 - **parish_data.json is the source of truth** — Supabase is for the editorial pipeline only, not for serving data to the app
 
+## Three-Layer Content Stack (Local-First Principle)
+
+Every feature must work from locally cached data. API calls add richness but are never required for a feature to render something useful.
+
+| Layer | Source | Availability |
+|-------|--------|-------------|
+| 1 — Always present | Inline in bundle (`dist/app.min.js`) | 100% — no network needed |
+| 2 — Cached | Static JSON files in repo (`data/`, `parish_data.json`) | After first load — SW cached |
+| 3 — Live | External APIs (LitCal, BibleGet, readings API) | Online only — graceful degradation |
+
+**Rule:** When building a new feature, establish Layer 1 or Layer 2 behaviour first. Layer 3 (API) enhances the experience but never gates it. If an API call fails, the feature must still render something from cache.
+
+**Data files** in `data/` are lazy-loaded on first use and SW-cached — not in `SHELL_ASSETS`. Users who never use a feature pay zero download cost.
+
 ## How to Add a New Service Type
 
 1. Add entry to `SERVICE_TYPES` in `src/config.js` (label, group, icon, seasonal flag)

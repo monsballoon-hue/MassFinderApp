@@ -1,12 +1,12 @@
 // src/ccc.js — CCC (Catechism of the Catholic Church) bottom sheet
-// Loads ccc-mini.json and renders paragraph references in a bottom sheet
+// Loads data/catechism.json (2,865 paragraphs) and renders paragraph references in a bottom sheet
 
 var _cccData = null, _cccXrefs = null, _cccHistory = [], _cccCurrentNum = '';
 
 async function _loadCCCData() {
   if (_cccData) return;
   try {
-    var resp = await fetch('/ccc-mini.json');
+    var resp = await fetch('/data/catechism.json');
     var json = await resp.json();
     _cccData = {};
     Object.keys(json.paragraphs).forEach(function(k) { _cccData[parseInt(k, 10)] = json.paragraphs[k]; });
@@ -105,17 +105,27 @@ async function _renderCCCContent(numStr) {
   _cccCurrentNum = numStr;
 }
 
+function _crossfadeTo(numStr) {
+  var scroll = document.getElementById('cccSheetScroll');
+  scroll.style.opacity = '0';
+  setTimeout(function() {
+    _renderCCCContent(numStr).then(function() {
+      scroll.style.opacity = '1';
+    });
+  }, 150);
+}
+
 function cccNavigate(numStr) {
   _cccHistory.push(_cccCurrentNum);
   document.getElementById('cccBackBtn').style.display = 'inline-flex';
-  _renderCCCContent(numStr);
+  _crossfadeTo(numStr);
 }
 
 function cccGoBack() {
   if (!_cccHistory.length) return;
   var prev = _cccHistory.pop();
   if (!_cccHistory.length) document.getElementById('cccBackBtn').style.display = 'none';
-  _renderCCCContent(prev);
+  _crossfadeTo(prev);
 }
 
 function _initSwipeDismiss() {
