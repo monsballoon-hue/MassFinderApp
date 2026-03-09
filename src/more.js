@@ -499,10 +499,10 @@ function renderMore() {
         + '</div></div>';
     }).join('') : '<p class="wh-empty">No upcoming YC events.</p>';
 
-    // Community events column — up to 4 items
-    var commShow = allCommunityEvents.slice(0, 4);
+    // Community events column — ticker with auto-scroll
+    var commShow = allCommunityEvents.slice(0, 8);
     window._moreEvents = allCommunityEvents.slice(0, 10);
-    document.getElementById('whCommunityList').innerHTML = commShow.length ? commShow.map(function(e, idx) {
+    var commCards = commShow.length ? commShow.map(function(e, idx) {
       var ch = state.allChurches.find(function(x) { return x.id === e.churchId; });
       var dist = ch ? getDist(ch, state.userLat, state.userLng) : null;
       var near = dist !== null && dist <= 10 ? '<div class="wh-event-near">\uD83D\uDCCD ' + fmtDist(dist) + '</div>' : '';
@@ -517,7 +517,14 @@ function renderMore() {
         + '<button class="saved-evt-btn" onclick="downloadEventIcal(\'' + esc(e.id) + '\');event.stopPropagation()" title="Add to Calendar">' + cCalSvg + '</button>'
         + '<button class="saved-evt-btn" onclick="expressInterest(\'' + esc(e.id) + '\',event)" title="I\'m interested">&#9825;</button>'
         + '</div></div>';
-    }).join('') : '<p class="wh-empty">No upcoming events.</p>';
+    }).join('') : '';
+    var commEl = document.getElementById('whCommunityList');
+    if (commCards && commShow.length > 4) {
+      // Ticker: duplicate content for seamless scroll
+      commEl.innerHTML = '<div class="wh-ticker">' + commCards + commCards + '</div>';
+    } else {
+      commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
+    }
   }
 
   // Liturgical calendar — re-renders after LitCal fetch completes
@@ -579,20 +586,8 @@ function dismissMoreInstall() {
 
 // ── openCCC ──
 function openCCC(numStr) {
-  // Stub — wires CCC reference taps to open the CCC popup
-  // The full CCC rendering is handled by the CCC module (ccc.js or inline)
-  var _cccHistory = [];
-  var backBtn = document.getElementById('cccBackBtn');
-  if (backBtn) backBtn.style.display = 'none';
-  var overlay = document.getElementById('cccOverlay');
-  if (overlay) overlay.classList.add('open');
-  var sheet = document.getElementById('cccSheet');
-  if (sheet) sheet.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  // _renderCCCContent must be wired by the CCC module or app.js
-  if (typeof window._renderCCCContent === 'function') {
-    window._renderCCCContent(numStr);
-  }
+  var ccc = require('./ccc.js');
+  ccc.openCCC(numStr);
 }
 
 module.exports = {

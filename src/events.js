@@ -458,17 +458,20 @@ function renderEventsWidget() {
 
   var cards = ordered.map(function(e) {
     var r = resolveYC(e);
+    var dt = new Date(e.date + 'T12:00:00');
+    var mon = dt.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+    var day = dt.getDate();
     return '<div class="event-mini-card" onclick="openEventDetail(\'' + e.id + '\')">'
-      + '<div class="event-mini-date">' + fmtYCDate(e.date) + '</div>'
-      + '<div class="event-mini-title">' + utils.esc(e.title) + '</div>'
-      + '<div class="event-mini-church">' + utils.esc(utils.displayName(r.locName || r.churchName)) + '</div>'
+      + '<div class="event-mini-date-badge"><div class="event-mini-date-month">' + mon + '</div><div class="event-mini-date-day">' + day + '</div></div>'
+      + '<div class="event-mini-info"><div class="event-mini-title">' + utils.esc(e.title) + '</div>'
+      + '<div class="event-mini-church">' + utils.esc(utils.displayName(r.locName || r.churchName)) + '</div></div>'
       + '</div>';
   }).join('');
 
   var seeAll = upcoming.length > 6
     ? '<button class="events-widget-seeall" onclick="document.querySelector(\'[data-filter=yc]\').click()">See all ' + upcoming.length + ' \u2192</button>'
     : '';
-  el.innerHTML = '<div class="events-widget-header"><span class="events-widget-label">Upcoming Events</span>' + seeAll + '</div>'
+  el.innerHTML = '<div class="events-widget-header"><span class="events-widget-label">Upcoming Young &amp; Catholic Events</span>' + seeAll + '</div>'
     + '<div class="events-widget-strip">' + cards + '</div>';
 }
 

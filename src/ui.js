@@ -36,7 +36,7 @@ function updateMFChip() {
   var btn = document.getElementById('moreFiltersBtn');
   if (!btn) return;
   var c = state.advancedFilters.types.length + state.advancedFilters.days.length + state.advancedFilters.languages.length;
-  btn.innerHTML = c > 0 ? 'Filters <span class="chip-count">' + c + '</span>' : 'More Filters';
+  btn.innerHTML = c > 0 ? 'Filters <span class="chip-count">' + c + '</span>' : 'More';
   btn.classList.toggle('active', c > 0);
 }
 
@@ -85,11 +85,39 @@ function toggleTemp(k, v) {
   renderFiltersBody();
 }
 
+// ── Apply Quick Filter (from More drawer) ──
+function applyQuickFilter(filter) {
+  state.currentFilter = filter;
+  document.querySelectorAll('.chip[data-filter]').forEach(function(ch) { ch.classList.toggle('active', ch.dataset.filter === filter); });
+  if (['today', 'weekend'].includes(filter)) { state.currentSort = 'next_service'; updateSortLabel(); }
+  closeMoreFilters();
+  filterChurches();
+  var render = require('./render.js');
+  render.renderCards();
+}
+
 // ── Render Filters Body ──
 function renderFiltersBody() {
   var body = document.getElementById('filtersBody');
   if (!body) return;
   var html = '';
+
+  // Quick filters — shortcuts for chip-bar filters hidden on mobile
+  var quickFilters = [
+    { label: 'Confession', filter: 'confession' },
+    { label: 'Adoration', filter: 'adoration' },
+    { label: 'Latin Mass', filter: 'latin' },
+    { label: 'Spanish Mass', filter: 'spanish' }
+  ];
+  if (utils.isLentSeason()) quickFilters.push({ label: 'Lent', filter: 'lent' });
+  quickFilters.push({ label: 'YC Events', filter: 'yc' });
+  html += '<div class="filter-group"><div class="filter-group-title">Quick Filters</div><div class="filter-group-grid">';
+  for (var qi = 0; qi < quickFilters.length; qi++) {
+    var qf = quickFilters[qi];
+    var qActive = state.currentFilter === qf.filter;
+    html += '<button class="filter-checkbox' + (qActive ? ' checked' : '') + '" onclick="applyQuickFilter(\'' + qf.filter + '\')">' + esc(qf.label) + '</button>';
+  }
+  html += '</div></div>';
 
   // Service type groups (from config.SERVICE_GROUPS)
   var groups = Object.keys(SERVICE_GROUPS);
@@ -266,4 +294,5 @@ module.exports = {
   trapFocus: trapFocus,
   releaseFocus: releaseFocus,
   updateTabIndex: updateTabIndex,
+  applyQuickFilter: applyQuickFilter,
 };

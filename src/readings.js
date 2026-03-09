@@ -357,18 +357,19 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
   var cacheKey = 'bg_' + query;
   try {
     var cached = localStorage.getItem(cacheKey);
-    if (cached) { textEl.innerHTML = cached; return Promise.resolve(); }
+    if (cached) { console.log('[BibleGet] Cache HIT:', ref, '->', query); textEl.innerHTML = cached; return Promise.resolve(); }
   } catch (e) { /* noop */ }
-  return fetch(
-    'https://query.bibleget.io/v3/?query=' + encodeURIComponent(query) + '&version=NABRE',
-    { signal: AbortSignal.timeout(8000) }
-  )
+  var url = 'https://query.bibleget.io/v3/?query=' + encodeURIComponent(query) + '&version=NABRE';
+  console.log('[BibleGet] Fetching:', ref, '->', url);
+  return fetch(url, { signal: AbortSignal.timeout(8000) })
   .then(function(resp) {
+    console.log('[BibleGet] Response:', ref, 'status=' + resp.status);
     if (!resp.ok) return;
     return resp.json();
   })
   .then(function(data) {
-    if (!data || !data.results || !data.results.length) return;
+    if (!data || !data.results || !data.results.length) { console.warn('[BibleGet] No results for:', ref); return; }
+    console.log('[BibleGet] Got', data.results.length, 'verses for:', ref);
 
     var html = '';
     if (isPsalm) {
@@ -386,7 +387,7 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
     textEl.innerHTML = html;
     try { localStorage.setItem(cacheKey, html); } catch (e) { /* noop */ }
   })
-  .catch(function(e) { /* keep fallback */ });
+  .catch(function(e) { console.error('[BibleGet] Error for:', ref, e.message || e); });
 }
 
 // ── Render Prose Verses ──

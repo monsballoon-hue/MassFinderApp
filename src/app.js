@@ -10,6 +10,7 @@ var ui = require('./ui.js');
 var saved = require('./saved.js');
 var more = require('./more.js');
 var location_ = require('./location.js');
+var ccc = require('./ccc.js');
 
 var state = data.state;
 
@@ -58,8 +59,12 @@ window.exportLitCalICS = readings.exportLitCalICS;
 window.removeAdv = ui.removeAdv;
 window.updateMFChip = ui.updateMFChip;
 window.toggleTemp = ui.toggleTemp;
+window.applyQuickFilter = ui.applyQuickFilter;
 window.verifyOk = more.verifyOk;
 window.renderSaved = saved.renderSaved;
+window.closeCCC = ccc.closeCCC;
+window.cccNavigate = ccc.cccNavigate;
+window.cccGoBack = ccc.cccGoBack;
 window.init = init;
 
 // ── Chip clicks ──
@@ -99,7 +104,8 @@ if (sC) {
 // ── Keyboard ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
+    if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
+    else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();
     else if (document.getElementById('detailPanel').classList.contains('open')) render.closeDetail();
   }
@@ -151,48 +157,65 @@ window._deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._deferredInstallPrompt = e; });
 window.addEventListener('appinstalled', function() { window._deferredInstallPrompt = null; more.dismissMoreInstall(); });
 
+// ── Pull-to-refresh gesture ──
+(function() {
+  var panel = document.getElementById('panelFind');
+  if (!panel) return;
+  var pull = document.getElementById('pullIndicator');
+  if (!pull) return;
+  var startY = 0, pulling = false, threshold = 60;
+  panel.addEventListener('touchstart', function(e) {
+    if (window.scrollY > 5) return;
+    startY = e.touches[0].clientY;
+    pulling = true;
+  }, { passive: true });
+  panel.addEventListener('touchmove', function(e) {
+    if (!pulling) return;
+    var dy = e.touches[0].clientY - startY;
+    if (dy < 0) { pulling = false; return; }
+    var h = Math.min(dy * 0.4, 50);
+    pull.style.height = h + 'px';
+    if (dy > threshold) {
+      pull.className = 'pull-indicator ready';
+      document.getElementById('pullText').textContent = 'Release to refresh';
+    } else {
+      pull.className = 'pull-indicator';
+      document.getElementById('pullText').textContent = 'Pull to refresh';
+    }
+  }, { passive: true });
+  panel.addEventListener('touchend', function() {
+    if (!pulling) return;
+    pulling = false;
+    if (pull.classList.contains('ready')) {
+      location_.refreshApp();
+    } else {
+      pull.style.height = '0';
+    }
+  }, { passive: true });
+})();
+
 // ── Init ──
 async function init() {
   data.loadFav();
   data.migrateFavorites();
   try {
-    var churchData = null, useApi = false;
-    try {
-      var apiResp = await fetch('/api/churches', { signal: AbortSignal.timeout(8000) });
-      if (apiResp.ok) {
-        var apiData = await apiResp.json();
-        if (Array.isArray(apiData.churches) && apiData.churches.length) { churchData = apiData; useApi = true; }
-        else { console.warn('[MassFinder] API returned empty/invalid churches, falling back to static JSON'); }
-      }
-    } catch (e) { console.warn('[MassFinder] API unavailable, using static JSON:', e.message); }
-
-    if (!useApi) {
-      var controller = new AbortController();
-      var timeout = setTimeout(function() { controller.abort(); }, 8000);
-      var r = await fetch('parish_data.json', { signal: controller.signal });
-      clearTimeout(timeout);
-      var jsonData = await r.json();
-      var churches = data.parishesToChurches(jsonData.parishes || []);
-      churchData = { churches: churches };
-      state.ycEvents = (jsonData.yc_events || []).sort(function(a, b) { return a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''); });
-    }
+    // Load parish data from static JSON
+    var controller = new AbortController();
+    var timeout = setTimeout(function() { controller.abort(); }, 8000);
+    var r = await fetch('parish_data.json', { signal: controller.signal });
+    clearTimeout(timeout);
+    var jsonData = await r.json();
+    var churches = data.parishesToChurches(jsonData.parishes || []);
+    var churchData = { churches: churches };
+    state.ycEvents = (jsonData.yc_events || []).sort(function(a, b) { return a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''); });
 
     state.allChurches = data.processChurches(churchData.churches || []);
 
-    // Load events
+    // Load events from static JSON
     try {
-      var evtData = null;
-      if (useApi) {
-        try {
-          var evtResp = await fetch('/api/events', { signal: AbortSignal.timeout(5000) });
-          if (evtResp.ok) evtData = await evtResp.json();
-        } catch (e) { console.warn('[MassFinder] Events API unavailable:', e.message); }
-      }
-      if (!evtData) {
-        var evtResp2 = await fetch('events.json', { signal: AbortSignal.timeout(5000) });
-        if (evtResp2.ok) evtData = await evtResp2.json();
-      }
-      if (evtData) {
+      var evtResp = await fetch('events.json', { signal: AbortSignal.timeout(5000) });
+      if (evtResp.ok) {
+        var evtData = await evtResp.json();
         state.eventsData = (evtData.events || []).sort(function(a, b) { return (a.date || '9999').localeCompare(b.date || '9999') || (a.time || '').localeCompare(b.time || ''); });
         var ycFromEvents = state.eventsData.filter(function(e) { return e.category === 'yc'; });
         if (ycFromEvents.length) state.ycEvents = ycFromEvents;

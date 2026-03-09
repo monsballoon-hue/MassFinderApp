@@ -6,6 +6,7 @@ var SHELL_ASSETS = [
   '/dist/app.min.js',
   '/parish_data.json',
   '/events.json',
+  '/ccc-mini.json',
   '/manifest.json',
   '/assets/icon-192.png',
   '/assets/icon-512.png',

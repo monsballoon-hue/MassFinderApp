@@ -104,34 +104,21 @@ function refreshApp() {
   var showToast = require('./render.js').showToast;
   var renderCards = require('./render.js').renderCards;
 
-  var btn = document.getElementById('refreshBtn');
-  if (btn) btn.classList.add('spinning');
+  var pull = document.getElementById('pullIndicator');
+  if (pull) { pull.className = 'pull-indicator refreshing'; pull.style.height = '36px'; document.getElementById('pullText').textContent = 'Refreshing\u2026'; }
   refreshLocation(function() {
-    // Try API first, fall back to static JSON
-    fetch('/api/churches', { cache: 'no-store', signal: AbortSignal.timeout(8000) }).then(function(r) {
-      if (!r.ok) throw new Error('API failed');
+    fetch('parish_data.json', { cache: 'no-store', signal: AbortSignal.timeout(8000) }).then(function(r) {
+      if (!r.ok) throw new Error('fetch failed');
       return r.json();
     }).then(function(d) {
-      if (!Array.isArray(d.churches) || !d.churches.length) throw new Error('invalid response');
-      state.allChurches = processChurches(d.churches);
+      state.allChurches = processChurches(parishesToChurches(d.parishes || []));
       filterChurches();
       renderCards();
       showToast('Data refreshed');
     }).catch(function() {
-      // Fallback to static JSON
-      fetch('parish_data.json', { cache: 'no-store', signal: AbortSignal.timeout(8000) }).then(function(r) {
-        if (!r.ok) throw new Error('fetch failed');
-        return r.json();
-      }).then(function(d) {
-        state.allChurches = processChurches(parishesToChurches(d.parishes || []));
-        filterChurches();
-        renderCards();
-        showToast('Data refreshed');
-      }).catch(function() {
-        showToast('Could not refresh \u2014 check connection');
-      });
+      showToast('Could not refresh \u2014 check connection');
     }).finally(function() {
-      if (btn) btn.classList.remove('spinning');
+      if (pull) { pull.className = 'pull-indicator'; pull.style.height = '0'; document.getElementById('pullText').textContent = 'Pull to refresh'; }
     });
   });
 }

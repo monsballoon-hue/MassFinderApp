@@ -33,13 +33,22 @@ function renderCards() {
   if (sparseEl) sparseEl.style.display = (state.currentFilter === 'today' && shown < 10) ? 'block' : 'none';
 
   // Events widget — show on all/today filters
-  if (typeof renderEventsWidget === 'function') renderEventsWidget();
+  var evts = require('./events.js');
+  if (evts && typeof evts.renderEventsWidget === 'function') evts.renderEventsWidget();
 
   // Normal mode
   document.getElementById('resultsCount').textContent = shown === total ? total + ' churches' : 'Showing ' + shown + ' of ' + total + ' churches';
   if (!shown) {
     el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>Try adjusting your search or filters.</p></div>';
     return;
+  }
+
+  // Compute event counts per church for badges
+  var evtCounts = {};
+  if (state.eventsData && state.eventsData.length) {
+    state.eventsData.filter(function(e) { return e.category !== 'yc' && utils.isEventActive(e); }).forEach(function(e) {
+      evtCounts[e.church_id] = (evtCounts[e.church_id] || 0) + 1;
+    });
   }
 
   var checkSvg = '<svg class="card-verified" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
@@ -59,7 +68,7 @@ function renderCards() {
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')
       + '<button class="card-fav' + (fav ? ' is-fav' : '') + '" onclick="toggleFav(\'' + c.id + "',event)\" aria-label=\"Favorite\"><svg viewBox=\"0 0 24 24\" fill=\"" + (fav ? 'currentColor' : 'none') + "\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></button>"
-      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh
+      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + (evtCounts[c.id] ? '<span class="saved-evt-count">' + evtCounts[c.id] + ' event' + (evtCounts[c.id] !== 1 ? 's' : '') + '</span>' : '') + '</div>' + nh
       + '</article>';
   });
 
@@ -217,7 +226,8 @@ function closeDetail(releaseFocus) {
   // If event panel is open on top, close that first
   var evPanel = document.getElementById('eventDetailPanel');
   if (evPanel && evPanel.classList.contains('open')) {
-    if (typeof closeEventDetail === 'function') closeEventDetail();
+    var evts = require('./events.js');
+    if (evts && typeof evts.closeEventDetail === 'function') evts.closeEventDetail();
     return;
   }
   document.getElementById('detailBackdrop').classList.remove('open');
