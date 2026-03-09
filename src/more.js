@@ -500,7 +500,7 @@ function renderMore() {
     }).join('') : '<p class="wh-empty">No upcoming YC events.</p>';
 
     // Community events column — ticker with auto-scroll
-    var commShow = allCommunityEvents.slice(0, 8);
+    var commShow = allCommunityEvents.slice(0, 4);
     window._moreEvents = allCommunityEvents.slice(0, 10);
     var commCards = commShow.length ? commShow.map(function(e, idx) {
       var ch = state.allChurches.find(function(x) { return x.id === e.churchId; });
@@ -519,12 +519,7 @@ function renderMore() {
         + '</div></div>';
     }).join('') : '';
     var commEl = document.getElementById('whCommunityList');
-    if (commCards && commShow.length > 4) {
-      // Ticker: duplicate content for seamless scroll
-      commEl.innerHTML = '<div class="wh-ticker">' + commCards + commCards + '</div>';
-    } else {
-      commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
-    }
+    commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
   }
 
   // Liturgical calendar — re-renders after LitCal fetch completes
