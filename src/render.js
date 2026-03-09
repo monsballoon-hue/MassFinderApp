@@ -49,8 +49,13 @@ function renderCards() {
     return;
   }
 
-  // Normal mode
-  document.getElementById('resultsCount').textContent = shown === total ? total + ' churches' : 'Showing ' + shown + ' of ' + total + ' churches';
+  // Normal mode — show count + clear button when a quick filter is active
+  var _quickFilterLabels = { confession:'Confession', adoration:'Adoration', latin:'Latin Mass', spanish:'Spanish Mass', lent:'Lent', today:'Today', weekend:'This Weekend', yc:'YC' };
+  var _filterLabel = _quickFilterLabels[state.currentFilter];
+  var _countText = shown === total ? total + ' churches' : 'Showing ' + shown + ' of ' + total + ' churches';
+  var _clearHtml = (state.currentFilter !== 'all' && _filterLabel)
+    ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
+  document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml ? ' ' : '') + _clearHtml;
   if (!shown) {
     el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>Try adjusting your search or filters.</p></div>';
     return;

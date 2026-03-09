@@ -73,13 +73,21 @@ function renderSaved() {
   var toggleFav = data.toggleFav;
 
   var el = document.getElementById('savedList');
-  var sub = document.getElementById('savedSubtitle');
   var favChurches = state.allChurches.filter(function(c) { return isFav(c.id); });
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
+  var count = favChurches.length;
 
-  sub.textContent = favChurches.length
-    ? favChurches.length + ' saved church' + (favChurches.length !== 1 ? 'es' : '')
-    : 'Tap the heart on any church to save it';
+  // Update count badges (panel header + tab bar)
+  var countBadge = document.getElementById('savedCountBadge');
+  if (countBadge) {
+    countBadge.textContent = count || '';
+    countBadge.classList.toggle('visible', count > 0);
+  }
+  var tabBadge = document.getElementById('savedTabBadge');
+  if (tabBadge) {
+    tabBadge.textContent = count || '';
+    tabBadge.classList.toggle('visible', count > 0);
+  }
 
   if (!favChurches.length) {
     el.innerHTML = '<div class="saved-empty">'

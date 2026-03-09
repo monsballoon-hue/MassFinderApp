@@ -115,7 +115,7 @@ function getLiturgicalEventsFromLitCal(events) {
       color: color, colorHex: colorMap[color] || '#16A34A',
       hdo: !!e.holy_day_of_obligation
     };
-  }).sort(function(a, b) { return a.date - b.date; }).slice(0, 3);
+  }).sort(function(a, b) { return a.date - b.date; }).slice(0, 2);
 }
 
 // ── Render Liturgical Calendar ──

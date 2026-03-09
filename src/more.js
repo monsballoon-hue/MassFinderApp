@@ -149,22 +149,22 @@ var DEVOTIONAL_GUIDES = [
 +'<p>There\u2019s no required prayer or posture. Many people read Scripture, pray the Rosary, journal, or simply sit in silence. Adoration chapels are typically quiet spaces open for individual prayer, sometimes for extended hours.</p>'
 +'<p>If a parish offers <strong>Perpetual Adoration</strong>, it means the chapel is open 24 hours a day, 7 days a week, kept continuous by volunteers who sign up for hourly slots. Many people find regular Adoration to be the most transformative spiritual practice of their week.</p>'
     ,findLabel:'Adoration',filter:'adoration'},
-    {icon:'\uD83C\uDF0A',title:'Divine Mercy Chaplet',body:
+    {icon:'\uD83C\uDF0A',title:'Divine Mercy Chaplet',findLabel:'Adoration',filter:'adoration',body:
 '<p>The Divine Mercy Chaplet is a short prayer given to St. Faustina Kowalska in the 1930s, centred on trust in God\u2019s mercy. It is prayed on ordinary Rosary beads and takes about 10\u201315 minutes.</p>'
 +'<p>Begin with one <strong>Our Father</strong>, one <strong>Hail Mary</strong>, and the <strong>Apostles\u2019 Creed</strong>. On each large bead, pray: <em>\u201cEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\u201d</em> On each small bead: <em>\u201cFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\u201d</em> Conclude with: <em>\u201cHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world\u201d</em> \u2014 said three times.</p>'
 +'<p>The traditional time for this prayer is 3:00 PM \u2014 the Hour of Mercy \u2014 marking the time of Christ\u2019s death. Many parishes offer a communal chaplet at this hour during Adoration.</p>'
     },
-    {icon:'\uD83D\uDE4F',title:'Novena',body:
+    {icon:'\uD83D\uDE4F',title:'Novena',findLabel:'a parish near me',filter:'all',body:
 '<p>A Novena is nine consecutive days of prayer for a specific intention \u2014 the name comes from the Latin <em>novem</em>, meaning nine. The practice traces back to the nine days the apostles and Mary prayed together between the Ascension and Pentecost.</p>'
 +'<p>Novenas can be prayed privately at any time, or communally at a parish. Common novenas include the <strong>Novena to the Holy Spirit</strong> (before Pentecost), the <strong>Divine Mercy Novena</strong> (beginning Good Friday), and novenas to specific saints like St. Joseph, St. Anthony, or Our Lady of Guadalupe.</p>'
 +'<p>To begin a novena, simply choose a prayer \u2014 many are available in prayer books or online \u2014 commit to praying it on nine consecutive days, and bring your intention before God with trust. The power of a novena is less in the number of days and more in the sustained, intentional attention you bring to prayer.</p>'
     },
-    {icon:'\uD83C\uDFC5',title:'Miraculous Medal',body:
+    {icon:'\uD83C\uDFC5',title:'Miraculous Medal',findLabel:'Miraculous Medal devotions',filter:'all',body:
 '<p>The Miraculous Medal devotion stems from apparitions of the Blessed Virgin Mary to St. Catherine Labour\u00e9 in Paris in 1830. Mary appeared standing on a globe, with rays of light streaming from her hands, and asked that a medal be struck in this image. The front bears the prayer: <em>\u201cO Mary, conceived without sin, pray for us who have recourse to thee.\u201d</em></p>'
 +'<p>The medal was approved by the Church and quickly became one of the most widely worn sacramentals in Catholic life. It is not a good-luck charm \u2014 it is a sign of devotion to Mary and trust in her intercession. Those who wear it are encouraged to pray the inscription daily.</p>'
 +'<p>Many parishes hold a weekly <strong>Miraculous Medal Novena</strong>, often on Mondays, consisting of prayers, hymns, and the Novena prayer to Our Lady of the Miraculous Medal. These services are typically brief \u2014 about 15 to 20 minutes.</p>'
     },
-    {icon:'\u271F',title:'Gorzkie \u017bale',body:
+    {icon:'\u271F',title:'Gorzkie \u017bale',findLabel:'Gorzkie \u017bale',filter:'lent',body:
 '<p><strong>Gorzkie \u017bale</strong> (pronounced <em>GOSH-kyeh ZAH-leh</em>, meaning \u201cBitter Lamentations\u201d) is a traditional Polish Lenten devotion dating to the early 18th century. It is a sung meditation on the Passion of Christ, structured in three parts that reflect on Christ\u2019s suffering, His trial, and His death on the cross.</p>'
 +'<p>The devotion is typically held on Sunday afternoons during Lent, often followed by Benediction of the Blessed Sacrament. It combines hymns, prayers, and readings in a format unique to the Polish Catholic tradition. Gorzkie \u017bale holds a place in Polish Catholic life similar to the Stations of the Cross in other traditions.</p>'
 +'<p>In Western New England, parishes with Polish heritage continue this devotion as a cherished link between faith and cultural identity. The service is usually about 30\u201340 minutes and is sung partly or entirely in Polish.</p>'
@@ -588,6 +588,12 @@ function renderMore() {
     renderHDOBanner(events);
     renderSaintCard(events);
     renderLiturgicalCalendar(); // Re-render with LitCal data now cached
+    // Show Lent & Holy Week ICS export button only during Lent season
+    var lentBtn = document.getElementById('icsLentBtn');
+    if (lentBtn) {
+      var season = document.documentElement.getAttribute('data-season');
+      lentBtn.style.display = (season === 'lent') ? '' : 'none';
+    }
   });
 
   window._moreRendered = true;

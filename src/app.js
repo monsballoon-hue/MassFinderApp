@@ -22,6 +22,12 @@ state._onFavToggle = function(id) {
     db.classList.toggle('fav-active', data.isFav(id));
     db.querySelector('svg').setAttribute('fill', data.isFav(id) ? 'currentColor' : 'none');
   }
+  // Update saved count badges without full re-render
+  var count = state.favorites.length;
+  var tabBadge = document.getElementById('savedTabBadge');
+  if (tabBadge) { tabBadge.textContent = count || ''; tabBadge.classList.toggle('visible', count > 0); }
+  var countBadge = document.getElementById('savedCountBadge');
+  if (countBadge) { countBadge.textContent = count || ''; countBadge.classList.toggle('visible', count > 0); }
 };
 
 // ── Expose functions for HTML onclick attributes ──
