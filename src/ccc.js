@@ -118,12 +118,27 @@ function cccGoBack() {
   _renderCCCContent(prev);
 }
 
+function _initSwipeDismiss() {
+  var sheet = document.getElementById('cccSheet');
+  if (!sheet || sheet._swipeInit) return;
+  sheet._swipeInit = true;
+  var startY = 0;
+  sheet.addEventListener('touchstart', function(e) {
+    startY = e.touches[0].clientY;
+  }, { passive: true });
+  sheet.addEventListener('touchend', function(e) {
+    var dy = e.changedTouches[0].clientY - startY;
+    if (dy > 72) closeCCC();
+  }, { passive: true });
+}
+
 function openCCC(numStr) {
   _cccHistory = [];
   document.getElementById('cccBackBtn').style.display = 'none';
   document.getElementById('cccOverlay').classList.add('open');
   document.getElementById('cccSheet').classList.add('open');
   document.body.style.overflow = 'hidden';
+  _initSwipeDismiss();
   _renderCCCContent(numStr);
 }
 

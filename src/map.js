@@ -67,8 +67,8 @@ function initMap() {
     var next = getNext(c, 'all');
     var dist = getDist(c, state.userLat, state.userLng);
 
-    // Build popup with inline onclick that uses lazy require
-    popupHtml = '<div class="popup-card" data-church-id="' + c.id + '">';
+    // Build popup HTML; click is wired in popupopen handler below
+    var popupHtml = '<div class="popup-card" data-church-id="' + c.id + '">';
     popupHtml += '<div class="popup-name">' + esc(displayName(c.name)) + '</div>';
     popupHtml += '<div class="popup-town">' + esc(c.city) + ', ' + esc(c.state) + '</div>';
     if (next) {
@@ -81,11 +81,11 @@ function initMap() {
     }
     popupHtml += '</div>';
 
-    // Bind popup with click handler that uses lazy require for openDetail
-    (function(churchId, html) {
-      marker.bindPopup(html, { className: 'map-popup', closeButton: false, minWidth: 240, maxWidth: 280 });
-      marker.on('popupopen', function() {
-        var popupEl = marker.getPopup().getElement();
+    // Bind popup with click handler; pass marker explicitly to avoid loop closure bug
+    (function(churchId, html, mkr) {
+      mkr.bindPopup(html, { className: 'map-popup', closeButton: false, minWidth: 240, maxWidth: 280 });
+      mkr.on('popupopen', function() {
+        var popupEl = mkr.getPopup().getElement();
         if (popupEl) {
           var card = popupEl.querySelector('.popup-card');
           if (card) {
@@ -97,7 +97,7 @@ function initMap() {
           }
         }
       });
-    })(c.id, popupHtml);
+    })(c.id, popupHtml, marker);
 
     cluster.addLayer(marker);
     bounds.push([c.lat, c.lng]);
