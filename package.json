@@ -1,0 +1,24 @@
+{
+  "name": "massfinder",
+  "version": "3.0.0",
+  "private": true,
+  "description": "Catholic services directory PWA",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "dev": "node scripts/build.js --watch",
+    "schema": "node scripts/generate-schema.js",
+    "validate": "npx ajv-cli validate --spec=draft7 -s parish_data.schema.json -d parish_data.json --errors=text --all-errors -c ajv-formats",
+    "precommit": "npm run build && npm run schema && npm run validate"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "ajv-cli": "^5.0.0",
+    "ajv-formats": "^3.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

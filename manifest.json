@@ -1,0 +1,21 @@
+{
+  "name": "MassFinder — Catholic Services Directory",
+  "short_name": "MassFinder",
+  "description": "Find Mass, Confession, Adoration and more across Western New England",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F8F7F4",
+  "theme_color": "#F8F7F4",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

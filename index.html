@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%232C3E5A'/%3E%3Crect x='40' y='10' width='20' height='80' rx='4' fill='%23B8963F'/%3E%3Crect x='14' y='30' width='72' height='20' rx='4' fill='%23B8963F'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="assets/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="MassFinder">
+<meta name="theme-color" content="#F8F7F4">
+<meta name="description" content="Find Mass, Confession, Adoration and more across Western New England">
+<meta property="og:title" content="MassFinder — Catholic Services Directory">
+<meta property="og:description" content="Find Mass, Confession, Adoration and more across Western New England">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/icon-512.png">
+<meta name="twitter:card" content="summary">
+<link rel="manifest" href="manifest.json">
+<title>MassFinder — Catholic Services Directory</title>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0XWS7YKHED"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-0XWS7YKHED');
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css">
+<link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+<a href="#panelFind" class="skip-link">Skip to content</a>
+
+<header class="top-header"><div class="top-header-inner"><div class="header-logo">
+  <div class="header-logo-cross"><svg viewBox="0 0 16 16" fill="none"><rect x="6.5" y="1" width="3" height="14" rx="1" fill="#B8963F"/><rect x="1" y="5.5" width="14" height="3" rx="1" fill="#B8963F"/></svg></div>
+  <div><div class="header-logo-text">MassFinder</div><div class="header-logo-region">Western New England</div></div>
+</div></div></header>
+
+<main id="panelFind" class="tab-panel active" role="tabpanel">
+  <div class="search-section"><div class="search-bar" role="search">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search churches, cities, or services…" aria-label="Search churches">
+    <button id="searchClear" class="search-clear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div></div>
+
+  <div class="chip-bar-wrap">
+  <div class="chip-bar" role="toolbar" aria-label="Quick filters">
+    <button class="chip active" data-filter="all">All</button>
+    <button class="chip" data-filter="today">Today</button>
+    <button class="chip" data-filter="weekend">This Weekend</button>
+    <button class="chip lent-chip hide-mobile" data-filter="lent" id="lentChip" style="display:none">🌿 Lent</button>
+    <button class="chip hide-mobile" data-filter="confession">Confession</button>
+    <button class="chip hide-mobile" data-filter="adoration">Adoration</button>
+    <button class="chip hide-mobile" data-filter="latin">Latin</button>
+    <button class="chip hide-mobile" data-filter="spanish">Spanish</button>
+    <button class="chip yc-chip hide-mobile" data-filter="yc">YC Events</button>
+    <button class="chip more-filters" id="moreFiltersBtn" onclick="openMoreFilters()">More Filters</button>
+  </div>
+  </div>
+
+  <div id="activeFilters" class="active-filters"></div>
+
+  <div class="results-info">
+    <span id="resultsCount" class="results-count"></span>
+    <button id="refreshBtn" class="results-refresh" onclick="refreshApp()" title="Refresh data &amp; location">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+    </button>
+    <button class="results-sort" onclick="toggleSort()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 5h10M11 9h7M11 13h4M3 17l3 3 3-3M6 18V4"/></svg>
+      <span id="sortLabel">By name</span>
+    </button>
+  </div>
+
+  <div id="sparseMsg" class="sparse-msg" style="display:none"><div class="sparse-msg-inner">Fewer services on weekdays — <button onclick="document.querySelector('[data-filter=weekend]').click()">try This Weekend</button> for Sunday Mass times.</div></div>
+  <div id="eventsWidget" class="events-widget-wrap"></div>
+  <div id="cardList" class="card-list" role="list" aria-label="Churches">
+    <div class="loading-placeholder" style="display:flex;flex-direction:column;gap:var(--space-3)">
+      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite"></div>
+      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite;animation-delay:0.1s"></div>
+      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite;animation-delay:0.2s"></div>
+    </div>
+  </div>
+</main>
+
+<div id="panelMap" class="tab-panel" role="tabpanel">
+  <div id="mapContainer"></div>
+</div>
+
+<div id="panelSaved" class="tab-panel" role="tabpanel">
+  <div class="saved-content">
+    <div class="saved-header">
+      <h2>Saved Churches</h2>
+      <p id="savedSubtitle">Your favorited churches</p>
+    </div>
+    <div id="savedList" class="saved-list"></div>
+  </div>
+</div>
+
+<div id="panelMore" class="tab-panel" role="tabpanel">
+  <div class="more-content">
+
+    <!-- HOLY DAY OF OBLIGATION BANNER — shown day-of and day-before -->
+    <div id="hdoBanner"></div>
+
+    <!-- PWA INSTALL CARD (hidden if installed) -->
+    <div id="moreInstallCard"></div>
+
+    <!-- WHAT'S HAPPENING: YC Events + Community Events, equal prominence -->
+    <div class="more-section" id="whatsHappeningSection" style="display:none">
+      <h2 class="more-section-title">What's Happening</h2>
+      <div class="wh-grid">
+        <div class="wh-col" id="whYCCol">
+          <div class="wh-col-header">
+            <span class="wh-col-label yc-label">Young &amp; Catholic</span>
+            <button class="wh-col-seeall" id="whYCSeeAll" style="display:none" onclick="document.querySelector('[data-filter=yc]').click();switchTab('panelFind',document.querySelector('[data-tab=panelFind]'))">See all</button>
+          </div>
+          <div id="whYCList"><p class="wh-empty">No upcoming YC events.</p></div>
+        </div>
+        <div class="wh-divider"></div>
+        <div class="wh-col" id="whCommunityCol">
+          <div class="wh-col-header">
+            <span class="wh-col-label community-label">Community Events</span>
+          </div>
+          <div id="whCommunityList"><p class="wh-empty">No upcoming events.</p></div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SAINT OF THE DAY — powered by LitCal API -->
+    <div class="more-section">
+      <h2 class="more-section-title">Today's Celebration</h2>
+      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast">Loading…</div><div class="saint-name" style="font-size:var(--text-base);color:var(--color-text-tertiary);font-family:var(--font-body);font-weight:var(--weight-regular)">Fetching today's celebration…</div></div></div>
+    </div>
+
+    <!-- DAILY READINGS -->
+    <div class="more-section">
+      <h2 class="more-section-title">📖 Today's Readings</h2>
+      <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
+    </div>
+
+    <!-- LITURGICAL CALENDAR -->
+    <div class="more-section">
+      <h2 class="more-section-title">🕊 Upcoming Observances</h2>
+      <div id="liturgicalContent"></div>
+      <div class="ics-card">
+        <div class="ics-card-title">Add to Your Calendar</div>
+        <div class="ics-card-body">Download solemnities, feasts, and Holy Days of Obligation for this year — ready to import into Apple Calendar, Google Calendar, or Outlook.</div>
+        <button class="ics-card-btn" onclick="exportLitCalICS()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Download .ics File</button>
+      </div>
+    </div>
+
+    <!-- DEVOTIONAL GUIDES -->
+    <div class="more-section">
+      <h2 class="more-section-title">Faith Guides</h2>
+      <p>Brief guides to common Catholic devotions and services — written for everyone, whether you're returning after a long absence or simply curious.</p>
+      <div id="devotionalCards"></div>
+    </div>
+
+    <!-- FEEDBACK FORM -->
+    <div class="more-section">
+      <h2 class="more-section-title">Share Your Feedback</h2>
+      <p>Help us make MassFinder better. Suggestions, missing features, or anything else on your mind.</p>
+      <div id="feedbackFormWrap">
+        <div class="fb-type-grid" id="fbTypeGrid">
+          <button class="fb-type-btn" onclick="selectFbType(this,'Suggestion')">Suggestion</button>
+          <button class="fb-type-btn" onclick="selectFbType(this,'Missing feature')">Missing feature</button>
+          <button class="fb-type-btn" onclick="selectFbType(this,'Coverage gap')">Coverage gap</button>
+          <button class="fb-type-btn" onclick="selectFbType(this,'Other')">Other</button>
+        </div>
+        <input type="hidden" id="fbType" value="">
+        <textarea id="fbMessage" class="corr-input" rows="3" placeholder="Tell us what's on your mind…"></textarea>
+        <input id="fbEmail" type="email" class="corr-input" placeholder="Email (optional — for follow-up)" style="margin-top:var(--space-2);resize:none">
+        <button class="fb-submit" onclick="submitFeedback()">Send Feedback</button>
+        <div class="fb-thanks" id="fbThanks">Thank you — your feedback means a lot. God bless!</div>
+      </div>
+    </div>
+
+    <!-- ABOUT + CORRECTION -->
+    <div class="more-section">
+      <h2 class="more-section-title">About MassFinder</h2>
+      <div class="stat-grid" id="aboutStatGrid"></div>
+      <p>MassFinder is a stewardship project — built for our Catholic community across Western New England to find Mass times, Confession, Adoration, and other services nearby. If something looks off or you have suggestions, please submit a correction. Your feedback keeps the data accurate for everyone.</p>
+      <div class="more-links-inline">
+        <a class="more-link-pill" href="https://diospringfield.org" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Diocese
+        </a>
+        <button class="more-link-pill" onclick="showMoreCorrection()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Submit a Correction
+        </button>
+      </div>
+      <div id="moreCorrectionForm" style="display:none;padding:var(--space-4) 0">
+        <label class="corr-form-label" style="margin-top:0">Church name</label>
+        <input id="moreCorrChurch" type="text" placeholder="e.g. St. Michael Parish, Springfield" class="corr-input" style="resize:none">
+        <label class="corr-form-label">What's wrong?</label>
+        <div class="corr-pills" id="moreCorrPills">
+          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Wrong time')">Wrong time</button>
+          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Mass cancelled or moved')">Mass cancelled or moved</button>
+          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Missing a service')">Missing a service</button>
+          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Other')">Other</button>
+        </div>
+        <input type="hidden" id="moreCorrCategory" value="">
+        <label class="corr-form-label">Details</label>
+        <textarea id="moreCorrMessage" class="corr-input" rows="2" placeholder="Select a category above first…"></textarea>
+        <input id="moreCorrEmail" type="email" class="corr-input" placeholder="Your email (optional, for follow-up)" style="resize:none;margin-top:var(--space-2)">
+        <button onclick="submitMoreCorrection()" style="margin-top:var(--space-3);width:100%;padding:var(--space-3);border-radius:var(--radius-md);background:var(--color-primary);color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);min-height:44px">Submit Correction</button>
+        <div id="moreCorrThanks" style="display:none;text-align:center;padding:var(--space-3);font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-medium)">Thank you! We'll review your correction.</div>
+      </div>
+    </div>
+
+    <div class="more-footer" id="moreFooter"></div>
+  </div>
+</div>
+
+<div id="detailBackdrop" class="detail-backdrop" onclick="closeAllPanels()"></div>
+<div id="detailPanel" class="detail-panel" role="dialog" aria-modal="true" aria-label="Church details">
+  <div class="detail-handle" onclick="closeDetail()"><div class="detail-handle-bar"></div></div>
+  <div id="detailContent"></div>
+</div>
+
+<div id="eventDetailPanel" class="event-detail-panel" role="dialog" aria-modal="true" aria-label="Event details">
+  <div class="detail-handle" onclick="closeEventDetail()"><div class="detail-handle-bar"></div></div>
+  <div id="eventDetailContent"></div>
+</div>
+
+<div id="filtersBackdrop" class="filters-backdrop" onclick="closeMoreFilters()"></div>
+<div id="filtersOverlay" class="filters-overlay" role="dialog" aria-modal="true" aria-label="Filter options">
+  <div class="filters-header">
+    <h2>Filters</h2>
+    <button class="filters-close" onclick="closeMoreFilters()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  </div>
+  <div class="filters-body" id="filtersBody"></div>
+  <div class="filters-footer">
+    <button class="btn-clear" onclick="clearAdvancedFilters()">Clear All</button>
+    <button class="btn-apply" onclick="applyAdvancedFilters()">Apply Filters</button>
+  </div>
+</div>
+
+<nav class="tab-bar" role="tablist"><div class="tab-bar-inner">
+  <button class="tab-item active" data-tab="panelFind" role="tab" aria-selected="true" onclick="switchTab('panelFind',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><span>Find</span></button>
+  <button class="tab-item" data-tab="panelMap" role="tab" aria-selected="false" onclick="switchTab('panelMap',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg><span>Map</span></button>
+  <button class="tab-item" data-tab="panelSaved" role="tab" aria-selected="false" onclick="switchTab('panelSaved',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Saved</span></button>
+  <button class="tab-item" data-tab="panelMore" role="tab" aria-selected="false" onclick="switchTab('panelMore',this)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+</div></nav>
+
+<!-- CCC Bottom Sheet -->
+<div id="cccOverlay" class="ccc-overlay" onclick="closeCCC&&closeCCC()"></div>
+<div id="cccSheet" class="ccc-sheet">
+  <div class="ccc-handle"></div>
+  <div class="ccc-sheet-scroll" id="cccContent"></div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="mf-toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+<script src="/dist/app.min.js"></script>
+</body>
+</html>
