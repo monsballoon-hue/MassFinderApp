@@ -519,14 +519,22 @@ function renderMore() {
         + '</div></div>';
     }).join('') : '';
     var commEl = document.getElementById('whCommunityList');
-    commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
+    if (commCards && commShow.length > 3) {
+      // Ticker: duplicate content for seamless scroll loop
+      commEl.innerHTML = '<div class="wh-ticker">' + commCards + commCards + '</div>';
+    } else {
+      commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
+    }
 
-    // Match community column height to YC column with fade mask
+    // Match community column height to YC column
     setTimeout(function() {
       var ycList = document.getElementById('whYCList');
-      if (ycList && commEl && commEl.scrollHeight > ycList.offsetHeight) {
-        commEl.style.maxHeight = ycList.offsetHeight + 'px';
-        commEl.style.overflowY = 'auto';
+      if (ycList && commEl) {
+        var h = ycList.offsetHeight;
+        if (h > 100) {
+          commEl.style.maxHeight = h + 'px';
+          commEl.style.overflow = 'hidden';
+        }
       }
     }, 100);
   }

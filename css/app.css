@@ -609,8 +609,10 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 /* two-column always — no mobile stacking */
 .wh-divider { background: var(--color-border-light); }
 .wh-col { min-width: 0; }
-#whCommunityList { scrollbar-width: none; -webkit-mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, black 0%, black 80%, transparent 100%); }
-#whCommunityList::-webkit-scrollbar { display: none; }
+#whCommunityList { overflow: hidden; -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 80%, transparent 100%); mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 80%, transparent 100%); }
+.wh-ticker { animation: tickerScroll 90s linear infinite; }
+.wh-ticker:hover { animation-play-state: paused; }
+@keyframes tickerScroll { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 .wh-col-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-3); padding-bottom: var(--space-2); border-bottom: 2px solid var(--color-border-light); }
 .wh-col-label { font-size: var(--text-xs); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: 0.06em; }
 .wh-col-label.yc-label { color: var(--color-accent-text); }
