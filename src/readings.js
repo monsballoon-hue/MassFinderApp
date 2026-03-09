@@ -38,7 +38,8 @@ function setLiturgicalSeason(events) {
     else if (s === 'EASTER' || s === 'EASTER_SEASON') season = 'easter';
     else if (s === 'CHRISTMAS') season = 'christmas';
   }
-  document.documentElement.setAttribute('data-season', season);
+  var morePanel = document.getElementById('panelMore');
+  if (morePanel) morePanel.setAttribute('data-season', season);
 }
 
 // ── Holy Day of Obligation Banner ──
@@ -187,7 +188,7 @@ function fetchReadings() {
       html += usccbLink;
       el.innerHTML = html;
 
-      // Enhance with BibleGet — staggered 800ms apart to stay under rate limits
+      // Enhance with BibleGet — staggered 2500ms apart to stay under rate limits
       var bgDelay = 0;
       sections.forEach(function(s, i) {
         if (!s.ref || !s.text) return;
@@ -195,7 +196,7 @@ function fetchReadings() {
         if (!textEl) return;
         var isPsalm = s.heading.toLowerCase().indexOf('psalm') !== -1 || s.heading.toLowerCase().indexOf('responsorial') !== -1;
         setTimeout(enhanceWithBibleGet.bind(null, textEl, s.ref, s.text, s.heading, isPsalm), bgDelay);
-        bgDelay += 800;
+        bgDelay += 2500;
       });
     })
     .catch(function(e) {
@@ -368,7 +369,9 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
     return resp.json();
   })
   .then(function(data) {
-    if (!data || !data.results || !data.results.length) { console.warn('[BibleGet] No results for:', ref); return; }
+    if (!data) return;
+    if (data.errors && data.errors.length) { console.warn('[BibleGet] API errors for:', ref, data.errors.map(function(e) { return e.errMessage || e; })); }
+    if (!data.results || !data.results.length) { console.warn('[BibleGet] No results for:', ref, '(likely rate-limited)'); return; }
     console.log('[BibleGet] Got', data.results.length, 'verses for:', ref);
 
     var html = '';

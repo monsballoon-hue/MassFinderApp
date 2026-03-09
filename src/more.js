@@ -525,6 +525,15 @@ function renderMore() {
     } else {
       commEl.innerHTML = commCards || '<p class="wh-empty">No upcoming events.</p>';
     }
+    // Match ticker height to YC column
+    setTimeout(function() {
+      var ycCol = document.getElementById('whYCCol');
+      var commWrap = document.getElementById('whCommunityList');
+      if (ycCol && commWrap) {
+        var ycH = ycCol.offsetHeight;
+        if (ycH > 100) commWrap.style.maxHeight = ycH + 'px';
+      }
+    }, 50);
   }
 
   // Liturgical calendar — re-renders after LitCal fetch completes

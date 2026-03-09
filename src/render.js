@@ -36,6 +36,19 @@ function renderCards() {
   var evts = require('./events.js');
   if (evts && typeof evts.renderEventsWidget === 'function') evts.renderEventsWidget();
 
+  // YC filter — show full YC event cards instead of church cards
+  if (state.currentFilter === 'yc') {
+    var upcoming = evts.getUpcomingYC();
+    document.getElementById('resultsCount').textContent = upcoming.length + ' upcoming YC events';
+    if (!upcoming.length) {
+      el.innerHTML = '<div class="no-results"><h3>No upcoming YC events</h3><p>Check back soon for Young &amp; Catholic events.</p></div>';
+      return;
+    }
+    el.innerHTML = '<div class="yc-list-header"><h2 class="yc-list-title">Young &amp; Catholic</h2><span class="saved-week-count">' + upcoming.length + ' upcoming</span></div>'
+      + upcoming.map(function(e, i) { return evts.renderYCCard(e, i * 50, i); }).join('');
+    return;
+  }
+
   // Normal mode
   document.getElementById('resultsCount').textContent = shown === total ? total + ' churches' : 'Showing ' + shown + ' of ' + total + ' churches';
   if (!shown) {

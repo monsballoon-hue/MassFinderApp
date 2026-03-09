@@ -16,69 +16,13 @@ var isVer = utils.isVer;
 var fmtDist = utils.fmtDist;
 var getDist = utils.getDist;
 var getNext = utils.getNext;
-var isLentSeason = utils.isLentSeason;
 var state = data.state;
 var isFav = data.isFav;
 
-// ── getSavedChurchEvents ──
-function getSavedChurchEvents(favIds) {
-  var today = getNow();
-  var todayStr = today.toISOString().slice(0, 10);
-  var todayDow = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][today.getDay()];
-  // End of week = next Sunday
-  var endOfWeek = new Date(today);
-  endOfWeek.setDate(today.getDate() + (7 - today.getDay()));
-  var endOfWeekStr = endOfWeek.toISOString().slice(0, 10);
-  // Remaining days this week (after today)
-  var remainingDays = [];
-  for (var i = today.getDay() + 1; i < 7; i++) {
-    remainingDays.push(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'][i]);
-  }
-
-  var buckets = { today: [], coming: [], ongoing: [] };
-  var dayOrd = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
-  var evts = state.eventsData.filter(function(e) {
-    return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
-  });
-
-  for (var j = 0; j < evts.length; j++) {
-    var e = evts[j];
-    if (e.dates && e.dates.length) {
-      var next = getNextEventDate(e);
-      if (next === todayStr) buckets.today.push(e);
-      else if (next && next > todayStr && next <= endOfWeekStr) buckets.coming.push(e);
-      else buckets.ongoing.push(e);
-    } else if (e.date) {
-      if (e.date === todayStr) buckets.today.push(e);
-      else if (e.date > todayStr && e.date <= endOfWeekStr) buckets.coming.push(e);
-      else buckets.ongoing.push(e);
-    } else if (e.day) {
-      if (e.day === todayDow) buckets.today.push(e);
-      else if (remainingDays.includes(e.day)) buckets.coming.push(e);
-      else buckets.ongoing.push(e);
-    } else {
-      buckets.ongoing.push(e);
-    }
-  }
-
-  // Sort: dated by date, recurring by day-of-week
-  buckets.today.sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
-  buckets.coming.sort(function(a, b) {
-    var dateComp = (a.date || '').localeCompare(b.date || '');
-    if (dateComp !== 0) return dateComp;
-    return (dayOrd[a.day] != null ? dayOrd[a.day] : 7) - (dayOrd[b.day] != null ? dayOrd[b.day] : 7);
-  });
-  buckets.ongoing.sort(function(a, b) {
-    return (dayOrd[a.day] != null ? dayOrd[a.day] : 7) - (dayOrd[b.day] != null ? dayOrd[b.day] : 7);
-  });
-  return buckets;
-}
-
-// ── renderSavedEvt ──
-function renderSavedEvt(e) {
+// ── renderUnifiedEvt — single event row for the unified list ──
+function renderUnifiedEvt(e, isYC) {
   var c = state.allChurches.find(function(x) { return x.id === e.church_id; }) || {};
   var pName = displayName(c.name || '');
-  var isLent = isLentSeason() && (e.category === 'liturgical' || e.category === 'devotional');
 
   // When text
   var whenParts = [];
@@ -109,28 +53,23 @@ function renderSavedEvt(e) {
   if (e.time) whenParts.push(fmt12(e.time));
   whenParts.push(pName);
 
-  var calSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  var rowClass = isYC ? 'saved-evt-unified evt-yc-row' : 'saved-evt-unified';
+  var ycBadge = isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
+  var onclick = isYC ? 'openEventDetail(\'' + e.id + '\')' : 'openDetail(\'' + e.church_id + '\')';
 
-  return '<div class="saved-evt" onclick="openDetail(\'' + e.church_id + '\')">'
-    + '<div class="ce-item-accent' + (isLent ? ' saved-lent-accent' : ' upcoming') + '"></div>'
-    + '<div class="ce-item-body">'
-    + '<div class="ce-item-title">' + esc(e.title) + '</div>'
-    + '<div class="ce-item-when">' + whenParts.join(' \u00b7 ') + '</div>'
+  return '<div class="' + rowClass + '" onclick="' + onclick + '">'
+    + '<div class="saved-evt-unified-body">'
+    + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + '</div>'
+    + '<div class="saved-evt-unified-when">' + whenParts.join(' \u00b7 ') + '</div>'
     + '</div>'
-    + '<div class="saved-evt-actions">'
-    + '<button class="saved-evt-btn" onclick="downloadEventIcal(\'' + esc(e.id) + '\');event.stopPropagation()" title="Add to Calendar">' + calSvg + '</button>'
-    + '<button class="saved-evt-btn" onclick="expressInterest(\'' + esc(e.id) + '\',event)" title="I\'m interested">&#9825;</button>'
-    + '</div></div>';
+    + '<svg class="saved-evt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
+    + '</div>';
 }
 
 // ── renderSaved ──
 function renderSaved() {
-  // Lazy requires to break circular deps
   var events = require('./events.js');
   var getUpcomingYC = events.getUpcomingYC;
-  var resolveYC = events.resolveYC;
-  var fmtYCDate = events.fmtYCDate;
-  var renderCompactYC = events.renderCompactYC;
   var toggleFav = data.toggleFav;
 
   var el = document.getElementById('savedList');
@@ -154,51 +93,59 @@ function renderSaved() {
 
   var html = '';
 
-  // -- This Week at Your Churches --
-  var buckets = getSavedChurchEvents(favIds);
-  var totalEvts = buckets.today.length + buckets.coming.length + buckets.ongoing.length;
-  if (totalEvts) {
-    html += '<div class="saved-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>This Week at Your Churches</div>';
+  // ── UPCOMING EVENTS — unified chronological list ──
+  var allEvents = [];
 
-    if (buckets.today.length) {
-      html += '<div class="saved-week-section"><details open><summary>Today <span class="saved-week-count">' + buckets.today.length + '</span></summary>';
-      html += buckets.today.map(function(e) { return renderSavedEvt(e); }).join('');
-      html += '</details></div>';
+  // Community events at saved churches
+  state.eventsData.filter(function(e) {
+    return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
+  }).forEach(function(e) {
+    allEvents.push({ evt: e, isYC: false });
+  });
+
+  // YC events at saved churches
+  var upcomingYC = getUpcomingYC().filter(function(e) { return favIds.has(e.church_id); });
+  upcomingYC.forEach(function(e) {
+    allEvents.push({ evt: e, isYC: true });
+  });
+
+  // Sort chronologically: by next date, then time
+  allEvents.sort(function(a, b) {
+    var dateA = getNextEventDate(a.evt) || a.evt.date || '9999';
+    var dateB = getNextEventDate(b.evt) || b.evt.date || '9999';
+    var cmp = dateA.localeCompare(dateB);
+    if (cmp !== 0) return cmp;
+    return (a.evt.time || '').localeCompare(b.evt.time || '');
+  });
+
+  if (allEvents.length) {
+    html += '<div class="saved-section-label">UPCOMING EVENTS</div>';
+
+    // Show first 3
+    var showCount = Math.min(3, allEvents.length);
+    for (var i = 0; i < showCount; i++) {
+      html += renderUnifiedEvt(allEvents[i].evt, allEvents[i].isYC);
     }
-    if (buckets.coming.length) {
-      html += '<div class="saved-week-section"><details open><summary>Coming Up <span class="saved-week-count">' + buckets.coming.length + '</span></summary>';
-      html += buckets.coming.map(function(e) { return renderSavedEvt(e); }).join('');
-      html += '</details></div>';
+
+    // "N more" expandable
+    if (allEvents.length > 3) {
+      var moreCount = allEvents.length - 3;
+      html += '<details class="saved-more-details"><summary class="saved-more-toggle">' + moreCount + ' more</summary>';
+      for (var j = 3; j < allEvents.length; j++) {
+        html += renderUnifiedEvt(allEvents[j].evt, allEvents[j].isYC);
+      }
+      html += '</details>';
     }
-    if (buckets.ongoing.length) {
-      html += '<div class="saved-week-section"><details><summary>Ongoing <span class="saved-week-count">' + buckets.ongoing.length + '</span></summary>';
-      html += buckets.ongoing.map(function(e) { return renderSavedEvt(e); }).join('');
-      html += '</details></div>';
-    }
-    html += '<div class="saved-section-divider"></div>';
   }
 
-  // -- YC Events (compact) --
-  var upcoming = getUpcomingYC().filter(function(e) { return favIds.has(e.church_id); });
-  if (upcoming.length) {
-    html += '<div class="saved-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="20" height="20"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Young &amp; Catholic <span class="saved-week-count">' + upcoming.length + '</span></div>';
-    html += upcoming.slice(0, 4).map(function(e) { return renderCompactYC(e); }).join('');
-    if (upcoming.length > 4) {
-      html += '<div style="text-align:center;padding:var(--space-2) 0"><button style="font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-accent-text);padding:var(--space-2) var(--space-4)" onclick="document.querySelector(\'[data-filter=yc]\').click();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">See all YC events \u2192</button></div>';
-    }
-    html += '<div class="saved-section-divider"></div>';
-  }
-
-  // -- Your Churches --
-  // Count active events per parish for badges
+  // ── Church cards ──
+  // Count active events per church for badges
   var evtCounts = {};
   state.eventsData.filter(function(e) {
     return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
   }).forEach(function(e) {
     evtCounts[e.church_id] = (evtCounts[e.church_id] || 0) + 1;
   });
-
-  html += '<div class="saved-section-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/></svg>Your Churches</div>';
 
   // Sort: within 10mi by next service, then beyond 10mi by next service
   var sortedFav = favChurches.map(function(c) {
@@ -238,7 +185,6 @@ function renderSaved() {
 }
 
 module.exports = {
-  getSavedChurchEvents: getSavedChurchEvents,
-  renderSavedEvt: renderSavedEvt,
+  renderUnifiedEvt: renderUnifiedEvt,
   renderSaved: renderSaved,
 };
