@@ -1,4 +1,4 @@
-var CACHE_NAME = 'massfinder-v3_' + '20260309_1556';
+var CACHE_NAME = 'massfinder-v3_' + '20260309_1609';
 var SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -9,7 +9,11 @@ var SHELL_ASSETS = [
   '/manifest.json',
   '/assets/icon-192.png',
   '/assets/icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap',
+  '/offline.html',
+  '/assets/fonts/playfair-display-latin.woff2',
+  '/assets/fonts/playfair-display-latin-ext.woff2',
+  '/assets/fonts/source-sans-3-latin.woff2',
+  '/assets/fonts/source-sans-3-latin-ext.woff2',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css',
@@ -71,8 +75,9 @@ self.addEventListener('fetch', function(event) {
           if (response.ok) cache.put(event.request, response.clone());
           return response;
         }).catch(function() {
-          // Network failed — return cached or offline
+          // Network failed — return cached, offline page for navigation, or 503
           if (cached) return cached;
+          if (event.request.mode === 'navigate') return cache.match('/offline.html');
           return new Response('Offline', { status: 503, statusText: 'Offline' });
         });
         return cached || fetchPromise;

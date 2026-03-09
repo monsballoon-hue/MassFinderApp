@@ -3,9 +3,7 @@ var config = require('./config.js');
 var utils = require('./utils.js');
 var data = require('./data.js');
 
-// ── Derived: language display names ──
-var LANG_NAMES = {};
-Object.keys(config.LANGUAGES).forEach(function(k) { LANG_NAMES[k] = config.LANGUAGES[k].label; });
+var LANG_NAMES = config.LANG_NAMES;
 
 // ── Event type display names ──
 var EVT_TYPES = {

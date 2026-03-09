@@ -13,9 +13,7 @@ var filterChurches = data.filterChurches;
 var hasAdv = data.hasAdv;
 var esc = utils.esc;
 
-// Build LANG_NAMES from config.LANGUAGES
-var LANG_NAMES = {};
-Object.keys(LANGUAGES).forEach(function(k) { LANG_NAMES[k] = LANGUAGES[k].label; });
+var LANG_NAMES = config.LANG_NAMES;
 
 // ── Focus trap state ──
 var _focusTrapHandler = null;
@@ -205,39 +203,46 @@ function closeAllPanels() {
 
 // ── Switch Tab ──
 function switchTab(id, btn) {
-  document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
-  document.querySelectorAll('.tab-item').forEach(function(t) {
-    t.classList.remove('active');
-    t.setAttribute('aria-selected', 'false');
-  });
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-  btn.setAttribute('aria-selected', 'true');
-
-  if (id === 'panelMap' && !state.mapInitialized) {
-    var map = require('./map.js');
-    map.initMap();
-    state.mapInitialized = true;
-  }
-  if (id === 'panelMap' && state.mapInitialized && window._map) {
-    setTimeout(function() { window._map.invalidateSize(); }, 100);
-  }
-  if (id === 'panelMap') {
-    var location = require('./location.js');
-    location.refreshLocation(function(ok) {
-      if (ok && window._map && state.userLat !== null) {
-        window._map.setView([state.userLat, state.userLng], 13);
-      }
+  function doSwitch() {
+    document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.tab-item').forEach(function(t) {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
     });
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+
+    if (id === 'panelMap' && !state.mapInitialized) {
+      var map = require('./map.js');
+      map.initMap();
+      state.mapInitialized = true;
+    }
+    if (id === 'panelMap' && state.mapInitialized && window._map) {
+      setTimeout(function() { window._map.invalidateSize(); }, 100);
+    }
+    if (id === 'panelMap') {
+      var location = require('./location.js');
+      location.refreshLocation(function(ok) {
+        if (ok && window._map && state.userLat !== null) {
+          window._map.setView([state.userLat, state.userLng], 13);
+        }
+      });
+    }
+    if (id === 'panelSaved') {
+      var saved = require('./saved.js');
+      saved.renderSaved();
+    }
+    if (id === 'panelMore' && !window._moreRendered) {
+      var more = require('./more.js');
+      more.renderMore();
+      window._moreRendered = true;
+    }
   }
-  if (id === 'panelSaved') {
-    var saved = require('./saved.js');
-    saved.renderSaved();
-  }
-  if (id === 'panelMore' && !window._moreRendered) {
-    var more = require('./more.js');
-    more.renderMore();
-    window._moreRendered = true;
+  if (document.startViewTransition) {
+    document.startViewTransition(doSwitch);
+  } else {
+    doSwitch();
   }
 }
 

@@ -35,11 +35,9 @@ function toggleFav(id, ev) {
 // ── Search ──
 function matchSearch(c, q) {
   if (!q) return true;
-  var LANG_NAMES = {};
-  Object.keys(config.LANGUAGES).forEach(function(k) { LANG_NAMES[k] = config.LANGUAGES[k].label; });
   var f = [c.name, c.city, c.county, c.address].concat(
     (c.services || []).map(function(s) { return s.notes || ''; }),
-    (c.services || []).map(function(s) { return LANG_NAMES[s.language] || ''; }),
+    (c.services || []).map(function(s) { return config.LANG_NAMES[s.language] || ''; }),
     c.staff || []
   ).join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(function(w) { return f.includes(w); });

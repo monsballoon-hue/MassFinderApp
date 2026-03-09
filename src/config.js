@@ -114,6 +114,10 @@ Object.keys(SERVICE_TYPES).forEach(function(k) {
   SERVICE_GROUPS[g].push(k);
 });
 
+// Language display names: { en: 'English', es: 'Spanish', ... }
+var LANG_NAMES = {};
+Object.keys(LANGUAGES).forEach(function(k) { LANG_NAMES[k] = LANGUAGES[k].label; });
+
 // Day display order
 var DAY_ORDER = ['sunday','monday','tuesday','wednesday','thursday','friday','saturday'];
 var DAY_NAMES = {};
@@ -133,7 +137,7 @@ if (typeof module !== 'undefined' && module.exports) {
     SERVICE_TYPES: SERVICE_TYPES, DAY_TYPES: DAY_TYPES, LANGUAGES: LANGUAGES,
     REGION: REGION, CLERGY_ROLES: CLERGY_ROLES,
     SVC_LABELS: SVC_LABELS, SERVICE_GROUPS: SERVICE_GROUPS,
-    DAY_ORDER: DAY_ORDER, DAY_NAMES: DAY_NAMES,
+    DAY_ORDER: DAY_ORDER, DAY_NAMES: DAY_NAMES, LANG_NAMES: LANG_NAMES,
     SERVICE_TYPE_ENUM: SERVICE_TYPE_ENUM, DAY_ENUM: DAY_ENUM, LANGUAGE_ENUM: LANGUAGE_ENUM,
   };
 }

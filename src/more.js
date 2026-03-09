@@ -373,6 +373,7 @@ function renderMore() {
   var fetchLiturgicalDay = readings.fetchLiturgicalDay;
   var setLiturgicalSeason = readings.setLiturgicalSeason;
   var renderHDOBanner = readings.renderHDOBanner;
+  var updateHDOBadge = readings.updateHDOBadge;
   var renderSaintCard = readings.renderSaintCard;
   var switchTab = require('./ui.js').switchTab;
 
@@ -586,6 +587,7 @@ function renderMore() {
   fetchLiturgicalDay().then(function(events) {
     setLiturgicalSeason(events);
     renderHDOBanner(events);
+    updateHDOBadge(events);
     renderSaintCard(events);
     renderLiturgicalCalendar(); // Re-render with LitCal data now cached
     // Show Lent & Holy Week ICS export button only during Lent season

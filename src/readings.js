@@ -61,6 +61,21 @@ function renderHDOBanner(events) {
     + '</div>';
 }
 
+// ── Holy Day Badge (Badging API) ──
+function updateHDOBadge(events) {
+  if (!navigator.setAppBadge) return;
+  var now = getNow(), m = now.getMonth() + 1, d = now.getDate();
+  var tom = new Date(now); tom.setDate(tom.getDate() + 1);
+  var tm = tom.getMonth() + 1, td = tom.getDate();
+  var hasHDO = events.some(function(e) {
+    return e.holy_day_of_obligation && (
+      (e.month === m && e.day === d) || (e.month === tm && e.day === td)
+    );
+  });
+  if (hasHDO) navigator.setAppBadge(1).catch(function() {});
+  else navigator.clearAppBadge().catch(function() {});
+}
+
 // ── Liturgical Events ──
 function getLiturgicalEvents() {
   if (window._litcalCache && window._litcalCache.events) {
@@ -646,4 +661,5 @@ module.exports = {
   exportLitCalICS: exportLitCalICS,
   setLiturgicalSeason: setLiturgicalSeason,
   renderHDOBanner: renderHDOBanner,
+  updateHDOBadge: updateHDOBadge,
 };
