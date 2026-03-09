@@ -112,43 +112,13 @@
     <div class="more-section">
       <h2 class="more-section-title">About MassFinder</h2>
       <div class="stat-grid" id="aboutStatGrid"></div>
-      <p>MassFinder is a stewardship project — built for our Catholic community across Western New England to find Mass times, Confession, Adoration, and other services nearby. If something looks off or you have suggestions, please submit a correction. Your feedback keeps the data accurate for everyone.</p>
-      <details class="conf-exam" style="margin-top:var(--space-3)">
-        <summary>What We're Working On <svg style="width:16px;height:16px;flex-shrink:0;transition:transform 0.2s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="conf-exam-body">
-          <ul>
-            <li>Expanding coverage to more parishes across Western New England</li>
-            <li>Improving event discovery and community features</li>
-            <li>Better offline support and performance</li>
-          </ul>
-        </div>
-      </details>
-      <div class="more-links-inline">
-        <a class="more-link-pill" href="https://diospringfield.org" target="_blank" rel="noopener">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          Diocese
-        </a>
-        <button class="more-link-pill" onclick="showMoreCorrection()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          Submit a Correction
-        </button>
-      </div>
-      <div id="moreCorrectionForm" style="display:none;padding:var(--space-4) 0">
-        <label class="corr-form-label" style="margin-top:0">Church name</label>
-        <input id="moreCorrChurch" type="text" placeholder="e.g. St. Michael Parish, Springfield" class="corr-input" style="resize:none">
-        <label class="corr-form-label">What's wrong?</label>
-        <div class="corr-pills" id="moreCorrPills">
-          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Wrong time')">Wrong time</button>
-          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Mass cancelled or moved')">Mass cancelled or moved</button>
-          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Missing a service')">Missing a service</button>
-          <button class="corr-pill" onclick="selectMoreCorrPill(this,'Other')">Other</button>
-        </div>
-        <input type="hidden" id="moreCorrCategory" value="">
-        <label class="corr-form-label">Details</label>
-        <textarea id="moreCorrMessage" class="corr-input" rows="2" placeholder="Select a category above first…"></textarea>
-        <input id="moreCorrEmail" type="email" class="corr-input" placeholder="Your email (optional, for follow-up)" style="resize:none;margin-top:var(--space-2)">
-        <button onclick="submitMoreCorrection()" style="margin-top:var(--space-3);width:100%;padding:var(--space-3);border-radius:var(--radius-md);background:var(--color-primary);color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);min-height:44px">Submit Correction</button>
-        <div id="moreCorrThanks" style="display:none;text-align:center;padding:var(--space-3);font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-medium)">Thank you! We'll review your correction.</div>
+      <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
+      <div style="margin-top:var(--space-3);color:var(--color-accent-text);font-size:var(--text-sm);line-height:1.7">
+        <div style="display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3);font-weight:var(--weight-semibold)"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> What We're Working On</div>
+        <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">Right now, finding what's happening at Catholic churches in our region means checking dozens of individual bulletins, websites and Facebook pages. Each parish is behind its own wall. We're trying to change that.</p>
+        <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">MassFinder uses AI to read parish bulletins and pull services, events and schedule changes into one central place &mdash; so you can see what's happening across the region without hunting for it.</p>
+        <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">It's a small effort at digital evangelism: making it easier for Catholics to stay connected to their faith community and discover what's going on beyond their own parish.</p>
+        <p style="color:var(--color-text-secondary)">This is actively being built, and you'll notice rough edges. We appreciate your patience as it comes together.</p>
       </div>
     </div>
 
@@ -200,25 +170,6 @@
       <h2 class="more-section-title">Faith Guides</h2>
       <p>Brief guides to common Catholic devotions and services — written for everyone, whether you're returning after a long absence or simply curious.</p>
       <div id="devotionalCards"></div>
-    </div>
-
-    <!-- FEEDBACK FORM -->
-    <div class="more-section">
-      <h2 class="more-section-title">Share Your Feedback</h2>
-      <p>Help us make MassFinder better. Suggestions, missing features, or anything else on your mind.</p>
-      <div id="feedbackFormWrap">
-        <div class="fb-type-grid" id="fbTypeGrid">
-          <button class="fb-type-btn" onclick="selectFbType(this,'Suggestion')">Suggestion</button>
-          <button class="fb-type-btn" onclick="selectFbType(this,'Missing feature')">Missing feature</button>
-          <button class="fb-type-btn" onclick="selectFbType(this,'Coverage gap')">Coverage gap</button>
-          <button class="fb-type-btn" onclick="selectFbType(this,'Other')">Other</button>
-        </div>
-        <input type="hidden" id="fbType" value="">
-        <textarea id="fbMessage" class="corr-input" rows="3" placeholder="Tell us what's on your mind…"></textarea>
-        <input id="fbEmail" type="email" class="corr-input" placeholder="Email (optional — for follow-up)" style="margin-top:var(--space-2);resize:none">
-        <button class="fb-submit" onclick="submitFeedback()">Send Feedback</button>
-        <div class="fb-thanks" id="fbThanks">Thank you — your feedback means a lot. God bless!</div>
-      </div>
     </div>
 
     <!-- About section moved above What's Happening -->

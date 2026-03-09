@@ -167,4 +167,5 @@ module.exports = {
   filterChurches: filterChurches, sortChurches: sortChurches,
   migrateFavorites: migrateFavorites,
   parishesToChurches: parishesToChurches, processChurches: processChurches,
+  PARISH_CHURCH_MAP: PARISH_CHURCH_MAP,
 };

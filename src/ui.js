@@ -61,6 +61,8 @@ function closeMoreFilters() {
 // ── Clear Advanced Filters ──
 function clearAdvancedFilters() {
   state.tempAdvanced = { types: [], days: [], languages: [] };
+  state.currentFilter = 'all';
+  document.querySelectorAll('.chip[data-filter]').forEach(function(ch) { ch.classList.toggle('active', ch.dataset.filter === 'all'); });
   renderFiltersBody();
 }
 

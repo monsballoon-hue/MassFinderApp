@@ -461,10 +461,12 @@ function renderEventsWidget() {
     var dt = new Date(e.date + 'T12:00:00');
     var mon = dt.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
     var day = dt.getDate();
+    var timeStr = e.time ? utils.fmt12(e.time) : '';
     return '<div class="event-mini-card" onclick="openEventDetail(\'' + e.id + '\')">'
       + '<div class="event-mini-date-badge"><div class="event-mini-date-month">' + mon + '</div><div class="event-mini-date-day">' + day + '</div></div>'
       + '<div class="event-mini-info"><div class="event-mini-title">' + utils.esc(e.title) + '</div>'
-      + '<div class="event-mini-church">' + utils.esc(utils.displayName(r.locName || r.churchName)) + '</div></div>'
+      + (timeStr ? '<div class="event-mini-time">' + timeStr + '</div>' : '')
+      + '<div class="event-mini-church">' + utils.esc(utils.displayName(r.locName || r.churchName)) + (r.town ? ' \u00b7 ' + utils.esc(r.town) : '') + '</div></div>'
       + '</div>';
   }).join('');
 

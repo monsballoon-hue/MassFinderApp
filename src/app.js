@@ -208,6 +208,12 @@ async function init() {
     var churches = data.parishesToChurches(jsonData.parishes || []);
     var churchData = { churches: churches };
     state.ycEvents = (jsonData.yc_events || []).sort(function(a, b) { return a.date.localeCompare(b.date) || (a.time || '').localeCompare(b.time || ''); });
+    // Map church_id for YC events from parish_data.json
+    state.ycEvents.forEach(function(e) {
+      if (!e.church_id) {
+        e.church_id = e.location_id || data.PARISH_CHURCH_MAP[e.parish_id] || e.parish_id;
+      }
+    });
 
     state.allChurches = data.processChurches(churchData.churches || []);
 
@@ -217,6 +223,12 @@ async function init() {
       if (evtResp.ok) {
         var evtData = await evtResp.json();
         state.eventsData = (evtData.events || []).sort(function(a, b) { return (a.date || '9999').localeCompare(b.date || '9999') || (a.time || '').localeCompare(b.time || ''); });
+        // Map church_id from location_id or parish_id for event↔church lookups
+        state.eventsData.forEach(function(e) {
+          if (!e.church_id) {
+            e.church_id = e.location_id || data.PARISH_CHURCH_MAP[e.parish_id] || e.parish_id;
+          }
+        });
         var ycFromEvents = state.eventsData.filter(function(e) { return e.category === 'yc'; });
         if (ycFromEvents.length) state.ycEvents = ycFromEvents;
         console.log('[MassFinder] Loaded events:', state.eventsData.length, ', YC:', ycFromEvents.length);
