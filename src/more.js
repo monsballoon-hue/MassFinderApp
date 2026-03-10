@@ -202,12 +202,16 @@ function renderMore() {
     renderLiturgicalCalendar(lituEl);
   }
 
+  // Confession tracker (PAT-02)
+  var exam = require('./examination.js');
+  exam._updateMoreTabTracker();
+
   // Prayer Tools grid
   var ptGrid = document.getElementById('prayerToolsGrid');
   if (ptGrid) {
     var ptCards = [
       { id: 'rosary', icon: '\u271E', title: 'Guided Rosary', desc: 'Pray the Rosary with mysteries, meditations, and bead counter', action: 'openRosary()', label: 'Begin', active: true },
-      { id: 'examination', icon: '\u2696\uFE0F', title: 'Examination of Conscience', desc: 'Prepare for the Sacrament of Reconciliation', label: 'Coming Soon', active: false },
+      { id: 'examination', icon: '\u2696\uFE0F', title: 'Examination of Conscience', desc: 'Prepare for the Sacrament of Reconciliation', action: 'openExamination()', label: 'Begin', active: true },
       { id: 'stations', icon: '\u271D\uFE0F', title: 'Stations of the Cross', desc: 'Walk the Via Dolorosa with guided meditations', label: isLentSeason() ? 'Lenten Devotion' : 'Coming Soon', active: false }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {

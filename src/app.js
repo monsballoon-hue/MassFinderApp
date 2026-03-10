@@ -13,6 +13,7 @@ var location_ = require('./location.js');
 var ccc = require('./ccc.js');
 var refs = require('./refs.js');
 var rosary = require('./rosary.js');
+var examination = require('./examination.js');
 
 var state = data.state;
 
@@ -97,6 +98,11 @@ window.rosaryNext = rosary.rosaryNext;
 window.rosaryPrev = rosary.rosaryPrev;
 window.rosaryBeadTap = rosary.rosaryBeadTap;
 window.rosaryGoTo = rosary.rosaryGoTo;
+window.openExamination = examination.openExamination;
+window.closeExamination = examination.closeExamination;
+window.examToggleSection = examination.examToggleSection;
+window.examMarkConfession = examination.examMarkConfession;
+window.examFindConfession = examination.examFindConfession;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -147,6 +153,7 @@ if (sC) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
+    else if (document.getElementById('examOverlay').classList.contains('open')) examination.closeExamination();
     else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();

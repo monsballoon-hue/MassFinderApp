@@ -171,6 +171,7 @@
     <!-- PRAYER TOOLS — interactive prayer features -->
     <div class="more-section" id="prayerToolsSection">
       <h2 class="more-section-title">Prayer Tools</h2>
+      <div id="confessionTracker" class="confession-tracker" style="display:none"></div>
       <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
     </div>
 
@@ -232,6 +233,16 @@
     <div id="cccSheetBody"></div>
     <div id="cccSheetRelated"></div>
   </div>
+</div>
+
+<!-- Examination of Conscience Overlay -->
+<div id="examOverlay" class="exam-overlay" role="dialog" aria-modal="true" aria-label="Examination of Conscience">
+  <div class="exam-header">
+    <button class="exam-close" onclick="closeExamination()" aria-label="Close">&times;</button>
+    <div class="exam-title">Examination of Conscience</div>
+    <div class="exam-close" style="visibility:hidden" aria-hidden="true">&times;</div>
+  </div>
+  <div class="exam-body" id="examBody"></div>
 </div>
 
 <!-- Rosary Overlay -->
