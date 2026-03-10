@@ -267,15 +267,28 @@ function openEventDetail(eventId) {
     if (evt.date === today) dateLine = 'Today \u2014 ' + dateLine;
     else if (evt.date === tomorrowStr) dateLine = 'Tomorrow \u2014 ' + dateLine;
   } else if (evt.day) {
-    dateLine = (config.DAY_NAMES[evt.day] || evt.day.charAt(0).toUpperCase() + evt.day.slice(1)) + 's';
+    var dayName = config.DAY_NAMES[evt.day] || evt.day.charAt(0).toUpperCase() + evt.day.slice(1);
+    if (evt.frequency === 'monthly' && evt.recurrence && evt.recurrence.week) {
+      var ordinals = ['', '1st', '2nd', '3rd', '4th', '5th'];
+      dateLine = (ordinals[evt.recurrence.week] || '') + ' ' + dayName + ' of the month';
+    } else {
+      dateLine = dayName + 's';
+      if (evt.frequency === 'weekly') dateLine = 'Every ' + dayName;
+    }
     isRecurring = true;
   } else {
     dateLine = 'Ongoing';
     isRecurring = true;
   }
+  // Append end date for recurring events
+  if (isRecurring && evt.end_date) {
+    var ed = new Date(evt.end_date + 'T12:00:00');
+    dateLine += ' through ' + ed.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
 
   // Time line
   var timeLine = timeStr ? timeStr + endStr : '';
+  if (timeLine && evt.time_is_inferred) timeLine += ' <span class="evt-time-approx">(approx)</span>';
 
   // ── Countdown ──
   var countdownHtml = '';
@@ -366,16 +379,24 @@ function openEventDetail(eventId) {
       + '</summary><div class="evt-series-list">' + seriesItems + '</div></details>';
   }
 
-  // ── Notes callout ──
-  var notesHtml = '';
-  if (evt.notes) {
-    notesHtml = '<div class="evt-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>' + utils.esc(evt.notes) + '</span></div>';
-  }
-
-  // ── Description ──
+  // ── Description or Notes (description replaces notes when available) ──
   var descHtml = '';
   if (evt.description) {
     descHtml = '<div class="evt-desc"><p>' + utils.esc(evt.description) + '</p></div>';
+  } else if (evt.notes) {
+    descHtml = '<div class="evt-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>' + utils.esc(evt.notes) + '</span></div>';
+  }
+
+  // ── Price row ──
+  var priceHtml = '';
+  if (evt.price) {
+    priceHtml = '<div class="evt-detail-row"><svg class="evt-detail-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><div class="evt-detail-row-text"><span class="evt-detail-row-label">Price</span><span class="evt-detail-row-value">' + utils.esc(evt.price) + '</span></div></div>';
+  }
+
+  // ── Registration info row ──
+  var regHtml = '';
+  if (evt.registration_info) {
+    regHtml = '<div class="evt-detail-row"><svg class="evt-detail-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg><div class="evt-detail-row-text"><span class="evt-detail-row-label">Registration</span><span class="evt-detail-row-value">' + utils.esc(evt.registration_info) + '</span></div></div>';
   }
 
   // ── Image hero ──
@@ -386,11 +407,26 @@ function openEventDetail(eventId) {
 
   // ── Contact info ──
   var contactHtml = '';
-  if (evt.contact_name || evt.contact_email) {
-    contactHtml = '<div class="evt-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
-    if (evt.contact_name) contactHtml += '<span>' + utils.esc(evt.contact_name) + '</span>';
-    if (evt.contact_email) contactHtml += '<a href="mailto:' + utils.esc(evt.contact_email) + '">' + utils.esc(evt.contact_email) + '</a>';
-    contactHtml += '</div>';
+  if (evt.contact_name || evt.contact_email || evt.contact_phone) {
+    var contactParts = [];
+    if (evt.contact_name) contactParts.push('<strong>' + utils.esc(evt.contact_name) + '</strong>');
+    if (evt.contact_phone) {
+      var rawPhone = evt.contact_phone.replace(/[^+\d]/g, '');
+      // Only make tel: link if phone has 10+ digits (full number)
+      if (rawPhone.length >= 10) {
+        contactParts.push('<a href="tel:' + utils.esc(rawPhone) + '">' + utils.esc(evt.contact_phone) + '</a>');
+      } else {
+        contactParts.push(utils.esc(evt.contact_phone));
+      }
+    }
+    if (evt.contact_email) contactParts.push('<a href="mailto:' + utils.esc(evt.contact_email) + '">' + utils.esc(evt.contact_email) + '</a>');
+    contactHtml = '<div class="evt-detail-row"><svg class="evt-detail-row-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div class="evt-detail-row-text"><span class="evt-detail-row-label">Contact</span><span class="evt-detail-row-value">' + contactParts.join(' &middot; ') + '</span></div></div>';
+  }
+
+  // ── YC banner (replaces tags for YC events) ──
+  var ycBannerHtml = '';
+  if (isYC) {
+    ycBannerHtml = '<div class="evt-yc-banner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Young &amp; Catholic Event</span></div>';
   }
 
   // ── Actions (2-col grid) ──
@@ -430,8 +466,10 @@ function openEventDetail(eventId) {
     + imageHtml
     + infoCard
     + seriesHtml
-    + notesHtml
     + descHtml
+    + ycBannerHtml
+    + priceHtml
+    + regHtml
     + contactHtml
     + actions
     + footerLink

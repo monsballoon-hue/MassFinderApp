@@ -65,23 +65,35 @@ function buildPrompt(event) {
     + 'Category: ' + (event.category || 'unknown') + '\n'
     + 'Notes: ' + event.notes + '\n\n'
     + 'Return ONLY a JSON object (no markdown, no explanation) with these fields:\n'
-    + '- "description": A clean 1-2 sentence summary of what the event is and what attendees can expect. Do NOT repeat the title. If the notes are just logistical details with no real description, set to null.\n'
-    + '- "contact_name": Name of a contact person if mentioned, otherwise null.\n'
-    + '- "contact_email": Email address if mentioned, otherwise null.\n'
-    + '- "contact_phone": Phone number if mentioned, otherwise null.\n'
-    + '- "price": Ticket/entry cost information as a brief string (e.g., "Adults $20, Children $10"), or null if free/not mentioned.\n'
-    + '- "registration_info": How to register, buy tickets, or RSVP — brief string, or null if just show up.\n\n'
+    + '- "description": A clean 1-2 sentence summary of what attendees can expect. Do NOT repeat the title or restate logistics (date/time/location). Focus on what makes this event worth attending. If the notes are just logistical details with no real substance to describe, set to null.\n'
+    + '- "contact_name": The person to contact for questions/RSVP. ONLY extract if the notes explicitly say "Contact", "Call", "RSVP with", "questions?", "info:", or "reservations:". Do NOT extract speakers ("Speaker: X"), celebrants ("with Fr. X", "Mass with Fr. X"), retreat leaders ("led by X"), facilitators ("facilitated by X"), or discussion leaders ("led by Dcn. X"). These are participants, not contact people. Set to null if no explicit contact person.\n'
+    + '- "contact_email": Email address if explicitly provided as contact info, otherwise null.\n'
+    + '- "contact_phone": Phone number for the contact person. If multiple phone numbers for different people, return ONLY the first/primary one. Must be explicitly tied to a contact action (call, RSVP, info). Set to null if a phone is mentioned but not as a contact method.\n'
+    + '- "price": Ticket/entry cost as a compact string (e.g., "Adults $20, Children $10"). Set to null if free, not mentioned, or just "self pay".\n'
+    + '- "registration_info": How to register, buy tickets, or RSVP — ONLY if there is an actual signup/reservation/ticket-buying process. Set to null if you just show up, if there is no registration process, or if it is just general attendance info like "after all Masses". "Check parish for schedule" is NOT registration. "Tickets at the door" is NOT registration (no advance action needed). A Zoom link request IS registration.\n\n'
     + 'Rules:\n'
-    + '- Only extract what is explicitly stated in the notes. Do not invent information.\n'
+    + '- ONLY extract what is explicitly stated. Do not infer, invent, or embellish.\n'
     + '- For description, write in third person present tense ("Features live music and dancing").\n'
-    + '- Keep price as a compact string, not a paragraph.\n'
-    + '- If notes only contain a date/time or very minimal info, set description to null.\n';
+    + '- If notes only contain a date/time/location or very minimal info, set description to null.\n'
+    + '- When in doubt, set a field to null. False negatives are far better than false positives.\n';
 }
 
 async function main() {
   var raw = fs.readFileSync(EVENTS_PATH, 'utf8');
   var data = JSON.parse(raw);
   var events = data.events;
+
+  // If --re-run flag, clear all previously enriched fields first
+  var RERUN = process.argv.includes('--re-run');
+  if (RERUN) {
+    var cleared = 0;
+    events.forEach(function(e) {
+      if (e.category === 'yc') return;
+      var fields = ['description', 'contact_name', 'contact_email', 'contact_phone', 'price', 'registration_info'];
+      fields.forEach(function(f) { if (e[f]) { delete e[f]; cleared++; } });
+    });
+    console.log('Re-run mode: cleared', cleared, 'enriched fields');
+  }
 
   // Filter: community events with notes, no description yet
   var targets = events.filter(function(e) {
