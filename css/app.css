@@ -194,7 +194,7 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 /* SEARCH */
 .search-section { max-width: var(--max-width); margin: 0 auto; padding: var(--space-4) var(--space-4) 0; }
 .search-bar { display: flex; align-items: center; background: var(--color-surface); border: 1.5px solid var(--color-border); border-radius: var(--radius-md); padding: 0 var(--space-4); height: 48px; transition: border-color var(--transition-fast), box-shadow var(--transition-fast); gap: var(--space-2); }
-.search-bar:focus-within { border-color: var(--color-primary-muted); box-shadow: 0 0 0 3px rgba(44,62,90,0.08); }
+.search-bar:focus-within { border-color: var(--color-primary-muted); box-shadow: 0 0 0 2px rgba(44,62,90,0.05); }
 .search-bar svg { width: 20px; height: 20px; color: var(--color-text-tertiary); flex-shrink: 0; }
 .search-bar input { flex: 1; height: 100%; font-size: var(--text-base); }
 .search-bar input::placeholder { color: var(--color-text-tertiary); }
@@ -202,19 +202,14 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .search-clear.visible { display: flex; }
 
 /* LITURGICAL TEASER (Change 1) */
-.liturgical-teaser { max-width:var(--max-width);margin:0 auto;padding:var(--space-2) var(--space-4) 0; }
-.teaser-card { display:flex;align-items:stretch;background:var(--color-surface);border-radius:var(--radius-md);overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,0.04); }
-.teaser-color-bar { width:4px;flex-shrink:0;background:var(--teaser-color,var(--color-primary)); }
-.teaser-content { flex:1;padding:var(--space-3) var(--space-4); }
-.teaser-date { font-size:var(--text-xs);color:var(--color-text-tertiary);margin-bottom:2px; }
-.teaser-name { font-family:var(--font-display);font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-heading);line-height:1.35; }
-/* Season progress (Change 17) */
-.season-progress { margin:var(--space-2) 0 0;position:relative;height:20px;background:var(--color-surface-hover);border-radius:10px;overflow:hidden; }
-.season-progress-bar { position:absolute;left:0;top:0;bottom:0;background:var(--color-primary-muted);border-radius:10px;transition:width 0.6s ease;opacity:0.3; }
-.season-progress-label { position:relative;z-index:1;display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;font-weight:var(--weight-semibold);color:var(--color-text-secondary);letter-spacing:0.02em; }
-/* Time-aware notes (Change 22) */
-.teaser-note { max-width:var(--max-width);margin:var(--space-1) 0 0;padding:0;font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic; }
-.teaser-note--hdo { color:var(--color-warning);font-style:normal;font-weight:var(--weight-medium); }
+.liturgical-teaser { max-width:var(--max-width);margin:0 auto;padding:var(--space-1) var(--space-4) 0; }
+/* Daily context strip (replaces teaser + progress + confession) */
+.daily-strip { display:flex;align-items:center;justify-content:space-between;cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.daily-strip-main { display:flex;align-items:center;gap:var(--space-2);min-width:0;flex:1; }
+.daily-strip-dot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+.daily-strip-text { font-size:var(--text-xs);color:var(--color-text-secondary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.daily-strip-link { font-size:var(--text-xs);color:var(--color-primary);font-weight:var(--weight-medium);white-space:nowrap;flex-shrink:0;margin-left:var(--space-2); }
+.daily-strip-sub { font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;margin-top:2px; }
 /* Daily CCC Reflection (Change 16) */
 .reflection-card { padding:var(--space-4);background:var(--color-surface);border-radius:var(--radius-md);cursor:pointer;transition:box-shadow var(--transition-fast);-webkit-tap-highlight-color:transparent; }
 .reflection-card:hover { box-shadow:var(--shadow-card); }
@@ -593,6 +588,7 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .schedule-lang-badge { display: inline-block; font-size: 11px; font-weight: var(--weight-medium); padding: 1px 6px; border-radius: var(--radius-full); color: #1E40AF; background: #DBEAFE; margin-left: var(--space-2); }
 .schedule-season-badge { display: inline-flex; align-items: center; gap: 2px; font-size: 11px; font-weight: var(--weight-medium); padding: 1px 7px; border-radius: var(--radius-full); color: #4D7C0F; background: #ECFCCB; margin-left: var(--space-2); letter-spacing: 0.01em; }
 .schedule-appt { font-size: var(--text-sm); color: var(--color-text-tertiary); font-style: italic; padding: var(--space-2) 0; }
+.first-devotion-highlight { background:var(--color-verified-bg);border-radius:var(--radius-md);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);border-left:3px solid var(--color-verified); }
 .schedule-day.first-friday { border-left: 3px solid #B91C1C; padding-left: var(--space-3); margin-left: calc(-1 * var(--space-1)); }
 .schedule-day.first-friday .schedule-day-label { color: #B91C1C; }
 .schedule-day.first-saturday { border-left: 3px solid #2563EB; padding-left: var(--space-3); margin-left: calc(-1 * var(--space-1)); }
@@ -877,6 +873,10 @@ select:focus-visible,
 .more-section { padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border-light); }
 .more-section:last-child { border-bottom: none; }
 .more-section-title { font-family: var(--font-display); font-size: var(--text-xl); font-weight: 700; color: var(--color-text-primary); margin-bottom: var(--space-3); }
+.more-section-collapsible { cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none; }
+.more-section-collapsible::-webkit-details-marker { display:none; }
+details.more-section[open] > .more-section-collapsible svg { transform:rotate(180deg); }
+details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; }
 .more-section p { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.6; margin-bottom: var(--space-3); }
 .more-section p:last-child { margin-bottom: 0; }
 .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-3); }
@@ -907,6 +907,21 @@ select:focus-visible,
 .card-seasonal-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: var(--weight-semibold); color: var(--color-verified); background: var(--color-verified-bg); padding: 2px 8px; border-radius: var(--radius-full); }
 
 /* EVENTS WIDGET */
+/* Inline YC discovery strip (in search results feed) */
+.inline-yc-strip { padding:var(--space-3) var(--space-4);margin:var(--space-2) 0; }
+.inline-yc-header { display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2); }
+.inline-yc-label { font-size:var(--text-xs);font-weight:var(--weight-semibold);text-transform:uppercase;letter-spacing:0.03em;color:var(--color-text-tertiary); }
+.inline-yc-seeall { font-size:var(--text-xs);color:var(--color-primary);font-weight:var(--weight-medium);background:none;border:none;cursor:pointer;padding:0; }
+.inline-yc-scroll { display:flex;gap:var(--space-3);overflow-x:auto;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;padding-bottom:var(--space-1); }
+.inline-yc-scroll::-webkit-scrollbar { display:none; }
+.inline-yc-card { flex-shrink:0;width:200px;scroll-snap-align:start;display:flex;gap:var(--space-2);padding:var(--space-3);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.inline-yc-card:active { transform:scale(0.98); }
+.inline-yc-date { display:flex;flex-direction:column;align-items:center;justify-content:center;width:36px;flex-shrink:0; }
+.inline-yc-mon { font-size:10px;font-weight:var(--weight-semibold);color:var(--color-accent-text);text-transform:uppercase;letter-spacing:0.05em; }
+.inline-yc-day { font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-text-primary);line-height:1; }
+.inline-yc-info { min-width:0;flex:1; }
+.inline-yc-title { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.inline-yc-meta { font-size:var(--text-xs);color:var(--color-text-tertiary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px; }
 .events-widget-wrap { max-width: var(--max-width); margin: 0 auto; padding-bottom: var(--space-2); }
 .events-widget-wrap:empty { display: none; }
 .events-widget-header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-3) var(--space-4) var(--space-2); }
@@ -1395,11 +1410,11 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-summary-title span { font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-tertiary); }
 .exam-summary-privacy { font-size:12px;color:var(--color-text-tertiary);margin-bottom:var(--space-3);font-style:italic; }
 .exam-summary-empty { font-size:var(--text-sm);color:var(--color-text-tertiary);padding:var(--space-3) 0; }
-.exam-summary-group { margin-bottom:var(--space-3); }
+.exam-summary-group { margin-bottom:var(--space-5); }
 .exam-summary-group:last-child { margin-bottom:0; }
-.exam-summary-cmd { font-size:12px;font-weight:var(--weight-semibold);color:var(--color-primary);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:var(--space-1); }
+.exam-summary-cmd { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);text-transform:uppercase;letter-spacing:0.03em;margin-bottom:var(--space-2); }
 .exam-summary-items { list-style:none;padding:0;margin:0; }
-.exam-summary-items li { font-size:var(--text-sm);line-height:1.5;color:var(--color-text);padding:var(--space-1) 0;padding-left:var(--space-3);position:relative; }
+.exam-summary-items li { font-size:var(--text-base);line-height:1.6;color:var(--color-text);padding:var(--space-2) 0;padding-left:var(--space-3);position:relative; }
 .exam-summary-items li::before { content:'\2022';position:absolute;left:0;color:var(--color-primary); }
 
 /* ── Floating footer bar (checked items count) ── */

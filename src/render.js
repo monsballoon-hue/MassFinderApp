@@ -32,9 +32,7 @@ function renderCards() {
   var sparseEl = document.getElementById('sparseMsg');
   if (sparseEl) sparseEl.style.display = (state.currentFilter === 'today' && shown < 10) ? 'block' : 'none';
 
-  // Events widget — show on all/today filters
   var evts = require('./events.js');
-  if (evts && typeof evts.renderEventsWidget === 'function') evts.renderEventsWidget();
 
   // YC filter — show full YC event cards instead of church cards
   if (state.currentFilter === 'yc') {
@@ -52,7 +50,7 @@ function renderCards() {
   // Normal mode — show count + clear button when a quick filter is active
   var _quickFilterLabels = { confession:'Confession', adoration:'Adoration', latin:'Latin Mass', spanish:'Spanish Mass', lent:'Lent', today:'Today', weekend:'This Weekend', yc:'YC' };
   var _filterLabel = _quickFilterLabels[state.currentFilter];
-  var _countText = shown === total ? total + ' churches' : 'Showing ' + shown + ' of ' + total + ' churches';
+  var _countText = shown === total ? String(total) : shown + ' of ' + total;
   var _clearHtml = (state.currentFilter !== 'all' && _filterLabel)
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
   document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml ? ' ' : '') + _clearHtml;
@@ -94,6 +92,34 @@ function renderCards() {
       + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + evtHtml
       + '</article>';
   });
+
+  // Inline YC discovery strip — after 3rd card
+  if (['all', 'today'].indexOf(state.currentFilter) !== -1 && cards.length >= 3 && evts && typeof evts.getUpcomingYC === 'function') {
+    var upcoming = evts.getUpcomingYC().slice(0, 3);
+    if (upcoming.length) {
+      var ycCards = upcoming.map(function(e) {
+        var dt = new Date(e.date + 'T12:00:00');
+        var mon = dt.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+        var day = dt.getDate();
+        var timeStr = e.time ? utils.fmt12(e.time) : '';
+        var locName = e.location || e.church_name || '';
+        return '<div class="inline-yc-card" onclick="openEventDetail(\'' + e.id + '\')">'
+          + '<div class="inline-yc-date"><span class="inline-yc-mon">' + mon + '</span><span class="inline-yc-day">' + day + '</span></div>'
+          + '<div class="inline-yc-info"><div class="inline-yc-title">' + utils.esc(e.title) + '</div>'
+          + '<div class="inline-yc-meta">' + (timeStr ? timeStr + ' \u00b7 ' : '') + utils.esc(utils.displayName(locName)) + '</div>'
+          + '</div></div>';
+      }).join('');
+
+      var seeAllCount = evts.getUpcomingYC().length;
+      var strip = '<div class="inline-yc-strip" role="listitem">'
+        + '<div class="inline-yc-header"><span class="inline-yc-label">Young &amp; Catholic</span>'
+        + '<button class="inline-yc-seeall" onclick="document.querySelector(\'[data-filter=yc]\').click()">See all ' + seeAllCount + ' \u203a</button>'
+        + '</div>'
+        + '<div class="inline-yc-scroll">' + ycCards + '</div>'
+        + '</div>';
+      cards.splice(3, 0, strip);
+    }
+  }
 
   el.innerHTML = cards.join('');
 }
@@ -190,11 +216,25 @@ function openDetail(id, trapFocus, releaseFocus) {
     var timedCount = svcs.filter(function(s) { return s.time; }).length;
     var badgeCount = timedCount > 0 ? timedCount : svcs.length;
     var isFirst = sec.k === 'mass';
+
+    // Split First Fri/Sat to top of devotion section
+    var bodyInner = '';
+    if (sec.k === 'devot') {
+      var firstDevSvcs = svcs.filter(function(s) { return isFirstDevotionMass(s); });
+      var regularDevSvcs = svcs.filter(function(s) { return !isFirstDevotionMass(s); });
+      if (firstDevSvcs.length) {
+        bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types) + '</div>';
+      }
+      bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types);
+    } else {
+      bodyInner = renderSched(svcs, locL, ml, sec.types);
+    }
+
     secHtml += '<div class="detail-section"><button class="accordion-header" aria-expanded="' + isFirst + '" onclick="toggleAcc(this)">'
       + '<div class="accordion-header-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="' + sec.ic + '"/></svg>'
       + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeCount + '</span></div>'
       + '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
-      + '</button><div class="accordion-body' + (isFirst ? ' open' : '') + '"><div class="accordion-body-inner">' + renderSched(svcs, locL, ml, sec.types) + '</div></div></div>';
+      + '</button><div class="accordion-body' + (isFirst ? ' open' : '') + '"><div class="accordion-body-inner">' + bodyInner + '</div></div></div>';
   }
 
   // Community events section — lazy require to avoid circular dep

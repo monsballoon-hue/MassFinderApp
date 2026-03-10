@@ -477,6 +477,8 @@ function openEventDetail(eventId) {
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('eventDetailPanel').classList.add('open');
+  var churchHandle = document.querySelector('#detailPanel .detail-handle');
+  if (churchHandle) churchHandle.style.visibility = 'hidden';
   document.body.style.overflow = 'hidden';
   document.getElementById('eventDetailPanel').scrollTop = 0;
   window._lastFocused = window._lastFocused || document.activeElement;
@@ -487,6 +489,8 @@ function closeEventDetail() {
   var ui = require('./ui.js');
 
   document.getElementById('eventDetailPanel').classList.remove('open');
+  var churchHandle = document.querySelector('#detailPanel .detail-handle');
+  if (churchHandle) churchHandle.style.visibility = '';
   // If parish panel is open underneath, keep backdrop and body lock
   if (!document.getElementById('detailPanel').classList.contains('open')) {
     document.getElementById('detailBackdrop').classList.remove('open');

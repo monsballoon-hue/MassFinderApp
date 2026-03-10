@@ -235,6 +235,23 @@ function _renderHowTo(howTo) {
   return html;
 }
 
+// ── Confessional format helpers ──
+function _toActionFormat(text) {
+  var s = text.replace(/^(Have I|Did I|Do I|Have you|Did you|Am I|Was I)\s+/i, '').replace(/\?$/, '');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+function _shortCmdLabel(full) {
+  var m = full.match(/^(\d+)\./);
+  if (!m) {
+    if (full.indexOf('Precepts') >= 0) return 'Precepts of the Church';
+    return full;
+  }
+  var n = parseInt(m[1], 10);
+  var suf = n === 1 ? 'st' : n === 2 ? 'nd' : n === 3 ? 'rd' : 'th';
+  return n + suf + ' Commandment';
+}
+
 // ── Render summary section ──
 function _renderSummaryHTML() {
   var keys = Object.keys(_checked);
@@ -257,10 +274,10 @@ function _renderSummaryHTML() {
   var html = '';
   order.forEach(function(cmd) {
     html += '<div class="exam-summary-group">';
-    html += '<div class="exam-summary-cmd">' + _esc(cmd) + '</div>';
+    html += '<div class="exam-summary-cmd">' + _esc(_shortCmdLabel(cmd)) + '</div>';
     html += '<ul class="exam-summary-items">';
     groups[cmd].forEach(function(text) {
-      html += '<li>' + _esc(text) + '</li>';
+      html += '<li>' + _esc(_toActionFormat(text)) + '</li>';
     });
     html += '</ul></div>';
   });

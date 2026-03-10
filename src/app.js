@@ -268,65 +268,64 @@ window.addEventListener('appinstalled', function() { window._deferredInstallProm
   }, { passive: true });
 })();
 
-// ── Liturgical Teaser on Find tab (Change 1 + 17 + 22) ──
-function _renderLiturgicalTeaser(events) {
+// ── Swipe-to-dismiss for detail panels ──
+(function() {
+  function initPanelSwipe(panelId, closeFn) {
+    var panel = document.getElementById(panelId);
+    if (!panel || panel._swipeInit) return;
+    panel._swipeInit = true;
+    var startY = 0;
+    panel.addEventListener('touchstart', function(e) {
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    panel.addEventListener('touchend', function(e) {
+      var dy = e.changedTouches[0].clientY - startY;
+      if (dy > 72 && panel.scrollTop <= 5) closeFn();
+    }, { passive: true });
+  }
+  initPanelSwipe('detailPanel', function() { render.closeDetail(); });
+  initPanelSwipe('eventDetailPanel', function() { events.closeEventDetail(); });
+})();
+
+// ── Daily Context Strip on Find tab (replaces teaser + progress + confession) ──
+function _renderDailyStrip(events) {
   var el = document.getElementById('liturgicalTeaser');
   if (!el) return;
   var now = utils.getNow(), m = now.getMonth() + 1, d = now.getDate();
   var today = events.filter(function(e) { return e.month === m && e.day === d && !e.is_vigil_mass; });
   if (!today.length) return;
 
-  // Pick highest-grade celebration
   var pick = today.sort(function(a, b) { return (b.grade || 0) - (a.grade || 0); })[0];
   var color = (pick.color && pick.color[0]) || 'green';
   var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
   var colorHex = colorMap[color] || '#16A34A';
-  var gradeLabels = { 0: '', 1: 'Commemoration', 2: 'Optional Memorial', 3: 'Memorial', 4: 'Feast', 5: 'Feast of the Lord', 6: 'Solemnity', 7: 'Solemnity' };
-  var rank = gradeLabels[pick.grade] || '';
-  if (pick.holy_day_of_obligation) rank = (rank ? rank + ' \u2014 ' : '') + 'Holy Day of Obligation';
 
-  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  var dateLabel = months[now.getMonth()] + ' ' + now.getDate();
-
-  el.innerHTML = '<div class="teaser-card" style="--teaser-color:' + colorHex + '">'
-    + '<div class="teaser-color-bar"></div>'
-    + '<div class="teaser-content">'
-    + '<div class="teaser-date">' + utils.esc(dateLabel) + (rank ? ' \u00b7 ' + utils.esc(rank) : '') + '</div>'
-    + '<div class="teaser-name">' + utils.esc(pick.name) + '</div>'
-    + '</div></div>';
-  el.style.display = '';
-
-  // ── Season progress bar (Change 17) ──
+  var name = pick.name;
   var progress = utils.getSeasonProgress();
-  if (progress) {
-    el.innerHTML += '<div class="season-progress">'
-      + '<div class="season-progress-bar" style="width:' + progress.pct + '%"></div>'
-      + '<span class="season-progress-label">Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season + '</span>'
-      + '</div>';
-  }
+  var progressText = progress ? ' \u00b7 Day ' + progress.day + ' of ' + progress.total : '';
 
-  // ── Time-aware notes (Change 22) ──
+  // Optional secondary line
+  var secondary = '';
   var dow = now.getDay();
   var season = document.documentElement.getAttribute('data-season');
-  // Friday abstinence during Lent
-  if (dow === 5 && season === 'lent') {
-    var note = document.createElement('div');
-    note.className = 'teaser-note';
-    note.textContent = 'Abstinence from meat today (Lenten Friday)';
-    el.appendChild(note);
-  }
-  // HDO tomorrow
+  if (dow === 5 && season === 'lent') secondary = 'Abstinence from meat today';
+  else if (dow === 6 || season === 'lent') secondary = 'Find confession times nearby';
+  // HDO tomorrow check
   var tomorrow = new Date(now.getTime() + 86400000);
-  var tm = tomorrow.getMonth() + 1, td = tomorrow.getDate();
   var tomorrowHDO = events.filter(function(e) {
-    return e.month === tm && e.day === td && e.holy_day_of_obligation && !e.is_vigil_mass;
+    return e.month === (tomorrow.getMonth() + 1) && e.day === tomorrow.getDate() && e.holy_day_of_obligation;
   });
-  if (tomorrowHDO.length) {
-    var hdoNote = document.createElement('div');
-    hdoNote.className = 'teaser-note teaser-note--hdo';
-    hdoNote.textContent = 'Tomorrow: Holy Day of Obligation \u2014 ' + tomorrowHDO[0].name;
-    el.appendChild(hdoNote);
-  }
+  if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
+
+  el.innerHTML = '<div class="daily-strip" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
+    + '<div class="daily-strip-main">'
+    + '<span class="daily-strip-dot" style="background:' + colorHex + '"></span>'
+    + '<span class="daily-strip-text">' + utils.esc(name) + utils.esc(progressText) + '</span>'
+    + '</div>'
+    + '<span class="daily-strip-link">See more \u203a</span>'
+    + '</div>'
+    + (secondary ? '<div class="daily-strip-sub">' + utils.esc(secondary) + '</div>' : '');
+  el.style.display = '';
 }
 
 // ── Daily CCC Reflection (Change 16) ──
@@ -405,30 +404,6 @@ function _renderReturnCard(daysMissed) {
   el.style.display = '';
 }
 
-// ── Contextual confession prompt (Change 20) ──
-function _renderConfessionPrompt() {
-  var confDismissed = localStorage.getItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
-  if (confDismissed) return;
-
-  var dow = new Date().getDay();
-  var season = document.documentElement.getAttribute('data-season');
-  var confStatus = examination.getConfessionStatus();
-  // Saturday, Lent, or 30+ days since last confession
-  if (dow !== 6 && season !== 'lent' && !(confStatus && confStatus.daysAgo >= 30)) return;
-
-  var el = document.getElementById('confessionPrompt');
-  if (!el) return;
-  var message = confStatus && confStatus.daysAgo >= 30
-    ? 'It\u2019s been ' + confStatus.daysAgo + ' days \u2014 confession times near you'
-    : 'Find confession times near you this weekend';
-
-  el.innerHTML = '<div class="conf-prompt">'
-    + '<div class="conf-prompt-text">' + message + '</div>'
-    + '<button class="conf-prompt-btn" onclick="applyQuickFilter(\'confession\');this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">Find times</button>'
-    + '<button class="conf-prompt-x" onclick="this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')" aria-label="Dismiss">\u2715</button>'
-    + '</div>';
-  el.style.display = '';
-}
 
 // ── "Your Churches" horizontal row on Find tab (Change 5+21) ──
 function _renderYourChurches() {
@@ -442,14 +417,8 @@ function _renderYourChurches() {
 
   if (!favChurches.length) { el.style.display = 'none'; return; }
 
-  var todayStr = new Date().toISOString().slice(0, 10);
-  var weekEnd = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
-
   var cards = favChurches.map(function(c) {
     var next = utils.getNext(c, state.currentFilter === 'all' ? 'all' : state.currentFilter);
-    var weekEvents = (state.eventsData || []).filter(function(e) {
-      return e.church_id === c.id && e.date >= todayStr && e.date <= weekEnd;
-    }).length;
 
     return '<div class="yc-compact" onclick="openDetail(\'' + utils.esc(c.id) + '\')">'
       + '<div class="yc-compact-name">' + utils.esc(utils.displayName(c.name)) + '</div>'
@@ -457,7 +426,6 @@ function _renderYourChurches() {
         ? '<div class="yc-compact-time">' + next.timeFormatted + '</div>'
           + '<div class="yc-compact-label">' + utils.esc(next.dayLabel) + ' \u00b7 ' + utils.esc(config.SVC_LABELS[next.service.type] || '') + '</div>'
         : '<div class="yc-compact-label" style="color:var(--color-text-tertiary)">See schedule</div>')
-      + (weekEvents ? '<div class="yc-compact-events">' + weekEvents + ' event' + (weekEvents > 1 ? 's' : '') + ' this week</div>' : '')
       + '</div>';
   }).join('');
 
@@ -550,15 +518,13 @@ async function init() {
     readings.fetchLiturgicalDay().then(function() {
       if (window._litcalCache) {
         readings.setLiturgicalSeason(window._litcalCache.events);
-        _renderLiturgicalTeaser(window._litcalCache.events);
+        _renderDailyStrip(window._litcalCache.events);
       }
       // Return-visit context card (Change 18) — needs litcal for missed feasts
       if (state._isReturning && state._lastVisit) {
         var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
         if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
       }
-      // Contextual confession prompt (Change 20) — needs season data
-      _renderConfessionPrompt();
     }).catch(function() {});
 
     // Register service worker
