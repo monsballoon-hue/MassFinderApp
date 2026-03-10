@@ -113,14 +113,13 @@
     <!-- PWA INSTALL CARD (hidden if installed) -->
     <div id="moreInstallCard"></div>
 
-    <!-- TODAY — saint/celebration card (first content section) -->
-    <div class="more-section" id="saintSection">
-      <h2 class="more-section-title">Today</h2>
+    <!-- Saint/celebration card (first content section) -->
+    <div class="more-section more-section--tight" id="saintSection">
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
     </div>
 
     <!-- DAILY CCC REFLECTION -->
-    <div id="dailyReflection" class="more-section" style="display:none"></div>
+    <div id="dailyReflection" class="more-section more-section--tight" style="display:none"></div>
 
     <!-- DAILY READINGS -->
     <div class="more-section">
@@ -160,16 +159,7 @@
       <div id="devotionalCards"></div>
     </details>
 
-    <!-- ABOUT MASSFINDER — collapsed at bottom -->
-    <details class="more-section">
-      <summary class="more-section-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none">
-        About MassFinder
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
-      </summary>
-      <div style="padding-top:var(--space-3)">
-        <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
-      </div>
-    </details>
+    <div class="more-about-text">MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</div>
 
     <div class="more-footer" id="moreFooter"></div>
   </div>
