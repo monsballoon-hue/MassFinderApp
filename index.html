@@ -56,12 +56,12 @@
     <button class="chip active" data-filter="all">All</button>
     <button class="chip" data-filter="today">Today</button>
     <button class="chip" data-filter="weekend">This Weekend</button>
-    <button class="chip season-chip hide-mobile" data-filter="lent" id="seasonChip" style="display:none"></button>
-    <button class="chip hide-mobile" data-filter="confession">Confession</button>
-    <button class="chip hide-mobile" data-filter="adoration">Adoration</button>
-    <button class="chip hide-mobile" data-filter="latin">Latin</button>
-    <button class="chip hide-mobile" data-filter="spanish">Spanish</button>
-    <button class="chip yc-chip hide-mobile" data-filter="yc">YC Events</button>
+    <button class="chip season-chip" data-filter="lent" id="seasonChip" style="display:none"></button>
+    <button class="chip" data-filter="confession">Confession</button>
+    <button class="chip" data-filter="adoration">Adoration</button>
+    <button class="chip" data-filter="latin">Latin</button>
+    <button class="chip" data-filter="spanish">Spanish</button>
+    <button class="chip yc-chip" data-filter="yc">YC Events</button>
     <button class="chip more-filters" id="moreFiltersBtn" onclick="openMoreFilters()">More</button>
   </div>
   </div>
@@ -113,20 +113,25 @@
     <!-- PWA INSTALL CARD (hidden if installed) -->
     <div id="moreInstallCard"></div>
 
-    <!-- ABOUT MASSFINDER — moved up per production -->
+    <!-- TODAY — saint/celebration card (first content section) -->
+    <div class="more-section" id="saintSection">
+      <h2 class="more-section-title">Today</h2>
+      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast">Loading…</div><div class="saint-name" style="font-size:var(--text-base);color:var(--color-text-tertiary);font-family:var(--font-body);font-weight:var(--weight-regular)">Fetching today's celebration…</div></div></div>
+    </div>
+
+    <!-- DAILY CCC REFLECTION -->
+    <div id="dailyReflection" class="more-section" style="display:none"></div>
+
+    <!-- DAILY READINGS -->
     <div class="more-section">
-      <h2 class="more-section-title">About MassFinder</h2>
-      <div class="stat-grid" id="aboutStatGrid"></div>
-      <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
-      <details style="margin-top:var(--space-3);color:#7D6520;font-size:var(--text-sm);line-height:1.7">
-        <summary style="display:flex;align-items:center;gap:var(--space-2);font-weight:var(--weight-semibold);cursor:pointer;list-style:none"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> What We're Working On</summary>
-        <div style="margin-top:var(--space-3)">
-          <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">Right now, finding what's happening at Catholic churches in our region means checking dozens of individual bulletins, websites and Facebook pages. Each parish is behind its own wall. We're trying to change that.</p>
-          <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">MassFinder uses AI to read parish bulletins and pull services, events and schedule changes into one central place &mdash; so you can see what's happening across the region without hunting for it.</p>
-          <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">It's a small effort at digital evangelism: making it easier for Catholics to stay connected to their faith community and discover what's going on beyond their own parish.</p>
-          <p style="color:var(--color-text-secondary)">This is actively being built, and you'll notice rough edges. We appreciate your patience as it comes together.</p>
-        </div>
-      </details>
+      <h2 class="more-section-title">Today's Readings</h2>
+      <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
+    </div>
+
+    <!-- PRAYER TOOLS — interactive prayer features -->
+    <div class="more-section" id="prayerToolsSection">
+      <h2 class="more-section-title">Prayer Tools</h2>
+      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
     </div>
 
     <!-- WHAT'S HAPPENING: YC Events + Community Events, two-column layout -->
@@ -149,21 +154,6 @@
       </div>
     </div>
 
-    <!-- SAINT OF THE DAY — hidden per production -->
-    <div class="more-section" style="display:none">
-      <h2 class="more-section-title">Today's Celebration</h2>
-      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast">Loading…</div><div class="saint-name" style="font-size:var(--text-base);color:var(--color-text-tertiary);font-family:var(--font-body);font-weight:var(--weight-regular)">Fetching today's celebration…</div></div></div>
-    </div>
-
-    <!-- DAILY CCC REFLECTION -->
-    <div id="dailyReflection" class="more-section" style="display:none"></div>
-
-    <!-- DAILY READINGS -->
-    <div class="more-section">
-      <h2 class="more-section-title">Today's Readings</h2>
-      <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
-    </div>
-
     <!-- LITURGICAL CALENDAR -->
     <div class="more-section">
       <h2 class="more-section-title">Upcoming Observances</h2>
@@ -178,13 +168,6 @@
       </details>
     </div>
 
-    <!-- PRAYER TOOLS — interactive prayer features -->
-    <div class="more-section" id="prayerToolsSection">
-      <h2 class="more-section-title">Prayer Tools</h2>
-      <div id="confessionTracker" class="confession-tracker" style="display:none"></div>
-      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
-    </div>
-
     <!-- DEVOTIONAL GUIDES -->
     <div class="more-section">
       <h2 class="more-section-title">Faith Guides</h2>
@@ -192,7 +175,17 @@
       <div id="devotionalCards"></div>
     </div>
 
-    <!-- About section moved above What's Happening -->
+    <!-- ABOUT MASSFINDER — collapsed at bottom -->
+    <details class="more-section">
+      <summary class="more-section-title" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none">
+        About MassFinder
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div style="padding-top:var(--space-3)">
+        <div class="stat-grid" id="aboutStatGrid"></div>
+        <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
+      </div>
+    </details>
 
     <div class="more-footer" id="moreFooter"></div>
   </div>

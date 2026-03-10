@@ -115,6 +115,18 @@ window.toggleTheme = function() {
   var meta = document.getElementById('metaThemeColor');
   if (meta) meta.setAttribute('content', next === 'dark' ? '#1A1C22' : '#F8F7F4');
 };
+// Follow system dark mode changes when no explicit user preference (Change 9)
+if (window.matchMedia) {
+  try {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+      if (localStorage.getItem('mf-theme')) return;
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      var meta = document.getElementById('metaThemeColor');
+      if (meta) meta.setAttribute('content', e.matches ? '#1A1C22' : '#F8F7F4');
+    });
+  } catch (e) { /* Safari <14 doesn't support addEventListener on matchMedia */ }
+}
+
 window.init = init;
 window.renderDailyReflection = _renderDailyReflection;
 window.setTextSize = function(size) {

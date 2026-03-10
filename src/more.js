@@ -205,30 +205,45 @@ function renderMore() {
     renderLiturgicalCalendar(lituEl);
   }
 
-  // Confession tracker (PAT-02)
-  var exam = require('./examination.js');
-  exam._updateMoreTabTracker();
-
   // Prayer Tools grid
+  var exam = require('./examination.js');
   var ptGrid = document.getElementById('prayerToolsGrid');
   if (ptGrid) {
+    var confStatus = exam.getConfessionStatus();
+    var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
+
     var ptCards = [
-      { id: 'rosary', icon: '\u271E', title: 'Guided Rosary', desc: 'Pray the Rosary with mysteries, meditations, and bead counter', action: 'openRosary()', label: 'Begin', active: true },
-      { id: 'examination', icon: '\u2696\uFE0F', title: 'Examination of Conscience', desc: 'Prepare for the Sacrament of Reconciliation', action: 'openExamination()', label: 'Begin', active: true },
-      { id: 'stations', icon: '\u271D\uFE0F', title: 'Stations of the Cross', desc: 'Walk the Via Dolorosa with guided meditations', label: isLentSeason() ? 'Lenten Devotion' : 'Coming Soon', active: false }
+      { id: 'rosary', icon: '\u271E', title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
+      { id: 'examination', icon: '\u2696\uFE0F', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
+      { id: 'stations', icon: '\u271D\uFE0F', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
-      return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '">'
+      return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
+        + (c.active ? ' onclick="' + c.action + '" role="button" tabindex="0"' : '')
+        + '>'
         + '<div class="prayer-tool-icon">' + c.icon + '</div>'
         + '<div class="prayer-tool-body">'
         + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
-        + '<div class="prayer-tool-desc">' + esc(c.desc) + '</div>'
+        + '<div class="prayer-tool-subtitle">' + esc(c.subtitle) + '</div>'
         + '</div>'
-        + (c.active
-          ? '<button class="prayer-tool-btn" onclick="' + c.action + '">' + c.label + '</button>'
-          : '<span class="prayer-tool-badge">' + c.label + '</span>')
+        + (c.active ? '<span class="prayer-tool-chevron" aria-hidden="true">\u203A</span>' : '')
         + '</div>';
     }).join('');
+
+    // Seasonal nudge above prayer tools (Change 13)
+    var season = document.documentElement.getAttribute('data-season');
+    var ptSection = document.getElementById('prayerToolsSection');
+    if (ptSection && (season === 'lent' || season === 'advent')) {
+      var existingNudge = ptSection.querySelector('.seasonal-nudge');
+      if (!existingNudge) {
+        var nudge = document.createElement('div');
+        nudge.className = 'seasonal-nudge';
+        nudge.textContent = season === 'lent'
+          ? 'It\u2019s Lent \u2014 a season of prayer, fasting, and almsgiving. These tools can help.'
+          : 'It\u2019s Advent \u2014 a season of preparation and joyful expectation. These tools can help.';
+        ptSection.insertBefore(nudge, ptGrid);
+      }
+    }
 
     // Prayer activity summary (Change 19)
     try {

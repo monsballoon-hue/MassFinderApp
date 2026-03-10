@@ -100,8 +100,10 @@ function renderSaved() {
   if (!favChurches.length) {
     el.innerHTML = '<div class="saved-empty">'
       + '<div class="saved-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>'
-      + '<h3>No saved churches yet</h3>'
-      + '<p>Tap the heart icon on any church card<br>to save it for quick access here.</p></div>';
+      + '<h3>Save your parish for quick access</h3>'
+      + '<p>Your saved churches appear here with their upcoming schedules and events at a glance.</p>'
+      + '<button class="saved-empty-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Find churches near me</button>'
+      + '</div>';
     return;
   }
 

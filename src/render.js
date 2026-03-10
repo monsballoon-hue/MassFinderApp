@@ -90,6 +90,7 @@ function renderCards() {
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')
       + '<button class="card-fav' + (fav ? ' is-fav' : '') + '" onclick="toggleFav(\'' + c.id + "',event)\" aria-label=\"Favorite\"><svg viewBox=\"0 0 24 24\" fill=\"" + (fav ? 'currentColor' : 'none') + "\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></button>"
+      + '<span class="card-chevron" aria-hidden="true">\u203A</span>'
       + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + evtHtml
       + '</article>';
   });
