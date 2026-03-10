@@ -144,6 +144,12 @@ var DEVOTIONAL_GUIDES = [
 +'<p>Catholics who attend the Traditional Latin Mass do so for a variety of reasons, including its contemplative character, its continuity with centuries of Catholic worship, and its rich musical tradition of Gregorian chant and polyphony. The Mass fulfills the Sunday obligation. Missals with Latin-English translations are usually available at the church to help you follow along.</p>'
   ,findLabel:'Latin Mass',filter:'latin'},
   {icon:'\uD83D\uDCFF',title:'Devotions',isGroup:true,children:[
+    {icon:'\u271E',title:'The Holy Rosary',findLabel:'Rosary',filter:'all',body:
+'<p>The Rosary is one of the most beloved prayers in the Catholic tradition \u2014 a contemplative meditation on the life of Christ through the eyes of Mary. It is prayed using a set of beads, moving through five decades of Hail Marys, each preceded by an Our Father and a mystery to meditate on.</p>'
++'<p>The four sets of mysteries \u2014 Joyful, Sorrowful, Glorious, and Luminous \u2014 walk through the Annunciation, the Passion, the Resurrection, and key moments of Christ\u2019s public ministry. Each day of the week has a traditional set assigned.</p>'
++'<p>Whether you pray alone, with family, or at your parish, the Rosary takes about 15\u201320 minutes and is one of the most accessible forms of daily prayer.</p>'
++'<button class="rosary-start-btn" onclick="openRosary();event.stopPropagation()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polygon points="5 3 19 12 5 21 5 3"/></svg> Pray the Rosary</button>'
+    },
     {icon:'\uD83D\uDD6F\uFE0F',title:'Eucharistic Adoration',body:
 '<p><strong>Eucharistic Adoration</strong> is time spent in prayer before the Blessed Sacrament \u2014 the consecrated host \u2014 which Catholics believe is truly the Body of Christ. The host is placed in a vessel called a monstrance and displayed on the altar. You simply sit, kneel, or stand in its presence.</p>'
 +'<p>There\u2019s no required prayer or posture. Many people read Scripture, pray the Rosary, journal, or simply sit in silence. Adoration chapels are typically quiet spaces open for individual prayer, sometimes for extended hours.</p>'

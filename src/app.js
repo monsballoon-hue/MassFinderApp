@@ -12,6 +12,7 @@ var more = require('./more.js');
 var location_ = require('./location.js');
 var ccc = require('./ccc.js');
 var refs = require('./refs.js');
+var rosary = require('./rosary.js');
 
 var state = data.state;
 
@@ -89,6 +90,12 @@ window.closeCCC = ccc.closeCCC;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
 window._refTap = refs.handleRefTap;
+window.openRosary = rosary.openRosary;
+window.closeRosary = rosary.closeRosary;
+window.rosarySelectSet = rosary.rosarySelectSet;
+window.rosaryNext = rosary.rosaryNext;
+window.rosaryPrev = rosary.rosaryPrev;
+window.rosaryBeadTap = rosary.rosaryBeadTap;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -138,7 +145,8 @@ if (sC) {
 // ── Keyboard ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
+    if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
+    else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();
     else if (document.getElementById('detailPanel').classList.contains('open')) render.closeDetail();
