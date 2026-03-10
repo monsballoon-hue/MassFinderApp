@@ -198,16 +198,36 @@ var PLATFORM_STEPS = {
 };
 
 // ── Open Guide ──
-function openInstallGuide() {
-  var platform = detectPlatform();
+function openInstallGuide(forcePlatform) {
+  var platform = forcePlatform || detectPlatform();
   var steps = PLATFORM_STEPS[platform];
-  if (!steps || !steps.length) return; // desktop fallback — no visual guide
-
-  var currentStep = 0;
 
   var overlay = document.createElement('div');
   overlay.id = 'installGuideOverlay';
   overlay.className = 'ig-overlay';
+
+  // Desktop or unknown: show platform picker
+  if (!steps || !steps.length) {
+    overlay.innerHTML = '<div class="ig-container">'
+      + '<button class="ig-close" onclick="closeInstallGuide()" aria-label="Close">\u2715</button>'
+      + '<div class="ig-picker-title">What kind of phone do you have?</div>'
+      + '<div class="ig-picker">'
+      + '<button class="ig-picker-btn" onclick="closeInstallGuide();openInstallGuide(\'ios-safari\')">'
+      + '<span class="ig-picker-icon">\uF8FF</span>'
+      + '<span class="ig-picker-label">iPhone / iPad</span>'
+      + '</button>'
+      + '<button class="ig-picker-btn" onclick="closeInstallGuide();openInstallGuide(\'android\')">'
+      + '<span class="ig-picker-icon">\u25B6</span>'
+      + '<span class="ig-picker-label">Android</span>'
+      + '</button>'
+      + '</div>'
+      + '</div>';
+    document.body.appendChild(overlay);
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  var currentStep = 0;
 
   function render() {
     var step = steps[currentStep];

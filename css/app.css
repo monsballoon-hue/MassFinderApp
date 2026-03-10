@@ -372,6 +372,12 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .ig-nav-btn { min-height:48px;padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;-webkit-tap-highlight-color:transparent; }
 .ig-nav-back { color:var(--color-text-secondary);background:var(--color-surface-hover); }
 .ig-nav-next { color:white;background:var(--color-primary);flex:1; }
+.ig-picker-title { font-size:var(--text-xl);font-weight:var(--weight-bold);text-align:center;margin-bottom:var(--space-6);color:var(--color-text-primary); }
+.ig-picker { display:flex;gap:var(--space-4);justify-content:center; }
+.ig-picker-btn { display:flex;flex-direction:column;align-items:center;gap:var(--space-3);padding:var(--space-6) var(--space-8);border-radius:var(--radius-lg);background:var(--color-surface-hover);border:2px solid var(--color-border-light);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:border-color 0.15s,transform 0.15s;min-width:140px; }
+.ig-picker-btn:active { transform:scale(0.97);border-color:var(--color-primary); }
+.ig-picker-icon { font-size:40px;line-height:1; }
+.ig-picker-label { font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-text-primary); }
 /* Phone mockup */
 .ig-phone { width:220px;height:380px;background:var(--color-text-primary);border-radius:28px;padding:8px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,0.15); }
 .ig-phone--android { border-radius:20px; }
