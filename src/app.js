@@ -132,7 +132,7 @@ window.showMoreCorrection = more.showMoreCorrection;
 window.selectMoreCorrPill = more.selectMoreCorrPill;
 window.submitMoreCorrection = more.submitMoreCorrection;
 window.expressInterest = more.expressInterest;
-window.dismissMoreInstall = more.dismissMoreInstall;
+window.dismissInstallCard = more.dismissInstallCard;
 window.toggleReading = readings.toggleReading;
 window.exportLitCalICS = readings.exportLitCalICS;
 window.removeAdv = ui.removeAdv;
@@ -283,7 +283,7 @@ if (topHeader) {
 // ── PWA install prompt capture ──
 window._deferredInstallPrompt = null;
 window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault(); window._deferredInstallPrompt = e; });
-window.addEventListener('appinstalled', function() { window._deferredInstallPrompt = null; more.dismissMoreInstall(); });
+window.addEventListener('appinstalled', function() { window._deferredInstallPrompt = null; more.dismissInstallCard(); });
 
 // ── Pull-to-refresh gesture ──
 (function() {
@@ -587,7 +587,7 @@ async function init() {
   }
 }
 
-// ── Dev Panel (hidden, activated by 5 taps on version label) ──
+// ── Dev Panel ──
 var _devTaps = 0;
 var _devTimer = null;
 window._devTap = function() {
@@ -596,37 +596,128 @@ window._devTap = function() {
   _devTimer = setTimeout(function() { _devTaps = 0; }, 2000);
   if (_devTaps >= 5) {
     _devTaps = 0;
-    _openDevPanel();
+    _toggleDevPanel();
   }
 };
 
-function _openDevPanel() {
+var _devState = {
+  welcome: false,
+  returnCard: false,
+  confession: false,
+  moreBadge: false,
+  season: null
+};
+
+function _toggleDevPanel() {
   var existing = document.getElementById('devPanel');
-  if (existing) { existing.remove(); return; }
+  if (existing) { _closeDevPanel(); return; }
+
+  var overlay = document.createElement('div');
+  overlay.id = 'devPanelOverlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(0,0,0,0.3);';
+  overlay.onclick = function() { _closeDevPanel(); };
+  document.body.appendChild(overlay);
 
   var panel = document.createElement('div');
   panel.id = 'devPanel';
-  panel.style.cssText = 'position:fixed;bottom:70px;left:8px;right:8px;z-index:9999;background:var(--color-surface);border:2px solid var(--color-primary);border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);max-height:60vh;overflow-y:auto;font-size:13px;';
+  panel.style.cssText = 'position:fixed;bottom:calc(var(--tab-bar-height,56px) + var(--safe-bottom,0px) + 8px);left:8px;right:8px;z-index:9999;background:var(--color-surface);border:2px solid var(--color-primary);border-radius:var(--radius-md);padding:var(--space-4);box-shadow:var(--shadow-elevated,0 8px 32px rgba(0,0,0,0.3));max-height:50vh;overflow-y:auto;';
 
-  var toggles = [
-    { label: 'Welcome Banner', action: 'localStorage.removeItem("mf-welcome-dismissed");_renderWelcomeBanner()' },
-    { label: 'Return Card (3 days)', action: 'localStorage.setItem("mf-last-visit",new Date(Date.now()-3*86400000).toISOString().slice(0,10));location.reload()' },
-    { label: 'Confession Prompt', action: 'localStorage.removeItem("mf-conf-prompt-"+new Date().toISOString().slice(0,10));_renderConfessionPrompt();document.getElementById("confessionPrompt").style.display=""' },
-    { label: 'More Tab Badge', action: 'document.getElementById("moreTabBadge").classList.add("visible")' },
-    { label: 'Season: Lent', action: 'document.documentElement.setAttribute("data-season","lent")' },
-    { label: 'Season: Advent', action: 'document.documentElement.setAttribute("data-season","advent")' },
-    { label: 'Season: Easter', action: 'document.documentElement.setAttribute("data-season","easter")' },
-    { label: 'Season: Ordinary', action: 'document.documentElement.setAttribute("data-season","ordinary")' },
-    { label: 'Clear All localStorage', action: 'localStorage.clear();location.reload()' },
+  var features = [
+    { key: 'welcome', label: 'Welcome Banner', active: _devState.welcome },
+    { key: 'returnCard', label: 'Return Card', active: _devState.returnCard },
+    { key: 'confession', label: 'Confession Prompt', active: _devState.confession },
+    { key: 'moreBadge', label: 'More Tab Badge', active: _devState.moreBadge },
   ];
 
-  panel.innerHTML = '<div style="font-weight:600;margin-bottom:8px;color:var(--color-primary)">Dev Panel</div>'
-    + toggles.map(function(t) {
-      return '<button onclick="' + t.action.replace(/"/g, '&quot;') + '" style="display:block;width:100%;text-align:left;padding:8px 12px;margin-bottom:4px;background:var(--color-surface-hover);border:1px solid var(--color-border);border-radius:8px;font-size:13px;cursor:pointer;">' + t.label + '</button>';
+  var seasons = ['lent', 'advent', 'easter', 'ordinary'];
+  var currentSeason = _devState.season || document.documentElement.getAttribute('data-season') || 'none';
+
+  var featureHtml = features.map(function(f) {
+    return '<label style="display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light);cursor:pointer;-webkit-tap-highlight-color:transparent">'
+      + '<input type="checkbox" ' + (f.active ? 'checked' : '') + ' onchange="window._devToggle(\'' + f.key + '\',this.checked)" style="width:20px;height:20px;accent-color:var(--color-primary);flex-shrink:0">'
+      + '<span style="font-size:var(--text-sm);color:var(--color-text-primary)">' + f.label + '</span>'
+      + '</label>';
+  }).join('');
+
+  var seasonHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Season Override</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap">'
+    + seasons.map(function(s) {
+      var isActive = currentSeason === s;
+      return '<button onclick="window._devSetSeason(\'' + s + '\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid ' + (isActive ? 'var(--color-primary)' : 'var(--color-border)') + ';background:' + (isActive ? 'var(--color-primary)' : 'var(--color-surface)') + ';color:' + (isActive ? 'white' : 'var(--color-text-secondary)') + ';cursor:pointer;min-height:32px">' + s.charAt(0).toUpperCase() + s.slice(1) + '</button>';
     }).join('')
-    + '<button onclick="this.parentElement.remove()" style="display:block;width:100%;text-align:center;padding:8px;margin-top:8px;color:var(--color-text-tertiary);font-size:12px;cursor:pointer;">Close</button>';
+    + '</div></div>';
+
+  var resetHtml = '<button onclick="localStorage.clear();location.reload()" style="display:block;width:100%;padding:var(--space-3);margin-top:var(--space-3);background:#DC2626;color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);border-radius:var(--radius-md);cursor:pointer;min-height:44px">Clear All localStorage &amp; Reload</button>';
+
+  panel.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)">'
+    + '<span style="font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary)">Dev Panel</span>'
+    + '<button onclick="window._closeDevPanel()" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--color-text-tertiary);font-size:var(--text-sm);cursor:pointer">\u2715</button>'
+    + '</div>'
+    + featureHtml
+    + seasonHtml
+    + resetHtml;
 
   document.body.appendChild(panel);
 }
+
+function _closeDevPanel() {
+  var panel = document.getElementById('devPanel');
+  var overlay = document.getElementById('devPanelOverlay');
+  if (panel) panel.remove();
+  if (overlay) overlay.remove();
+}
+window._closeDevPanel = _closeDevPanel;
+
+window._devToggle = function(key, checked) {
+  _devState[key] = checked;
+
+  if (key === 'welcome') {
+    var wb = document.getElementById('welcomeBanner');
+    if (checked) {
+      localStorage.removeItem('mf-welcome-dismissed');
+      var oldVisit = state._lastVisit;
+      state._lastVisit = null;
+      _renderWelcomeBanner();
+      state._lastVisit = oldVisit;
+    } else {
+      if (wb) wb.style.display = 'none';
+    }
+  }
+
+  if (key === 'returnCard') {
+    var rc = document.getElementById('returnCard');
+    if (checked) {
+      _renderReturnCard(3);
+    } else {
+      if (rc) rc.style.display = 'none';
+    }
+  }
+
+  if (key === 'confession') {
+    var cp = document.getElementById('confessionPrompt');
+    if (checked) {
+      localStorage.removeItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
+      if (cp) {
+        cp.innerHTML = '<div class="conf-nudge" onclick="applyQuickFilter(\'confession\');this.parentElement.style.display=\'none\'">Find confession times nearby \u2192</div>';
+        cp.style.display = '';
+      }
+    } else {
+      if (cp) cp.style.display = 'none';
+    }
+  }
+
+  if (key === 'moreBadge') {
+    var mb = document.getElementById('moreTabBadge');
+    if (mb) mb.classList.toggle('visible', checked);
+  }
+};
+
+window._devSetSeason = function(season) {
+  _devState.season = season;
+  document.documentElement.setAttribute('data-season', season);
+  _closeDevPanel();
+  _toggleDevPanel();
+};
 
 init();

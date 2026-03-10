@@ -50,38 +50,69 @@ function renderMore() {
     if (!slot) return;
     if (window.matchMedia('(display-mode: standalone)').matches) return;
     if (window.navigator.standalone === true) return;
-    if (document.cookie.split('; ').some(function(c) { return c.startsWith('pf_more_install_dismissed='); })) return;
+
+    // Dismiss tracking: after 3 dismissals, suppress for 30 days
+    var dismissCount = parseInt(localStorage.getItem('mf-install-dismiss-count') || '0', 10);
+    var dismissUntil = localStorage.getItem('mf-install-dismiss-until');
+    if (dismissUntil && new Date().toISOString().slice(0, 10) < dismissUntil) return;
 
     var ua = navigator.userAgent || '';
     var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    var shareIcon = '<svg class="ios-share-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M5 10l7-7 7 7"/><path d="M5 17h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z"/></svg>';
+    var isCriOS = /CriOS/.test(ua);
+    var isAndroid = /Android/.test(ua);
 
-    var bodyHtml, actionHtml = '';
-    if (isIOS) {
-      var isCriOS = /CriOS/.test(ua);
-      if (isCriOS) bodyHtml = 'Tap <strong>\u22EF</strong> then <strong>\u201CAdd to Home Screen\u201D</strong> for the full app experience \u2014 faster loads, offline access, and no browser toolbar.';
-      else bodyHtml = 'Tap ' + shareIcon + ' then <strong>\u201CAdd to Home Screen\u201D</strong> for the full app experience \u2014 faster loads, offline access, and no browser toolbar.';
+    var stepsHtml = '';
+    if (isIOS && !isCriOS) {
+      stepsHtml = '<div class="install-steps">'
+        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap the <strong>Share</strong> button <svg class="install-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M5 10l7-7 7 7"/><path d="M5 17h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z"/></svg> at the bottom of your screen</div></div>'
+        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Scroll down and tap <strong>Add to Home Screen</strong></div></div>'
+        + '<div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">Tap <strong>Add</strong> in the top right</div></div>'
+        + '</div>';
+    } else if (isIOS && isCriOS) {
+      stepsHtml = '<div class="install-steps">'
+        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap the <strong>\u22EF</strong> menu in the top right</div></div>'
+        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Tap <strong>Add to Home Screen</strong></div></div>'
+        + '<div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">Tap <strong>Add</strong> to confirm</div></div>'
+        + '</div>';
+    } else if (isAndroid) {
+      stepsHtml = '<div class="install-steps">'
+        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap <strong>Install</strong> below, or tap the <strong>\u22EE</strong> menu at the top right</div></div>'
+        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Tap <strong>Add to Home Screen</strong> or <strong>Install App</strong></div></div>'
+        + '</div>';
     } else {
-      bodyHtml = 'Get the full experience \u2014 faster loads, offline access, and no browser toolbar.';
-      actionHtml = '<button class="mic-action" id="micInstallBtn">Install App</button>';
+      stepsHtml = '<div class="install-steps">'
+        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Look for the install icon <strong>\u2B07</strong> in your browser\'s address bar</div></div>'
+        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Click <strong>Install</strong> when prompted</div></div>'
+        + '</div>';
     }
 
-    slot.innerHTML = '<div class="more-install-card" id="moreInstallCardInner">'
-      + '<button class="mic-close" onclick="dismissMoreInstall()" aria-label="Dismiss">\u2715</button>'
-      + '<div class="mic-title">Install MassFinder</div>'
-      + '<div class="mic-body">' + bodyHtml + '</div>'
-      + actionHtml
+    var androidBtn = (isAndroid && window._deferredInstallPrompt)
+      ? '<button class="install-btn" id="micInstallBtn">Install MassFinder</button>'
+      : '';
+
+    slot.innerHTML = '<div class="install-card" id="moreInstallCardInner">'
+      + '<button class="install-close" onclick="dismissInstallCard()" aria-label="Dismiss">\u2715</button>'
+      + '<div class="install-header">'
+      + '<div class="install-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="24" height="24"><path d="M12 18v-12"/><path d="M5 12l7 7 7-7"/><rect x="3" y="20" width="18" height="2" rx="1"/></svg></div>'
+      + '<div>'
+      + '<div class="install-title">Add MassFinder to your home screen</div>'
+      + '<div class="install-subtitle">Open it like any app \u2014 instant access, no browser needed</div>'
+      + '</div>'
+      + '</div>'
+      + stepsHtml
+      + androidBtn
       + '</div>';
 
-    if (!isIOS) {
+    if (isAndroid && window._deferredInstallPrompt) {
       var btn = document.getElementById('micInstallBtn');
-      if (btn && window._deferredInstallPrompt) {
+      if (btn) {
         btn.addEventListener('click', function() {
           window._deferredInstallPrompt.prompt();
-          window._deferredInstallPrompt.userChoice.then(function() { window._deferredInstallPrompt = null; dismissMoreInstall(); });
+          window._deferredInstallPrompt.userChoice.then(function() {
+            window._deferredInstallPrompt = null;
+            dismissInstallCard();
+          });
         });
-      } else if (btn) {
-        btn.style.display = 'none';
       }
     }
   })();
@@ -208,12 +239,20 @@ function renderMore() {
   window._moreRendered = true;
 }
 
-// ── dismissMoreInstall ──
-function dismissMoreInstall() {
+// ── dismissInstallCard ──
+function dismissInstallCard() {
   var el = document.getElementById('moreInstallCardInner');
-  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity 0.2s'; setTimeout(function() { el.parentElement.innerHTML = ''; }, 250); }
-  var d = new Date(); d.setDate(d.getDate() + 90);
-  document.cookie = 'pf_more_install_dismissed=1;expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+  if (el) {
+    el.style.opacity = '0';
+    el.style.transition = 'opacity 0.2s';
+    setTimeout(function() { if (el.parentElement) el.parentElement.innerHTML = ''; }, 250);
+  }
+  var count = parseInt(localStorage.getItem('mf-install-dismiss-count') || '0', 10) + 1;
+  localStorage.setItem('mf-install-dismiss-count', String(count));
+  if (count >= 3) {
+    var d = new Date(); d.setDate(d.getDate() + 30);
+    localStorage.setItem('mf-install-dismiss-until', d.toISOString().slice(0, 10));
+  }
 }
 
 module.exports = {
@@ -231,7 +270,7 @@ module.exports = {
   web3submit: forms.web3submit,
   // More tab own exports
   renderMore: renderMore,
-  dismissMoreInstall: dismissMoreInstall,
+  dismissInstallCard: dismissInstallCard,
   // Re-export devotions for external consumers
   renderGuide: renderGuide,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,

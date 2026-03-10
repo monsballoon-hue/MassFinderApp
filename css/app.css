@@ -338,13 +338,22 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .pull-indicator.refreshing svg { animation: spin 0.8s linear infinite; color: var(--color-accent); }
 
 /* MORE TAB INSTALL CARD */
-.more-install-card { background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-5); box-shadow: var(--shadow-card); border-left: 3px solid var(--color-primary); position: relative; margin-bottom: var(--space-4); }
-.more-install-card .mic-title { font-family: var(--font-display); font-size: var(--text-lg); font-weight: var(--weight-semibold); color: var(--color-text-primary); margin-bottom: var(--space-1); }
-.more-install-card .mic-body { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-4); }
-.more-install-card .mic-body .ios-share-icon { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin: 0 1px; }
-.more-install-card .mic-action { display: inline-flex; align-items: center; padding: var(--space-2) var(--space-5); background: var(--color-primary); color: #fff; font-size: var(--text-sm); font-weight: var(--weight-semibold); border-radius: var(--radius-full); min-height: 40px; }
-.more-install-card .mic-close { position: absolute; top: var(--space-2); right: var(--space-2); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: 1.1rem; border-radius: 50%; }
-.more-install-card .mic-close:hover { background: var(--color-surface-hover); }
+/* PWA INSTALL CARD */
+.install-card { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);position:relative;margin-bottom:var(--space-4); }
+.install-close { position:absolute;top:var(--space-2);right:var(--space-2);width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:1.1rem;border-radius:50%; }
+.install-close:hover { background:var(--color-surface-hover); }
+.install-header { display:flex;align-items:flex-start;gap:var(--space-3);margin-bottom:var(--space-4); }
+.install-icon-wrap { width:44px;height:44px;background:var(--color-primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:white; }
+.install-title { font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-text-primary);line-height:1.3; }
+.install-subtitle { font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:2px; }
+.install-steps { display:flex;flex-direction:column;gap:var(--space-3); }
+.install-step { display:flex;align-items:flex-start;gap:var(--space-3); }
+.install-step-num { width:28px;height:28px;background:var(--color-primary);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:var(--text-sm);font-weight:var(--weight-semibold);flex-shrink:0; }
+.install-step-text { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5;padding-top:3px; }
+.install-step-text strong { color:var(--color-text-primary);font-weight:var(--weight-semibold); }
+.install-inline-icon { display:inline-block;width:16px;height:16px;vertical-align:-3px;margin:0 2px; }
+.install-btn { display:block;width:100%;margin-top:var(--space-4);padding:var(--space-3);background:var(--color-primary);color:white;font-size:var(--text-base);font-weight:var(--weight-semibold);border-radius:var(--radius-md);min-height:48px;text-align:center; }
+.install-btn:hover { background:var(--color-primary-light); }
 
 /* CARDS */
 .card-list { max-width: var(--max-width); margin: 0 auto; padding: var(--space-2) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }
