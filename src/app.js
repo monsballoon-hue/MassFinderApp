@@ -366,12 +366,12 @@ function _renderDailyReflection() {
   fetch('data/catechism.json').then(function(r) { return r.json(); }).then(function(d) {
     var text = d.paragraphs[String(num)];
     if (!text) { el.style.display = 'none'; return; }
-    // Truncate to ~200 chars at a sentence boundary
+    // Truncate to ~120 chars at a sentence boundary
     var preview = text.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '');
-    if (preview.length > 220) {
-      var cut = preview.lastIndexOf('.', 200);
-      if (cut > 80) preview = preview.slice(0, cut + 1);
-      else preview = preview.slice(0, 200).trim() + '\u2026';
+    if (preview.length > 140) {
+      var cut = preview.lastIndexOf('.', 120);
+      if (cut > 50) preview = preview.slice(0, cut + 1);
+      else preview = preview.slice(0, 120).trim() + '\u2026';
     }
     el.innerHTML = '<div class="reflection-card" onclick="openCCC(\'' + num + '\')" role="button" tabindex="0">'
       + '<div class="reflection-label">Daily Reflection</div>'

@@ -294,10 +294,21 @@ function renderSaintCard(events) {
     subtitle = pick.liturgical_season_lcl;
   }
 
+  // Secondary celebrations (optional memorials alongside the weekday)
+  var alsoToday = '';
+  if (pick.grade === 0 && saints.length) {
+    var others = saints.slice(0, 2).map(function(s) { return esc(s.name); });
+    if (others.length) alsoToday = '<div class="saint-also">Also today: ' + others.join(', ') + '</div>';
+  } else if (saints.length > 1) {
+    var otherSaints = saints.filter(function(s) { return s !== pick; }).slice(0, 2).map(function(s) { return esc(s.name); });
+    if (otherSaints.length) alsoToday = '<div class="saint-also">Also: ' + otherSaints.join(', ') + '</div>';
+  }
+
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
     + '<div class="saint-feast">' + esc(feastLabel) + '</div>'
     + '<div class="saint-name">' + esc(pick.name) + '</div>'
     + (subtitle ? '<div class="saint-subtitle">' + esc(subtitle) + '</div>' : '')
+    + alsoToday
     + '<div id="saintVerse"></div>'
     + '</div>';
 

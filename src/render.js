@@ -50,7 +50,7 @@ function renderCards() {
   // Normal mode — show count + clear button when a quick filter is active
   var _quickFilterLabels = { confession:'Confession', adoration:'Adoration', latin:'Latin Mass', spanish:'Spanish Mass', lent:'Lent', today:'Today', weekend:'This Weekend', yc:'YC' };
   var _filterLabel = _quickFilterLabels[state.currentFilter];
-  var _countText = shown === total ? String(total) : shown + ' of ' + total;
+  var _countText = shown === total ? 'All ' + total : shown + ' of ' + total;
   var _clearHtml = (state.currentFilter !== 'all' && _filterLabel)
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
   document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml ? ' ' : '') + _clearHtml;
