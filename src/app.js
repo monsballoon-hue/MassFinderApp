@@ -340,6 +340,75 @@ function _renderDailyReflection() {
   }).catch(function() { el.style.display = 'none'; });
 }
 
+// ── First-visit welcome banner (Change 4) ──
+function _renderWelcomeBanner() {
+  if (state._lastVisit) return; // not first visit
+  if (localStorage.getItem('mf-welcome-dismissed')) return;
+  var el = document.getElementById('welcomeBanner');
+  if (!el) return;
+  el.innerHTML = '<div class="welcome-banner">'
+    + '<div class="welcome-text">'
+    + '<div class="welcome-title">Welcome to MassFinder</div>'
+    + '<div class="welcome-desc">Find Mass, Confession, Adoration and more across Western New England. Save your churches for quick access.</div>'
+    + '</div>'
+    + '<button class="welcome-dismiss" onclick="this.closest(\'.welcome-wrap\').style.display=\'none\';localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+    + '</div>';
+  el.style.display = '';
+}
+
+// ── Return-visit context card (Change 18) ──
+function _renderReturnCard(daysMissed) {
+  var el = document.getElementById('returnCard');
+  if (!el) return;
+
+  var missed = [];
+  if (window._litcalCache && window._litcalCache.events) {
+    var lastDate = new Date(state._lastVisit + 'T00:00:00');
+    var today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+    window._litcalCache.events.forEach(function(e) {
+      var evtDate = new Date(e.year + '-' + String(e.month).padStart(2, '0') + '-' + String(e.day).padStart(2, '0') + 'T00:00:00');
+      if (evtDate > lastDate && evtDate < today && e.grade >= 3 && !e.is_vigil_mass) {
+        missed.push(e.name);
+      }
+    });
+  }
+
+  var missedText = missed.length
+    ? missed.slice(0, 3).join(', ') + (missed.length > 3 ? ' +' + (missed.length - 3) + ' more' : '')
+    : '';
+
+  el.innerHTML = '<div class="return-card">'
+    + '<div class="return-text">Welcome back' + (missedText ? ' \u2014 ' + utils.esc(missedText) + ' since your last visit' : '') + '</div>'
+    + '<button class="return-dismiss" onclick="this.closest(\'.return-card-wrap\').style.display=\'none\'" aria-label="Dismiss">\u2715</button>'
+    + '</div>';
+  el.style.display = '';
+}
+
+// ── Contextual confession prompt (Change 20) ──
+function _renderConfessionPrompt() {
+  var confDismissed = localStorage.getItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
+  if (confDismissed) return;
+
+  var dow = new Date().getDay();
+  var season = document.documentElement.getAttribute('data-season');
+  var confStatus = examination.getConfessionStatus();
+  // Saturday, Lent, or 30+ days since last confession
+  if (dow !== 6 && season !== 'lent' && !(confStatus && confStatus.daysAgo >= 30)) return;
+
+  var el = document.getElementById('confessionPrompt');
+  if (!el) return;
+  var message = confStatus && confStatus.daysAgo >= 30
+    ? 'It\u2019s been ' + confStatus.daysAgo + ' days \u2014 confession times near you'
+    : 'Find confession times near you this weekend';
+
+  el.innerHTML = '<div class="conf-prompt">'
+    + '<div class="conf-prompt-text">' + message + '</div>'
+    + '<button class="conf-prompt-btn" onclick="applyQuickFilter(\'confession\');this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">Find times</button>'
+    + '<button class="conf-prompt-x" onclick="this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')" aria-label="Dismiss">\u2715</button>'
+    + '</div>';
+  el.style.display = '';
+}
+
 // ── "Your Churches" horizontal row on Find tab (Change 5+21) ──
 function _renderYourChurches() {
   var el = document.getElementById('yourChurches');
@@ -441,6 +510,7 @@ async function init() {
     if (['today', 'weekend'].includes(sm)) state.currentSort = 'next_service';
     ui.updateSortLabel(); location_.initLocation(); data.filterChurches(); render.renderCards();
     _renderYourChurches();
+    _renderWelcomeBanner();
 
     // Deep link
     if (location.hash) {
@@ -454,6 +524,13 @@ async function init() {
         readings.setLiturgicalSeason(window._litcalCache.events);
         _renderLiturgicalTeaser(window._litcalCache.events);
       }
+      // Return-visit context card (Change 18) — needs litcal for missed feasts
+      if (state._isReturning && state._lastVisit) {
+        var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
+        if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
+      }
+      // Contextual confession prompt (Change 20) — needs season data
+      _renderConfessionPrompt();
     }).catch(function() {});
 
     // Register service worker
