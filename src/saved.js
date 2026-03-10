@@ -53,13 +53,22 @@ function renderUnifiedEvt(e, isYC) {
   if (e.time) whenParts.push(fmt12(e.time));
   whenParts.push(pName);
 
-  var rowClass = isYC ? 'saved-evt-unified evt-yc-row' : 'saved-evt-unified';
+  // Determine if this event is happening today
+  var todayCheck = getNow().toISOString().slice(0, 10);
+  var isToday = false;
+  if (e.date) isToday = e.date === todayCheck;
+  else if (e.dates && e.dates.length) isToday = e.dates.indexOf(todayCheck) !== -1;
+
+  var rowClass = 'saved-evt-unified';
+  if (isYC) rowClass += ' evt-yc-row';
+  if (isToday) rowClass += ' saved-evt-today';
   var ycBadge = isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
+  var todayBadge = isToday ? ' <span class="saved-evt-today-badge">Today</span>' : '';
   var onclick = 'openEventDetail(\'' + e.id + '\')';
 
   return '<div class="' + rowClass + '" onclick="' + onclick + '">'
     + '<div class="saved-evt-unified-body">'
-    + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + '</div>'
+    + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + todayBadge + '</div>'
     + '<div class="saved-evt-unified-when">' + whenParts.join(' \u00b7 ') + '</div>'
     + '</div>'
     + '<svg class="saved-evt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
@@ -77,24 +86,24 @@ function renderSaved() {
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
   var count = favChurches.length;
 
-  // Update count badges — weekly event count at favorited churches
+  // Update badges — dot if any events today at favorited churches
   var now = getNow();
   var todayStr = now.toISOString().slice(0, 10);
-  var endStr = new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10);
-  var weeklyEvtCount = (state.eventsData || []).filter(function(e) {
+  var hasToday = (state.eventsData || []).some(function(e) {
     if (!favIds.has(e.church_id)) return false;
-    var d = e.date || '';
-    return d >= todayStr && d <= endStr;
-  }).length;
+    if (e.date) return e.date === todayStr;
+    if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
+    return false;
+  });
   var countBadge = document.getElementById('savedCountBadge');
   if (countBadge) {
-    countBadge.textContent = weeklyEvtCount || '';
-    countBadge.classList.toggle('visible', weeklyEvtCount > 0);
+    countBadge.textContent = '';
+    countBadge.classList.toggle('visible', hasToday);
   }
   var tabBadge = document.getElementById('savedTabBadge');
   if (tabBadge) {
-    tabBadge.textContent = weeklyEvtCount || '';
-    tabBadge.classList.toggle('visible', weeklyEvtCount > 0);
+    tabBadge.textContent = '';
+    tabBadge.classList.toggle('visible', hasToday);
   }
 
   if (!favChurches.length) {

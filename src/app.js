@@ -105,19 +105,20 @@ function _getDailyPrompt() {
   return pool[dayOfYear % pool.length];
 }
 
-// Count events this week at favorited churches
-function _weeklyEventsAtFavs() {
-  if (!state.eventsData || !state.favorites.length) return 0;
-  var now = new Date();
-  var today = now.toISOString().slice(0, 10);
-  var end = new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10);
+// Check if any events today (now → midnight) at favorited churches
+function _hasTodayEventsAtFavs() {
+  if (!state.eventsData || !state.favorites.length) return false;
+  var today = utils.getNow().toISOString().slice(0, 10);
   var favSet = {};
   state.favorites.forEach(function(id) { favSet[id] = true; });
-  return state.eventsData.filter(function(e) {
+  return state.eventsData.some(function(e) {
     if (!favSet[e.church_id]) return false;
-    var d = e.date || '';
-    return d >= today && d <= end;
-  }).length;
+    // Single-date event
+    if (e.date) return e.date === today;
+    // Multi-date event
+    if (e.dates && e.dates.length) return e.dates.indexOf(today) !== -1;
+    return false;
+  });
 }
 
 // Wire cross-module callback for favorite toggle
@@ -128,12 +129,12 @@ state._onFavToggle = function(id) {
     db.classList.toggle('fav-active', data.isFav(id));
     db.querySelector('svg').setAttribute('fill', data.isFav(id) ? 'currentColor' : 'none');
   }
-  // Update saved count badges — show weekly event count at favorited churches
-  var evtCount = _weeklyEventsAtFavs();
+  // Update saved badges — dot if any events today at favorited churches
+  var hasToday = _hasTodayEventsAtFavs();
   var tabBadge = document.getElementById('savedTabBadge');
-  if (tabBadge) { tabBadge.textContent = evtCount || ''; tabBadge.classList.toggle('visible', evtCount > 0); }
+  if (tabBadge) { tabBadge.textContent = ''; tabBadge.classList.toggle('visible', hasToday); }
   var countBadge = document.getElementById('savedCountBadge');
-  if (countBadge) { countBadge.textContent = evtCount || ''; countBadge.classList.toggle('visible', evtCount > 0); }
+  if (countBadge) { countBadge.textContent = ''; countBadge.classList.toggle('visible', hasToday); }
 };
 
 // ── Expose functions for HTML onclick attributes ──
