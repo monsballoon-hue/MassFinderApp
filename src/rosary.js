@@ -8,7 +8,7 @@ var utils = require('./utils.js');
 // Desktop/unsupported: silent no-op
 function _haptic() {
   try {
-    if (navigator.vibrate) { navigator.vibrate(50); return; }
+    if (navigator.vibrate) { navigator.vibrate(10); return; }
     var label = document.createElement('label');
     label.ariaHidden = 'true';
     label.style.display = 'none';
@@ -22,11 +22,11 @@ function _haptic() {
   } catch (e) {}
 }
 _haptic.confirm = function() {
-  if (navigator.vibrate) { navigator.vibrate([50, 70, 50]); return; }
+  if (navigator.vibrate) { navigator.vibrate([10, 70, 10]); return; }
   _haptic(); setTimeout(_haptic, 120);
 };
 _haptic.error = function() {
-  if (navigator.vibrate) { navigator.vibrate([50, 70, 50, 70, 50]); return; }
+  if (navigator.vibrate) { navigator.vibrate([10, 70, 10, 70, 10]); return; }
   _haptic(); setTimeout(_haptic, 120); setTimeout(_haptic, 240);
 };
 
@@ -41,6 +41,7 @@ var _wakeLock = null;
 var _touchStartX = 0;
 var _touchStartY = 0;
 var _longPressTimer = null;
+var _cccParagraphs = null;   // lazy-loaded catechism data for inline CCC
 
 var SET_META = {
   Joyful:    { color: '#4A90D9', desc: 'Monday & Saturday' },
@@ -254,6 +255,70 @@ function _onTouchEnd(e) {
   else rosaryPrev();         // swipe right → prev
 }
 
+// ── Inline CCC expansion (avoids z-index collision with z-2000 overlay) ──
+function _loadCCC(cb) {
+  if (_cccParagraphs) return cb();
+  fetch('data/catechism.json').then(function(r) { return r.json(); })
+    .then(function(d) {
+      _cccParagraphs = {};
+      Object.keys(d.paragraphs).forEach(function(k) {
+        _cccParagraphs[parseInt(k, 10)] = d.paragraphs[k];
+      });
+      cb();
+    }).catch(function() { cb(); });
+}
+
+function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function _stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+
+function _toggleInlineCCC(span, numStr) {
+  var container = span.closest('.rosary-mystery-refs') || span.parentNode;
+
+  // If already expanded, collapse
+  var existing = container.querySelector('.exam-ccc-card');
+  if (existing) {
+    existing.remove();
+    span.classList.remove('ref-tap--active');
+    return;
+  }
+
+  // Close any other open inline CCC
+  var body = document.getElementById('rosaryBody');
+  body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
+  body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
+
+  span.classList.add('ref-tap--active');
+  _haptic();
+
+  _loadCCC(function() {
+    var id = parseInt(numStr, 10);
+    var card = document.createElement('div');
+    card.className = 'exam-ccc-card';
+    // Header
+    var html = '<div class="exam-ccc-card-header">';
+    html += '<div class="exam-ccc-card-icon">\u00A7</div>';
+    html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
+    html += '</div>';
+    // Body — show first paragraph only (compact for rosary context)
+    html += '<div class="exam-ccc-card-body">';
+    var text = _cccParagraphs && _cccParagraphs[id];
+    if (text) {
+      var clean = _stripCCCRefs(text).trim();
+      var firstLine = clean.split('\n').filter(function(l) { return l.trim(); })[0] || '';
+      if (firstLine.charAt(0) === '>') {
+        html += '<p class="exam-ccc-card-quote">' + _esc(firstLine.slice(1).trim()) + '</p>';
+      } else {
+        html += '<p class="exam-ccc-card-text">' + _esc(firstLine) + '</p>';
+      }
+    } else {
+      html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
+    }
+    html += '</div>';
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
 // ── Render main dispatcher ──
 function _render() {
   var title = document.getElementById('rosaryTitle');
@@ -323,11 +388,11 @@ function _renderDecade(title, body, progress, nav) {
   progress.innerHTML = _dotsHtml(_decade);
   var p = _data.prayers;
 
-  // CCC refs
+  // CCC refs (inline expansion — avoids z-index collision)
   var cccHtml = '';
   if (m.ccc && m.ccc.length) {
     cccHtml = '<div class="rosary-mystery-refs">' + m.ccc.map(function(n) {
-      return '<span class="ccc-ref" onclick="window.openCCC(\'' + n + '\');event.stopPropagation()">CCC ' + n + '</span>';
+      return '<span class="ccc-ref rosary-ccc-ref" data-ccc="' + n + '">CCC ' + n + '</span>';
     }).join(' ') + '</div>';
   }
 
@@ -389,6 +454,16 @@ function _renderDecade(title, body, progress, nav) {
       rosaryBeadTap();
     });
   }
+
+  // Wire inline CCC refs
+  var cccRefs = document.querySelectorAll('.rosary-ccc-ref');
+  cccRefs.forEach(function(span) {
+    span.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      _toggleInlineCCC(span, span.dataset.ccc);
+    });
+  });
 }
 
 // ── Render: Closing ──

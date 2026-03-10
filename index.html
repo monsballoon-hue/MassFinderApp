@@ -255,9 +255,11 @@
 <!-- Rosary Overlay -->
 <div id="rosaryOverlay" class="rosary-overlay" role="dialog" aria-modal="true" aria-label="Guided Rosary">
   <div class="rosary-header">
-    <button class="rosary-close" onclick="closeRosary()" aria-label="Close">&times;</button>
+    <button class="rosary-close-btn" onclick="closeRosary()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
     <div class="rosary-title" id="rosaryTitle">The Holy Rosary</div>
-    <div class="rosary-close" style="visibility:hidden" aria-hidden="true">&times;</div>
+    <div class="rosary-close-btn" style="visibility:hidden" aria-hidden="true"></div>
   </div>
   <div class="rosary-progress" id="rosaryProgress"></div>
   <div class="rosary-body" id="rosaryBody"></div>

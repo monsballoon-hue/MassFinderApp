@@ -53,11 +53,15 @@ function _loadCCC(cb) {
 }
 
 // ── Parse CCC range (e.g. "2087-2089" → [2087,2088,2089]) ──
-function _parseCCCRange(numStr) {
+// isSectionLevel: true for commandment header refs (cap at 1 paragraph)
+function _parseCCCRange(numStr, isSectionLevel) {
   var m = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
   if (m) {
-    var ids = [], s = parseInt(m[1], 10), e = Math.min(parseInt(m[2], 10), s + 4);
-    for (var i = s; i <= e; i++) ids.push(i);
+    var s = parseInt(m[1], 10), end = parseInt(m[2], 10);
+    // Section headers span many paragraphs — show only the first
+    var cap = isSectionLevel ? s : Math.min(end, s + 4);
+    var ids = [];
+    for (var i = s; i <= cap; i++) ids.push(i);
     return ids;
   }
   return [parseInt(numStr, 10)];
@@ -94,14 +98,25 @@ function _toggleInlineCCC(span, numStr) {
   span.classList.add('ref-tap--active');
   _haptic();
 
+  // Detect if this is a section-level ref (inside .exam-ccc-ref container at top of section)
+  var isSectionLevel = !!span.closest('.exam-ccc-ref');
+
   _loadCCC(function() {
-    var ids = _parseCCCRange(numStr);
+    var ids = _parseCCCRange(numStr, isSectionLevel);
     var card = document.createElement('div');
     card.className = 'exam-ccc-card';
-    var html = '';
-    ids.forEach(function(id) {
+    // Header
+    var html = '<div class="exam-ccc-card-header">';
+    html += '<div class="exam-ccc-card-icon">\u00A7</div>';
+    html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
+    html += '</div>';
+    // Body
+    html += '<div class="exam-ccc-card-body">';
+    ids.forEach(function(id, idx) {
       var text = _cccParagraphs && _cccParagraphs[id];
-      html += '<div class="exam-ccc-card-num">\u00A7\u00A0' + id + '</div>';
+      if (ids.length > 1) {
+        html += '<div class="exam-ccc-card-num' + (idx > 0 ? '' : '') + '">\u00A7\u00A0' + id + '</div>';
+      }
       if (text) {
         var clean = _stripRefs(text).trim();
         var lines = clean.split('\n');
@@ -109,7 +124,7 @@ function _toggleInlineCCC(span, numStr) {
           line = line.trim();
           if (!line) return;
           if (line.charAt(0) === '>') {
-            html += '<p class="exam-ccc-card-quote"><em>' + _esc(line.slice(1).trim()) + '</em></p>';
+            html += '<p class="exam-ccc-card-quote">' + _esc(line.slice(1).trim()) + '</p>';
           } else {
             html += '<p class="exam-ccc-card-text">' + _esc(line) + '</p>';
           }
@@ -118,6 +133,14 @@ function _toggleInlineCCC(span, numStr) {
         html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
       }
     });
+    html += '</div>';
+    // For section-level refs spanning many paragraphs, add a "See full range" link
+    if (isSectionLevel) {
+      var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
+      if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 1) {
+        html += '<p class="exam-ccc-card-more" onclick="closeExamination();setTimeout(function(){openCCC(\'' + _esc(numStr) + '\')},350)">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
+      }
+    }
     card.innerHTML = html;
     container.appendChild(card);
   });
@@ -346,25 +369,28 @@ function _renderExamination(d) {
   // Wire keyboard for remaining ref-tap spans
   refs.initRefTaps(body);
 
-  // Wire checkbox change via event delegation
-  body.addEventListener('change', function(e) {
-    var cb = e.target;
-    if (!cb.classList.contains('exam-checkbox')) return;
-    var qid = parseInt(cb.dataset.qid, 10);
-    var qEl = cb.closest('.exam-q');
-    if (cb.checked) {
-      _checked[qid] = {
-        text: qEl.querySelector('.exam-q-text').textContent,
-        commandment: cb.dataset.cmd
-      };
-      qEl.classList.add('checked');
-    } else {
-      delete _checked[qid];
-      qEl.classList.remove('checked');
-    }
-    _haptic();
-    _updateCheckedUI();
-  });
+  // Wire checkbox change via event delegation (guard against duplicate listeners)
+  if (!body._examChangeWired) {
+    body._examChangeWired = true;
+    body.addEventListener('change', function(e) {
+      var cb = e.target;
+      if (!cb.classList.contains('exam-checkbox')) return;
+      var qid = parseInt(cb.dataset.qid, 10);
+      var qEl = cb.closest('.exam-q');
+      if (cb.checked) {
+        _checked[qid] = {
+          text: qEl.querySelector('.exam-q-text').textContent,
+          commandment: cb.dataset.cmd
+        };
+        qEl.classList.add('checked');
+      } else {
+        delete _checked[qid];
+        qEl.classList.remove('checked');
+      }
+      _haptic();
+      _updateCheckedUI();
+    });
+  }
 
   // Scroll progress
   _initScrollProgress();
@@ -378,6 +404,8 @@ function _initScrollProgress() {
   var body = document.getElementById('examBody');
   var bar = document.getElementById('examProgress');
   if (!body || !bar) return;
+  if (body._examScrollWired) return;
+  body._examScrollWired = true;
   body.addEventListener('scroll', function() {
     var pct = body.scrollTop / (body.scrollHeight - body.clientHeight);
     bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, pct)) + ')';

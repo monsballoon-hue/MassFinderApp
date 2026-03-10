@@ -1013,7 +1013,7 @@ select:focus-visible,
 /* CCC REFERENCE BOTTOM SHEET */
 .ccc-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:900;opacity:0;pointer-events:none;transition:opacity 0.35s ease; }
 .ccc-overlay.open { opacity:1;pointer-events:auto; }
-.ccc-sheet { position:fixed;bottom:0;left:0;right:0;background:var(--color-surface);border-radius:16px 16px 0 0;z-index:901;max-height:72vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.45s cubic-bezier(0.32,0.72,0,1);box-shadow:var(--shadow-elevated); }
+.ccc-sheet { position:fixed;bottom:0;left:0;right:0;background:var(--color-surface);border-radius:16px 16px 0 0;z-index:901;max-height:72vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06); }
 .ccc-sheet.open { transform:translateY(0); }
 @media (min-width:768px) { .ccc-sheet { left:50%;right:auto;width:100%;max-width:var(--max-width);transform:translate(-50%,100%); } .ccc-sheet.open { transform:translate(-50%,0); } }
 .ccc-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:var(--space-3) auto var(--space-2);flex-shrink:0; }
@@ -1027,8 +1027,9 @@ select:focus-visible,
 .ccc-blockquote p { margin:0 0 var(--space-1); }
 .ccc-divider { border:none;border-top:1px solid var(--color-border-light);margin:var(--space-5) 0 var(--space-4); }
 .ccc-related-header { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-accent-text);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--space-3); }
-.ccc-related-item { padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light);cursor:pointer; }
+.ccc-related-item { padding:var(--space-3) 0;border-bottom:0.5px solid var(--color-border-light);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s; }
 .ccc-related-item:last-child { border-bottom:none; }
+.ccc-related-item:active { background:rgba(0,0,0,0.04); }
 .ccc-related-num { font-family:var(--font-display);font-size:var(--text-base);font-weight:600;color:var(--color-accent-text);margin-bottom:2px; }
 .ccc-related-preview { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden; }
 .ccc-loading { font-size:var(--text-sm);color:var(--color-text-tertiary);padding:var(--space-6) 0;text-align:center; }
@@ -1071,11 +1072,12 @@ select:focus-visible,
 .conf-exam-body ul li { margin-bottom: var(--space-1); }
 
 /* ── GUIDED ROSARY ── */
-.rosary-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);overscroll-behavior:contain; }
+.rosary-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
 .rosary-overlay.open { transform:translateY(0); }
-.rosary-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border-light);padding-top:max(var(--space-3),env(safe-area-inset-top));gap:var(--space-2); }
-.rosary-close { background:none;border:none;font-size:24px;padding:var(--space-2);cursor:pointer;color:var(--color-text-tertiary);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center; }
-.rosary-close:hover { color:var(--color-text-primary); }
+.rosary-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);border-bottom:0.5px solid var(--color-border-light);padding-top:max(var(--space-3),env(safe-area-inset-top));gap:var(--space-2);background:var(--color-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px); }
+.rosary-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
+.rosary-close-btn:active { background:rgba(142,142,147,0.24); }
+.rosary-close-btn svg { display:block; }
 .rosary-title { flex:1;text-align:center;font-family:var(--font-heading);font-weight:var(--weight-bold);font-size:var(--text-lg);color:var(--color-text-primary); }
 .rosary-progress { padding:var(--space-2) 0; }
 .rosary-dots { display:flex;justify-content:center;gap:10px;padding:var(--space-2); }
@@ -1169,6 +1171,9 @@ select:focus-visible,
 
 /* Dark mode overrides for rosary */
 html[data-theme="dark"] .rosary-overlay { background:var(--color-bg); }
+html[data-theme="dark"] .rosary-header { background:rgba(26,28,34,0.85); }
+html[data-theme="dark"] .rosary-close-btn { background:rgba(142,142,147,0.2); }
+html[data-theme="dark"] .rosary-close-btn:active { background:rgba(142,142,147,0.35); }
 html[data-theme="dark"] .rosary-set-btn { background:var(--color-surface);border-color:var(--color-border); }
 html[data-theme="dark"] .rosary-begin-btn { opacity:0.95; }
 html[data-theme="dark"] .rosary-mystery { background:rgba(255,255,255,0.04); }
@@ -1255,13 +1260,19 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-q-text { font-size:var(--text-base);line-height:1.55;color:var(--color-text); }
 .exam-q-ref { align-self:flex-start; }
 
-/* Inline CCC expansion card */
-.exam-ccc-card { margin-top:var(--space-2);padding:var(--space-3);background:rgba(74,124,89,0.06);border-radius:var(--radius-sm);border-left:3px solid var(--color-primary);animation:examCCCIn 0.25s cubic-bezier(0.28,0.11,0.32,1); }
-@keyframes examCCCIn { from { opacity:0;transform:translateY(-4px); } to { opacity:1;transform:translateY(0); } }
-.exam-ccc-card-num { font-size:12px;font-weight:var(--weight-semibold);color:var(--color-primary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-1); }
-.exam-ccc-card-text { font-size:var(--text-sm);line-height:1.65;color:var(--color-text-secondary);margin-bottom:var(--space-1); }
+/* Inline CCC expansion card — Apple HIG elevated card */
+.exam-ccc-card { margin-top:var(--space-3);padding:0;background:var(--color-surface);border-radius:12px;border:none;box-shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 12px rgba(0,0,0,0.04);overflow:hidden;animation:examCCCIn 0.3s cubic-bezier(0.28,0.11,0.32,1); }
+@keyframes examCCCIn { from { opacity:0;transform:translateY(-6px) scale(0.98); } to { opacity:1;transform:translateY(0) scale(1); } }
+.exam-ccc-card-header { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:rgba(74,124,89,0.06);border-bottom:0.5px solid var(--color-border-light); }
+.exam-ccc-card-icon { width:22px;height:22px;border-radius:6px;background:var(--color-primary);color:white;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:var(--weight-bold);flex-shrink:0; }
+.exam-ccc-card-label { font-size:12px;font-weight:var(--weight-semibold);color:var(--color-primary);text-transform:uppercase;letter-spacing:0.03em;flex:1; }
+.exam-ccc-card-num { font-size:12px;font-weight:var(--weight-semibold);color:var(--color-primary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-1);padding:var(--space-3) var(--space-4) 0; }
+.exam-ccc-card-num:not(:first-child) { padding-top:var(--space-3);border-top:0.5px solid var(--color-border-light); }
+.exam-ccc-card-body { padding:0 var(--space-4) var(--space-3); }
+.exam-ccc-card-text { font-size:var(--text-sm);line-height:1.7;color:var(--color-text-secondary);margin-bottom:var(--space-1); }
 .exam-ccc-card-text:last-child { margin-bottom:0; }
-.exam-ccc-card-quote { font-size:var(--text-sm);line-height:1.65;color:var(--color-text-tertiary);margin-bottom:var(--space-1);padding-left:var(--space-3);border-left:2px solid var(--color-border-light); }
+.exam-ccc-card-quote { font-size:var(--text-sm);line-height:1.7;color:var(--color-text-tertiary);font-style:italic;margin-bottom:var(--space-1);padding-left:var(--space-3);border-left:2px solid var(--color-border-light); }
+.exam-ccc-card-more { font-size:var(--text-xs);color:var(--color-primary);cursor:pointer;padding:var(--space-2) var(--space-4) var(--space-3);margin:0;font-weight:var(--weight-medium);display:block; }
 
 /* Active ref-tap highlight */
 .ref-tap--active { background:rgba(74,124,89,0.15);border-radius:4px;padding:1px 4px;margin:-1px -4px; }
@@ -1334,7 +1345,9 @@ html[data-theme="dark"] .exam-howto { background:var(--color-surface); }
 html[data-theme="dark"] .exam-tracker-btn.confirmed { background:var(--color-accent);border-color:var(--color-accent); }
 html[data-theme="dark"] .exam-q.checked { background:rgba(74,124,89,0.1); }
 html[data-theme="dark"] .exam-checkmark { border-color:var(--color-border); }
-html[data-theme="dark"] .exam-ccc-card { background:rgba(74,124,89,0.1);border-left-color:var(--color-accent); }
+html[data-theme="dark"] .exam-ccc-card { background:var(--color-surface);box-shadow:0 1px 4px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.15); }
+html[data-theme="dark"] .exam-ccc-card-header { background:rgba(74,124,89,0.1); }
+html[data-theme="dark"] .exam-ccc-card-icon { background:var(--color-accent); }
 html[data-theme="dark"] .exam-summary { background:var(--color-surface); }
 html[data-theme="dark"] .exam-footer { background:var(--color-surface);box-shadow:0 -2px 10px rgba(0,0,0,0.2); }
 html[data-theme="dark"] .ref-tap--active { background:rgba(74,124,89,0.2); }
