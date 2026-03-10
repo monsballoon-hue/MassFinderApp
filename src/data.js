@@ -101,6 +101,26 @@ function sortChurches() {
   } else {
     state.filteredChurches.sort(function(a, b) { return a.church.name.localeCompare(b.church.name); });
   }
+
+  // Float saved churches to top (after primary sort is applied)
+  if (state.favorites && state.favorites.length) {
+    var favSet = {};
+    state.favorites.forEach(function(id) { favSet[id] = true; });
+    var saved = [];
+    var rest = [];
+    state.filteredChurches.forEach(function(item) {
+      if (favSet[item.church.id]) saved.push(item);
+      else rest.push(item);
+    });
+    if (saved.length && rest.length) {
+      state.filteredChurches = saved.concat(rest);
+      state._savedSplitIndex = saved.length;
+    } else {
+      state._savedSplitIndex = 0;
+    }
+  } else {
+    state._savedSplitIndex = 0;
+  }
 }
 
 // ── Parish→Church migration map ──

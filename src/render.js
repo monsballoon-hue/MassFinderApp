@@ -150,6 +150,11 @@ function renderCards() {
       + '</article>';
   });
 
+  // Inject saved/rest separator if applicable
+  if (state._savedSplitIndex > 0 && state._savedSplitIndex < cards.length) {
+    cards.splice(state._savedSplitIndex, 0, '<div class="card-list-separator" role="separator"><span>Nearby churches</span></div>');
+  }
+
   // Inline YC discovery strip — after 3rd card
   if (['all', 'today'].indexOf(state.currentFilter) !== -1 && cards.length >= 3 && evts && typeof evts.getUpcomingYC === 'function') {
     var upcoming = evts.getUpcomingYC().slice(0, 3);

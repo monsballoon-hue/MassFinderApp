@@ -102,6 +102,8 @@ state._onFavToggle = function(id) {
 
 // ── Expose functions for HTML onclick attributes ──
 window._getDailyPrompt = _getDailyPrompt;
+window._renderWelcomeBanner = _renderWelcomeBanner;
+window._renderConfessionPrompt = _renderConfessionPrompt;
 window.openDetail = render.openDetail;
 window.closeDetail = render.closeDetail;
 window.switchTab = ui.switchTab;
@@ -366,9 +368,6 @@ function _renderDailyStrip(events) {
   });
   if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
-  // Daily micro-prompt (seasonal)
-  var prompt = _getDailyPrompt();
-
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
     + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
@@ -379,7 +378,6 @@ function _renderDailyStrip(events) {
     + '</div>'
     + '<span class="daily-card-arrow">\u203a</span>'
     + '</div>'
-    + (prompt ? '<div class="daily-card-prompt">' + utils.esc(prompt) + '</div>' : '')
     + '</div>';
   el.style.display = '';
 }
@@ -398,10 +396,8 @@ function _renderConfessionPrompt() {
 
   var el = document.getElementById('confessionPrompt');
   if (!el) return;
-  el.innerHTML = '<div class="conf-prompt">'
-    + '<div class="conf-prompt-text">Find confession times near you this weekend</div>'
-    + '<button class="conf-prompt-btn" onclick="applyQuickFilter(\'confession\');this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">Find times</button>'
-    + '<button class="conf-prompt-x" onclick="this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')" aria-label="Dismiss">\u2715</button>'
+  el.innerHTML = '<div class="conf-nudge" onclick="applyQuickFilter(\'confession\');this.parentElement.style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">'
+    + 'Find confession times nearby \u2192'
     + '</div>';
   el.style.display = '';
 }
@@ -589,6 +585,48 @@ async function init() {
     document.getElementById('cardList').innerHTML = '<div class="no-results"><h3>' + (isTimeout ? 'Connection timed out' : 'Unable to load churches') + '</h3><p>' + (isTimeout ? 'Check your signal and try again.' : 'Please check your connection and try refreshing.') + '</p><button onclick="init()" style="margin-top:var(--space-4);padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);background:var(--color-primary);color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);min-height:44px">Try Again</button></div>';
     console.error(err);
   }
+}
+
+// ── Dev Panel (hidden, activated by 5 taps on version label) ──
+var _devTaps = 0;
+var _devTimer = null;
+window._devTap = function() {
+  _devTaps++;
+  clearTimeout(_devTimer);
+  _devTimer = setTimeout(function() { _devTaps = 0; }, 2000);
+  if (_devTaps >= 5) {
+    _devTaps = 0;
+    _openDevPanel();
+  }
+};
+
+function _openDevPanel() {
+  var existing = document.getElementById('devPanel');
+  if (existing) { existing.remove(); return; }
+
+  var panel = document.createElement('div');
+  panel.id = 'devPanel';
+  panel.style.cssText = 'position:fixed;bottom:70px;left:8px;right:8px;z-index:9999;background:var(--color-surface);border:2px solid var(--color-primary);border-radius:12px;padding:16px;box-shadow:0 8px 32px rgba(0,0,0,0.3);max-height:60vh;overflow-y:auto;font-size:13px;';
+
+  var toggles = [
+    { label: 'Welcome Banner', action: 'localStorage.removeItem("mf-welcome-dismissed");_renderWelcomeBanner()' },
+    { label: 'Return Card (3 days)', action: 'localStorage.setItem("mf-last-visit",new Date(Date.now()-3*86400000).toISOString().slice(0,10));location.reload()' },
+    { label: 'Confession Prompt', action: 'localStorage.removeItem("mf-conf-prompt-"+new Date().toISOString().slice(0,10));_renderConfessionPrompt();document.getElementById("confessionPrompt").style.display=""' },
+    { label: 'More Tab Badge', action: 'document.getElementById("moreTabBadge").classList.add("visible")' },
+    { label: 'Season: Lent', action: 'document.documentElement.setAttribute("data-season","lent")' },
+    { label: 'Season: Advent', action: 'document.documentElement.setAttribute("data-season","advent")' },
+    { label: 'Season: Easter', action: 'document.documentElement.setAttribute("data-season","easter")' },
+    { label: 'Season: Ordinary', action: 'document.documentElement.setAttribute("data-season","ordinary")' },
+    { label: 'Clear All localStorage', action: 'localStorage.clear();location.reload()' },
+  ];
+
+  panel.innerHTML = '<div style="font-weight:600;margin-bottom:8px;color:var(--color-primary)">Dev Panel</div>'
+    + toggles.map(function(t) {
+      return '<button onclick="' + t.action.replace(/"/g, '&quot;') + '" style="display:block;width:100%;text-align:left;padding:8px 12px;margin-bottom:4px;background:var(--color-surface-hover);border:1px solid var(--color-border);border-radius:8px;font-size:13px;cursor:pointer;">' + t.label + '</button>';
+    }).join('')
+    + '<button onclick="this.parentElement.remove()" style="display:block;width:100%;text-align:center;padding:8px;margin-top:8px;color:var(--color-text-tertiary);font-size:12px;cursor:pointer;">Close</button>';
+
+  document.body.appendChild(panel);
 }
 
 init();

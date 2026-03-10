@@ -326,6 +326,7 @@ function renderSaintCard(events) {
     + (subtitle ? '<div class="saint-subtitle">' + esc(subtitle) + '</div>' : '')
     + alsoToday
     + '<div id="saintVerse"></div>'
+    + (typeof window._getDailyPrompt === 'function' ? '<div class="saint-prompt">' + esc(window._getDailyPrompt()) + '</div>' : '')
     + upcomingHtml
     + '</div>';
 

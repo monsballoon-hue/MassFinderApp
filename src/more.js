@@ -86,46 +86,6 @@ function renderMore() {
     }
   })();
 
-  // -- What's Happening: unified chronological event list --
-  var upcoming = getUpcomingYC();
-  var allCommunityEvents = state.eventsData.filter(function(e) { return e.category !== 'yc' && isEventActive(e); }).map(function(e) {
-    var ch = state.allChurches.find(function(x) { return x.id === e.church_id; });
-    return Object.assign({}, e, { churchName: ch ? ch.name : '', churchId: e.church_id, isYC: false });
-  });
-  var ycMapped = upcoming.map(function(e) {
-    var r = resolveYC(e);
-    return Object.assign({}, e, { churchName: r.locName || r.churchName, isYC: true });
-  });
-  var allEvents = ycMapped.concat(allCommunityEvents).sort(function(a, b) {
-    return (a.date || '9999').localeCompare(b.date || '9999');
-  }).slice(0, 8);
-
-  var whSection = document.getElementById('whatsHappeningSection');
-  var whList = document.getElementById('whEventsList');
-  if (whSection && whList && allEvents.length) {
-    whSection.style.display = 'block';
-    whList.innerHTML = allEvents.map(function(e) {
-      var dateStr = e.date ? fmtYCDate(e.date) : (e.day ? (DAY_NAMES[e.day] || e.day) : '');
-      var timeStr = e.time ? ' \u00b7 ' + fmt12(e.time) : '';
-      var ycBadge = e.isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
-      return '<div class="wh-event-card" onclick="openEventDetail(\'' + esc(e.id) + '\')">'
-        + '<div class="wh-event-date">' + esc(dateStr) + timeStr + '</div>'
-        + '<div class="wh-event-title">' + esc(e.title) + ycBadge + '</div>'
-        + '<div class="wh-event-church">' + esc(displayName(e.churchName)) + '</div>'
-        + '</div>';
-    }).join('');
-  }
-
-  // Daily micro-prompt (seasonal)
-  var promptEl = document.getElementById('moreDailyPrompt');
-  if (promptEl && typeof window._getDailyPrompt === 'function') {
-    var prompt = window._getDailyPrompt();
-    if (prompt) {
-      promptEl.textContent = prompt;
-      promptEl.style.display = '';
-    }
-  }
-
   // Daily CCC Reflection (Change 16)
   if (typeof window.renderDailyReflection === 'function') window.renderDailyReflection();
 
@@ -233,7 +193,7 @@ function renderMore() {
       + '<button class="text-size-btn text-size-btn--md' + (curSize === 'default' ? ' active' : '') + '" onclick="window.setTextSize(\'default\')" aria-label="Default text">A</button>'
       + '<button class="text-size-btn text-size-btn--lg' + (curSize === 'large' ? ' active' : '') + '" onclick="window.setTextSize(\'large\')" aria-label="Large text">A</button>'
       + '</div></div></div>'
-      + '<div>MassFinder v2</div>';
+      + '<div onclick="window._devTap && window._devTap()" style="cursor:default">MassFinder v2</div>';
   }
 
   // Trigger readings and saint card fetches
