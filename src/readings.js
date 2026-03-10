@@ -130,7 +130,7 @@ function getLiturgicalEventsFromLitCal(events) {
       color: color, colorHex: colorMap[color] || '#16A34A',
       hdo: !!e.holy_day_of_obligation
     };
-  }).sort(function(a, b) { return a.date - b.date; }).slice(0, 2);
+  }).sort(function(a, b) { return a.date - b.date; }).slice(0, 3);
 }
 
 // ── Render Liturgical Calendar ──
@@ -187,7 +187,6 @@ function fetchReadings() {
       var chevron = '<svg class="reading-expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>';
 
       var html = '';
-      if (data.title) html += '<div class="reading-day-name">' + esc(data.title) + '</div>';
       html += sections.map(function(s, i) {
         var id = 'reading-entry-' + i;
         var hasText = s.text && s.text.length > 0;
@@ -202,8 +201,6 @@ function fetchReadings() {
           + (hasText ? '<div class="reading-text" id="reading-text-' + i + '">' + formatReadingText(s.text, s.heading) + '</div>' : '')
           + '</div>';
       }).join('');
-      html += '<div class="reading-copyright">Scripture texts from the New American Bible, Revised Edition \u00a9 2010, 1991, 1986, 1970 Confraternity of Christian Doctrine, Washington, D.C.</div>';
-      html += usccbLink;
       el.innerHTML = html;
 
       // Enhance with BibleGet — staggered 2500ms apart to stay under rate limits
@@ -304,12 +301,32 @@ function renderSaintCard(events) {
     if (otherSaints.length) alsoToday = '<div class="saint-also">Also: ' + otherSaints.join(', ') + '</div>';
   }
 
+  // Build upcoming observances section (folded into saint card)
+  var upcomingHtml = '';
+  var upcomingEvts = getLiturgicalEvents().filter(function(e) { return e.daysAway > 0; });
+  if (upcomingEvts.length) {
+    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    var evtItems = upcomingEvts.map(function(e) {
+      var soon = e.daysAway <= 7 ? '<span class="litu-soon">' + (e.daysAway === 1 ? 'Tomorrow' : 'In ' + e.daysAway + ' days') + '</span>' : '';
+      var hdoBadge = e.hdo ? '<span class="litu-hdo">Obligation</span>' : '';
+      return '<div class="saint-upcoming-item">'
+        + '<div class="litu-date-badge" style="background:' + e.colorHex + '"><div class="litu-month">' + months[e.date.getMonth()] + '</div><div class="litu-day">' + e.date.getDate() + '</div></div>'
+        + '<div class="saint-upcoming-info"><div class="litu-name">' + esc(e.name) + '</div>' + (hdoBadge ? '<div class="litu-type">' + hdoBadge + '</div>' : '') + soon + '</div>'
+        + '</div>';
+    }).join('');
+    var chevSvg = '<svg class="saint-upcoming-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>';
+    upcomingHtml = '<details class="saint-upcoming"><summary class="saint-upcoming-toggle">Coming up' + chevSvg + '</summary>'
+      + '<div class="saint-upcoming-list">' + evtItems + '</div>'
+      + '</details>';
+  }
+
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
     + '<div class="saint-feast">' + esc(feastLabel) + '</div>'
     + '<div class="saint-name">' + esc(pick.name) + '</div>'
     + (subtitle ? '<div class="saint-subtitle">' + esc(subtitle) + '</div>' : '')
     + alsoToday
     + '<div id="saintVerse"></div>'
+    + upcomingHtml
     + '</div>';
 
   // Fetch gospel acclamation verse async (non-blocking)

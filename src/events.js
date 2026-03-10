@@ -162,10 +162,6 @@ function renderCommunityEvents(c) {
       whenText = [dayName ? dayName + 's' : '', timeStr3].filter(Boolean).join(' \u00b7 ');
     }
     var accent = isUpcoming ? 'upcoming' : 'ongoing';
-    var calSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14">'
-      + '<rect x="3" y="4" width="18" height="18" rx="2"/>'
-      + '<line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>'
-      + '<line x1="3" y1="10" x2="21" y2="10"/></svg>';
     return '<div class="ce-item" onclick="openEventDetail(\'' + utils.esc(e.id) + '\')" style="cursor:pointer">'
       + '<div class="ce-item-accent ' + accent + '"></div>'
       + '<div class="ce-item-body">'
@@ -173,10 +169,8 @@ function renderCommunityEvents(c) {
       + (whenText ? '<div class="ce-item-when">' + whenText + '</div>' : '')
       + (e.notes ? '<div class="ce-item-notes">' + utils.esc(e.notes) + '</div>' : '')
       + '</div>'
-      + '<div class="saved-evt-actions">'
-      + '<button class="saved-evt-btn" onclick="downloadEventIcal(\'' + utils.esc(e.id) + '\');event.stopPropagation()" title="Add to Calendar">' + calSvg + '</button>'
-      + '<button class="saved-evt-btn" onclick="expressInterest(\'' + utils.esc(e.id) + '\',event)" title="I\'m interested">&#9825;</button>'
-      + '</div></div>';
+      + '<span class="ce-item-chevron" aria-hidden="true">\u203A</span>'
+      + '</div>';
   }
 
   var html = '<div class="community-events-section">'

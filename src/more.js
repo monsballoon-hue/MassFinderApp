@@ -31,7 +31,6 @@ function renderMore() {
   var openDetail = render.openDetail;
   var showToast = render.showToast;
   var readings = require('./readings.js');
-  var renderLiturgicalCalendar = readings.renderLiturgicalCalendar;
   var fetchReadings = readings.fetchReadings;
   var fetchLiturgicalDay = readings.fetchLiturgicalDay;
   var setLiturgicalSeason = readings.setLiturgicalSeason;
@@ -117,14 +116,18 @@ function renderMore() {
     }).join('');
   }
 
+  // Daily micro-prompt (seasonal)
+  var promptEl = document.getElementById('moreDailyPrompt');
+  if (promptEl && typeof window._getDailyPrompt === 'function') {
+    var prompt = window._getDailyPrompt();
+    if (prompt) {
+      promptEl.textContent = prompt;
+      promptEl.style.display = '';
+    }
+  }
+
   // Daily CCC Reflection (Change 16)
   if (typeof window.renderDailyReflection === 'function') window.renderDailyReflection();
-
-  // Liturgical calendar
-  var lituEl = document.getElementById('liturgicalContent');
-  if (lituEl) {
-    renderLiturgicalCalendar(lituEl);
-  }
 
   // Prayer Tools grid
   var exam = require('./examination.js');
@@ -240,12 +243,6 @@ function renderMore() {
     renderHDOBanner(events);
     updateHDOBadge(events);
     renderSaintCard(events);
-    renderLiturgicalCalendar();
-    var lentBtn = document.getElementById('icsLentBtn');
-    if (lentBtn) {
-      var season = document.documentElement.getAttribute('data-season');
-      lentBtn.style.display = (season === 'lent') ? '' : 'none';
-    }
   });
 
   window._moreRendered = true;

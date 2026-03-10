@@ -69,8 +69,6 @@
 
   <div id="activeFilters" class="active-filters" aria-live="polite" aria-label="Active filters"></div>
 
-  <div id="yourChurches" class="yc-row-wrap" style="display:none"></div>
-
   <div class="results-info">
     <span id="resultsCount" class="results-count" aria-live="polite" aria-atomic="true"></span>
     <button class="results-sort" onclick="toggleSort()">
@@ -113,6 +111,9 @@
     <!-- PWA INSTALL CARD (hidden if installed) -->
     <div id="moreInstallCard"></div>
 
+    <!-- Daily micro-prompt (seasonal) -->
+    <div id="moreDailyPrompt" class="more-daily-prompt" style="display:none"></div>
+
     <!-- Saint/celebration card (first content section) -->
     <div class="more-section more-section--tight" id="saintSection">
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
@@ -139,27 +140,13 @@
       <div id="whEventsList"></div>
     </details>
 
-    <!-- LITURGICAL CALENDAR -->
-    <details class="more-section">
-      <summary class="more-section-title more-section-collapsible">Upcoming Observances<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
-      <div id="liturgicalContent"></div>
-      <details class="ics-collapse">
-        <summary class="ics-collapse-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Add to Calendar</summary>
-        <div class="ics-btn-group">
-          <button class="ics-card-btn" onclick="exportLitCalICS('hdo')">Holy Days</button>
-          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('feasts')">Feasts &amp; Solemnities</button>
-          <button id="icsLentBtn" class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('lent')" style="display:none">Lent &amp; Holy Week</button>
-        </div>
-      </details>
-    </details>
-
     <!-- DEVOTIONAL GUIDES -->
     <details class="more-section">
       <summary class="more-section-title more-section-collapsible">Faith Guides<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
       <div id="devotionalCards"></div>
     </details>
 
-    <div class="more-about-text">MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</div>
+    <div class="more-about-text">MassFinder is a community project built for Catholics across Western New England. Find Mass times, Confession, Adoration, and local events at parishes throughout the region &mdash; plus daily readings, reflections, prayer tools, and guides to help you grow in faith. All free, always improving, and made with care for this community.</div>
 
     <div class="more-footer" id="moreFooter"></div>
   </div>

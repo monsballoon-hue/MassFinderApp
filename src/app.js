@@ -17,6 +17,58 @@ var examination = require('./examination.js');
 
 var state = data.state;
 
+// ── Daily Micro-Prompts (Layer 1 — inline, no API) ──
+var DAILY_PROMPTS = {
+  lent: [
+    'What one thing can you offer God today?',
+    'Is there someone you need to forgive?',
+    'How has prayer shaped your Lent so far?',
+    'What attachment is God asking you to release?',
+    'Have you checked in with someone who is struggling?',
+    'Where did you see God at work yesterday?',
+    'What scripture passage has stayed with you this week?',
+    'How can you serve someone in your parish today?',
+    'What small sacrifice can you make before dinner tonight?',
+    'Are you making time for silence in your day?',
+    'What grace are you asking for this Lent?',
+    'Is there a habit you need to bring to Confession?',
+    'How is fasting changing your perspective?',
+    'What does the Cross mean to you today?',
+    'Have you prayed for your parish priest this week?',
+    'What fruit of the Spirit do you most need right now?',
+    'How can you practice patience today?',
+    'What would it look like to give more generously this week?',
+    'Where is God inviting you to grow?',
+    'Take a moment to thank God for three specific things.'
+  ],
+  advent: [
+    'What are you waiting for this Advent?',
+    'How can you make room for Christ today?',
+    'Is there a relationship that needs reconciliation before Christmas?',
+    'What does hope look like in your life right now?',
+    'How can you bring joy to someone today?',
+    'What is God preparing you for?',
+    'Have you spent time in quiet prayer this week?',
+    'How can you simplify your preparations and focus on what matters?',
+    'What gift of yourself can you offer someone?',
+    'Where do you need God\u2019s peace most?'
+  ],
+  ordinary: [
+    'What are you grateful for today?',
+    'How can you live your faith more fully this week?',
+    'Is there someone who needs your encouragement today?',
+    'What virtue is God calling you to practice?',
+    'Take a moment to offer your day to God.'
+  ]
+};
+
+function _getDailyPrompt() {
+  var season = document.documentElement.getAttribute('data-season');
+  var pool = DAILY_PROMPTS[season] || DAILY_PROMPTS.ordinary;
+  var dayOfYear = Math.floor((utils.getNow().getTime() - new Date(utils.getNow().getFullYear(), 0, 0).getTime()) / 86400000);
+  return pool[dayOfYear % pool.length];
+}
+
 // Count events this week at favorited churches
 function _weeklyEventsAtFavs() {
   if (!state.eventsData || !state.favorites.length) return 0;
@@ -40,7 +92,6 @@ state._onFavToggle = function(id) {
     db.classList.toggle('fav-active', data.isFav(id));
     db.querySelector('svg').setAttribute('fill', data.isFav(id) ? 'currentColor' : 'none');
   }
-  _renderYourChurches();
   // Update saved count badges — show weekly event count at favorited churches
   var evtCount = _weeklyEventsAtFavs();
   var tabBadge = document.getElementById('savedTabBadge');
@@ -50,6 +101,7 @@ state._onFavToggle = function(id) {
 };
 
 // ── Expose functions for HTML onclick attributes ──
+window._getDailyPrompt = _getDailyPrompt;
 window.openDetail = render.openDetail;
 window.closeDetail = render.closeDetail;
 window.switchTab = ui.switchTab;
@@ -314,6 +366,9 @@ function _renderDailyStrip(events) {
   });
   if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
+  // Daily micro-prompt (seasonal)
+  var prompt = _getDailyPrompt();
+
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
     + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
@@ -324,6 +379,7 @@ function _renderDailyStrip(events) {
     + '</div>'
     + '<span class="daily-card-arrow">\u203a</span>'
     + '</div>'
+    + (prompt ? '<div class="daily-card-prompt">' + utils.esc(prompt) + '</div>' : '')
     + '</div>';
   el.style.display = '';
 }
@@ -427,34 +483,6 @@ function _renderReturnCard(daysMissed) {
 }
 
 
-// ── "Your Churches" horizontal row on Find tab (Change 5+21) ──
-function _renderYourChurches() {
-  var el = document.getElementById('yourChurches');
-  if (!el) return;
-  if (!state.favorites.length) { el.style.display = 'none'; return; }
-
-  var favChurches = state.favorites.map(function(id) {
-    return state.allChurches.find(function(c) { return c.id === id; });
-  }).filter(Boolean);
-
-  if (!favChurches.length) { el.style.display = 'none'; return; }
-
-  var cards = favChurches.map(function(c) {
-    var next = utils.getNext(c, state.currentFilter === 'all' ? 'all' : state.currentFilter);
-
-    return '<div class="yc-compact" onclick="openDetail(\'' + utils.esc(c.id) + '\')">'
-      + '<div class="yc-compact-name">' + utils.esc(utils.displayName(c.name)) + '</div>'
-      + (next
-        ? '<div class="yc-compact-time">' + next.timeFormatted + '</div>'
-          + '<div class="yc-compact-label">' + utils.esc(next.dayLabel) + ' \u00b7 ' + utils.esc(config.SVC_LABELS[next.service.type] || '') + '</div>'
-        : '<div class="yc-compact-label" style="color:var(--color-text-tertiary)">See schedule</div>')
-      + '</div>';
-  }).join('');
-
-  el.innerHTML = '<div class="yc-row-label">Your Churches</div>'
-    + '<div class="yc-row-scroll">' + cards + '</div>';
-  el.style.display = '';
-}
 
 // ── Init ──
 async function init() {
@@ -520,7 +548,6 @@ async function init() {
     document.querySelectorAll('.chip[data-filter]').forEach(function(ch) { ch.classList.toggle('active', ch.dataset.filter === sm); });
     if (['today', 'weekend'].includes(sm)) state.currentSort = 'next_service';
     ui.updateSortLabel(); location_.initLocation(); data.filterChurches(); render.renderCards();
-    _renderYourChurches();
     _renderWelcomeBanner();
 
     // More tab badge — show dot when daily content hasn't been seen today (Change 12)

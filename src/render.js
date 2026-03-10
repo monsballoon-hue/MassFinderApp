@@ -22,6 +22,62 @@ function renderPills() {
   }).join('');
 }
 
+// ── Search Context — surface why a card matched the query ──
+function _getSearchContext(c, q) {
+  if (!q) return '';
+  var ql = q.toLowerCase();
+  var words = ql.split(/\s+/);
+
+  // 1. Check if query matches a service type label
+  var svcKeys = Object.keys(config.SVC_LABELS);
+  for (var i = 0; i < svcKeys.length; i++) {
+    var label = config.SVC_LABELS[svcKeys[i]].toLowerCase();
+    if (words.every(function(w) { return label.includes(w); })) {
+      // Find matching services on this church
+      var matches = (c.services || []).filter(function(s) { return s.type === svcKeys[i]; });
+      if (matches.length) {
+        var parts = matches.slice(0, 3).map(function(s) {
+          var dayLabel = config.DAY_NAMES[s.day] || s.day || '';
+          var timeStr = s.time ? utils.fmt12(s.time) : 'See bulletin';
+          return dayLabel + (s.time ? ' ' + timeStr : ' \u00b7 ' + timeStr);
+        });
+        return '<div class="card-search-match"><span class="card-match-label">' + utils.esc(config.SVC_LABELS[svcKeys[i]]) + '</span> ' + utils.esc(parts.join(' \u00b7 ')) + '</div>';
+      }
+    }
+  }
+
+  // 2. Check if query matches service notes
+  var svcs = c.services || [];
+  for (var j = 0; j < svcs.length; j++) {
+    var notes = (svcs[j].notes || '').toLowerCase();
+    if (notes && words.every(function(w) { return notes.includes(w); })) {
+      var svcLabel = config.SVC_LABELS[svcs[j].type] || svcs[j].type;
+      return '<div class="card-search-match"><span class="card-match-label">' + utils.esc(svcLabel) + '</span> ' + utils.esc(svcs[j].notes.length > 50 ? svcs[j].notes.slice(0, 50) + '\u2026' : svcs[j].notes) + '</div>';
+    }
+  }
+
+  // 3. Check language match
+  for (var k = 0; k < svcs.length; k++) {
+    var langName = (config.LANG_NAMES[svcs[k].language] || '').toLowerCase();
+    if (langName && words.every(function(w) { return langName.includes(w); })) {
+      var dayL = config.DAY_NAMES[svcs[k].day] || svcs[k].day || '';
+      var tStr = svcs[k].time ? utils.fmt12(svcs[k].time) : '';
+      var sLabel = config.SVC_LABELS[svcs[k].type] || '';
+      return '<div class="card-search-match"><span class="card-match-label">' + utils.esc(config.LANG_NAMES[svcs[k].language]) + '</span> ' + utils.esc(sLabel + (dayL ? ' \u00b7 ' + dayL : '') + (tStr ? ' ' + tStr : '')) + '</div>';
+    }
+  }
+
+  // 4. Check staff match
+  var staff = c.staff || [];
+  for (var s = 0; s < staff.length; s++) {
+    if (words.every(function(w) { return staff[s].toLowerCase().includes(w); })) {
+      return '<div class="card-search-match"><span class="card-match-label">Staff</span> ' + utils.esc(staff[s]) + '</div>';
+    }
+  }
+
+  return '';
+}
+
 // ── Card List ──
 function renderCards() {
   var el = document.getElementById('cardList');
@@ -84,12 +140,13 @@ function renderCards() {
     if (evtCounts[c.id]) {
       evtHtml = '<div class="card-evt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + evtCounts[c.id] + ' event' + (evtCounts[c.id] > 1 ? 's' : '') + ' this week</div>';
     }
+    var searchCtx = _getSearchContext(c, state.searchQuery);
     return '<article class="parish-card" role="listitem" style="animation-delay:' + d + 'ms" onclick="openDetail(\'' + c.id + '\')">'
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')
       + '<button class="card-fav' + (fav ? ' is-fav' : '') + '" onclick="toggleFav(\'' + c.id + "',event)\" aria-label=\"Favorite\"><svg viewBox=\"0 0 24 24\" fill=\"" + (fav ? 'currentColor' : 'none') + "\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></button>"
       + '<span class="card-chevron" aria-hidden="true">\u203A</span>'
-      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + evtHtml
+      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + searchCtx + evtHtml
       + '</article>';
   });
 
