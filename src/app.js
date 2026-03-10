@@ -287,7 +287,7 @@ window.addEventListener('appinstalled', function() { window._deferredInstallProm
   initPanelSwipe('eventDetailPanel', function() { events.closeEventDetail(); });
 })();
 
-// ── Daily Context Strip on Find tab (replaces teaser + progress + confession) ──
+// ── Daily Card on Find tab (liturgical day teaser) ──
 function _renderDailyStrip(events) {
   var el = document.getElementById('liturgicalTeaser');
   if (!el) return;
@@ -300,31 +300,53 @@ function _renderDailyStrip(events) {
   var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
   var colorHex = colorMap[color] || '#16A34A';
 
-  var name = pick.name;
   var progress = utils.getSeasonProgress();
-  var progressText = progress ? ' \u00b7 Day ' + progress.day + ' of ' + progress.total : '';
+  var progressText = progress ? 'Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season : '';
 
-  // Optional secondary line
+  // Secondary line
   var secondary = '';
   var dow = now.getDay();
   var season = document.documentElement.getAttribute('data-season');
   if (dow === 5 && season === 'lent') secondary = 'Abstinence from meat today';
-  else if (dow === 6 || season === 'lent') secondary = 'Find confession times nearby';
-  // HDO tomorrow check
   var tomorrow = new Date(now.getTime() + 86400000);
   var tomorrowHDO = events.filter(function(e) {
     return e.month === (tomorrow.getMonth() + 1) && e.day === tomorrow.getDate() && e.holy_day_of_obligation;
   });
   if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
-  el.innerHTML = '<div class="daily-strip" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
-    + '<div class="daily-strip-main">'
-    + '<span class="daily-strip-dot" style="background:' + colorHex + '"></span>'
-    + '<span class="daily-strip-text">' + utils.esc(name) + utils.esc(progressText) + '</span>'
+  el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
+    + '<div class="daily-card-row">'
+    + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
+    + '<div class="daily-card-text">'
+    + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
+    + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
+    + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
     + '</div>'
-    + '<span class="daily-strip-link">See more \u203a</span>'
+    + '<span class="daily-card-arrow">\u203a</span>'
     + '</div>'
-    + (secondary ? '<div class="daily-strip-sub">' + utils.esc(secondary) + '</div>' : '');
+    + '</div>';
+  el.style.display = '';
+}
+
+// ── Contextual confession prompt ──
+function _renderConfessionPrompt() {
+  var dismissed = localStorage.getItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
+  if (dismissed) return;
+  var welcome = document.getElementById('welcomeBanner');
+  var returnC = document.getElementById('returnCard');
+  if ((welcome && welcome.style.display !== 'none') || (returnC && returnC.style.display !== 'none')) return;
+
+  var day = new Date().getDay();
+  var season = document.documentElement.getAttribute('data-season');
+  if (day !== 6 && season !== 'lent') return;
+
+  var el = document.getElementById('confessionPrompt');
+  if (!el) return;
+  el.innerHTML = '<div class="conf-prompt">'
+    + '<div class="conf-prompt-text">Find confession times near you this weekend</div>'
+    + '<button class="conf-prompt-btn" onclick="applyQuickFilter(\'confession\');this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">Find times</button>'
+    + '<button class="conf-prompt-x" onclick="this.closest(\'.conf-prompt-wrap\').style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')" aria-label="Dismiss">\u2715</button>'
+    + '</div>';
   el.style.display = '';
 }
 
@@ -520,6 +542,7 @@ async function init() {
         readings.setLiturgicalSeason(window._litcalCache.events);
         _renderDailyStrip(window._litcalCache.events);
       }
+      _renderConfessionPrompt();
       // Return-visit context card (Change 18) — needs litcal for missed feasts
       if (state._isReturning && state._lastVisit) {
         var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);

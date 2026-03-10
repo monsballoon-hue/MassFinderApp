@@ -65,6 +65,8 @@
   </div>
   </div>
 
+  <div id="confessionPrompt" class="conf-prompt-wrap" style="display:none"></div>
+
   <div id="activeFilters" class="active-filters" aria-live="polite" aria-label="Active filters"></div>
 
   <div id="yourChurches" class="yc-row-wrap" style="display:none"></div>
@@ -114,7 +116,7 @@
     <!-- TODAY — saint/celebration card (first content section) -->
     <div class="more-section" id="saintSection">
       <h2 class="more-section-title">Today</h2>
-      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast">Loading…</div><div class="saint-name" style="font-size:var(--text-base);color:var(--color-text-tertiary);font-family:var(--font-body);font-weight:var(--weight-regular)">Fetching today's celebration…</div></div></div>
+      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
     </div>
 
     <!-- DAILY CCC REFLECTION -->
@@ -127,29 +129,15 @@
     </div>
 
     <!-- PRAYER TOOLS — interactive prayer features -->
-    <details class="more-section" id="prayerToolsSection" open>
-      <summary class="more-section-title more-section-collapsible">Prayer Tools<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
+    <div class="more-section" id="prayerToolsSection">
+      <h2 class="more-section-title">Prayer Tools</h2>
       <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
-    </details>
+    </div>
 
-    <!-- WHAT'S HAPPENING: YC Events + Community Events, two-column layout -->
+    <!-- WHAT'S HAPPENING: unified chronological event list -->
     <details class="more-section" id="whatsHappeningSection" style="display:none">
       <summary class="more-section-title more-section-collapsible">What's Happening<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
-      <div class="wh-two-col">
-        <div class="wh-col wh-col-left" id="whYCCol">
-          <div class="wh-col-header">
-            <span class="wh-col-label yc-label">Young &amp; Catholic</span>
-            <button class="wh-col-seeall" id="whYCSeeAll" style="display:none" onclick="document.querySelector('[data-filter=yc]').click();switchTab('panelFind',document.querySelector('[data-tab=panelFind]'))">See all</button>
-          </div>
-          <div id="whYCList"><p class="wh-empty">No upcoming YC events.</p></div>
-        </div>
-        <div class="wh-col wh-col-right" id="whCommunityCol">
-          <div class="wh-col-header">
-            <span class="wh-col-label community-label">Community Events</span>
-          </div>
-          <div id="whCommunityList"><p class="wh-empty">No upcoming events.</p></div>
-        </div>
-      </div>
+      <div id="whEventsList"></div>
     </details>
 
     <!-- LITURGICAL CALENDAR -->
@@ -169,7 +157,6 @@
     <!-- DEVOTIONAL GUIDES -->
     <details class="more-section">
       <summary class="more-section-title more-section-collapsible">Faith Guides<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
-      <p>Brief guides to common Catholic devotions and services — written for everyone, whether you're returning after a long absence or simply curious.</p>
       <div id="devotionalCards"></div>
     </details>
 
@@ -180,7 +167,6 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>
       </summary>
       <div style="padding-top:var(--space-3)">
-        <div class="stat-grid" id="aboutStatGrid"></div>
         <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
       </div>
     </details>
