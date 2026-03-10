@@ -67,6 +67,55 @@ function isLentSeason() {
   return td >= ashWed && td <= holySat;
 }
 
+// ── Easter date (Anonymous Gregorian algorithm) ──
+function getEaster(year) {
+  var a = year % 19, b = Math.floor(year / 100), c = year % 100;
+  var d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25);
+  var g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30;
+  var i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7;
+  var mn = Math.floor((a + 11 * h + 22 * l) / 451);
+  var eMonth = Math.floor((h + l - 7 * mn + 114) / 31);
+  var eDay = ((h + l - 7 * mn + 114) % 31) + 1;
+  return new Date(year, eMonth - 1, eDay);
+}
+
+// ── Liturgical Season Progress (Lent, Easter, Advent) ──
+function getSeasonProgress() {
+  var now = getNow();
+  var year = now.getFullYear();
+  var easter = getEaster(year);
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  // Ash Wednesday = Easter - 46 days
+  var ashWed = new Date(easter); ashWed.setDate(easter.getDate() - 46);
+  // Holy Saturday = Easter - 1
+  var holySat = new Date(easter); holySat.setDate(easter.getDate() - 1);
+  // Pentecost = Easter + 49
+  var pentecost = new Date(easter); pentecost.setDate(easter.getDate() + 49);
+
+  // Advent: 4th Sunday before Christmas
+  var christmas = new Date(year, 11, 25);
+  var christmasDay = christmas.getDay();
+  var advent1 = new Date(christmas);
+  advent1.setDate(christmas.getDate() - (christmasDay === 0 ? 21 : (christmasDay + 21)));
+
+  if (today >= ashWed && today <= holySat) {
+    var elapsed = Math.floor((today - ashWed) / 86400000) + 1;
+    var total = Math.floor((holySat - ashWed) / 86400000) + 1;
+    return { season: 'Lent', day: elapsed, total: total, pct: Math.round((elapsed / total) * 100) };
+  }
+  if (today >= easter && today <= pentecost) {
+    var elapsed2 = Math.floor((today - easter) / 86400000) + 1;
+    return { season: 'Easter Season', day: elapsed2, total: 50, pct: Math.round((elapsed2 / 50) * 100) };
+  }
+  if (today >= advent1 && today < christmas) {
+    var elapsed3 = Math.floor((today - advent1) / 86400000) + 1;
+    var total3 = Math.floor((christmas - advent1) / 86400000);
+    return { season: 'Advent', day: elapsed3, total: total3, pct: Math.round((elapsed3 / total3) * 100) };
+  }
+  return null;
+}
+
 function getNext(parish, filter) {
   var now = getNow(), curMin = now.getHours() * 60 + now.getMinutes(), curDI = now.getDay();
   var svcs = parish.services.filter(function(s) {
@@ -279,4 +328,5 @@ module.exports = {
   isVer: isVer, generateICS: generateICS,
   svcKey: svcKey, cleanNote: cleanNote, escRe: escRe, makeRangeLabel: makeRangeLabel,
   smartDefault: smartDefault, esc: esc,
+  getEaster: getEaster, getSeasonProgress: getSeasonProgress,
 };

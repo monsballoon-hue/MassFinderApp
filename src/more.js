@@ -196,6 +196,9 @@ function renderMore() {
     }, 100);
   }
 
+  // Daily CCC Reflection (Change 16)
+  if (typeof window.renderDailyReflection === 'function') window.renderDailyReflection();
+
   // Liturgical calendar
   var lituEl = document.getElementById('liturgicalContent');
   if (lituEl) {

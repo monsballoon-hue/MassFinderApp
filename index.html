@@ -46,6 +46,8 @@
     <button id="searchClear" class="search-clear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div></div>
 
+  <div id="liturgicalTeaser" class="liturgical-teaser" style="display:none"></div>
+
   <div class="chip-bar-wrap">
   <div class="chip-bar" role="toolbar" aria-label="Quick filters">
     <button class="chip active" data-filter="all">All</button>
@@ -148,15 +150,18 @@
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast">Loading…</div><div class="saint-name" style="font-size:var(--text-base);color:var(--color-text-tertiary);font-family:var(--font-body);font-weight:var(--weight-regular)">Fetching today's celebration…</div></div></div>
     </div>
 
+    <!-- DAILY CCC REFLECTION -->
+    <div id="dailyReflection" class="more-section" style="display:none"></div>
+
     <!-- DAILY READINGS -->
     <div class="more-section">
-      <h2 class="more-section-title">📖 Today's Readings</h2>
+      <h2 class="more-section-title">Today's Readings</h2>
       <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
     </div>
 
     <!-- LITURGICAL CALENDAR -->
     <div class="more-section">
-      <h2 class="more-section-title">🕊 Upcoming Observances</h2>
+      <h2 class="more-section-title">Upcoming Observances</h2>
       <div id="liturgicalContent"></div>
       <details class="ics-collapse">
         <summary class="ics-collapse-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Add to Calendar</summary>

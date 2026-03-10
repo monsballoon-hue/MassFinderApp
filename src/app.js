@@ -115,6 +115,7 @@ window.toggleTheme = function() {
   if (meta) meta.setAttribute('content', next === 'dark' ? '#1A1C22' : '#F8F7F4');
 };
 window.init = init;
+window.renderDailyReflection = _renderDailyReflection;
 
 // ── Chip clicks ──
 document.querySelectorAll('.chip[data-filter]').forEach(function(chip) {
@@ -245,8 +246,107 @@ window.addEventListener('appinstalled', function() { window._deferredInstallProm
   }, { passive: true });
 })();
 
+// ── Liturgical Teaser on Find tab (Change 1 + 17 + 22) ──
+function _renderLiturgicalTeaser(events) {
+  var el = document.getElementById('liturgicalTeaser');
+  if (!el) return;
+  var now = utils.getNow(), m = now.getMonth() + 1, d = now.getDate();
+  var today = events.filter(function(e) { return e.month === m && e.day === d && !e.is_vigil_mass; });
+  if (!today.length) return;
+
+  // Pick highest-grade celebration
+  var pick = today.sort(function(a, b) { return (b.grade || 0) - (a.grade || 0); })[0];
+  var color = (pick.color && pick.color[0]) || 'green';
+  var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
+  var colorHex = colorMap[color] || '#16A34A';
+  var gradeLabels = { 0: '', 1: 'Commemoration', 2: 'Optional Memorial', 3: 'Memorial', 4: 'Feast', 5: 'Feast of the Lord', 6: 'Solemnity', 7: 'Solemnity' };
+  var rank = gradeLabels[pick.grade] || '';
+  if (pick.holy_day_of_obligation) rank = (rank ? rank + ' \u2014 ' : '') + 'Holy Day of Obligation';
+
+  var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  var dateLabel = months[now.getMonth()] + ' ' + now.getDate();
+
+  el.innerHTML = '<div class="teaser-card" style="--teaser-color:' + colorHex + '">'
+    + '<div class="teaser-color-bar"></div>'
+    + '<div class="teaser-content">'
+    + '<div class="teaser-date">' + utils.esc(dateLabel) + (rank ? ' \u00b7 ' + utils.esc(rank) : '') + '</div>'
+    + '<div class="teaser-name">' + utils.esc(pick.name) + '</div>'
+    + '</div></div>';
+  el.style.display = '';
+
+  // ── Season progress bar (Change 17) ──
+  var progress = utils.getSeasonProgress();
+  if (progress) {
+    el.innerHTML += '<div class="season-progress">'
+      + '<div class="season-progress-bar" style="width:' + progress.pct + '%"></div>'
+      + '<span class="season-progress-label">Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season + '</span>'
+      + '</div>';
+  }
+
+  // ── Time-aware notes (Change 22) ──
+  var dow = now.getDay();
+  var season = document.documentElement.getAttribute('data-season');
+  // Friday abstinence during Lent
+  if (dow === 5 && season === 'lent') {
+    var note = document.createElement('div');
+    note.className = 'teaser-note';
+    note.textContent = 'Abstinence from meat today (Lenten Friday)';
+    el.appendChild(note);
+  }
+  // HDO tomorrow
+  var tomorrow = new Date(now.getTime() + 86400000);
+  var tm = tomorrow.getMonth() + 1, td = tomorrow.getDate();
+  var tomorrowHDO = events.filter(function(e) {
+    return e.month === tm && e.day === td && e.holy_day_of_obligation && !e.is_vigil_mass;
+  });
+  if (tomorrowHDO.length) {
+    var hdoNote = document.createElement('div');
+    hdoNote.className = 'teaser-note teaser-note--hdo';
+    hdoNote.textContent = 'Tomorrow: Holy Day of Obligation \u2014 ' + tomorrowHDO[0].name;
+    el.appendChild(hdoNote);
+  }
+}
+
+// ── Daily CCC Reflection (Change 16) ──
+function _getDailyCCCNumber() {
+  var now = utils.getNow();
+  var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
+  // Pool: paragraphs 27-2865 (skip introductory/meta paragraphs)
+  var poolSize = 2865 - 27 + 1;
+  return 27 + (daysSinceEpoch % poolSize);
+}
+
+function _renderDailyReflection() {
+  var el = document.getElementById('dailyReflection');
+  if (!el) return;
+  var num = _getDailyCCCNumber();
+  fetch('data/catechism.json').then(function(r) { return r.json(); }).then(function(d) {
+    var text = d.paragraphs[String(num)];
+    if (!text) { el.style.display = 'none'; return; }
+    // Truncate to ~200 chars at a sentence boundary
+    var preview = text.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '');
+    if (preview.length > 220) {
+      var cut = preview.lastIndexOf('.', 200);
+      if (cut > 80) preview = preview.slice(0, cut + 1);
+      else preview = preview.slice(0, 200).trim() + '\u2026';
+    }
+    el.innerHTML = '<div class="reflection-card" onclick="openCCC(\'' + num + '\')" role="button" tabindex="0">'
+      + '<div class="reflection-label">Daily Reflection</div>'
+      + '<div class="reflection-text">\u201C' + utils.esc(preview) + '\u201D</div>'
+      + '<div class="reflection-cite">Catechism \u00A7' + num + ' \u2014 Tap to read more</div>'
+      + '</div>';
+    el.style.display = '';
+  }).catch(function() { el.style.display = 'none'; });
+}
+
 // ── Init ──
 async function init() {
+  // ── Last-visit tracking (Change 11) ──
+  var todayStr = new Date().toISOString().slice(0, 10);
+  state._lastVisit = localStorage.getItem('mf-last-visit') || null;
+  state._isReturning = !!state._lastVisit && state._lastVisit < todayStr;
+  localStorage.setItem('mf-last-visit', todayStr);
+
   data.loadFav();
   data.migrateFavorites();
   try {
@@ -304,7 +404,10 @@ async function init() {
 
     // Fetch liturgical season early so accent bar + wash render on first tab
     readings.fetchLiturgicalDay().then(function() {
-      if (window._litcalCache) readings.setLiturgicalSeason(window._litcalCache.events);
+      if (window._litcalCache) {
+        readings.setLiturgicalSeason(window._litcalCache.events);
+        _renderLiturgicalTeaser(window._litcalCache.events);
+      }
     }).catch(function() {});
 
     // Register service worker
