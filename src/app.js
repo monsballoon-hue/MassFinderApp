@@ -117,6 +117,15 @@ window.toggleTheme = function() {
 };
 window.init = init;
 window.renderDailyReflection = _renderDailyReflection;
+window.setTextSize = function(size) {
+  document.documentElement.setAttribute('data-text-size', size === 'default' ? '' : size);
+  if (size === 'default') document.documentElement.removeAttribute('data-text-size');
+  else document.documentElement.setAttribute('data-text-size', size);
+  localStorage.setItem('mf-text-size', size);
+  document.querySelectorAll('.text-size-btn').forEach(function(b) { b.classList.remove('active'); });
+  var active = document.querySelector('.text-size-btn[onclick*="' + size + '"]');
+  if (active) active.classList.add('active');
+};
 
 // ── Chip clicks ──
 document.querySelectorAll('.chip[data-filter]').forEach(function(chip) {

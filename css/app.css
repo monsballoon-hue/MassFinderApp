@@ -264,6 +264,26 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .conf-prompt-x { flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;font-size:var(--text-xs);color:var(--color-verified);opacity:0.5; }
 .conf-prompt-x:hover { opacity:1; }
 
+/* SHAPED SKELETONS (Change 10) */
+.skel-card { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);box-shadow:var(--shadow-card);animation:pulse 1.5s ease-in-out infinite; }
+.skel-title { width:55%;height:14px;background:var(--color-surface-hover);border-radius:4px;margin-bottom:var(--space-3); }
+.skel-line { width:80%;height:10px;background:var(--color-surface-hover);border-radius:4px;margin-bottom:var(--space-2); }
+.skel-line--short { width:45%; }
+.skel-badges { display:flex;gap:var(--space-2);margin-top:var(--space-3); }
+.skel-badge { width:60px;height:22px;background:var(--color-surface-hover);border-radius:var(--radius-full); }
+
+/* TEXT SIZE PREFERENCE (Change 14) */
+[data-text-size="small"] { font-size:14px; }
+[data-text-size="large"] { font-size:18px; }
+.footer-controls { display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-3); }
+.text-size-control { display:flex;align-items:center;gap:var(--space-2); }
+.text-size-label { font-size:var(--text-xs);color:var(--color-text-tertiary); }
+.text-size-btns { display:flex;gap:2px;background:var(--color-surface-hover);border-radius:var(--radius-md);padding:2px; }
+.text-size-btn { width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:calc(var(--radius-md) - 2px);font-size:12px;color:var(--color-text-secondary);font-weight:var(--weight-semibold);transition:all var(--transition-fast); }
+.text-size-btn--md { font-size:15px; }
+.text-size-btn--lg { font-size:18px; }
+.text-size-btn.active { background:var(--color-surface);color:var(--color-text-primary);box-shadow:0 1px 2px rgba(0,0,0,0.1); }
+
 /* CHIPS */
 .chip-bar-wrap { position: relative; }
 .chip-bar { max-width: var(--max-width); margin: 0 auto; padding: var(--space-3) 0 var(--space-2); overflow-x: auto; display: flex; gap: var(--space-2); scrollbar-width: none; -webkit-overflow-scrolling: touch; -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%); mask-image: linear-gradient(to right, black 88%, transparent 100%); transition: mask-image 0.2s; }

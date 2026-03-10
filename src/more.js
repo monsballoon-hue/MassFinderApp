@@ -282,9 +282,19 @@ function renderMore() {
   var footer = document.getElementById('moreFooter');
   if (footer) {
     var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    footer.innerHTML = '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
+    var curSize = localStorage.getItem('mf-text-size') || 'default';
+    footer.innerHTML = '<div class="footer-controls">'
+      + '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
       + (isDark ? '\u2600\uFE0F Light Mode' : '\uD83C\uDF19 Dark Mode')
-      + '</button><div>MassFinder v2</div>';
+      + '</button>'
+      + '<div class="text-size-control">'
+      + '<span class="text-size-label">Text size</span>'
+      + '<div class="text-size-btns">'
+      + '<button class="text-size-btn' + (curSize === 'small' ? ' active' : '') + '" onclick="window.setTextSize(\'small\')" aria-label="Small text">A</button>'
+      + '<button class="text-size-btn text-size-btn--md' + (curSize === 'default' ? ' active' : '') + '" onclick="window.setTextSize(\'default\')" aria-label="Default text">A</button>'
+      + '<button class="text-size-btn text-size-btn--lg' + (curSize === 'large' ? ' active' : '') + '" onclick="window.setTextSize(\'large\')" aria-label="Large text">A</button>'
+      + '</div></div></div>'
+      + '<div>MassFinder v2</div>';
   }
 
   // Trigger readings and saint card fetches

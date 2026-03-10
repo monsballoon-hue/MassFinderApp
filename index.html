@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MassFinder">
 <meta name="theme-color" content="#F8F7F4" id="metaThemeColor">
-<script>(function(){var t=localStorage.getItem('mf-theme');if(t){document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.getElementById('metaThemeColor');if(m)m.setAttribute('content','#1A1C22');}}})();</script>
+<script>(function(){var t=localStorage.getItem('mf-theme');if(t){document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.getElementById('metaThemeColor');if(m)m.setAttribute('content','#1A1C22');}}var s=localStorage.getItem('mf-text-size');if(s&&s!=='default')document.documentElement.setAttribute('data-text-size',s);})();</script>
 <meta name="description" content="Find Mass, Confession, Adoration and more across Western New England">
 <meta property="og:title" content="MassFinder — Catholic Services Directory">
 <meta property="og:description" content="Find Mass, Confession, Adoration and more across Western New England">
@@ -83,9 +83,9 @@
   <div id="eventsWidget" class="events-widget-wrap"></div>
   <div id="cardList" class="card-list" role="list" aria-label="Churches">
     <div class="loading-placeholder" style="display:flex;flex-direction:column;gap:var(--space-3)">
-      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite"></div>
-      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite;animation-delay:0.1s"></div>
-      <div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-5);box-shadow:var(--shadow-card);height:130px;animation:pulse 1.5s ease-in-out infinite;animation-delay:0.2s"></div>
+      <div class="skel-card"><div class="skel-title"></div><div class="skel-line"></div><div class="skel-line skel-line--short"></div><div class="skel-badges"><div class="skel-badge"></div><div class="skel-badge"></div></div></div>
+      <div class="skel-card" style="animation-delay:0.1s"><div class="skel-title"></div><div class="skel-line"></div><div class="skel-line skel-line--short"></div><div class="skel-badges"><div class="skel-badge"></div><div class="skel-badge"></div></div></div>
+      <div class="skel-card" style="animation-delay:0.2s"><div class="skel-title"></div><div class="skel-line"></div><div class="skel-line skel-line--short"></div><div class="skel-badges"><div class="skel-badge"></div><div class="skel-badge"></div></div></div>
     </div>
   </div>
 </main>
