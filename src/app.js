@@ -40,7 +40,27 @@ var DAILY_PROMPTS = {
     'How can you practice patience today?',
     'What would it look like to give more generously this week?',
     'Where is God inviting you to grow?',
-    'Take a moment to thank God for three specific things.'
+    'Take a moment to thank God for three specific things.',
+    'What prayer are you returning to again and again this Lent?',
+    'How can you be more present to your family today?',
+    'Is there a comfort you\u2019re clinging to instead of God?',
+    'Who in your life needs your prayers most right now?',
+    'What would it mean to truly trust God with your worries?',
+    'How has God surprised you recently?',
+    'What does dying to self look like in your daily routine?',
+    'Have you read the Gospel for today? What stood out?',
+    'Is there an act of mercy you can perform before the day ends?',
+    'What would your Lent look like if you started fresh today?',
+    'How can you bring the peace of Christ to a difficult situation?',
+    'What fear is keeping you from deeper conversion?',
+    'Have you thanked someone who has helped you grow in faith?',
+    'What does humility ask of you today?',
+    'How can you honor the Sabbath more intentionally this week?',
+    'What wound are you asking Jesus to heal?',
+    'Is there a grudge weighing on your heart? Can you release it?',
+    'How is God speaking to you through the people around you?',
+    'What does it mean to pick up your cross today?',
+    'Spend one minute in silence. What does God place on your heart?'
   ],
   advent: [
     'What are you waiting for this Advent?',
@@ -52,14 +72,29 @@ var DAILY_PROMPTS = {
     'Have you spent time in quiet prayer this week?',
     'How can you simplify your preparations and focus on what matters?',
     'What gift of yourself can you offer someone?',
-    'Where do you need God\u2019s peace most?'
+    'Where do you need God\u2019s peace most?',
+    'How can you slow down and savor this season?',
+    'What does it mean to watch and wait with expectation?',
+    'Is there someone lonely who could use your company?',
+    'What would Mary\u2019s trust look like in your life today?',
+    'How can you make your home a place of peace this week?',
+    'What are you most hopeful for this Christmas?',
+    'Have you told someone what their friendship means to you?',
+    'What darkness in the world can you bring light to?',
+    'How is God asking you to say yes today?',
+    'Take a moment to pray for those who are grieving this season.'
   ],
   ordinary: [
     'What are you grateful for today?',
     'How can you live your faith more fully this week?',
     'Is there someone who needs your encouragement today?',
     'What virtue is God calling you to practice?',
-    'Take a moment to offer your day to God.'
+    'Take a moment to offer your day to God.',
+    'How can you be a better listener today?',
+    'What beauty in creation has caught your eye recently?',
+    'Is there a saint whose example speaks to your life right now?',
+    'How can you bring more joy to ordinary moments?',
+    'What one thing can you do today to love your neighbor better?'
   ]
 };
 

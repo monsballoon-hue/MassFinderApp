@@ -146,20 +146,7 @@ function renderMore() {
         + '</div>';
     }).join('');
 
-    // Seasonal nudge above prayer tools (Change 13)
-    var season = document.documentElement.getAttribute('data-season');
-    var ptSection = document.getElementById('prayerToolsSection');
-    if (ptSection && (season === 'lent' || season === 'advent')) {
-      var existingNudge = ptSection.querySelector('.seasonal-nudge');
-      if (!existingNudge) {
-        var nudge = document.createElement('div');
-        nudge.className = 'seasonal-nudge';
-        nudge.textContent = season === 'lent'
-          ? 'It\u2019s Lent \u2014 a season of prayer, fasting, and almsgiving. These tools can help.'
-          : 'It\u2019s Advent \u2014 a season of preparation and joyful expectation. These tools can help.';
-        ptSection.insertBefore(nudge, ptGrid);
-      }
-    }
+    // Seasonal nudge removed — header already removed, nudge adds clutter
 
     // Prayer activity summary (Change 19)
     try {
