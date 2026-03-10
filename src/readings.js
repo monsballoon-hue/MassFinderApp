@@ -46,7 +46,7 @@ function setLiturgicalSeason(events) {
 // ── Holy Day of Obligation Banner ──
 function renderHDOBanner(events) {
   var el = document.getElementById('hdoBanner');
-  if (!el) return;
+  if (!el || !config.FEATURES.hdo_banner) return;
   var now = getNow(), m = now.getMonth() + 1, d = now.getDate();
   var tom = new Date(now); tom.setDate(tom.getDate() + 1);
   var tm = tom.getMonth() + 1, td = tom.getDate();
@@ -160,7 +160,7 @@ function renderLiturgicalCalendar(el) {
 // ── Fetch Daily Readings ──
 function fetchReadings() {
   var el = document.getElementById('readingsContent');
-  if (!el) return Promise.resolve();
+  if (!el || !config.FEATURES.readings_api) return Promise.resolve();
   var now = getNow();
   var yyyymmdd = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
   var usccbUrl = 'https://bible.usccb.org/bible/readings/' + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0') + now.getFullYear().toString().slice(2) + '.cfm';
@@ -207,6 +207,7 @@ function fetchReadings() {
       el.innerHTML = html;
 
       // Enhance with BibleGet — staggered 2500ms apart to stay under rate limits
+      if (!config.FEATURES.bibleget) return;
       var bgDelay = 0;
       sections.forEach(function(s, i) {
         if (!s.ref || !s.text) return;
@@ -224,6 +225,7 @@ function fetchReadings() {
 
 // ── Fetch Liturgical Day (LitCal API) ──
 function fetchLiturgicalDay() {
+  if (!config.FEATURES.litcal) return Promise.resolve(null);
   var now = getNow();
   var year = now.getFullYear();
   // In-memory cache — one fetch per session per year

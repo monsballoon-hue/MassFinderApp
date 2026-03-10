@@ -18,7 +18,9 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run build
+      - name: Validate schema template
+        run: node -e "JSON.parse(require('fs').readFileSync('parish_data.schema.template.json','utf8'));console.log('✓ Schema template valid JSON')"
       - run: npm run schema
-      - name: Check JSON syntax
-        run: node -e "JSON.parse(require('fs').readFileSync('parish_data.json','utf8'));console.log('✓ Valid JSON')"
+      - name: Check data JSON syntax
+        run: node -e "JSON.parse(require('fs').readFileSync('parish_data.json','utf8'));console.log('✓ parish_data.json valid JSON')"
       - run: npm run validate

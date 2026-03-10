@@ -100,6 +100,15 @@ var CLERGY_ROLES = {
   bishop_emeritus:     { label: 'Bishop Emeritus',     rank: 12 },
 };
 
+// ── Feature Flags ──
+// Forkers can disable individual external API integrations without editing module code.
+var FEATURES = {
+  litcal: true,       // LitCal API — liturgical calendar, saint card, HDO banner
+  bibleget: true,     // BibleGet API — verse-level Scripture text enhancement
+  readings_api: true, // MassFinder Readings API — daily readings
+  hdo_banner: true,   // Holy Day of Obligation banner on Find tab
+};
+
 // ── Derived Values (computed, never maintained separately) ──
 
 // Service label map: { sunday_mass: 'Sunday Mass', ... }
@@ -135,7 +144,7 @@ var LANGUAGE_ENUM = Object.keys(LANGUAGES);
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     SERVICE_TYPES: SERVICE_TYPES, DAY_TYPES: DAY_TYPES, LANGUAGES: LANGUAGES,
-    REGION: REGION, CLERGY_ROLES: CLERGY_ROLES,
+    REGION: REGION, CLERGY_ROLES: CLERGY_ROLES, FEATURES: FEATURES,
     SVC_LABELS: SVC_LABELS, SERVICE_GROUPS: SERVICE_GROUPS,
     DAY_ORDER: DAY_ORDER, DAY_NAMES: DAY_NAMES, LANG_NAMES: LANG_NAMES,
     SERVICE_TYPE_ENUM: SERVICE_TYPE_ENUM, DAY_ENUM: DAY_ENUM, LANGUAGE_ENUM: LANGUAGE_ENUM,
