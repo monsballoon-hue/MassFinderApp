@@ -103,6 +103,7 @@ window.closeExamination = examination.closeExamination;
 window.examToggleSection = examination.examToggleSection;
 window.examMarkConfession = examination.examMarkConfession;
 window.examFindConfession = examination.examFindConfession;
+window.examScrollToSummary = examination.examScrollToSummary;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';

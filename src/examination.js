@@ -1,16 +1,20 @@
 // src/examination.js — Examination of Conscience (MOD-03)
 // Full-screen overlay with expandable commandment sections, tappable CCC refs,
-// Act of Contrition, confession tracker, and "Find Confession Near Me" button.
-// Privacy first: no data stored about which questions resonate.
-// UX: Apple HIG — inset grouped list, animated expand/collapse, haptics, swipe-dismiss.
+// interactive checklist, compiled summary, confession tracker, and "Find Confession Near Me".
+// Privacy: checked items exist only in memory — cleared when overlay closes.
+// UX: Apple HIG — inset grouped list, animated expand/collapse, haptics, swipe-dismiss,
+//     inline CCC expansion (avoids z-index collision with overlay).
 
 var refs = require('./refs.js');
 var ui = require('./ui.js');
 
+// ── State ──
 var _examData = null;
-var _expanded = {};  // commandment key → bool
+var _expanded = {};         // section key → bool
+var _checked = {};          // question id → { text, commandment }
+var _cccParagraphs = null;  // lazy-loaded catechism paragraph map
 
-// ── Haptic feedback (shared with rosary.js pattern) ──
+// ── Haptic feedback ──
 function _haptic() {
   try {
     if (navigator.vibrate) { navigator.vibrate(10); return; }
@@ -27,12 +31,36 @@ function _haptic() {
   } catch (e) {}
 }
 
-// ── Load data ──
+// ── Load examination data ──
 function _loadData(cb) {
   if (_examData) return cb(_examData);
   fetch('data/examination.json').then(function(r) { return r.json(); })
     .then(function(d) { _examData = d; cb(d); })
     .catch(function(e) { console.warn('[Examination] Failed to load data:', e); });
+}
+
+// ── Load catechism data for inline CCC ──
+function _loadCCC(cb) {
+  if (_cccParagraphs) return cb();
+  fetch('data/catechism.json').then(function(r) { return r.json(); })
+    .then(function(d) {
+      _cccParagraphs = {};
+      Object.keys(d.paragraphs).forEach(function(k) {
+        _cccParagraphs[parseInt(k, 10)] = d.paragraphs[k];
+      });
+      cb();
+    }).catch(function() { cb(); });
+}
+
+// ── Parse CCC range (e.g. "2087-2089" → [2087,2088,2089]) ──
+function _parseCCCRange(numStr) {
+  var m = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
+  if (m) {
+    var ids = [], s = parseInt(m[1], 10), e = Math.min(parseInt(m[2], 10), s + 4);
+    for (var i = s; i <= e; i++) ids.push(i);
+    return ids;
+  }
+  return [parseInt(numStr, 10)];
 }
 
 // ── Escape HTML ──
@@ -41,12 +69,82 @@ function _esc(s) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ── Render a single commandment/precepts row within a group ──
+// ── Strip CCC internal reference markers ──
+function _stripRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+
+// ── Toggle inline CCC expansion ──
+function _toggleInlineCCC(span, numStr) {
+  var container = span.closest('.exam-q') || span.closest('.exam-ccc-ref') || span.parentNode;
+
+  // If already expanded, collapse
+  var existing = container.querySelector('.exam-ccc-card');
+  if (existing) {
+    existing.remove();
+    span.classList.remove('ref-tap--active');
+    return;
+  }
+
+  // Close any other open inline CCC
+  var body = document.getElementById('examBody');
+  body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
+  body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
+
+  span.classList.add('ref-tap--active');
+  _haptic();
+
+  _loadCCC(function() {
+    var ids = _parseCCCRange(numStr);
+    var card = document.createElement('div');
+    card.className = 'exam-ccc-card';
+    var html = '';
+    ids.forEach(function(id) {
+      var text = _cccParagraphs && _cccParagraphs[id];
+      html += '<div class="exam-ccc-card-num">\u00A7\u00A0' + id + '</div>';
+      if (text) {
+        var clean = _stripRefs(text).trim();
+        var lines = clean.split('\n');
+        lines.forEach(function(line) {
+          line = line.trim();
+          if (!line) return;
+          if (line.charAt(0) === '>') {
+            html += '<p class="exam-ccc-card-quote"><em>' + _esc(line.slice(1).trim()) + '</em></p>';
+          } else {
+            html += '<p class="exam-ccc-card-text">' + _esc(line) + '</p>';
+          }
+        });
+      } else {
+        html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
+      }
+    });
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+// ── Wire inline CCC on all ref-tap spans inside exam body ──
+function _wireInlineCCC() {
+  var body = document.getElementById('examBody');
+  body.querySelectorAll('.ref-tap--ccc').forEach(function(span) {
+    var match = (span.getAttribute('onclick') || '').match(/_refTap\('ccc','([^']+)'\)/);
+    if (!match) return;
+    var cccNum = match[1];
+    span.removeAttribute('onclick');
+    span.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      _toggleInlineCCC(span, cccNum);
+    });
+  });
+}
+
+// ── Render a commandment row within a group ──
 function _renderSection(section, key, isFirst, isLast) {
   var isExpanded = !!_expanded[key];
   var cccRef = section.ccc ? refs.renderRef('ccc', section.ccc) : '';
+  var cmdTitle = section.number
+    ? section.number + '. ' + section.title
+    : section.title;
 
-  // Number badge for numbered commandments
   var numBadge = section.number
     ? '<span class="exam-num">' + section.number + '</span>'
     : '<span class="exam-num exam-num--icon">\u2690</span>';
@@ -58,18 +156,22 @@ function _renderSection(section, key, isFirst, isLast) {
   html += '<svg class="exam-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>';
   html += '</button>';
 
-  // Animated body wrapper — uses grid-template-rows for smooth height transition
-  html += '<div class="exam-row-body">';
-  html += '<div class="exam-row-inner">';
+  html += '<div class="exam-row-body"><div class="exam-row-inner">';
   if (cccRef) {
     html += '<div class="exam-ccc-ref">' + cccRef + '</div>';
   }
   section.questions.forEach(function(q) {
     var qRef = q.ccc ? refs.renderRef('ccc', q.ccc) : '';
-    html += '<div class="exam-q">';
-    html += '<span class="exam-q-text">' + _esc(q.text) + '</span>';
-    if (qRef) html += '<span class="exam-q-ref">' + qRef + '</span>';
-    html += '</div>';
+    var isChecked = !!_checked[q.id];
+    html += '<div class="exam-q' + (isChecked ? ' checked' : '') + '" data-qid="' + q.id + '">';
+    html += '<label class="exam-check">';
+    html += '<input type="checkbox" class="exam-checkbox" data-qid="' + q.id + '" data-cmd="' + _esc(cmdTitle) + '"' + (isChecked ? ' checked' : '') + '>';
+    html += '<span class="exam-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>';
+    html += '</label>';
+    html += '<div class="exam-q-content">';
+    html += '<div class="exam-q-text">' + _esc(q.text) + '</div>';
+    if (qRef) html += '<div class="exam-q-ref">' + qRef + '</div>';
+    html += '</div></div>';
   });
   html += '</div></div></div>';
   return html;
@@ -108,6 +210,75 @@ function _renderHowTo(howTo) {
   return html;
 }
 
+// ── Render summary section ──
+function _renderSummaryHTML() {
+  var keys = Object.keys(_checked);
+  if (!keys.length) {
+    return '<div class="exam-summary-empty">No items selected yet. Check items above as you examine your conscience.</div>';
+  }
+
+  // Group by commandment
+  var groups = {};
+  var order = [];
+  keys.forEach(function(qid) {
+    var item = _checked[qid];
+    if (!groups[item.commandment]) {
+      groups[item.commandment] = [];
+      order.push(item.commandment);
+    }
+    groups[item.commandment].push(item.text);
+  });
+
+  var html = '';
+  order.forEach(function(cmd) {
+    html += '<div class="exam-summary-group">';
+    html += '<div class="exam-summary-cmd">' + _esc(cmd) + '</div>';
+    html += '<ul class="exam-summary-items">';
+    groups[cmd].forEach(function(text) {
+      html += '<li>' + _esc(text) + '</li>';
+    });
+    html += '</ul></div>';
+  });
+  return html;
+}
+
+// ── Update checked count UI ──
+function _updateCheckedUI() {
+  var count = Object.keys(_checked).length;
+
+  // Footer bar
+  var footer = document.getElementById('examFooter');
+  if (footer) {
+    if (count > 0) {
+      footer.classList.add('visible');
+      document.getElementById('examCheckedCount').textContent = count + ' item' + (count !== 1 ? 's' : '') + ' noted';
+    } else {
+      footer.classList.remove('visible');
+    }
+  }
+
+  // Summary section
+  var summaryList = document.getElementById('examSummaryList');
+  if (summaryList) {
+    summaryList.innerHTML = _renderSummaryHTML();
+  }
+
+  // Summary title count
+  var summaryCount = document.getElementById('examSummaryCount');
+  if (summaryCount) {
+    summaryCount.textContent = count ? ' (' + count + ')' : '';
+  }
+}
+
+// ── Scroll to summary section ──
+function examScrollToSummary() {
+  var summary = document.getElementById('examSummary');
+  if (summary) {
+    summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  _haptic();
+}
+
 // ── Full render ──
 function _renderExamination(d) {
   var body = document.getElementById('examBody');
@@ -127,11 +298,19 @@ function _renderExamination(d) {
   });
   html += '</div>';
 
-  // Precepts of the Church — separate group
+  // Precepts of the Church
   html += '<div class="exam-group-label">Precepts of the Church</div>';
   html += '<div class="exam-group">';
   html += _renderSection(d.precepts, 'precepts', true, true);
   html += '</div>';
+
+  // Summary section
+  html += '<div class="exam-summary" id="examSummary">';
+  html += '<div class="exam-summary-title">Summary for Confession<span id="examSummaryCount"></span></div>';
+  html += '<div class="exam-summary-privacy">This list exists only during this session. Nothing is saved.</div>';
+  html += '<div class="exam-summary-list" id="examSummaryList">';
+  html += _renderSummaryHTML();
+  html += '</div></div>';
 
   // Prayers section
   html += '<div class="exam-group-label">Prayers</div>';
@@ -158,10 +337,38 @@ function _renderExamination(d) {
   html += 'Find Confession Near Me</button>';
 
   body.innerHTML = html;
+
+  // Wire inline CCC (override default openCCC behavior within overlay)
+  _wireInlineCCC();
+
+  // Wire keyboard for remaining ref-tap spans
   refs.initRefTaps(body);
 
-  // Wire scroll progress
+  // Wire checkbox change via event delegation
+  body.addEventListener('change', function(e) {
+    var cb = e.target;
+    if (!cb.classList.contains('exam-checkbox')) return;
+    var qid = parseInt(cb.dataset.qid, 10);
+    var qEl = cb.closest('.exam-q');
+    if (cb.checked) {
+      _checked[qid] = {
+        text: qEl.querySelector('.exam-q-text').textContent,
+        commandment: cb.dataset.cmd
+      };
+      qEl.classList.add('checked');
+    } else {
+      delete _checked[qid];
+      qEl.classList.remove('checked');
+    }
+    _haptic();
+    _updateCheckedUI();
+  });
+
+  // Scroll progress
   _initScrollProgress();
+
+  // Update footer state
+  _updateCheckedUI();
 }
 
 // ── Scroll progress bar ──
@@ -206,7 +413,6 @@ function _initSwipeDismiss() {
     var dy = e.changedTouches[0].clientY - startY;
     if (dy > 60) closeExamination();
   }, { passive: true });
-  // Also allow swipe from body when scrolled to top
   bodyEl.addEventListener('touchstart', function(e) {
     startY = e.touches[0].clientY;
   }, { passive: true });
@@ -219,6 +425,7 @@ function _initSwipeDismiss() {
 // ── Open overlay ──
 function openExamination() {
   _expanded = {};
+  _checked = {};
   window._lastFocused = document.activeElement;
   _loadData(function(d) {
     _renderExamination(d);
@@ -236,6 +443,10 @@ function closeExamination() {
   var overlay = document.getElementById('examOverlay');
   overlay.classList.remove('open');
   document.body.style.overflow = '';
+  // Clear session state — privacy first
+  _checked = {};
+  var footer = document.getElementById('examFooter');
+  if (footer) footer.classList.remove('visible');
   ui.releaseFocus();
   if (window._lastFocused) window._lastFocused.focus();
 }
@@ -246,7 +457,6 @@ function examMarkConfession() {
   _haptic();
   var render = require('./render.js');
   render.showToast('God bless you! Recorded for your reference.');
-  // Re-render tracker area
   var status = document.querySelector('.exam-tracker-status');
   if (status) {
     status.textContent = 'Last Confession: Today';
@@ -259,14 +469,12 @@ function examMarkConfession() {
       tracker.insertBefore(div, tracker.firstChild);
     }
   }
-  // Animate the button
   var btn = document.querySelector('.exam-tracker-btn');
   if (btn) { btn.classList.add('confirmed'); setTimeout(function() { btn.classList.remove('confirmed'); }, 1200); }
-  // Update More tab tracker if visible
   _updateMoreTabTracker();
 }
 
-// ── Update More tab confession tracker display ──
+// ── Update More tab confession tracker ──
 function _updateMoreTabTracker() {
   var el = document.getElementById('confessionTracker');
   if (!el) return;
@@ -276,7 +484,6 @@ function _updateMoreTabTracker() {
   var label = daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago';
   el.style.display = '';
   el.innerHTML = '<span class="confession-tracker-icon">&#10003;</span> Last Confession: ' + label;
-  // Gentle nudge after 30 days
   if (daysAgo >= 30) {
     el.innerHTML += ' <span class="confession-tracker-nudge">&mdash; <a href="#" onclick="examFindConfession();return false">Find Confession?</a></span>';
   }
@@ -288,7 +495,6 @@ function examFindConfession() {
   closeExamination();
   var ui2 = require('./ui.js');
   ui2.switchTab('panelFind');
-  // Activate confession chip
   setTimeout(function() {
     document.querySelectorAll('.chip[data-filter]').forEach(function(c) { c.classList.remove('active'); });
     var confChip = document.querySelector('.chip[data-filter="confession"]');
@@ -304,7 +510,7 @@ function examFindConfession() {
   }, 300);
 }
 
-// ── Get confession tracker info (for More tab) ──
+// ── Get confession tracker info ──
 function getConfessionStatus() {
   var lastConf = localStorage.getItem('mf-last-confession');
   if (!lastConf) return null;
@@ -318,6 +524,7 @@ module.exports = {
   examToggleSection: examToggleSection,
   examMarkConfession: examMarkConfession,
   examFindConfession: examFindConfession,
+  examScrollToSummary: examScrollToSummary,
   getConfessionStatus: getConfessionStatus,
   _updateMoreTabTracker: _updateMoreTabTracker,
 };
