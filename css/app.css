@@ -47,7 +47,7 @@
   --color-surface-hover: #F5F3EF;
   --color-text-primary: #1A1E26;
   --color-text-secondary: #5C6370;
-  --color-text-tertiary: #747981;
+  --color-text-tertiary: #656B73;
   --color-text-inverse: #FFFFFF;
   --color-verified: #4A7C59;
   --color-verified-bg: #EDF5F0;
@@ -92,7 +92,7 @@ html[data-theme="dark"] {
   --color-surface-hover: #2A2E38;
   --color-text-primary: #EEF0F4;
   --color-text-secondary: #A8AEBC;
-  --color-text-tertiary: #7A8190;
+  --color-text-tertiary: #949AAA;
   --color-text-inverse: #1A1C22;
   --color-verified: #6AAF84;
   --color-verified-bg: #1A2E22;
@@ -162,6 +162,10 @@ html[data-theme="dark"] .evt-notes { background: rgba(255,255,255,0.04); border-
 html[data-theme="dark"] .evt-action-btn { background: rgba(255,255,255,0.04); border-color: var(--color-border); }
 html[data-theme="dark"] .evt-footer-link-inner { background: rgba(255,255,255,0.04); }
 html[data-theme="dark"] .evt-contact { background: rgba(255,255,255,0.04); }
+html[data-theme="dark"] .evt-detail-row { background: rgba(255,255,255,0.04); }
+html[data-theme="dark"] .evt-yc-banner { background: rgba(184,150,63,0.12); border-left-color: #D4A84B; }
+html[data-theme="dark"] .evt-yc-banner svg { color: #D4A84B; }
+html[data-theme="dark"] .evt-yc-banner span { color: #D4A84B; }
 html[data-theme="dark"] .loc-site-dir { background: var(--color-surface-hover); border-color: var(--color-border); }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -326,7 +330,7 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .detail-header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-3); }
 .detail-name { font-family: var(--font-display); font-size: var(--text-3xl); font-weight: 700; color: var(--color-text-primary); line-height: 1.2; flex: 1; }
 .detail-actions { display: flex; gap: var(--space-2); flex-shrink: 0; }
-.detail-action-btn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); transition: all var(--transition-fast); }
+.detail-action-btn { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); transition: all var(--transition-fast); }
 .detail-action-btn:hover { background: var(--color-surface-hover); }
 .detail-action-btn.fav-active { color: var(--color-fav); }
 .detail-action-btn svg { width: 22px; height: 22px; }
