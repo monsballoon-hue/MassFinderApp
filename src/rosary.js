@@ -1,5 +1,34 @@
-// src/rosary.js — Guided Rosary Module (MOD-02 + UX-05)
+// src/rosary.js — Guided Rosary Module (MOD-02 + UX-05 + LIB-01)
 var utils = require('./utils.js');
+
+// ── Haptic feedback (LIB-01) ──
+// Inline implementation based on ios-haptics (MIT, tijnjh)
+// iOS Safari 17.4+: uses <input switch> trick for native haptics
+// Android: falls back to navigator.vibrate()
+// Desktop/unsupported: silent no-op
+function _haptic() {
+  try {
+    if (navigator.vibrate) { navigator.vibrate(50); return; }
+    var label = document.createElement('label');
+    label.ariaHidden = 'true';
+    label.style.display = 'none';
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.setAttribute('switch', '');
+    label.appendChild(input);
+    document.head.appendChild(label);
+    label.click();
+    document.head.removeChild(label);
+  } catch (e) {}
+}
+_haptic.confirm = function() {
+  if (navigator.vibrate) { navigator.vibrate([50, 70, 50]); return; }
+  _haptic(); setTimeout(_haptic, 120);
+};
+_haptic.error = function() {
+  if (navigator.vibrate) { navigator.vibrate([50, 70, 50, 70, 50]); return; }
+  _haptic(); setTimeout(_haptic, 120); setTimeout(_haptic, 240);
+};
 
 // ── State ──
 var _data = null;
@@ -128,6 +157,7 @@ function rosaryNext() {
     closeRosary();
     return;
   }
+  _haptic();
   _render();
   _scrollTop();
 }
@@ -143,6 +173,7 @@ function rosaryPrev() {
   } else if (_screen === 'opening') {
     _screen = 'select';
   }
+  _haptic();
   _render();
   _scrollTop();
 }
@@ -162,6 +193,8 @@ function rosaryBeadTap() {
   if (_screen !== 'decade' || _bead >= 10) return;
   _bead++;
   _updateBeadUI();
+  // Haptic: confirm on decade completion, light tap otherwise
+  if (_bead >= 10) _haptic.confirm(); else _haptic();
 }
 
 // ── Bead reset (long press) ──
@@ -169,6 +202,7 @@ function rosaryBeadReset() {
   if (_screen !== 'decade' || _bead === 0) return;
   _bead = 0;
   _updateBeadUI();
+  _haptic.error(); // triple-pulse feedback for reset
 }
 
 function _updateBeadUI() {

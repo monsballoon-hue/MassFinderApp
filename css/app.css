@@ -878,6 +878,21 @@ select:focus-visible,
 .litu-soon { display: inline-block; margin-top: 4px; font-size: var(--text-xs); font-weight: var(--weight-semibold); color: var(--color-accent-text); background: var(--color-accent-pale); padding: 1px 8px; border-radius: var(--radius-full); }
 .litu-hdo { display: inline-block; margin-left: var(--space-2); font-size: 10px; font-weight: var(--weight-semibold); color: white; background: var(--color-primary); padding: 1px 6px; border-radius: var(--radius-full); vertical-align: middle; }
 
+/* PRAYER TOOLS GRID */
+.prayer-tools-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-3); }
+@media (min-width: 480px) { .prayer-tools-grid { grid-template-columns: 1fr 1fr; } }
+.prayer-tool-card { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); transition: box-shadow 0.15s; }
+.prayer-tool-card:not(.coming-soon):hover { box-shadow: var(--shadow-card-hover, 0 2px 8px rgba(0,0,0,0.08)); }
+.prayer-tool-card.coming-soon { opacity: 0.6; }
+.prayer-tool-icon { font-size: 24px; flex-shrink: 0; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-bg); border-radius: var(--radius-sm); }
+.prayer-tool-body { flex: 1; min-width: 0; }
+.prayer-tool-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); }
+.prayer-tool-desc { font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.4; margin-top: 2px; }
+.prayer-tool-btn { flex-shrink: 0; padding: var(--space-2) var(--space-4); background: var(--color-primary); color: white; border: none; border-radius: var(--radius-sm); font-size: var(--text-xs); font-weight: var(--weight-semibold); cursor: pointer; min-height: 36px; transition: background 0.15s; }
+.prayer-tool-btn:hover { background: var(--color-primary-hover, #243148); }
+.prayer-tool-btn:active { transform: scale(0.97); }
+.prayer-tool-badge { flex-shrink: 0; padding: var(--space-1) var(--space-3); background: var(--color-bg); color: var(--color-text-tertiary); border-radius: var(--radius-full); font-size: 10px; font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap; }
+
 /* DEVOTIONAL CARDS */
 .devot-card { border: 1px solid var(--color-border-light); border-radius: var(--radius-md); margin-bottom: var(--space-3); overflow: hidden; background: var(--color-surface); }
 .devot-card:last-child { margin-bottom: 0; }
