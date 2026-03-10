@@ -80,6 +80,7 @@ function filterChurches() {
     if (!matchSearch(item.church, state.searchQuery)) return false;
     if (!matchAdv(item.church)) return false;
     if (['confession', 'adoration', 'latin', 'spanish', 'today', 'weekend', 'lent'].includes(state.currentFilter)) return item.next !== null;
+    if (['advent', 'easter'].includes(state.currentFilter)) return true; // seasonal badge, no service filter
     return true;
   });
   sortChurches();

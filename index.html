@@ -53,7 +53,7 @@
     <button class="chip active" data-filter="all">All</button>
     <button class="chip" data-filter="today">Today</button>
     <button class="chip" data-filter="weekend">This Weekend</button>
-    <button class="chip lent-chip hide-mobile" data-filter="lent" id="lentChip" style="display:none">🌿 Lent</button>
+    <button class="chip season-chip hide-mobile" data-filter="lent" id="seasonChip" style="display:none"></button>
     <button class="chip hide-mobile" data-filter="confession">Confession</button>
     <button class="chip hide-mobile" data-filter="adoration">Adoration</button>
     <button class="chip hide-mobile" data-filter="latin">Latin</button>
@@ -64,6 +64,8 @@
   </div>
 
   <div id="activeFilters" class="active-filters" aria-live="polite" aria-label="Active filters"></div>
+
+  <div id="yourChurches" class="yc-row-wrap" style="display:none"></div>
 
   <div class="results-info">
     <span id="resultsCount" class="results-count" aria-live="polite" aria-atomic="true"></span>

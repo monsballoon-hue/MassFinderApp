@@ -229,6 +229,26 @@ function renderMore() {
           : '<span class="prayer-tool-badge">' + c.label + '</span>')
         + '</div>';
     }).join('');
+
+    // Prayer activity summary (Change 19)
+    try {
+      var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+      var thisMonth = getNow().toISOString().slice(0, 7);
+      var monthEntries = prayerLog.filter(function(e) { return e.date.startsWith(thisMonth); });
+      if (monthEntries.length > 0) {
+        var rosaryCount = monthEntries.filter(function(e) { return e.type === 'rosary'; }).length;
+        var examCount = monthEntries.filter(function(e) { return e.type === 'examination'; }).length;
+        var parts = [];
+        if (rosaryCount) parts.push('Rosary \u00d7' + rosaryCount);
+        if (examCount) parts.push('Examination \u00d7' + examCount);
+        if (parts.length) {
+          var summaryEl = document.createElement('div');
+          summaryEl.className = 'prayer-activity';
+          summaryEl.innerHTML = '<span class="prayer-activity-label">This month:</span> ' + parts.join(' \u00b7 ');
+          ptGrid.parentNode.insertBefore(summaryEl, ptGrid.nextSibling);
+        }
+      }
+    } catch (e) {}
   }
 
   // Devotional guides

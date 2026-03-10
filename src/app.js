@@ -40,6 +40,7 @@ state._onFavToggle = function(id) {
     db.classList.toggle('fav-active', data.isFav(id));
     db.querySelector('svg').setAttribute('fill', data.isFav(id) ? 'currentColor' : 'none');
   }
+  _renderYourChurches();
   // Update saved count badges — show weekly event count at favorited churches
   var evtCount = _weeklyEventsAtFavs();
   var tabBadge = document.getElementById('savedTabBadge');
@@ -339,6 +340,42 @@ function _renderDailyReflection() {
   }).catch(function() { el.style.display = 'none'; });
 }
 
+// ── "Your Churches" horizontal row on Find tab (Change 5+21) ──
+function _renderYourChurches() {
+  var el = document.getElementById('yourChurches');
+  if (!el) return;
+  if (!state.favorites.length) { el.style.display = 'none'; return; }
+
+  var favChurches = state.favorites.map(function(id) {
+    return state.allChurches.find(function(c) { return c.id === id; });
+  }).filter(Boolean);
+
+  if (!favChurches.length) { el.style.display = 'none'; return; }
+
+  var todayStr = new Date().toISOString().slice(0, 10);
+  var weekEnd = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+
+  var cards = favChurches.map(function(c) {
+    var next = utils.getNext(c, state.currentFilter === 'all' ? 'all' : state.currentFilter);
+    var weekEvents = (state.eventsData || []).filter(function(e) {
+      return e.church_id === c.id && e.date >= todayStr && e.date <= weekEnd;
+    }).length;
+
+    return '<div class="yc-compact" onclick="openDetail(\'' + utils.esc(c.id) + '\')">'
+      + '<div class="yc-compact-name">' + utils.esc(utils.displayName(c.name)) + '</div>'
+      + (next
+        ? '<div class="yc-compact-time">' + next.timeFormatted + '</div>'
+          + '<div class="yc-compact-label">' + utils.esc(next.dayLabel) + ' \u00b7 ' + utils.esc(config.SVC_LABELS[next.service.type] || '') + '</div>'
+        : '<div class="yc-compact-label" style="color:var(--color-text-tertiary)">See schedule</div>')
+      + (weekEvents ? '<div class="yc-compact-events">' + weekEvents + ' event' + (weekEvents > 1 ? 's' : '') + ' this week</div>' : '')
+      + '</div>';
+  }).join('');
+
+  el.innerHTML = '<div class="yc-row-label">Your Churches</div>'
+    + '<div class="yc-row-scroll">' + cards + '</div>';
+  el.style.display = '';
+}
+
 // ── Init ──
 async function init() {
   // ── Last-visit tracking (Change 11) ──
@@ -388,13 +425,22 @@ async function init() {
     } catch (e) { console.warn('[MassFinder] events not available:', e.message); }
     console.log('[MassFinder] churches:', state.allChurches.length, ', ycEvents:', state.ycEvents.length);
 
-    // Show Lent chip if in season
-    var lentChip = document.getElementById('lentChip');
-    if (lentChip && utils.isLentSeason()) lentChip.style.display = '';
+    // Show seasonal chip (Lent, Easter, Advent) if in season
+    var seasonChip = document.getElementById('seasonChip');
+    if (seasonChip) {
+      var sp = utils.getSeasonProgress();
+      if (sp) {
+        var seasonLabels = { Lent: '\uD83C\uDF3F Lent', 'Easter Season': '\u2720 Easter', Advent: '\uD83D\uDD6F Advent' };
+        seasonChip.textContent = seasonLabels[sp.season] || sp.season;
+        seasonChip.dataset.filter = sp.season === 'Lent' ? 'lent' : sp.season === 'Advent' ? 'advent' : 'easter';
+        seasonChip.style.display = '';
+      }
+    }
     var sm = utils.smartDefault(); state.currentFilter = sm;
     document.querySelectorAll('.chip[data-filter]').forEach(function(ch) { ch.classList.toggle('active', ch.dataset.filter === sm); });
     if (['today', 'weekend'].includes(sm)) state.currentSort = 'next_service';
     ui.updateSortLabel(); location_.initLocation(); data.filterChurches(); render.renderCards();
+    _renderYourChurches();
 
     // Deep link
     if (location.hash) {

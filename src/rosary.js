@@ -155,6 +155,14 @@ function rosaryNext() {
     if (_decade < 4) { _decade++; _bead = 0; }
     else { _screen = 'closing'; }
   } else if (_screen === 'closing') {
+    // Log rosary completion (Change 19)
+    try {
+      var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+      log.push({ type: 'rosary', date: new Date().toISOString().slice(0, 10), set: _set });
+      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+      log = log.filter(function(e) { return e.date >= cutoff; });
+      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
+    } catch (e) {}
     closeRosary();
     return;
   }
