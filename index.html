@@ -111,7 +111,7 @@
       <h2 class="more-section-title">About MassFinder</h2>
       <div class="stat-grid" id="aboutStatGrid"></div>
       <p>MassFinder is a stewardship project for Catholics in Western New England &mdash; find Mass, Confession and Adoration near you, throughout the region.</p>
-      <details style="margin-top:var(--space-3);color:var(--color-accent-text);font-size:var(--text-sm);line-height:1.7">
+      <details style="margin-top:var(--space-3);color:#7D6520;font-size:var(--text-sm);line-height:1.7">
         <summary style="display:flex;align-items:center;gap:var(--space-2);font-weight:var(--weight-semibold);cursor:pointer;list-style:none"><svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> What We're Working On</summary>
         <div style="margin-top:var(--space-3)">
           <p style="color:var(--color-text-secondary);margin-bottom:var(--space-3)">Right now, finding what's happening at Catholic churches in our region means checking dozens of individual bulletins, websites and Facebook pages. Each parish is behind its own wall. We're trying to change that.</p>
@@ -158,15 +158,14 @@
     <div class="more-section">
       <h2 class="more-section-title">🕊 Upcoming Observances</h2>
       <div id="liturgicalContent"></div>
-      <div class="ics-card">
-        <div class="ics-card-title">Add to Your Calendar</div>
-        <div class="ics-card-body">Download liturgical dates for this year — ready to import into Apple Calendar, Google Calendar, or Outlook.</div>
+      <details class="ics-collapse">
+        <summary class="ics-collapse-toggle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Add to Calendar</summary>
         <div class="ics-btn-group">
-          <button class="ics-card-btn" onclick="exportLitCalICS('hdo')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Holy Days</button>
-          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('feasts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Feasts &amp; Solemnities</button>
-          <button id="icsLentBtn" class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('lent')" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Lent &amp; Holy Week</button>
+          <button class="ics-card-btn" onclick="exportLitCalICS('hdo')">Holy Days</button>
+          <button class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('feasts')">Feasts &amp; Solemnities</button>
+          <button id="icsLentBtn" class="ics-card-btn ics-card-btn--outline" onclick="exportLitCalICS('lent')" style="display:none">Lent &amp; Holy Week</button>
         </div>
-      </div>
+      </details>
     </div>
 
     <!-- DEVOTIONAL GUIDES -->

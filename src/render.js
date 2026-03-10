@@ -82,11 +82,15 @@ function renderCards() {
     } else {
       nh = '<div class="card-next-service"><span class="card-next-label" style="color:var(--color-text-tertiary)">Check bulletin for times</span></div>';
     }
+    var evtHtml = '';
+    if (evtCounts[c.id]) {
+      evtHtml = '<div class="card-evt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + evtCounts[c.id] + ' event' + (evtCounts[c.id] > 1 ? 's' : '') + ' this week</div>';
+    }
     return '<article class="parish-card" role="listitem" style="animation-delay:' + d + 'ms" onclick="openDetail(\'' + c.id + '\')">'
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')
       + '<button class="card-fav' + (fav ? ' is-fav' : '') + '" onclick="toggleFav(\'' + c.id + "',event)\" aria-label=\"Favorite\"><svg viewBox=\"0 0 24 24\" fill=\"" + (fav ? 'currentColor' : 'none') + "\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></button>"
-      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + (evtCounts[c.id] ? '<span class="saved-evt-count">' + evtCounts[c.id] + ' event' + (evtCounts[c.id] !== 1 ? 's' : '') + '</span>' : '') + '</div>' + nh
+      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + evtHtml
       + '</article>';
   });
 

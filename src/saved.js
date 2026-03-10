@@ -55,7 +55,7 @@ function renderUnifiedEvt(e, isYC) {
 
   var rowClass = isYC ? 'saved-evt-unified evt-yc-row' : 'saved-evt-unified';
   var ycBadge = isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
-  var onclick = isYC ? 'openEventDetail(\'' + e.id + '\')' : 'openDetail(\'' + e.church_id + '\')';
+  var onclick = 'openEventDetail(\'' + e.id + '\')';
 
   return '<div class="' + rowClass + '" onclick="' + onclick + '">'
     + '<div class="saved-evt-unified-body">'
@@ -77,16 +77,24 @@ function renderSaved() {
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
   var count = favChurches.length;
 
-  // Update count badges (panel header + tab bar)
+  // Update count badges — weekly event count at favorited churches
+  var now = getNow();
+  var todayStr = now.toISOString().slice(0, 10);
+  var endStr = new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10);
+  var weeklyEvtCount = (state.eventsData || []).filter(function(e) {
+    if (!favIds.has(e.church_id)) return false;
+    var d = e.date || '';
+    return d >= todayStr && d <= endStr;
+  }).length;
   var countBadge = document.getElementById('savedCountBadge');
   if (countBadge) {
-    countBadge.textContent = count || '';
-    countBadge.classList.toggle('visible', count > 0);
+    countBadge.textContent = weeklyEvtCount || '';
+    countBadge.classList.toggle('visible', weeklyEvtCount > 0);
   }
   var tabBadge = document.getElementById('savedTabBadge');
   if (tabBadge) {
-    tabBadge.textContent = count || '';
-    tabBadge.classList.toggle('visible', count > 0);
+    tabBadge.textContent = weeklyEvtCount || '';
+    tabBadge.classList.toggle('visible', weeklyEvtCount > 0);
   }
 
   if (!favChurches.length) {

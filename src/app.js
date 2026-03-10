@@ -15,6 +15,21 @@ var refs = require('./refs.js');
 
 var state = data.state;
 
+// Count events this week at favorited churches
+function _weeklyEventsAtFavs() {
+  if (!state.eventsData || !state.favorites.length) return 0;
+  var now = new Date();
+  var today = now.toISOString().slice(0, 10);
+  var end = new Date(now.getTime() + 7 * 86400000).toISOString().slice(0, 10);
+  var favSet = {};
+  state.favorites.forEach(function(id) { favSet[id] = true; });
+  return state.eventsData.filter(function(e) {
+    if (!favSet[e.church_id]) return false;
+    var d = e.date || '';
+    return d >= today && d <= end;
+  }).length;
+}
+
 // Wire cross-module callback for favorite toggle
 state._onFavToggle = function(id) {
   render.renderCards();
@@ -23,12 +38,12 @@ state._onFavToggle = function(id) {
     db.classList.toggle('fav-active', data.isFav(id));
     db.querySelector('svg').setAttribute('fill', data.isFav(id) ? 'currentColor' : 'none');
   }
-  // Update saved count badges without full re-render
-  var count = state.favorites.length;
+  // Update saved count badges — show weekly event count at favorited churches
+  var evtCount = _weeklyEventsAtFavs();
   var tabBadge = document.getElementById('savedTabBadge');
-  if (tabBadge) { tabBadge.textContent = count || ''; tabBadge.classList.toggle('visible', count > 0); }
+  if (tabBadge) { tabBadge.textContent = evtCount || ''; tabBadge.classList.toggle('visible', evtCount > 0); }
   var countBadge = document.getElementById('savedCountBadge');
-  if (countBadge) { countBadge.textContent = count || ''; countBadge.classList.toggle('visible', count > 0); }
+  if (countBadge) { countBadge.textContent = evtCount || ''; countBadge.classList.toggle('visible', evtCount > 0); }
 };
 
 // ── Expose functions for HTML onclick attributes ──
@@ -268,6 +283,11 @@ async function init() {
       var id = location.hash.slice(1);
       if (state.allChurches.find(function(c) { return c.id === id; })) setTimeout(function() { render.openDetail(id); }, 400);
     }
+
+    // Fetch liturgical season early so accent bar + wash render on first tab
+    readings.fetchLiturgicalDay().then(function() {
+      if (window._litcalCache) readings.setLiturgicalSeason(window._litcalCache.events);
+    }).catch(function() {});
 
     // Register service worker
     if ('serviceWorker' in navigator) {

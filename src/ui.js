@@ -209,7 +209,10 @@ function switchTab(id, btn) {
       t.classList.remove('active');
       t.setAttribute('aria-selected', 'false');
     });
-    document.getElementById(id).classList.add('active');
+    var panel = document.getElementById(id);
+    panel.classList.add('active');
+    panel.scrollTop = 0;
+    window.scrollTo(0, 0);
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
 

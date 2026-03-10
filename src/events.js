@@ -166,7 +166,7 @@ function renderCommunityEvents(c) {
       + '<rect x="3" y="4" width="18" height="18" rx="2"/>'
       + '<line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>'
       + '<line x1="3" y1="10" x2="21" y2="10"/></svg>';
-    return '<div class="ce-item">'
+    return '<div class="ce-item" onclick="openEventDetail(\'' + utils.esc(e.id) + '\')" style="cursor:pointer">'
       + '<div class="ce-item-accent ' + accent + '"></div>'
       + '<div class="ce-item-body">'
       + '<div class="ce-item-title">' + utils.esc(e.title) + '</div>'
@@ -203,6 +203,23 @@ function renderCommunityEvents(c) {
   return html;
 }
 
+// ── Category display names + icons ──
+var CAT_LABELS = {
+  yc: 'Young & Catholic', community: 'Community', social: 'Social',
+  fellowship: 'Fellowship', educational: 'Educational', liturgical: 'Liturgical',
+  devotional: 'Devotional', volunteering: 'Volunteer & Service'
+};
+var CAT_ICONS = {
+  yc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  social: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+  liturgical: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v8"/><path d="M8 6h8"/><path d="M6 18h12"/><path d="M12 10v12"/></svg>',
+  devotional: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  educational: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  fellowship: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  volunteering: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>',
+  community: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
+};
+
 // ── Event detail panel ──
 
 function openEventDetail(eventId) {
@@ -219,66 +236,52 @@ function openEventDetail(eventId) {
   var evtAddress = evt.venue_address || c.address || '';
   var evtLat = evt.venue_lat || c.lat;
   var evtLng = evt.venue_lng || c.lng;
-
   var mapUrl = evtLat && evtLng
     ? render.getMapsUrlCoords(evtLat, evtLng, evtAddress || '')
     : (evtAddress ? render.getMapsUrl(evtAddress) : '');
   var churchDisplayName = utils.displayName(c.name || '');
   var venueName = evt.venue_name || churchDisplayName;
+  var isYC = evt.category === 'yc';
 
-  // Format date -- guard for recurring events without a date
+  // ── Date / time formatting ──
   var timeStr = evt.time ? utils.fmt12(evt.time) : '';
   var endStr = evt.end_time ? ' \u2013 ' + utils.fmt12(evt.end_time) : '';
-  var dateStr = '';
-  if (evt.dates && evt.dates.length) {
-    // Multi-date series
-    var fmtOpts = { month: 'short', day: 'numeric' };
-    dateStr = evt.dates.map(function(ds) {
-      return new Date(ds + 'T12:00:00').toLocaleDateString('en-US', fmtOpts);
-    }).join(', ');
-  } else if (evt.date) {
-    var d = new Date(evt.date + 'T12:00:00');
-    dateStr = d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
-  } else if (evt.day) {
-    dateStr = (config.DAY_NAMES[evt.day] || evt.day) + 's' + (evt.time ? ' \u00b7 ' + timeStr : '');
-  } else {
-    dateStr = 'Ongoing';
-  }
-
-  // Badges
-  var badges = '';
-  // Category badge
-  if (evt.category === 'yc') badges += '<span class="evt-badge yc">Young & Catholic</span>';
-  else if (evt.category === 'community') badges += '<span class="evt-badge community">Community</span>';
-  // Date badge
   var today = utils.getNow().toISOString().slice(0, 10);
+  var tomorrow = new Date(utils.getNow());
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  var tomorrowStr = tomorrow.toISOString().slice(0, 10);
+
+  // Primary date line (prominent)
+  var dateLine = '';
+  var isRecurring = false;
   if (evt.dates && evt.dates.length) {
     var remaining = utils.getRemainingDates(evt);
-    badges += '<span class="evt-badge date-badge">' + utils.esc(dateStr) + '</span>';
-    if (remaining.length) badges += '<span class="evt-badge countdown-badge">' + remaining.length + ' date' + (remaining.length !== 1 ? 's' : '') + ' remaining</span>';
+    var nextDate = remaining.length ? remaining[0] : evt.dates[evt.dates.length - 1];
+    var nd = new Date(nextDate + 'T12:00:00');
+    dateLine = nd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    if (nextDate === today) dateLine = 'Today \u2014 ' + dateLine;
+    else if (nextDate === tomorrowStr) dateLine = 'Tomorrow \u2014 ' + dateLine;
   } else if (evt.date) {
-    var tomorrow = new Date(utils.getNow());
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    var tomorrowStr = tomorrow.toISOString().slice(0, 10);
-    var dateBadgeText = dateStr;
-    if (evt.date === today) dateBadgeText = 'Today \u00b7 ' + dateStr.split(', ').slice(1).join(', ');
-    else if (evt.date === tomorrowStr) dateBadgeText = 'Tomorrow \u00b7 ' + dateStr.split(', ').slice(1).join(', ');
-    badges += '<span class="evt-badge date-badge">' + dateBadgeText + '</span>';
+    var dd = new Date(evt.date + 'T12:00:00');
+    dateLine = dd.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+    if (evt.date === today) dateLine = 'Today \u2014 ' + dateLine;
+    else if (evt.date === tomorrowStr) dateLine = 'Tomorrow \u2014 ' + dateLine;
+  } else if (evt.day) {
+    dateLine = (config.DAY_NAMES[evt.day] || evt.day.charAt(0).toUpperCase() + evt.day.slice(1)) + 's';
+    isRecurring = true;
   } else {
-    badges += '<span class="evt-badge date-badge">' + utils.esc(dateStr) + '</span>';
+    dateLine = 'Ongoing';
+    isRecurring = true;
   }
-  // Time badge
-  if (timeStr) badges += '<span class="evt-badge time-badge">' + timeStr + endStr + '</span>';
-  // Type badge
-  var typeLabel = EVT_TYPES[evt.type] || evt.type;
-  if (typeLabel) badges += '<span class="evt-badge type-badge">' + utils.esc(typeLabel) + '</span>';
-  // Social badge
-  if (evt.social) badges += '<span class="evt-badge social-badge">\u2726 Social gathering</span>';
-  // Countdown badge (only for dated events)
+
+  // Time line
+  var timeLine = timeStr ? timeStr + endStr : '';
+
+  // ── Countdown ──
+  var countdownHtml = '';
   if (evt.date) {
     var evtDateTime = new Date(evt.date + 'T' + (evt.time || '12:00'));
-    var nowMs = utils.getNow().getTime();
-    var diffMs = evtDateTime.getTime() - nowMs;
+    var diffMs = evtDateTime.getTime() - utils.getNow().getTime();
     if (diffMs > 0) {
       var diffMins = Math.floor(diffMs / 60000);
       var diffHrs = Math.floor(diffMins / 60);
@@ -287,57 +290,152 @@ function openEventDetail(eventId) {
       var imminent = false;
       if (diffMins < 60) { countdownText = 'In ' + diffMins + ' minute' + (diffMins !== 1 ? 's' : ''); imminent = true; }
       else if (diffHrs < 24) { countdownText = 'In ' + diffHrs + ' hour' + (diffHrs !== 1 ? 's' : ''); imminent = diffHrs <= 3; }
-      else if (diffDays === 1) { countdownText = 'In 1 day'; }
-      else if (diffDays < 30) { countdownText = 'In ' + diffDays + ' days'; }
+      else if (diffDays === 1) countdownText = 'Tomorrow';
+      else if (diffDays < 30) countdownText = 'In ' + diffDays + ' days';
       else { var diffWeeks = Math.floor(diffDays / 7); countdownText = 'In ' + diffWeeks + ' week' + (diffWeeks !== 1 ? 's' : ''); }
-      badges += '<span class="evt-badge countdown-badge' + (imminent ? ' imminent' : '') + '">' + countdownText + '</span>';
+      countdownHtml = '<div class="evt-countdown' + (imminent ? ' imminent' : '') + '">' + countdownText + '</div>';
     }
+  } else if (evt.dates && evt.dates.length) {
+    var rem = utils.getRemainingDates(evt);
+    if (rem.length) countdownHtml = '<div class="evt-countdown">' + rem.length + ' date' + (rem.length !== 1 ? 's' : '') + ' remaining</div>';
   }
 
-  // Parish link row
-  var parishLink = c.id
-    ? '<div class="evt-parish-link" onclick="navEventToParish(\'' + c.id + '\')">'
-      + '<div class="evt-parish-link-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/></svg></div>'
-      + '<div class="evt-parish-link-text"><div class="evt-parish-link-label">Hosted at</div>'
-      + '<div class="evt-parish-link-name">' + utils.esc(churchDisplayName) + '</div></div>'
-      + '<svg class="evt-parish-link-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
-    : '';
+  // ── Category subtitle ──
+  var catLabel = CAT_LABELS[evt.category] || '';
+  var typeLabel = EVT_TYPES[evt.type] || evt.type || '';
+  var subtitleParts = [];
+  if (catLabel) subtitleParts.push(catLabel);
+  if (typeLabel && typeLabel !== catLabel) subtitleParts.push(typeLabel);
+  if (isRecurring && evt.frequency) {
+    var freqLabel = evt.frequency === 'weekly' ? 'Weekly' : evt.frequency === 'monthly' ? 'Monthly' : '';
+    if (freqLabel) subtitleParts.push(freqLabel);
+  }
+  if (evt.social) subtitleParts.push('Social');
 
-  // Description & notes
+  // ── Category icon ──
+  var catIcon = CAT_ICONS[evt.category] || CAT_ICONS.community;
+
+  // ── Seasonal tint class ──
+  var seasonClass = '';
+  if (evt.seasonal && evt.seasonal.is_seasonal) {
+    var s = evt.seasonal.season || '';
+    if (s === 'lent' || s === 'holy_week') seasonClass = ' evt-season-lent';
+    else if (s === 'advent') seasonClass = ' evt-season-advent';
+    else if (s === 'easter') seasonClass = ' evt-season-easter';
+    else if (s === 'christmas') seasonClass = ' evt-season-christmas';
+  }
+
+  // ── When + Where info card ──
+  var calSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
+  var clockSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>';
+  var pinSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+
+  var infoCard = '<div class="evt-info-card">';
+  infoCard += '<div class="evt-info-row"><div class="evt-info-icon">' + calSvg + '</div><div class="evt-info-text"><div class="evt-info-primary">' + utils.esc(dateLine) + '</div></div></div>';
+  if (timeLine) infoCard += '<div class="evt-info-row"><div class="evt-info-icon">' + clockSvg + '</div><div class="evt-info-text"><div class="evt-info-primary">' + timeLine + '</div></div></div>';
+  // Location row — show venue if different from church
+  var locPrimary = utils.esc(venueName);
+  var locSecondary = '';
+  if (evt.venue_name && churchDisplayName && evt.venue_name !== c.name) {
+    locSecondary = utils.esc(churchDisplayName);
+  }
+  if (c.city) locSecondary += (locSecondary ? ' \u00b7 ' : '') + utils.esc(c.city + (c.state ? ', ' + c.state : ''));
+  infoCard += '<div class="evt-info-row' + (mapUrl ? ' evt-info-clickable' : '') + '"' + (mapUrl ? ' onclick="window.open(\'' + utils.esc(mapUrl) + '\',\'_blank\')"' : '') + '>'
+    + '<div class="evt-info-icon">' + pinSvg + '</div>'
+    + '<div class="evt-info-text"><div class="evt-info-primary">' + locPrimary + '</div>'
+    + (locSecondary ? '<div class="evt-info-secondary">' + locSecondary + '</div>' : '')
+    + '</div></div>';
+  infoCard += '</div>';
+
+  // ── Multi-date series list ──
+  var seriesHtml = '';
+  if (evt.dates && evt.dates.length > 1) {
+    var remaining2 = utils.getRemainingDates(evt);
+    var pastDates = evt.dates.filter(function(ds) { return ds < today; });
+    var seriesItems = evt.dates.map(function(ds) {
+      var sd = new Date(ds + 'T12:00:00');
+      var label = sd.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      var isPast = ds < today;
+      var isToday = ds === today;
+      var cls = isPast ? 'evt-series-date past' : isToday ? 'evt-series-date today' : 'evt-series-date';
+      return '<div class="' + cls + '">' + (isPast ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>' : isToday ? '<span class="evt-series-dot today"></span>' : '<span class="evt-series-dot"></span>') + '<span>' + label + '</span></div>';
+    }).join('');
+    seriesHtml = '<details class="evt-series"><summary class="evt-series-toggle">'
+      + remaining2.length + ' of ' + evt.dates.length + ' dates remaining'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>'
+      + '</summary><div class="evt-series-list">' + seriesItems + '</div></details>';
+  }
+
+  // ── Notes callout ──
+  var notesHtml = '';
+  if (evt.notes) {
+    notesHtml = '<div class="evt-notes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><span>' + utils.esc(evt.notes) + '</span></div>';
+  }
+
+  // ── Description ──
   var descHtml = '';
-  if (evt.description || evt.notes) {
-    descHtml = '<div class="evt-description">';
-    if (evt.description) descHtml += '<p>' + utils.esc(evt.description) + '</p>';
-    if (evt.notes) descHtml += '<div class="evt-notes-callout">' + utils.esc(evt.notes) + '</div>';
-    descHtml += '</div>';
+  if (evt.description) {
+    descHtml = '<div class="evt-desc"><p>' + utils.esc(evt.description) + '</p></div>';
   }
 
-  // Actions: Directions, Add to Calendar, Registration, Flyer
+  // ── Image hero ──
+  var imageHtml = '';
+  if (evt.image_url) {
+    imageHtml = '<div class="evt-hero"><img src="' + utils.esc(evt.image_url) + '" alt="" loading="lazy"></div>';
+  }
+
+  // ── Contact info ──
+  var contactHtml = '';
+  if (evt.contact_name || evt.contact_email) {
+    contactHtml = '<div class="evt-contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+    if (evt.contact_name) contactHtml += '<span>' + utils.esc(evt.contact_name) + '</span>';
+    if (evt.contact_email) contactHtml += '<a href="mailto:' + utils.esc(evt.contact_email) + '">' + utils.esc(evt.contact_email) + '</a>';
+    contactHtml += '</div>';
+  }
+
+  // ── Actions (2-col grid) ──
   var actions = '<div class="evt-actions">';
   if (mapUrl) actions += '<a class="evt-action-btn" href="' + mapUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>Directions</span></a>';
-  // iCal download
-  actions += '<button class="evt-action-btn" onclick="downloadEventIcal(\'' + utils.esc(evt.id) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Add to Calendar</span></button>';
-  if (evt.registration_url) actions += '<a class="evt-action-btn" href="' + utils.esc(evt.registration_url) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg><span>Register</span></a>';
+  actions += '<button class="evt-action-btn" onclick="downloadEventIcal(\'' + utils.esc(evt.id) + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Add to Calendar</span></button>';
+  if (evt.registration_url) actions += '<a class="evt-action-btn evt-action-primary" href="' + utils.esc(evt.registration_url) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg><span>Register</span></a>';
   if (evt.flyer_url) actions += '<a class="evt-action-btn" href="' + utils.esc(evt.flyer_url) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>View Flyer</span></a>';
-  actions += '<button class="evt-action-btn" onclick="expressInterest(\'' + utils.esc(evt.id) + '\',event)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>I\'m Interested</span></button>';
   actions += '</div>';
 
-  // Image (optional hero)
-  var imageHtml = '';
-  if (evt.image_url) imageHtml = '<div style="margin:0 calc(-1 * var(--space-5));"><img src="' + utils.esc(evt.image_url) + '" alt="" style="width:100%;max-height:200px;object-fit:cover;"></div>';
-
-  // Footer: "See all at this parish"
+  // ── Footer: parish link ──
   var footerLink = c.id
     ? '<div class="evt-footer-link" onclick="navEventToParish(\'' + c.id + '\')">'
-      + '<span>See all services at ' + utils.esc(churchDisplayName) + '</span>'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
+      + '<div class="evt-footer-link-inner">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>'
+      + '<span>View ' + utils.esc(churchDisplayName) + '</span>'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</div></div>'
     : '';
 
-  document.getElementById('eventDetailContent').innerHTML =
-    '<div class="evt-header"><div class="evt-header-top"><h2 class="evt-title">' + utils.esc(evt.title) + '</h2>'
+  // ── Assemble ──
+  var headerHtml = '<div class="evt-header' + seasonClass + '">'
+    + '<div class="evt-handle"><div class="evt-handle-bar"></div></div>'
+    + '<div class="evt-header-top">'
+    + '<div class="evt-cat-icon">' + catIcon + '</div>'
+    + '<div class="evt-header-text">'
+    + '<h2 class="evt-title">' + utils.esc(evt.title) + '</h2>'
+    + '<div class="evt-subtitle">' + utils.esc(subtitleParts.join(' \u00b7 ')) + '</div>'
+    + '</div>'
     + '<button class="evt-close" onclick="closeEventDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-    + '</div><div class="evt-badges">' + badges + '</div></div>'
-    + '<div class="evt-body">' + imageHtml + parishLink + descHtml + actions + footerLink + '</div>';
+    + '</div>'
+    + countdownHtml
+    + '</div>';
+
+  document.getElementById('eventDetailContent').innerHTML = headerHtml
+    + '<div class="evt-body">'
+    + imageHtml
+    + infoCard
+    + seriesHtml
+    + notesHtml
+    + descHtml
+    + contactHtml
+    + actions
+    + footerLink
+    + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('eventDetailPanel').classList.add('open');

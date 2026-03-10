@@ -133,12 +133,15 @@ function _initSwipeDismiss() {
   if (!sheet || sheet._swipeInit) return;
   sheet._swipeInit = true;
   var startY = 0;
+  var scrollEl = sheet.querySelector('.ccc-sheet-scroll');
   sheet.addEventListener('touchstart', function(e) {
     startY = e.touches[0].clientY;
   }, { passive: true });
   sheet.addEventListener('touchend', function(e) {
     var dy = e.changedTouches[0].clientY - startY;
-    if (dy > 72) closeCCC();
+    // Only dismiss if scrolled to top — prevents closing when scrolling back up through content
+    var atTop = !scrollEl || scrollEl.scrollTop <= 5;
+    if (dy > 72 && atTop) closeCCC();
   }, { passive: true });
 }
 
