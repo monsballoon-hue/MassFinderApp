@@ -1,14 +1,16 @@
-// src/saved.js — Saved tab rendering
+// src/saved.js — Saved tab rendering (dashboard redesign)
 var config = require('./config.js');
 var utils = require('./utils.js');
 var data = require('./data.js');
 
+var DAY_ORDER = config.DAY_ORDER;
 var DAY_NAMES = config.DAY_NAMES;
 var SVC_LABELS = config.SVC_LABELS;
 var displayName = utils.displayName;
 var getNow = utils.getNow;
 var esc = utils.esc;
 var fmt12 = utils.fmt12;
+var toMin = utils.toMin;
 var isEventActive = utils.isEventActive;
 var getNextEventDate = utils.getNextEventDate;
 var getRemainingDates = utils.getRemainingDates;
@@ -18,6 +20,43 @@ var getDist = utils.getDist;
 var getNext = utils.getNext;
 var state = data.state;
 var isFav = data.isFav;
+
+// ── getTodayServices — all services at saved churches happening today ──
+function getTodayServices(favChurches) {
+  var now = getNow();
+  var curDI = now.getDay();
+  var curDay = DAY_ORDER[curDI];
+  var curMin = now.getHours() * 60 + now.getMinutes();
+  var results = [];
+
+  for (var i = 0; i < favChurches.length; i++) {
+    var c = favChurches[i];
+    if (!c.services) continue;
+    for (var j = 0; j < c.services.length; j++) {
+      var s = c.services[j];
+      if (!s.time || !s.day) continue;
+      // Skip seasonal services
+      if (s.seasonal && s.seasonal.is_seasonal) continue;
+      // Match today's day
+      var matchDay = s.day === curDay || s.day === 'daily' || (s.day === 'weekday' && curDI >= 1 && curDI <= 5);
+      if (!matchDay) continue;
+      var sm = toMin(s.time);
+      if (sm === null) continue;
+      var isPast = sm < curMin - 30; // Past if ended 30+ min ago
+      results.push({
+        church: c,
+        service: s,
+        minutes: sm,
+        isPast: isPast,
+        isLive: !isPast && sm <= curMin,
+        isSoon: !isPast && sm > curMin && sm <= curMin + 60
+      });
+    }
+  }
+
+  results.sort(function(a, b) { return a.minutes - b.minutes; });
+  return results;
+}
 
 // ── renderUnifiedEvt — single event row for the unified list ──
 function renderUnifiedEvt(e, isYC) {
@@ -63,12 +102,11 @@ function renderUnifiedEvt(e, isYC) {
   if (isYC) rowClass += ' evt-yc-row';
   if (isToday) rowClass += ' saved-evt-today';
   var ycBadge = isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
-  var todayBadge = isToday ? ' <span class="saved-evt-today-badge">Today</span>' : '';
   var onclick = 'openEventDetail(\'' + e.id + '\')';
 
   return '<div class="' + rowClass + '" onclick="' + onclick + '">'
     + '<div class="saved-evt-unified-body">'
-    + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + todayBadge + '</div>'
+    + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + '</div>'
     + '<div class="saved-evt-unified-when">' + whenParts.join(' \u00b7 ') + '</div>'
     + '</div>'
     + '<svg class="saved-evt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
@@ -84,7 +122,6 @@ function renderSaved() {
   var el = document.getElementById('savedList');
   var favChurches = state.allChurches.filter(function(c) { return isFav(c.id); });
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
-  var count = favChurches.length;
 
   // Update badges — dot if any events today at favorited churches
   var now = getNow();
@@ -95,6 +132,11 @@ function renderSaved() {
     if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
     return false;
   });
+  // Also show dot if any services today
+  if (!hasToday && favChurches.length) {
+    var todaySvcs = getTodayServices(favChurches);
+    hasToday = todaySvcs.some(function(s) { return !s.isPast; });
+  }
   var countBadge = document.getElementById('savedCountBadge');
   if (countBadge) {
     countBadge.textContent = '';
@@ -120,23 +162,51 @@ function renderSaved() {
 
   var html = '';
 
-  // ── UPCOMING EVENTS — unified chronological list ──
-  var allEvents = [];
+  // ── 1. TODAY'S SCHEDULE — Mass times + services across all saved churches ──
+  var todaySvcs = getTodayServices(favChurches);
+  if (todaySvcs.length) {
+    html += '<div class="saved-section-label">TODAY\'S SCHEDULE</div>';
+    html += '<div class="saved-schedule">';
+    for (var si = 0; si < todaySvcs.length; si++) {
+      var item = todaySvcs[si];
+      var svcLabel = SVC_LABELS[item.service.type] || item.service.type;
+      var timeStr = fmt12(item.service.time);
+      var cName = displayName(item.church.name);
+      var statusCls = '';
+      var statusBadge = '';
+      if (item.isPast) statusCls = ' sched-past';
+      else if (item.isLive) {
+        statusCls = ' sched-live';
+        statusBadge = '<span class="sched-live-badge"><span class="pulse-dot"></span>Now</span>';
+      } else if (item.isSoon) {
+        statusCls = ' sched-soon';
+        statusBadge = '<span class="sched-soon-badge">Soon</span>';
+      }
+      html += '<div class="sched-row' + statusCls + '" onclick="openDetail(\'' + item.church.id + '\')">'
+        + '<div class="sched-time">' + timeStr + '</div>'
+        + '<div class="sched-info">'
+        + '<span class="sched-type">' + esc(svcLabel) + '</span>' + statusBadge
+        + '<span class="sched-church">' + esc(cName) + '</span>'
+        + '</div>'
+        + '</div>';
+    }
+    html += '</div>';
+  }
 
+  // ── 2. TODAY'S EVENTS — events happening today with accent bar ──
+  var allEvents = [];
   // Community events at saved churches
   state.eventsData.filter(function(e) {
     return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
   }).forEach(function(e) {
     allEvents.push({ evt: e, isYC: false });
   });
-
   // YC events at saved churches
   var upcomingYC = getUpcomingYC().filter(function(e) { return favIds.has(e.church_id); });
   upcomingYC.forEach(function(e) {
     allEvents.push({ evt: e, isYC: true });
   });
-
-  // Sort chronologically: by next date, then time
+  // Sort chronologically
   allEvents.sort(function(a, b) {
     var dateA = getNextEventDate(a.evt) || a.evt.date || '9999';
     var dateB = getNextEventDate(b.evt) || b.evt.date || '9999';
@@ -145,27 +215,84 @@ function renderSaved() {
     return (a.evt.time || '').localeCompare(b.evt.time || '');
   });
 
-  if (allEvents.length) {
-    html += '<div class="saved-section-label">UPCOMING EVENTS</div>';
+  // Split into today vs upcoming
+  var todayEvents = [];
+  var upcomingEvents = [];
+  for (var ei = 0; ei < allEvents.length; ei++) {
+    var evt = allEvents[ei].evt;
+    var evtIsToday = false;
+    if (evt.date) evtIsToday = evt.date === todayStr;
+    else if (evt.dates && evt.dates.length) evtIsToday = evt.dates.indexOf(todayStr) !== -1;
+    if (evtIsToday) todayEvents.push(allEvents[ei]);
+    else upcomingEvents.push(allEvents[ei]);
+  }
 
-    // Show first 3
-    var showCount = Math.min(3, allEvents.length);
-    for (var i = 0; i < showCount; i++) {
-      html += renderUnifiedEvt(allEvents[i].evt, allEvents[i].isYC);
+  if (todayEvents.length) {
+    html += '<div class="saved-section-label">HAPPENING TODAY</div>';
+    for (var ti = 0; ti < todayEvents.length; ti++) {
+      html += renderUnifiedEvt(todayEvents[ti].evt, todayEvents[ti].isYC);
     }
+  }
 
-    // "N more" expandable
-    if (allEvents.length > 3) {
-      var moreCount = allEvents.length - 3;
+  // ── 3. COMING UP — future events ──
+  if (upcomingEvents.length) {
+    html += '<div class="saved-section-label">COMING UP</div>';
+    var showCount = Math.min(3, upcomingEvents.length);
+    for (var ui = 0; ui < showCount; ui++) {
+      html += renderUnifiedEvt(upcomingEvents[ui].evt, upcomingEvents[ui].isYC);
+    }
+    if (upcomingEvents.length > 3) {
+      var moreCount = upcomingEvents.length - 3;
       html += '<details class="saved-more-details"><summary class="saved-more-toggle">' + moreCount + ' more</summary>';
-      for (var j = 3; j < allEvents.length; j++) {
-        html += renderUnifiedEvt(allEvents[j].evt, allEvents[j].isYC);
+      for (var mi = 3; mi < upcomingEvents.length; mi++) {
+        html += renderUnifiedEvt(upcomingEvents[mi].evt, upcomingEvents[mi].isYC);
       }
       html += '</details>';
     }
   }
 
-  // ── Church cards ──
+  // ── 4. YOUR ACTIVITY — prayer stats + confession reminder ──
+  var activityParts = [];
+  try {
+    var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
+    var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
+    var rosaryCount = recentEntries.filter(function(e) { return e.type === 'rosary'; }).length;
+    var examCount = recentEntries.filter(function(e) { return e.type === 'examination'; }).length;
+    if (rosaryCount) activityParts.push('<div class="activity-stat"><span class="activity-stat-val">' + rosaryCount + '</span><span class="activity-stat-label">Rosary</span></div>');
+    if (examCount) activityParts.push('<div class="activity-stat"><span class="activity-stat-val">' + examCount + '</span><span class="activity-stat-label">Examen</span></div>');
+  } catch (e) {}
+
+  // Confession reminder
+  var confessionNote = '';
+  try {
+    var lastConf = localStorage.getItem('mf-last-confession');
+    if (lastConf) {
+      var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
+      if (daysSince >= 30) {
+        confessionNote = '<div class="activity-confession-nudge" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">'
+          + '<span class="activity-confession-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M12 2v20M5 7h14"/></svg></span>'
+          + '<span>It\'s been ' + daysSince + ' days since your last confession</span>'
+          + '<span class="activity-confession-link">Find times \u203A</span>'
+          + '</div>';
+      }
+    }
+  } catch (e) {}
+
+  if (activityParts.length || confessionNote) {
+    html += '<div class="saved-section-label">YOUR ACTIVITY</div>';
+    html += '<div class="saved-activity">';
+    if (activityParts.length) {
+      html += '<div class="activity-stats">'
+        + '<div class="activity-stats-header">Last 30 days</div>'
+        + '<div class="activity-stats-row">' + activityParts.join('') + '</div>'
+        + '</div>';
+    }
+    if (confessionNote) html += confessionNote;
+    html += '</div>';
+  }
+
+  // ── 5. YOUR CHURCHES — compact cards ──
   // Count active events per church for badges
   var evtCounts = {};
   state.eventsData.filter(function(e) {
@@ -186,6 +313,7 @@ function renderSaved() {
     return aMin - bMin;
   });
 
+  html += '<div class="saved-section-label">YOUR CHURCHES</div>';
   html += sortedFav.map(function(item) {
     var c = item.c, next = item.next, dist = item.dist;
     var ver = isVer(c);
@@ -207,6 +335,14 @@ function renderSaved() {
       + '</div></div><div class="card-town">' + esc(c.city) + ', ' + esc(c.state) + evtBadge + '</div>' + nh
       + '</article>';
   }).join('');
+
+  // ── Quick action ──
+  html += '<div class="saved-quick-action">'
+    + '<button class="saved-find-mass-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+    + ' Find Mass now'
+    + '</button>'
+    + '</div>';
 
   el.innerHTML = html;
 }

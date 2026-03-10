@@ -128,10 +128,13 @@ function renderMore() {
     var confStatus = exam.getConfessionStatus();
     var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
 
+    var svgRosary = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="6" r="3"/><line x1="12" y1="9" x2="12" y2="21"/><line x1="8" y1="14" x2="16" y2="14"/></svg>';
+    var svgExamen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>';
+    var svgStations = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 2v20M5 5h14M8 2v6M16 2v6"/></svg>';
     var ptCards = [
-      { id: 'rosary', icon: '\u271E', title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
-      { id: 'examination', icon: '\u2696\uFE0F', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
-      { id: 'stations', icon: '\u271D\uFE0F', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
+      { id: 'rosary', icon: svgRosary, title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
+      { id: 'examination', icon: svgExamen, title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
+      { id: 'stations', icon: svgStations, title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
@@ -157,8 +160,8 @@ function renderMore() {
         var rosaryCount = monthEntries.filter(function(e) { return e.type === 'rosary'; }).length;
         var examCount = monthEntries.filter(function(e) { return e.type === 'examination'; }).length;
         var pills = [];
-        if (rosaryCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-icon">\u271E</span><span class="prayer-stat-count">' + rosaryCount + '</span><span class="prayer-stat-label">Rosary</span></span>');
-        if (examCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-icon">\u2696\uFE0F</span><span class="prayer-stat-count">' + examCount + '</span><span class="prayer-stat-label">Exam</span></span>');
+        if (rosaryCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-count">' + rosaryCount + '</span><span class="prayer-stat-label">Rosary</span></span>');
+        if (examCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-count">' + examCount + '</span><span class="prayer-stat-label">Examen</span></span>');
         if (pills.length) {
           var summaryEl = document.createElement('div');
           summaryEl.className = 'prayer-activity';
