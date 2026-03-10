@@ -266,6 +266,7 @@ async function init() {
         var ycFromEvents = state.eventsData.filter(function(e) { return e.category === 'yc'; });
         if (ycFromEvents.length) state.ycEvents = ycFromEvents;
         console.log('[MassFinder] Loaded events:', state.eventsData.length, ', YC:', ycFromEvents.length);
+        data.rebuildEvtSearchCache();
       }
     } catch (e) { console.warn('[MassFinder] events not available:', e.message); }
     console.log('[MassFinder] churches:', state.allChurches.length, ', ycEvents:', state.ycEvents.length);

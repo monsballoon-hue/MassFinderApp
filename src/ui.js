@@ -242,7 +242,7 @@ function switchTab(id, btn) {
       window._moreRendered = true;
     }
   }
-  if (document.startViewTransition) {
+  if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     document.startViewTransition(doSwitch);
   } else {
     doSwitch();

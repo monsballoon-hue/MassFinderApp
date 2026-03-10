@@ -33,12 +33,30 @@ function toggleFav(id, ev) {
 }
 
 // ── Search ──
+// Build a per-church event text cache for search (rebuilt when events change)
+var _evtSearchCache = {};
+function rebuildEvtSearchCache() {
+  _evtSearchCache = {};
+  (state.eventsData || []).forEach(function(e) {
+    var id = e.church_id;
+    if (!id) return;
+    var text = [e.title || '', e.notes || '', e.description || ''].join(' ');
+    _evtSearchCache[id] = (_evtSearchCache[id] || '') + ' ' + text;
+  });
+  (state.ycEvents || []).forEach(function(e) {
+    var id = e.church_id;
+    if (!id) return;
+    _evtSearchCache[id] = (_evtSearchCache[id] || '') + ' ' + (e.title || '');
+  });
+}
+
 function matchSearch(c, q) {
   if (!q) return true;
   var f = [c.name, c.city, c.county, c.address].concat(
     (c.services || []).map(function(s) { return s.notes || ''; }),
     (c.services || []).map(function(s) { return config.LANG_NAMES[s.language] || ''; }),
-    c.staff || []
+    c.staff || [],
+    [_evtSearchCache[c.id] || '']
   ).join(' ').toLowerCase();
   return q.toLowerCase().split(/\s+/).every(function(w) { return f.includes(w); });
 }
@@ -161,7 +179,7 @@ function processChurches(churches) {
 module.exports = {
   state: state,
   loadFav: loadFav, saveFav: saveFav, isFav: isFav, toggleFav: toggleFav,
-  matchSearch: matchSearch, hasAdv: hasAdv, matchAdv: matchAdv,
+  matchSearch: matchSearch, hasAdv: hasAdv, matchAdv: matchAdv, rebuildEvtSearchCache: rebuildEvtSearchCache,
   filterChurches: filterChurches, sortChurches: sortChurches,
   migrateFavorites: migrateFavorites,
   parishesToChurches: parishesToChurches, processChurches: processChurches,

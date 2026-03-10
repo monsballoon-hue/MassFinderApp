@@ -154,7 +154,9 @@ html[data-theme="dark"][data-season="christmas"] body {
 html[data-theme="dark"] .schedule-lang-badge { color: #93C5FD; background: #1B2640; }
 html[data-theme="dark"] .schedule-season-badge { color: #86EFAC; background: #162214; }
 html[data-theme="dark"] .yc-social-tag { color: #5EEAD4; background: #0D2320; }
+html[data-theme="dark"] .evt-countdown { color: #86EFAC; background: #1A2E22; }
 html[data-theme="dark"] .evt-countdown.imminent { color: #FCD34D; background: #2A1D0A; }
+html[data-theme="dark"] .evt-cat-icon { background: rgba(255,255,255,0.06); }
 html[data-theme="dark"] .evt-info-card { background: rgba(255,255,255,0.04); }
 html[data-theme="dark"] .evt-notes { background: rgba(255,255,255,0.04); border-left-color: var(--color-border); }
 html[data-theme="dark"] .evt-action-btn { background: rgba(255,255,255,0.04); border-color: var(--color-border); }
@@ -254,7 +256,7 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .more-install-card .mic-body { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-4); }
 .more-install-card .mic-body .ios-share-icon { display: inline-block; width: 14px; height: 14px; vertical-align: -2px; margin: 0 1px; }
 .more-install-card .mic-action { display: inline-flex; align-items: center; padding: var(--space-2) var(--space-5); background: var(--color-primary); color: #fff; font-size: var(--text-sm); font-weight: var(--weight-semibold); border-radius: var(--radius-full); min-height: 40px; }
-.more-install-card .mic-close { position: absolute; top: var(--space-3); right: var(--space-3); width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: 1.1rem; border-radius: 50%; }
+.more-install-card .mic-close { position: absolute; top: var(--space-2); right: var(--space-2); width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: 1.1rem; border-radius: 50%; }
 .more-install-card .mic-close:hover { background: var(--color-surface-hover); }
 
 /* CARDS */
@@ -562,6 +564,36 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
   @keyframes cardEnter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 }
 
+/* REDUCED MOTION — disable all transitions and animations */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .detail-panel, .event-detail-panel, .filters-overlay, .ccc-sheet,
+  .detail-backdrop, .filters-backdrop { transition: none !important; }
+  .wh-ticker { animation: none !important; }
+  .pulse-dot { animation: none !important; }
+}
+
+/* FOCUS VISIBLE — keyboard navigation indicator */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible,
+.chip:focus-visible,
+.tab-item:focus-visible,
+.filter-checkbox:focus-visible {
+  outline: 2px solid var(--color-primary-muted);
+  outline-offset: 2px;
+}
+.evt-action-btn:focus-visible,
+.quick-action:focus-visible { outline-offset: -2px; }
+
 /* RESPONSIVE */
 @media (min-width: 768px) {
   .parish-card { padding: var(--space-6); }
@@ -569,9 +601,82 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
   .detail-header { padding: var(--space-2) var(--space-8) var(--space-4); }
 }
 @media print {
-  .top-header, .tab-bar, .search-section, .chip-bar, .results-info, .detail-backdrop, .active-filters { display: none !important; }
-  body { padding-bottom: 0; }
-  .parish-card { break-inside: avoid; box-shadow: none; border: 1px solid #ccc; }
+  /* Hide app chrome */
+  .top-header, .tab-bar, .search-section, .chip-bar, .results-info,
+  .detail-backdrop, .active-filters, .events-widget, #sparseMsg,
+  #pullIndicator, .toast, .ccc-overlay, .ccc-sheet,
+  .detail-handle, .card-fav, .detail-fav-btn,
+  .evt-handle, .evt-close, .evt-action-btn, .evt-footer-link,
+  .saved-evt-actions, .detail-btn-row, .detail-verify,
+  .detail-actions, .loc-site-dir, #panelMap,
+  button[onclick*="expressInterest"], button[onclick*="downloadEventIcal"] { display: none !important; }
+
+  /* Reset layout */
+  body { padding: 0 !important; background: white !important; color: #1A1E26 !important; font-size: 11pt !important; }
+  * { box-shadow: none !important; text-shadow: none !important; }
+
+  /* Panel printing — make panels static, full-width, visible */
+  .detail-panel, .event-detail-panel {
+    position: static !important; transform: none !important;
+    max-height: none !important; overflow: visible !important;
+    border-radius: 0 !important; width: 100% !important;
+    max-width: 100% !important; left: auto !important;
+  }
+  .detail-panel.open, .event-detail-panel.open { transform: none !important; }
+
+  /* Hide non-active tab panels when printing from card list */
+  .tab-panel:not(.active) { display: none !important; }
+
+  /* Cards */
+  .parish-card { break-inside: avoid; box-shadow: none !important; border: 1px solid #ddd; margin-bottom: 8pt; padding: 8pt; page-break-inside: avoid; }
+  .card-right { display: none !important; }
+
+  /* Detail panel: schedule-friendly layout */
+  .detail-content { padding: 0 !important; }
+  .detail-name { font-size: 16pt !important; margin-bottom: 4pt; }
+  .detail-town { font-size: 10pt !important; }
+  .detail-section { border-color: #ddd !important; padding: 8pt 0 !important; }
+  .detail-section summary, .detail-section-toggle { font-size: 11pt !important; font-weight: 600 !important; }
+
+  /* Schedule rows */
+  .schedule-day { margin-bottom: 6pt; break-inside: avoid; }
+  .schedule-day-label { font-size: 10pt !important; border-bottom: 1px solid #ddd !important; }
+  .schedule-row { padding: 2pt 0 !important; }
+  .schedule-time { font-size: 11pt !important; color: #1A1E26 !important; }
+  .schedule-location { font-size: 9pt !important; }
+  .schedule-lang-badge, .schedule-season-badge { border: 1px solid #999 !important; background: transparent !important; color: #333 !important; font-size: 8pt !important; }
+
+  /* Event detail panel */
+  .evt-header { padding: 8pt 0 !important; }
+  .evt-cat-icon { display: none !important; }
+  .evt-title { font-size: 14pt !important; }
+  .evt-subtitle { font-size: 9pt !important; }
+  .evt-countdown { border: 1px solid #999 !important; background: transparent !important; color: #333 !important; }
+  .evt-info-card { background: transparent !important; border: 1px solid #ddd; padding: 6pt !important; }
+  .evt-info-icon svg { color: #333 !important; }
+  .evt-notes { background: transparent !important; border-left: 2px solid #999 !important; }
+  .evt-series-date.past { text-decoration: line-through; color: #999 !important; }
+
+  /* Community events in detail panel */
+  .ce-item { break-inside: avoid; }
+  .ce-item-accent { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+
+  /* Saved tab */
+  .saved-evt-unified { break-inside: avoid; }
+
+  /* More tab: readings, devotional guides */
+  .reading-section { break-inside: avoid; }
+  .conf-exam, .conf-act { break-inside: avoid; }
+
+  /* Links: show URL */
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; word-break: break-all; }
+  a[href^="tel"]::after { content: " (" attr(href) ")"; font-size: 8pt; color: #666; }
+
+  /* Footer with app name */
+  body::after { content: "Printed from MassFinder \2022  massfinder.app"; display: block; text-align: center; font-size: 8pt; color: #999; margin-top: 16pt; padding-top: 8pt; border-top: 1px solid #ddd; }
+
+  /* Page setup */
+  @page { margin: 0.5in; }
 }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .skip-link { position: absolute; top: -100%; left: 0; padding: 8px 16px; background: var(--color-primary); color: white; z-index: 999; font-size: var(--text-sm); font-weight: var(--weight-semibold); text-decoration: none; border-radius: 0 0 var(--radius-sm) 0; }
@@ -637,7 +742,7 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .saved-evt .ce-item-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .saved-evt .ce-item-when { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top: 1px; }
 .saved-evt-actions { display: flex; gap: var(--space-1); flex-shrink: 0; }
-.saved-evt-btn { width: 32px; height: 32px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-text-tertiary); background: none; border: 1px solid var(--color-border-light); cursor: pointer; transition: all var(--transition-fast); }
+.saved-evt-btn { width: 44px; height: 44px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--color-text-tertiary); background: none; border: 1px solid var(--color-border-light); cursor: pointer; transition: all var(--transition-fast); }
 .saved-evt-btn:hover { background: var(--color-surface-hover); color: var(--color-text-secondary); }
 .saved-evt-btn:disabled { opacity: 0.5; cursor: default; }
 .saved-lent-accent { background: #7C3AED !important; }

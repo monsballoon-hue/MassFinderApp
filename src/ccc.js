@@ -151,14 +151,21 @@ function openCCC(numStr) {
   document.getElementById('cccOverlay').classList.add('open');
   document.getElementById('cccSheet').classList.add('open');
   document.body.style.overflow = 'hidden';
+  window._lastFocused = document.activeElement;
   _initSwipeDismiss();
   _renderCCCContent(numStr);
+  // Focus trap
+  var ui = require('./ui.js');
+  ui.trapFocus(document.getElementById('cccSheet'));
 }
 
 function closeCCC() {
   document.getElementById('cccOverlay').classList.remove('open');
   document.getElementById('cccSheet').classList.remove('open');
   document.body.style.overflow = '';
+  var ui = require('./ui.js');
+  ui.releaseFocus();
+  if (window._lastFocused) window._lastFocused.focus();
 }
 
 module.exports = {
