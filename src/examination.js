@@ -74,7 +74,9 @@ function _stripRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').
 
 // ── Toggle inline CCC expansion ──
 function _toggleInlineCCC(span, numStr) {
-  var container = span.closest('.exam-q') || span.closest('.exam-ccc-ref') || span.parentNode;
+  // For question-level refs, insert inside .exam-q-content (column flex) so it flows below text.
+  // For section-level refs, insert inside .exam-ccc-ref container.
+  var container = span.closest('.exam-q-content') || span.closest('.exam-ccc-ref') || span.parentNode;
 
   // If already expanded, collapse
   var existing = container.querySelector('.exam-ccc-card');
