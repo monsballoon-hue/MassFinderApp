@@ -100,6 +100,7 @@ function renderMore() {
       + '</div>'
       + '</div>'
       + stepsHtml
+      + '<div class="install-guide-link" onclick="openInstallGuide()">Show me how \u2192</div>'
       + androidBtn
       + '</div>';
 

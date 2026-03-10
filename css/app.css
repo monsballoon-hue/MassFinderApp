@@ -354,6 +354,75 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .install-inline-icon { display:inline-block;width:16px;height:16px;vertical-align:-3px;margin:0 2px; }
 .install-btn { display:block;width:100%;margin-top:var(--space-4);padding:var(--space-3);background:var(--color-primary);color:white;font-size:var(--text-base);font-weight:var(--weight-semibold);border-radius:var(--radius-md);min-height:48px;text-align:center; }
 .install-btn:hover { background:var(--color-primary-light); }
+.install-guide-link { display:block;margin-top:var(--space-3);font-size:var(--text-sm);color:var(--color-primary);font-weight:var(--weight-medium);cursor:pointer;-webkit-tap-highlight-color:transparent;text-align:center; }
+
+/* VISUAL INSTALL GUIDE */
+.ig-overlay { position:fixed;inset:0;z-index:10000;background:var(--color-surface);display:flex;align-items:center;justify-content:center;overflow-y:auto; }
+.ig-container { width:100%;max-width:400px;padding:var(--space-6) var(--space-4);text-align:center;position:relative; }
+.ig-close { position:absolute;top:var(--space-2);right:var(--space-2);width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--color-text-tertiary);font-size:1.2rem;border-radius:50%;z-index:1; }
+.ig-close:hover { background:var(--color-surface-hover); }
+.ig-step-label { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-4); }
+.ig-visual { display:flex;justify-content:center;margin-bottom:var(--space-5); }
+.ig-caption { font-size:var(--text-lg);color:var(--color-text-primary);line-height:1.4;margin-bottom:var(--space-4);min-height:3.5em; }
+.ig-caption strong { color:var(--color-primary);font-weight:var(--weight-semibold); }
+.ig-dots { display:flex;justify-content:center;gap:var(--space-2);margin-bottom:var(--space-5); }
+.ig-dot { width:8px;height:8px;border-radius:50%;background:var(--color-border);transition:background 0.2s; }
+.ig-dot.active { background:var(--color-primary);width:24px;border-radius:4px; }
+.ig-nav { display:flex;justify-content:space-between;align-items:center;gap:var(--space-3); }
+.ig-nav-btn { min-height:48px;padding:var(--space-3) var(--space-6);border-radius:var(--radius-md);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.ig-nav-back { color:var(--color-text-secondary);background:var(--color-surface-hover); }
+.ig-nav-next { color:white;background:var(--color-primary);flex:1; }
+/* Phone mockup */
+.ig-phone { width:220px;height:380px;background:var(--color-text-primary);border-radius:28px;padding:8px;position:relative;box-shadow:0 8px 24px rgba(0,0,0,0.15); }
+.ig-phone--android { border-radius:20px; }
+.ig-phone-screen { width:100%;height:100%;background:var(--color-surface);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;position:relative; }
+.ig-phone--android .ig-phone-screen { border-radius:14px; }
+.ig-screen-content { flex:1;display:flex;align-items:center;justify-content:center;padding:var(--space-3); }
+.ig-app-preview { text-align:center; }
+.ig-app-icon { width:48px;height:48px;background:var(--color-primary);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;margin:0 auto var(--space-2); }
+.ig-app-label { font-size:12px;color:var(--color-text-secondary);font-weight:var(--weight-medium); }
+/* Safari bar */
+.ig-safari-bar { background:#F2F2F7;padding:6px 12px;border-top:1px solid var(--color-border-light); }
+.ig-safari-url { font-size:11px;color:var(--color-text-tertiary);text-align:center;margin-bottom:6px; }
+.ig-safari-actions { display:flex;justify-content:space-around;align-items:center; }
+.ig-safari-btn { font-size:16px;color:var(--color-primary);width:36px;height:36px;display:flex;align-items:center;justify-content:center; }
+.ig-safari-btn.dim { opacity:0.3; }
+.ig-safari-btn.highlight { background:rgba(44,62,90,0.1);border-radius:8px;animation:ig-pulse 1.5s infinite; }
+/* Share sheet */
+.ig-share-sheet { flex:1;display:flex;flex-direction:column;justify-content:flex-end;padding:0 8px 8px;background:rgba(0,0,0,0.02); }
+.ig-sheet-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:8px auto 12px; }
+.ig-sheet-row { display:flex;align-items:center;padding:12px 16px;font-size:13px;color:var(--color-text-primary);border-bottom:1px solid var(--color-border-light); }
+.ig-sheet-row.dim { opacity:0.35; }
+.ig-sheet-row.highlight { background:rgba(44,62,90,0.08);border-radius:8px;font-weight:var(--weight-semibold);color:var(--color-primary);opacity:1;animation:ig-pulse 1.5s infinite; }
+/* Chrome bar */
+.ig-chrome-bar,.ig-android-bar { display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#F2F2F7;border-bottom:1px solid var(--color-border-light); }
+.ig-chrome-url,.ig-android-url { font-size:12px;color:var(--color-text-tertiary);flex:1; }
+.ig-chrome-dots,.ig-android-dots { font-size:18px;font-weight:700;color:var(--color-text-secondary);width:36px;height:36px;display:flex;align-items:center;justify-content:center; }
+.ig-chrome-dots.highlight,.ig-android-dots.highlight { background:rgba(44,62,90,0.1);border-radius:8px;animation:ig-pulse 1.5s infinite; }
+.ig-chrome-menu,.ig-android-menu { flex:1;display:flex;flex-direction:column;padding:12px 8px;background:var(--color-surface); }
+/* Android dialog */
+.ig-android-dialog { background:var(--color-surface);border-radius:16px;box-shadow:0 4px 24px rgba(0,0,0,0.15);margin:auto 12px;padding:20px; }
+.ig-dialog-title { font-size:16px;font-weight:var(--weight-semibold);color:var(--color-text-primary);margin-bottom:16px; }
+.ig-dialog-preview { display:flex;flex-direction:column;align-items:center;gap:4px;margin-bottom:20px; }
+.ig-dialog-actions { display:flex;justify-content:flex-end;gap:12px; }
+.ig-dialog-btn { font-size:13px;font-weight:var(--weight-semibold);padding:8px 16px;border-radius:20px;cursor:pointer; }
+.ig-dialog-btn.dim { color:var(--color-text-tertiary); }
+.ig-dialog-btn.highlight { color:white;background:var(--color-primary);animation:ig-pulse 1.5s infinite; }
+/* Confirm dialog (iOS) */
+.ig-confirm-dialog { flex:1;display:flex;flex-direction:column;background:var(--color-surface); }
+.ig-confirm-bar { display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--color-border-light); }
+.ig-confirm-cancel { font-size:14px;color:var(--color-primary); }
+.ig-confirm-title { font-size:14px;font-weight:var(--weight-semibold);color:var(--color-text-primary); }
+.ig-confirm-add { font-size:14px;font-weight:var(--weight-semibold);color:var(--color-primary); }
+.ig-confirm-add.highlight { background:rgba(44,62,90,0.1);padding:6px 12px;border-radius:6px;animation:ig-pulse 1.5s infinite; }
+.ig-confirm-preview { flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px; }
+.ig-confirm-icon { width:52px;height:52px;background:var(--color-primary);color:white;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px; }
+.ig-confirm-name { font-size:14px;font-weight:var(--weight-semibold);color:var(--color-text-primary); }
+.ig-confirm-url { font-size:11px;color:var(--color-text-tertiary); }
+/* Pulse ring on tap target */
+.ig-tap-ring { position:absolute;width:44px;height:44px;border:3px solid var(--color-primary);border-radius:50%;animation:ig-ring 1.5s infinite;pointer-events:none; }
+@keyframes ig-pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+@keyframes ig-ring { 0%{transform:scale(0.8);opacity:0.8} 50%{transform:scale(1.2);opacity:0.3} 100%{transform:scale(0.8);opacity:0.8} }
 
 /* CARDS */
 .card-list { max-width: var(--max-width); margin: 0 auto; padding: var(--space-2) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }

@@ -14,6 +14,7 @@ var ccc = require('./ccc.js');
 var refs = require('./refs.js');
 var rosary = require('./rosary.js');
 var examination = require('./examination.js');
+var installGuide = require('./install-guide.js');
 
 var state = data.state;
 
@@ -133,6 +134,9 @@ window.selectMoreCorrPill = more.selectMoreCorrPill;
 window.submitMoreCorrection = more.submitMoreCorrection;
 window.expressInterest = more.expressInterest;
 window.dismissInstallCard = more.dismissInstallCard;
+window.openInstallGuide = installGuide.openInstallGuide;
+window.closeInstallGuide = installGuide.closeInstallGuide;
+// installGuideNav is set dynamically inside openInstallGuide()
 window.toggleReading = readings.toggleReading;
 window.exportLitCalICS = readings.exportLitCalICS;
 window.removeAdv = ui.removeAdv;
