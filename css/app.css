@@ -1180,70 +1180,113 @@ html[data-theme="dark"] .rosary-bead.filled { background:var(--color-accent);bor
 html[data-theme="dark"] .rosary-hm-section.complete .rosary-bead.filled { background:#5DAE73;border-color:#5DAE73; }
 html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,255,0.1); }
 
-/* ── Examination of Conscience ── */
-.exam-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);overscroll-behavior:contain; }
+/* ── Examination of Conscience (Apple HIG) ── */
+
+/* Overlay — full-screen slide-up with UIKit spring curve */
+.exam-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
 .exam-overlay.open { transform:translateY(0); }
-.exam-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border-light);flex-shrink:0;padding-top:max(var(--space-3), env(safe-area-inset-top)); }
-.exam-title { font-family:var(--font-heading);font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-heading); }
-.exam-close { background:none;border:none;font-size:28px;color:var(--color-text-secondary);cursor:pointer;padding:var(--space-1);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center; }
-.exam-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-4);padding-bottom:calc(var(--space-8) + env(safe-area-inset-bottom));overscroll-behavior:contain; }
+
+/* Navigation bar — blur backdrop, centered title, circular close */
+.exam-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);flex-shrink:0;padding-top:max(var(--space-3), env(safe-area-inset-top));background:var(--color-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:0.5px solid var(--color-border-light);position:sticky;top:0;z-index:1; }
+.exam-title { font-family:var(--font-body);font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-heading);text-align:center;flex:1; }
+.exam-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
+.exam-close-btn:active { background:rgba(142,142,147,0.24); }
+.exam-close-btn svg { display:block; }
+
+/* Scroll progress bar */
+.exam-progress-track { height:2px;background:var(--color-border-light);flex-shrink:0;overflow:hidden; }
+.exam-progress-bar { height:100%;background:var(--color-primary);transform:scaleX(0);transform-origin:left;transition:transform 0.1s linear;will-change:transform; }
+
+/* Scrolling body */
+.exam-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-5) var(--space-4);padding-bottom:calc(var(--space-12) + env(safe-area-inset-bottom));overscroll-behavior:contain; }
 .exam-body > * { max-width:600px;margin-left:auto;margin-right:auto; }
 
-.exam-label { font-size:var(--text-xs);font-weight:var(--weight-semibold);text-transform:uppercase;letter-spacing:0.08em;color:var(--color-text-tertiary);margin:var(--space-4) 0 var(--space-2); }
-.exam-divider { height:1px;background:var(--color-border-light);margin:var(--space-4) 0; }
+/* ── iOS Inset Grouped List ── */
 
-/* Section (commandment) */
-.exam-section { border:1px solid var(--color-border-light);border-radius:var(--radius-md);margin-bottom:var(--space-3);overflow:hidden; }
-.exam-section-header { display:flex;align-items:center;gap:var(--space-2);width:100%;padding:var(--space-4);background:var(--color-surface);border:none;cursor:pointer;text-align:left;min-height:56px;font-size:var(--text-sm); }
-.exam-section-title { flex:1;font-weight:var(--weight-semibold);color:var(--color-heading);line-height:1.4; }
-.exam-chevron { width:20px;height:20px;flex-shrink:0;color:var(--color-text-tertiary);transition:transform 0.2s ease; }
-.exam-section.expanded .exam-chevron { transform:rotate(180deg); }
-.exam-section-body { padding:0 var(--space-4) var(--space-4); }
+/* Group label — iOS-style floating section header */
+.exam-group-label { font-size:13px;font-weight:var(--weight-semibold);text-transform:uppercase;letter-spacing:0.04em;color:var(--color-text-tertiary);padding:var(--space-6) var(--space-4) var(--space-2);margin:0; }
+.exam-group-label:first-child { padding-top:0; }
 
-.exam-ccc-badge { margin-bottom:var(--space-3); }
+/* Group container — shared rounded corners (iOS Settings style) */
+.exam-group { background:var(--color-surface);border-radius:var(--radius-md);overflow:hidden;margin-bottom:var(--space-2); }
 
-/* Questions */
-.exam-questions { list-style:none;padding:0;margin:0; }
-.exam-question { padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light);display:flex;flex-direction:column;gap:var(--space-1); }
-.exam-question:last-child { border-bottom:none; }
-.exam-question-text { font-size:var(--text-base);line-height:1.6;color:var(--color-text); }
-.exam-question-ref { align-self:flex-start; }
+/* Row — each commandment within the group */
+.exam-row { border-bottom:0.5px solid var(--color-border-light); }
+.exam-row--last { border-bottom:none; }
 
-/* Prayers */
-.exam-prayer { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3); }
-.exam-prayer-title { font-family:var(--font-heading);font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-heading);margin-bottom:var(--space-3); }
-.exam-prayer-text { font-size:var(--text-sm);line-height:1.8;color:var(--color-text);margin-bottom:var(--space-2); }
+/* Row header — tappable, with number badge and chevron */
+.exam-row-header { display:flex;align-items:center;gap:var(--space-3);width:100%;padding:var(--space-3) var(--space-4);background:transparent;border:none;cursor:pointer;text-align:left;min-height:52px;-webkit-tap-highlight-color:transparent;transition:background 0.15s; }
+.exam-row-header:active { background:rgba(0,0,0,0.04); }
+
+/* Commandment number badge */
+.exam-num { width:28px;height:28px;border-radius:8px;background:var(--color-primary);color:white;font-size:13px;font-weight:var(--weight-semibold);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1; }
+.exam-num--icon { background:var(--color-text-tertiary);font-size:14px; }
+
+/* Row title */
+.exam-row-title { flex:1;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-heading);line-height:1.35; }
+
+/* Chevron — rotates 90deg on expand (iOS disclosure style) */
+.exam-chev { width:16px;height:16px;flex-shrink:0;color:var(--color-text-tertiary);transition:transform 0.3s cubic-bezier(0.28,0.11,0.32,1);opacity:0.6; }
+.exam-row.expanded > .exam-row-header .exam-chev { transform:rotate(90deg); }
+
+/* Animated expand/collapse body — CSS grid transition */
+.exam-row-body { display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.35s cubic-bezier(0.28,0.11,0.32,1); }
+.exam-row.expanded > .exam-row-body { grid-template-rows:1fr; }
+.exam-row-inner { overflow:hidden;padding:0 var(--space-4); }
+.exam-row.expanded > .exam-row-body > .exam-row-inner { padding-bottom:var(--space-4); }
+
+/* CCC ref badge within expanded section */
+.exam-ccc-ref { margin-bottom:var(--space-2);padding-top:var(--space-1); }
+
+/* Questions — clean list with hairline separators */
+.exam-q { padding:var(--space-3) 0;border-top:0.5px solid var(--color-border-light);display:flex;flex-direction:column;gap:6px; }
+.exam-q:first-of-type { border-top:none; }
+.exam-q-text { font-size:var(--text-base);line-height:1.55;color:var(--color-text); }
+.exam-q-ref { align-self:flex-start; }
+
+/* ── Prayers ── */
+.exam-prayer { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4) var(--space-5);margin-bottom:var(--space-3); }
+.exam-prayer-head { display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3); }
+.exam-prayer-icon { font-size:20px;line-height:1; }
+.exam-prayer-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-heading); }
+.exam-prayer-text { font-size:var(--text-base);line-height:1.75;color:var(--color-text);margin-bottom:var(--space-3); }
 .exam-prayer-text:last-child { margin-bottom:0; }
 
-/* How to Confess */
-.exam-howto { border:1px solid var(--color-border-light);border-radius:var(--radius-md);overflow:hidden; }
-.exam-howto-title { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-4);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-heading);cursor:pointer;list-style:none; }
-.exam-howto-title::-webkit-details-marker { display:none; }
-.exam-howto-title .exam-chevron { margin-left:auto; }
-.exam-howto[open] .exam-howto-title .exam-chevron { transform:rotate(180deg); }
-.exam-howto-steps { padding:0 var(--space-4) var(--space-4) var(--space-6);margin:0; }
-.exam-howto-steps li { font-size:var(--text-sm);line-height:1.7;color:var(--color-text);padding:var(--space-1) 0; }
+/* ── How to Confess (details/summary) ── */
+.exam-howto { background:var(--color-surface);border-radius:var(--radius-md);overflow:hidden;margin-bottom:var(--space-3); }
+.exam-howto-header { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);cursor:pointer;list-style:none;min-height:52px;-webkit-tap-highlight-color:transparent; }
+.exam-howto-header::-webkit-details-marker { display:none; }
+.exam-howto-header .exam-chev { margin-left:auto;transition:transform 0.3s cubic-bezier(0.28,0.11,0.32,1); }
+.exam-howto[open] > .exam-howto-header .exam-chev { transform:rotate(90deg); }
+.exam-howto-label { flex:1;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-heading); }
+.exam-howto-steps { padding:0 var(--space-4) var(--space-4) calc(var(--space-4) + 28px + var(--space-3));margin:0; }
+.exam-howto-steps li { font-size:var(--text-sm);line-height:1.65;color:var(--color-text);padding:var(--space-2) 0;border-top:0.5px solid var(--color-border-light); }
+.exam-howto-steps li:first-child { border-top:none; }
 
-/* Tracker */
-.exam-tracker { text-align:center;padding:var(--space-3) 0; }
+/* ── Tracker ── */
+.exam-tracker { text-align:center;padding:var(--space-5) 0 var(--space-3); }
 .exam-tracker-status { font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3); }
-.exam-tracker-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-5);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text);cursor:pointer;min-height:44px;transition:all 0.15s; }
-.exam-tracker-btn:active { transform:scale(0.97); }
+.exam-tracker-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-5);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text);cursor:pointer;min-height:44px;transition:all 0.2s cubic-bezier(0.28,0.11,0.32,1);-webkit-tap-highlight-color:transparent; }
+.exam-tracker-btn:active { transform:scale(0.96);background:var(--color-surface-hover); }
+.exam-tracker-btn.confirmed { background:var(--color-accent);color:white;border-color:var(--color-accent);transform:scale(1.02); }
 
-/* Find Confession button */
-.exam-find-btn { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:52px;transition:all 0.15s;margin-bottom:var(--space-4); }
-.exam-find-btn:hover { background:var(--color-primary-light); }
-.exam-find-btn:active { transform:scale(0.98); }
+/* ── Find Confession — prominent iOS-style filled button ── */
+.exam-find-btn { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:52px;transition:all 0.2s cubic-bezier(0.28,0.11,0.32,1);margin-bottom:var(--space-4);-webkit-tap-highlight-color:transparent; }
+.exam-find-btn:active { transform:scale(0.97);opacity:0.85; }
 
-/* Confession tracker on More tab */
+/* ── Confession tracker on More tab ── */
 .confession-tracker { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3); }
 .confession-tracker-icon { color:var(--color-accent);font-weight:var(--weight-bold); }
 .confession-tracker-nudge { color:var(--color-text-tertiary); }
 .confession-tracker-nudge a { color:var(--color-primary);text-decoration:none; }
 
-/* Dark mode overrides for examination */
+/* ── Dark mode ── */
 html[data-theme="dark"] .exam-overlay { background:var(--color-bg); }
-html[data-theme="dark"] .exam-section { border-color:var(--color-border); }
-html[data-theme="dark"] .exam-section-header { background:rgba(255,255,255,0.04); }
-html[data-theme="dark"] .exam-prayer { background:rgba(255,255,255,0.04); }
-html[data-theme="dark"] .exam-howto { border-color:var(--color-border); }
+html[data-theme="dark"] .exam-header { background:rgba(26,28,34,0.85); }
+html[data-theme="dark"] .exam-close-btn { background:rgba(142,142,147,0.2); }
+html[data-theme="dark"] .exam-close-btn:active { background:rgba(142,142,147,0.35); }
+html[data-theme="dark"] .exam-group { background:var(--color-surface); }
+html[data-theme="dark"] .exam-row-header:active { background:rgba(255,255,255,0.06); }
+html[data-theme="dark"] .exam-prayer { background:var(--color-surface); }
+html[data-theme="dark"] .exam-howto { background:var(--color-surface); }
+html[data-theme="dark"] .exam-tracker-btn.confirmed { background:var(--color-accent);border-color:var(--color-accent); }
