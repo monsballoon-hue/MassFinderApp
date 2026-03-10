@@ -1056,60 +1056,91 @@ select:focus-visible,
 .conf-exam-body ul li { margin-bottom: var(--space-1); }
 
 /* ── GUIDED ROSARY ── */
-.rosary-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1); }
+.rosary-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);overscroll-behavior:contain; }
 .rosary-overlay.open { transform:translateY(0); }
 .rosary-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border-light);padding-top:max(var(--space-3),env(safe-area-inset-top));gap:var(--space-2); }
 .rosary-close { background:none;border:none;font-size:24px;padding:var(--space-2);cursor:pointer;color:var(--color-text-tertiary);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center; }
+.rosary-close:hover { color:var(--color-text-primary); }
 .rosary-title { flex:1;text-align:center;font-family:var(--font-heading);font-weight:var(--weight-bold);font-size:var(--text-lg);color:var(--color-text-primary); }
 .rosary-progress { padding:var(--space-2) 0; }
-.rosary-dots { display:flex;justify-content:center;gap:8px;padding:var(--space-2); }
-.rosary-dot { width:10px;height:10px;border-radius:50%;background:var(--color-border);transition:all 0.3s; }
-.rosary-dot.active { background:var(--color-primary);transform:scale(1.4); }
+.rosary-dots { display:flex;justify-content:center;gap:10px;padding:var(--space-2); }
+.rosary-dot { width:12px;height:12px;border-radius:50%;background:var(--color-border);border:none;padding:0;cursor:pointer;transition:all 0.3s;-webkit-tap-highlight-color:transparent; }
+.rosary-dot:hover { background:var(--color-primary-muted); }
+.rosary-dot.active { background:var(--color-primary);transform:scale(1.4);box-shadow:0 0 0 3px rgba(44,62,90,0.15); }
 .rosary-dot.done { background:var(--color-primary);opacity:0.45; }
-.rosary-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-4);padding-bottom:var(--space-6); }
+.rosary-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-4);padding-bottom:var(--space-6);overscroll-behavior:contain; }
+.rosary-body > * { max-width:540px;margin-left:auto;margin-right:auto; }
 .rosary-nav { display:flex;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-border-light);padding-bottom:max(var(--space-4),env(safe-area-inset-bottom)); }
-.rosary-nav-btn { flex:1;padding:var(--space-3);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px;border:none;transition:opacity 0.15s; }
+.rosary-nav-btn { flex:1;padding:var(--space-3);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px;border:none;transition:all 0.15s; }
 .rosary-nav-primary { background:var(--color-primary);color:white; }
+.rosary-nav-primary:hover { background:var(--color-primary-light); }
+.rosary-nav-primary:active { transform:scale(0.98); }
 .rosary-nav-secondary { background:var(--color-surface);color:var(--color-text-secondary);border:1px solid var(--color-border-light); }
+.rosary-nav-secondary:hover { background:var(--color-surface-hover); }
+
+/* Loading state */
+.rosary-loading { text-align:center;padding:var(--space-6) 0;color:var(--color-text-tertiary); }
+.rosary-loading-spinner { width:28px;height:28px;border:3px solid var(--color-border);border-top-color:var(--color-primary);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto var(--space-3); }
+.rosary-loading p { font-size:var(--text-sm); }
 
 /* Select screen */
 .rosary-select { text-align:center;max-width:420px;margin:0 auto; }
-.rosary-select-intro { margin-bottom:var(--space-5); }
+.rosary-select-intro { margin-bottom:var(--space-4); }
 .rosary-cross-svg { width:28px;height:38px;color:var(--color-primary);margin-bottom:var(--space-3); }
 .rosary-select-rec { color:var(--color-text-secondary);font-size:var(--text-sm);margin-top:var(--space-2); }
+.rosary-select-season { font-size:var(--text-xs);color:#7C3AED;font-weight:var(--weight-semibold);text-transform:uppercase;letter-spacing:0.05em;margin-top:var(--space-1); }
+.rosary-begin-btn { display:block;width:100%;padding:var(--space-4);margin-bottom:var(--space-4);border:none;border-radius:var(--radius-md);background:var(--set-color,var(--color-primary));color:white;font-size:var(--text-base);font-weight:var(--weight-bold);cursor:pointer;min-height:52px;transition:all 0.15s; }
+.rosary-begin-btn:hover { opacity:0.9; }
+.rosary-begin-btn:active { transform:scale(0.98); }
+.rosary-select-divider { display:flex;align-items:center;gap:var(--space-3);margin-bottom:var(--space-3);color:var(--color-text-tertiary);font-size:var(--text-xs); }
+.rosary-select-divider::before,.rosary-select-divider::after { content:'';flex:1;height:1px;background:var(--color-border-light); }
 .rosary-set-grid { display:grid;gap:var(--space-3); }
-.rosary-set-btn { display:block;width:100%;text-align:left;padding:var(--space-4);border:2px solid var(--color-border-light);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;transition:border-color 0.2s; }
-.rosary-set-btn:active { opacity:0.8; }
-.rosary-set-today { border-color:var(--set-color);box-shadow:inset 0 0 0 1px var(--set-color); }
-.rosary-set-name { font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-text-primary); }
-.rosary-set-badge { display:inline-block;margin-left:var(--space-2);font-size:10px;background:var(--set-color);color:white;padding:1px 8px;border-radius:99px;font-weight:var(--weight-semibold);vertical-align:middle;letter-spacing:0.03em; }
-.rosary-set-sub { display:block;margin-top:var(--space-1);font-size:var(--text-xs);color:var(--color-text-tertiary);line-height:1.5; }
+@media (min-width:480px) { .rosary-set-grid { grid-template-columns:1fr 1fr; } }
+.rosary-set-btn { display:block;width:100%;text-align:left;padding:var(--space-3) var(--space-4);border:2px solid var(--color-border-light);border-radius:var(--radius-md);background:var(--color-surface);cursor:pointer;transition:all 0.2s; }
+.rosary-set-btn:hover { border-color:var(--set-color);background:var(--color-surface-hover); }
+.rosary-set-btn:active { transform:scale(0.98); }
+.rosary-set-name { font-size:var(--text-sm);font-weight:var(--weight-bold);color:var(--color-text-primary); }
+.rosary-set-day { display:block;font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:2px; }
 
 /* Mystery card */
 .rosary-mystery { border-left:3px solid var(--set-color);padding:var(--space-4);margin-bottom:var(--space-4);background:var(--color-surface);border-radius:0 var(--radius-md) var(--radius-md) 0; }
 .rosary-mystery-num { font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.05em;color:var(--set-color);font-weight:var(--weight-semibold);margin-bottom:var(--space-1); }
 .rosary-mystery-title { font-family:var(--font-heading);font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-text-primary);margin-bottom:var(--space-2);line-height:1.3; }
-.rosary-mystery-scripture { display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);color:var(--color-info);cursor:pointer;margin-bottom:var(--space-2); }
+.rosary-mystery-scripture { display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);color:var(--color-info);cursor:pointer;margin-bottom:var(--space-2);padding:var(--space-1) 0; }
+.rosary-mystery-scripture:hover { text-decoration:underline; }
 .rosary-mystery-meditation { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.65;font-style:italic;margin-bottom:var(--space-2); }
 .rosary-mystery-fruit { font-size:var(--text-sm);color:var(--color-text-secondary); }
 .rosary-mystery-refs { margin-top:var(--space-2);display:flex;gap:var(--space-2);flex-wrap:wrap; }
 
 /* Bead counter */
-.rosary-hm-section { text-align:center;margin-bottom:var(--space-4); }
+.rosary-hm-section { text-align:center;margin-bottom:var(--space-4);padding:var(--space-3);background:var(--color-surface);border-radius:var(--radius-md);transition:background 0.3s; }
+.rosary-hm-section.complete { background:rgba(44,62,90,0.06); }
 .rosary-hm-header { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-2); }
-.rosary-beads { display:flex;justify-content:center;gap:6px;padding:var(--space-3);cursor:pointer;-webkit-tap-highlight-color:transparent; }
-.rosary-bead { width:22px;height:22px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all 0.2s ease; }
+.rosary-beads { display:flex;justify-content:center;gap:8px;padding:var(--space-3);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none; }
+.rosary-bead { width:26px;height:26px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all 0.2s ease; }
 .rosary-bead.filled { background:var(--color-primary);border-color:var(--color-primary); }
-.rosary-bead-label { font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-1); }
+.rosary-bead.latest { animation:beadPop 0.25s ease; }
+@keyframes beadPop { 0% { transform:scale(1); } 50% { transform:scale(1.3); } 100% { transform:scale(1); } }
+.rosary-hm-section.complete .rosary-bead.filled { background:var(--color-verified);border-color:var(--color-verified); }
+.rosary-bead-label { font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-1);font-weight:var(--weight-semibold); }
+.rosary-hm-section.complete .rosary-bead-label { color:var(--color-verified); }
 .rosary-bead-hint { font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:var(--space-1); }
 
-/* Prayer blocks (opening/closing/decade) */
+/* Prayer blocks (opening/closing) — always expanded */
 .rosary-section-title { font-family:var(--font-heading);font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-text-primary);text-align:center;margin-bottom:var(--space-4); }
 .rosary-prayer-block { margin-bottom:var(--space-4);padding:var(--space-4);background:var(--color-surface);border-radius:var(--radius-md); }
-.rosary-prayer-name { font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary);margin-bottom:var(--space-2); }
+.rosary-prayer-name { font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary);margin-bottom:var(--space-2);list-style:none; }
+.rosary-prayer-name::-webkit-details-marker { display:none; }
 .rosary-prayer-sub { font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;margin-bottom:var(--space-2); }
 .rosary-prayer-text { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.8; }
 .rosary-prayer-text p { margin-bottom:var(--space-2); }
+
+/* Collapsible prayer blocks (decade screen) */
+.rosary-prayer-collapsible { cursor:default; }
+.rosary-prayer-collapsible > summary { display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;padding-bottom:0; }
+.rosary-prayer-collapsible[open] > summary { margin-bottom:var(--space-2); }
+.rosary-prayer-chev { width:16px;height:16px;color:var(--color-text-tertiary);flex-shrink:0;transition:transform 0.2s; }
+.rosary-prayer-collapsible:not([open]) .rosary-prayer-chev { transform:rotate(-90deg); }
 
 /* Completion */
 .rosary-complete { text-align:center;margin-top:var(--space-5);padding:var(--space-5) 0; }
@@ -1117,12 +1148,19 @@ select:focus-visible,
 .rosary-complete p { font-size:var(--text-sm);color:var(--color-text-secondary);font-style:italic;line-height:1.7; }
 
 /* Entry button in devotional guides */
-.rosary-start-btn { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px; }
+.rosary-start-btn { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px;transition:all 0.15s; }
+.rosary-start-btn:hover { background:var(--color-primary-light); }
+.rosary-start-btn:active { transform:scale(0.98); }
 
 /* Dark mode overrides for rosary */
 html[data-theme="dark"] .rosary-overlay { background:var(--color-bg); }
 html[data-theme="dark"] .rosary-set-btn { background:var(--color-surface);border-color:var(--color-border); }
+html[data-theme="dark"] .rosary-begin-btn { opacity:0.95; }
 html[data-theme="dark"] .rosary-mystery { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .rosary-prayer-block { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .rosary-hm-section { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .rosary-hm-section.complete { background:rgba(74,124,89,0.12); }
 html[data-theme="dark"] .rosary-bead { border-color:var(--color-border); }
 html[data-theme="dark"] .rosary-bead.filled { background:var(--color-accent);border-color:var(--color-accent); }
+html[data-theme="dark"] .rosary-hm-section.complete .rosary-bead.filled { background:#5DAE73;border-color:#5DAE73; }
+html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,255,0.1); }

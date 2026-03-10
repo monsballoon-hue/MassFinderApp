@@ -96,6 +96,7 @@ window.rosarySelectSet = rosary.rosarySelectSet;
 window.rosaryNext = rosary.rosaryNext;
 window.rosaryPrev = rosary.rosaryPrev;
 window.rosaryBeadTap = rosary.rosaryBeadTap;
+window.rosaryGoTo = rosary.rosaryGoTo;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
