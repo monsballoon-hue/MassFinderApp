@@ -521,6 +521,13 @@ async function init() {
     _renderYourChurches();
     _renderWelcomeBanner();
 
+    // More tab badge — show dot when daily content hasn't been seen today (Change 12)
+    var moreLastSeen = localStorage.getItem('mf-more-seen');
+    var moreBadge = document.getElementById('moreTabBadge');
+    if (moreBadge && moreLastSeen !== todayStr) {
+      moreBadge.classList.add('visible');
+    }
+
     // Deep link
     if (location.hash) {
       var id = location.hash.slice(1);

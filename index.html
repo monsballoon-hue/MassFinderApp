@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="MassFinder">
 <meta name="theme-color" content="#F8F7F4" id="metaThemeColor">
-<script>(function(){var t=localStorage.getItem('mf-theme');if(t){document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.getElementById('metaThemeColor');if(m)m.setAttribute('content','#1A1C22');}}var s=localStorage.getItem('mf-text-size');if(s&&s!=='default')document.documentElement.setAttribute('data-text-size',s);})();</script>
+<script>(function(){var t=localStorage.getItem('mf-theme');if(!t&&window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches)t='dark';if(t){document.documentElement.setAttribute('data-theme',t);if(t==='dark'){var m=document.getElementById('metaThemeColor');if(m)m.setAttribute('content','#1A1C22');}}var s=localStorage.getItem('mf-text-size');if(s&&s!=='default')document.documentElement.setAttribute('data-text-size',s);})();</script>
 <meta name="description" content="Find Mass, Confession, Adoration and more across Western New England">
 <meta property="og:title" content="MassFinder — Catholic Services Directory">
 <meta property="og:description" content="Find Mass, Confession, Adoration and more across Western New England">
@@ -230,7 +230,7 @@
   <button class="tab-item" data-tab="panelSaved" role="tab" aria-selected="false" onclick="switchTab('panelSaved',this)">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>Saved</span><span id="savedTabBadge" class="tab-saved-badge" aria-hidden="true"></span></button>
   <button class="tab-item" data-tab="panelMore" role="tab" aria-selected="false" onclick="switchTab('panelMore',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span><span id="moreTabBadge" class="tab-more-badge" aria-hidden="true"></span></button>
 </div></nav>
 
 <!-- CCC Bottom Sheet -->

@@ -650,6 +650,8 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .tab-item span { font-size: 11px; font-weight: var(--weight-medium); }
 .tab-saved-badge { position: absolute; top: 6px; right: calc(50% - 20px); min-width: 16px; height: 16px; background: var(--color-primary); color: white; font-size: 10px; font-weight: 700; border-radius: 8px; display: none; align-items: center; justify-content: center; padding: 0 4px; line-height: 1; pointer-events: none; }
 .tab-saved-badge.visible { display: inline-flex; }
+.tab-more-badge { position:absolute;top:8px;right:calc(50% - 16px);width:8px;height:8px;background:var(--color-accent);border-radius:50%;display:none;pointer-events:none; }
+.tab-more-badge.visible { display:block; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; }
 .stub-panel { max-width: var(--max-width); margin: 0 auto; padding: var(--space-12) var(--space-4); text-align: center; color: var(--color-text-tertiary); }

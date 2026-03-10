@@ -236,10 +236,16 @@ function switchTab(id, btn) {
       var saved = require('./saved.js');
       saved.renderSaved();
     }
-    if (id === 'panelMore' && !window._moreRendered) {
-      var more = require('./more.js');
-      more.renderMore();
-      window._moreRendered = true;
+    if (id === 'panelMore') {
+      if (!window._moreRendered) {
+        var more = require('./more.js');
+        more.renderMore();
+        window._moreRendered = true;
+      }
+      // Clear daily content badge (Change 12)
+      var moreBadge = document.getElementById('moreTabBadge');
+      if (moreBadge) moreBadge.classList.remove('visible');
+      localStorage.setItem('mf-more-seen', new Date().toISOString().slice(0, 10));
     }
   }
   if (document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
