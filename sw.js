@@ -1,4 +1,4 @@
-var CACHE_NAME = 'massfinder-v3_' + '20260310_1840';
+var CACHE_NAME = 'massfinder-v3_' + '20260310_1845';
 var SHELL_ASSETS = [
   '/',
   '/index.html',

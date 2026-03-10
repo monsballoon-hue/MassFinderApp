@@ -288,14 +288,13 @@ function _renderSummaryHTML() {
 function _updateCheckedUI() {
   var count = Object.keys(_checked).length;
 
-  // Footer bar
+  // Footer bar — always visible, but content changes
   var footer = document.getElementById('examFooter');
   if (footer) {
-    if (count > 0) {
-      footer.classList.add('visible');
-      document.getElementById('examCheckedCount').textContent = count + ' item' + (count !== 1 ? 's' : '') + ' noted';
-    } else {
-      footer.classList.remove('visible');
+    footer.classList.add('visible');
+    var countEl = document.getElementById('examCheckedCount');
+    if (countEl) {
+      countEl.textContent = count > 0 ? count + ' item' + (count !== 1 ? 's' : '') + ' noted' : 'No items noted yet';
     }
   }
 
@@ -347,6 +346,7 @@ function _renderExamination(d) {
 
   // Ten Commandments — iOS inset grouped list
   html += '<div class="exam-group-label">The Ten Commandments</div>';
+  html += '<div class="exam-expand-hint">Tap a commandment to expand</div>';
   html += '<div class="exam-group">';
   d.commandments.forEach(function(cmd, i) {
     html += _renderSection(cmd, 'cmd-' + cmd.number, i === 0, i === d.commandments.length - 1);
@@ -413,9 +413,20 @@ function _renderExamination(d) {
           commandment: cb.dataset.cmd
         };
         qEl.classList.add('checked');
+        // Brief "Noted" feedback
+        var noteEl = qEl.querySelector('.exam-q-noted');
+        if (!noteEl) {
+          noteEl = document.createElement('span');
+          noteEl.className = 'exam-q-noted';
+          noteEl.textContent = '\u2713 Noted';
+          var content = qEl.querySelector('.exam-q-content');
+          if (content) content.appendChild(noteEl);
+        }
       } else {
         delete _checked[qid];
         qEl.classList.remove('checked');
+        var noteEl = qEl.querySelector('.exam-q-noted');
+        if (noteEl) noteEl.remove();
       }
       _haptic();
       _updateCheckedUI();
@@ -488,6 +499,7 @@ function openExamination() {
   _checked = {};
   window._lastFocused = document.activeElement;
   _loadData(function(d) {
+    _expanded['cmd-1'] = true;
     _renderExamination(d);
     var overlay = document.getElementById('examOverlay');
     overlay.classList.add('open');
@@ -500,6 +512,10 @@ function openExamination() {
 
 // ── Close overlay ──
 function closeExamination() {
+  var count = Object.keys(_checked).length;
+  if (count > 0) {
+    if (!confirm('Close examination? Your ' + count + ' marked item' + (count !== 1 ? 's' : '') + ' will be cleared.')) return;
+  }
   var overlay = document.getElementById('examOverlay');
   overlay.classList.remove('open');
   document.body.style.overflow = '';

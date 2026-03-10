@@ -41,6 +41,7 @@ var _wakeLock = null;
 var _touchStartX = 0;
 var _touchStartY = 0;
 var _longPressTimer = null;
+var _swipeHintShown = false;
 var _cccParagraphs = null;   // lazy-loaded catechism data for inline CCC
 
 var SET_META = {
@@ -152,10 +153,20 @@ function rosaryNext() {
     _decade = 0;
     _bead = 0;
   } else if (_screen === 'decade') {
+    if (_bead < 10) {
+      var hint = document.getElementById('rosaryBeadLabel');
+      if (hint) {
+        hint.textContent = 'Finish your ' + (10 - _bead) + ' remaining Hail Mary' + (_bead === 9 ? '' : 's');
+        hint.classList.add('rosary-bead-nudge');
+        setTimeout(function() { hint.classList.remove('rosary-bead-nudge'); }, 1500);
+      }
+      _haptic.error();
+      return;
+    }
     if (_decade < 4) { _decade++; _bead = 0; }
     else { _screen = 'closing'; }
   } else if (_screen === 'closing') {
-    // Log rosary completion (Change 19)
+    // Log rosary completion
     try {
       var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
       log.push({ type: 'rosary', date: new Date().toISOString().slice(0, 10), set: _set });
@@ -163,7 +174,24 @@ function rosaryNext() {
       log = log.filter(function(e) { return e.date >= cutoff; });
       localStorage.setItem('mf-prayer-log', JSON.stringify(log));
     } catch (e) {}
-    closeRosary();
+    // Show completion screen briefly
+    var bodyEl = document.getElementById('rosaryBody');
+    var navEl = document.getElementById('rosaryNav');
+    var titleEl = document.getElementById('rosaryTitle');
+    var progressEl = document.getElementById('rosaryProgress');
+    if (titleEl) titleEl.textContent = 'Rosary Complete';
+    if (progressEl) progressEl.innerHTML = '';
+    if (navEl) navEl.innerHTML = '';
+    if (bodyEl) {
+      bodyEl.innerHTML = '<div class="rosary-complete-screen">'
+        + '<svg class="rosary-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
+        + '<h3 class="rosary-complete-title">' + utils.esc(_set) + ' Mysteries</h3>'
+        + '<p class="rosary-complete-sub">5 Decades \u00b7 53 Hail Marys \u00b7 6 Our Fathers</p>'
+        + '<p class="rosary-complete-msg">May the Holy Rosary bring you peace<br>and draw you closer to our Lord.</p>'
+        + '</div>';
+    }
+    _haptic.confirm();
+    setTimeout(closeRosary, 3000);
     return;
   }
   _haptic();
@@ -392,7 +420,7 @@ function _renderOpening(title, body, progress, nav) {
 function _renderDecade(title, body, progress, nav) {
   var m = _mysteries[_decade];
   var meta = SET_META[_set] || {};
-  title.textContent = _set + ' Mysteries';
+  title.textContent = _set + ' Mysteries \u2014 Decade ' + (_decade + 1) + ' of 5';
   progress.innerHTML = _dotsHtml(_decade);
   var p = _data.prayers;
 
@@ -426,7 +454,7 @@ function _renderDecade(title, body, progress, nav) {
     + '<div class="rosary-bead-label" id="rosaryBeadLabel">'
     + (_bead === 0 ? 'Tap to count' : _bead >= 10 ? 'All 10 complete' : 'Hail Mary ' + _bead + ' of 10')
     + '</div>'
-    + (_bead === 0 ? '<div class="rosary-bead-hint">Tap beads to count \u00b7 hold to reset</div>' : _bead < 10 ? '<div class="rosary-bead-hint">Hold to reset</div>' : '')
+    + (_bead < 10 ? '<div class="rosary-bead-hint">' + (_bead === 0 ? 'Tap beads to count' : 'Hold to reset') + '</div>' : '')
     + '</div>'
     + _prayerBlockCollapsible('Hail Mary', p.hail_mary)
     // Glory Be + O My Jesus (collapsible)
@@ -437,6 +465,16 @@ function _renderDecade(title, body, progress, nav) {
   var prevLabel = _decade === 0 ? '\u2190 Opening' : '\u2190 ' + _ordinal(_decade) + ' Decade';
   var nextLabel = _decade < 4 ? _ordinal(_decade + 2) + ' Decade \u2192' : 'Closing \u2192';
   nav.innerHTML = _navHtml(prevLabel, nextLabel);
+
+  // Swipe hint (show once)
+  if (!_swipeHintShown) {
+    _swipeHintShown = true;
+    var hintEl = document.createElement('div');
+    hintEl.className = 'rosary-swipe-hint';
+    hintEl.textContent = 'Swipe left or right to navigate';
+    body.appendChild(hintEl);
+    setTimeout(function() { if (hintEl.parentNode) hintEl.remove(); }, 3000);
+  }
 
   // Attach bead handlers programmatically (avoids window.* exposure + touch/click double-fire)
   var beadEl = document.getElementById('rosaryBeads');
@@ -500,8 +538,8 @@ function _prayerBlock(name, text, subtitle) {
 }
 
 // Collapsible prayer block — experienced pray-ers can collapse texts they know
-function _prayerBlockCollapsible(name, text, subtitle) {
-  return '<details class="rosary-prayer-block rosary-prayer-collapsible" open>'
+function _prayerBlockCollapsible(name, text, subtitle, isOpen) {
+  return '<details class="rosary-prayer-block rosary-prayer-collapsible"' + (isOpen ? ' open' : '') + '>'
     + '<summary class="rosary-prayer-name">' + name
     + '<svg class="rosary-prayer-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
     + '</summary>'
