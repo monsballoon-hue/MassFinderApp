@@ -159,6 +159,27 @@ async function _renderCCCContent(numStr) {
   relEl.innerHTML = relHtml;
   document.getElementById('cccSheetScroll').scrollTop = 0;
   _cccCurrentNum = numStr;
+
+  // Baltimore companion card — async append if mapping exists
+  cccData.loadBaltimore().then(function(b) {
+    if (!b) return;
+    var card = _renderBaltimoreCard(b, ids[0]);
+    if (card) {
+      var cardEl = document.createElement('div');
+      cardEl.innerHTML = card;
+      bodyEl.appendChild(cardEl.firstChild);
+    }
+  });
+}
+
+function _renderBaltimoreCard(baltimore, cccNum) {
+  var qa = baltimore.byCCC[String(cccNum)];
+  if (!qa) return '';
+  return '<div class="ccc-baltimore-card">'
+    + '<div class="ccc-baltimore-label">Baltimore Catechism #' + qa.id + '</div>'
+    + '<div class="ccc-baltimore-q">Q. ' + utils.esc(qa.question) + '</div>'
+    + '<div class="ccc-baltimore-a">A. ' + utils.esc(qa.answer) + '</div>'
+    + '</div>';
 }
 
 function _crossfadeTo(numStr) {

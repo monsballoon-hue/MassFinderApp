@@ -2,6 +2,7 @@
 // Loads data/catechism.json once, shared across ccc.js, examination.js, rosary.js
 
 var _data = null;
+var _baltimore = null;       // { questions: [...], byCCC: { cccNum: qa } }
 
 function load(cb) {
   if (_data) { if (cb) cb(_data); return Promise.resolve(_data); }
@@ -20,4 +21,18 @@ function load(cb) {
     });
 }
 
-module.exports = { load: load };
+// Baltimore Catechism loader — builds reverse CCC→Baltimore lookup
+function loadBaltimore() {
+  if (_baltimore) return Promise.resolve(_baltimore);
+  return fetch('/data/baltimore-catechism.json').then(function(r) { return r.json(); })
+    .then(function(d) {
+      var byCCC = {};
+      (d.questions || []).forEach(function(qa) {
+        if (qa.ccc) byCCC[String(qa.ccc)] = qa;
+      });
+      _baltimore = { questions: d.questions || [], byCCC: byCCC };
+      return _baltimore;
+    }).catch(function() { return null; });
+}
+
+module.exports = { load: load, loadBaltimore: loadBaltimore };

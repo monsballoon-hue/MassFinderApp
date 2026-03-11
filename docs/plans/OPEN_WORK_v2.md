@@ -389,9 +389,9 @@ function _getNovenaSubtitle() {
 
 ---
 
-### OW-19: CCC — Baltimore Catechism Toggle in Reference Sheet
+### OW-19: CCC — Baltimore Catechism Toggle in Reference Sheet ✅
 
-**Priority:** P2
+**Priority:** P2 — **DONE**
 **Effort:** 2 hours
 **Files:** `src/ccc.js`, `src/ccc-data.js`, `css/app.css`
 
@@ -1130,7 +1130,7 @@ Design document (`docs/plans/Portal_Auth_Infrastructure_Spec.md`) + Supabase mig
 ### P2 — Valuable, needs some design work
 | ID | Summary | Effort | Dependencies |
 |----|---------|--------|-------------|
-| OW-19 | CCC ↔ Baltimore toggle | 2 hrs | None |
+| ~~OW-19~~ | ~~CCC ↔ Baltimore toggle~~ | ~~2 hrs~~ | ✅ Done |
 | ~~OW-20~~ | ~~Baltimore language modernization~~ | ~~2 hrs~~ | ✅ Done |
 | OW-21 | CCC Explore module | 6–8 hrs | OW-19 (ideally) |
 | ~~OW-22~~ | ~~Bible refs progressive disclosure~~ | ~~1 hr~~ | ✅ Done |
