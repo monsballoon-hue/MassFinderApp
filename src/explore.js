@@ -254,7 +254,9 @@ function _generateConnections(type, id) {
         connections.push({
           group: 'Cross-References',
           items: bibleRefs.slice(0, 20).map(function(r) {
-            return { type: 'bible', label: r, ref: r };
+            // Support ranked tuple [ref, votes] and legacy string format
+            var refStr = Array.isArray(r) ? r[0] : r;
+            return { type: 'bible', label: refStr, ref: refStr };
           })
         });
       }

@@ -12,10 +12,11 @@
     "precommit": "npm run build && npm run schema && npm run validate",
     "prepare": "husky",
     "build:bible": "node scripts/build-bible-drb.js",
-    "build:xrefs": "node scripts/build-xrefs.js",
+    "build:xrefs": "node scripts/build-xrefs-ranked.js",
+    "build:ccc-hierarchy": "node scripts/build-ccc-hierarchy.js",
     "build:litcal": "node scripts/build-litcal.js",
     "build:summa": "node scripts/build-summa.js",
-    "build:data": "npm run build:bible && npm run build:xrefs && npm run build:litcal && npm run build:summa",
+    "build:data": "npm run build:bible && npm run build:xrefs && npm run build:ccc-hierarchy && npm run build:litcal && npm run build:summa",
     "modernize:baltimore": "node scripts/modernize-baltimore.js"
   },
   "devDependencies": {

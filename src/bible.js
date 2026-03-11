@@ -293,7 +293,9 @@ async function _renderBibleContent(refStr) {
       var xkeyNoSpace = parsed.book.abbr.replace(/\s+/g, '') + ':' + parsed.chapter + ':' + rv;
       var refs = _xrefs[xkey] || _xrefs[xkeyNoSpace] || [];
       refs.forEach(function(r) {
-        if (relatedRefs.indexOf(r) < 0) relatedRefs.push(r);
+        // Support both ranked tuple [ref, votes] and legacy string format
+        var refStr = Array.isArray(r) ? r[0] : r;
+        if (relatedRefs.indexOf(refStr) < 0) relatedRefs.push(refStr);
       });
     }
 
