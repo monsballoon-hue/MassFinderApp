@@ -181,6 +181,8 @@ window.toggleTemp = ui.toggleTemp;
 window.applyQuickFilter = ui.applyQuickFilter;
 window.verifyOk = more.verifyOk;
 window.renderSaved = saved.renderSaved;
+window.clearMapFilter = function() { require('./map.js').clearMapFilter(); };
+window.closeMapPopup = map.closeMapPopup;
 window.openCCC = ccc.openCCC;
 window.closeCCC = ccc.closeCCC;
 window.cccNavigate = ccc.cccNavigate;
@@ -208,6 +210,11 @@ window.toggleTheme = function() {
   if (btn) btn.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
   var meta = document.getElementById('metaThemeColor');
   if (meta) meta.setAttribute('content', next === 'dark' ? '#1A1C22' : '#F8F7F4');
+  // Update map tiles if map is initialized
+  if (state.mapInitialized) {
+    var mapMod = require('./map.js');
+    mapMod.updateTileTheme();
+  }
 };
 // Light mode is default regardless of system preference.
 // Dark mode only activates when user explicitly toggles via theme button.
@@ -232,6 +239,7 @@ document.querySelectorAll('.chip[data-filter]').forEach(function(chip) {
     state.currentFilter = chip.dataset.filter;
     if (['today', 'weekend'].includes(state.currentFilter)) { state.currentSort = 'next_service'; ui.updateSortLabel(); }
     data.filterChurches(); render.renderCards();
+    if (state.mapInitialized) { map.applyMapFilter(); }
   });
 });
 

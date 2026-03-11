@@ -94,6 +94,11 @@ function applyQuickFilter(filter) {
   filterChurches();
   var render = require('./render.js');
   render.renderCards();
+  // Sync filter to map if initialized
+  if (state.mapInitialized) {
+    var mapMod = require('./map.js');
+    mapMod.applyMapFilter();
+  }
 }
 
 // ── Render Filters Body ──
@@ -220,9 +225,11 @@ function switchTab(id, btn) {
       var map = require('./map.js');
       map.initMap();
       state.mapInitialized = true;
-    }
-    if (id === 'panelMap' && state.mapInitialized && window._map) {
-      setTimeout(function() { window._map.invalidateSize(); }, 100);
+    } else if (id === 'panelMap' && state.mapInitialized) {
+      // Re-apply filter and refresh layout
+      var map2 = require('./map.js');
+      map2.applyMapFilter();
+      if (window._map) setTimeout(function() { window._map.invalidateSize(); }, 100);
     }
     if (id === 'panelMap') {
       var location = require('./location.js');

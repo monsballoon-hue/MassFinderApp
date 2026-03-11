@@ -896,7 +896,7 @@ select:focus-visible,
 .skip-link:focus { position: fixed; top: 0; left: 0; outline: 2px solid var(--color-accent); outline-offset: 2px; }
 
 /* MAP TAB */
-#panelMap { padding: 0; box-sizing: border-box; overflow: hidden; }
+#panelMap { padding: 0; box-sizing: border-box; overflow: hidden; position:relative; }
 #mapContainer { width: 100%; height: calc(100vh - 56px - var(--tab-bar-height) - var(--safe-bottom)); height: calc(100dvh - 56px - var(--tab-bar-height) - var(--safe-bottom)); overflow: hidden; }
 .leaflet-container { background: var(--color-bg); font-family: var(--font-body); }
 .map-cluster {
@@ -908,19 +908,35 @@ select:focus-visible,
   border-radius: 50%; text-align: center; font-size: 13px; font-weight: var(--weight-semibold);
   display: flex; align-items: center; justify-content: center;
 }
+
+/* MAP FILTER PILL — floating indicator showing active filter */
+.map-filter-pill { position:absolute;top:var(--space-3);left:50%;transform:translateX(-50%);z-index:500;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--color-surface);border-radius:var(--radius-full);box-shadow:var(--shadow-elevated);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);white-space:nowrap;cursor:default;max-width:calc(100% - 120px); }
+.map-filter-pill-dot { width:8px;height:8px;border-radius:50%;background:var(--color-primary);flex-shrink:0; }
+.map-filter-pill-label { overflow:hidden;text-overflow:ellipsis; }
+.map-filter-pill-clear { width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--color-text-tertiary);font-size:var(--text-xs);flex-shrink:0;cursor:pointer;margin:-2px -8px -2px 0;-webkit-tap-highlight-color:transparent;background:none;border:none; }
+.map-filter-pill-clear:hover { background:var(--color-surface-hover);color:var(--color-text-secondary); }
+
+/* MAP POPUP */
 .map-popup { padding: 0; }
 .map-popup .leaflet-popup-content-wrapper { border-radius: var(--radius-md); box-shadow: var(--shadow-card); padding: 0; }
 .map-popup .leaflet-popup-content { margin: 0; width: 260px !important; }
 .map-popup .leaflet-popup-tip { border-top-color: var(--color-surface); }
 .popup-card { padding: var(--space-4); cursor: pointer; }
-.popup-card:hover { background: var(--color-surface-hover); }
-.popup-name { font-size: var(--text-base); font-weight: var(--weight-semibold); color: var(--color-text-primary); line-height: 1.3; margin-bottom: 2px; }
-.popup-town { font-size: var(--text-xs); color: var(--color-text-secondary); margin-bottom: var(--space-2); }
+.popup-card:active { background: var(--color-surface-hover); }
+.popup-top { display:flex;align-items:flex-start;gap:var(--space-2);margin-bottom:var(--space-2); }
+.popup-info { flex:1;min-width:0; }
+.popup-name { font-size: var(--text-base); font-weight: var(--weight-semibold); color: var(--color-text-primary); line-height: 1.3; }
+.popup-town { font-size: var(--text-xs); color: var(--color-text-secondary); margin-top:1px; }
+.popup-fav { width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--color-text-tertiary);flex-shrink:0;margin:-4px -4px 0 0;-webkit-tap-highlight-color:transparent;transition:color var(--transition-fast);background:none;border:none;cursor:pointer; }
+.popup-fav:hover { background:var(--color-surface-hover); }
+.popup-fav--active { color:var(--color-fav); }
 .popup-next { display: flex; align-items: baseline; gap: var(--space-2); }
 .popup-time { font-size: var(--text-xl); font-weight: var(--weight-semibold); color: var(--color-primary); }
 .popup-label { font-size: var(--text-xs); color: var(--color-text-secondary); font-weight: var(--weight-medium); }
 .popup-day { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 2px; }
 .popup-dist { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: var(--space-1); }
+
+/* MAP LOCATE BUTTON */
 .map-locate-btn {
   width: 40px; height: 40px; background: var(--color-surface); border: 2px solid rgba(0,0,0,0.15);
   border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center;
@@ -928,6 +944,16 @@ select:focus-visible,
 }
 .map-locate-btn:hover { background: var(--color-surface-hover); }
 .map-locate-btn svg { width: 20px; height: 20px; color: var(--color-primary); }
+.map-locate-loading svg { animation: spin 0.8s linear infinite; color: var(--color-accent); }
+
+/* MAP DARK MODE */
+html[data-theme="dark"] .leaflet-container { background: #1A1C22; }
+html[data-theme="dark"] .map-popup .leaflet-popup-content-wrapper { background: var(--color-surface); }
+html[data-theme="dark"] .map-popup .leaflet-popup-tip { border-top-color: var(--color-surface); }
+html[data-theme="dark"] .map-locate-btn { background: var(--color-surface); border-color: rgba(255,255,255,0.1); }
+html[data-theme="dark"] .map-cluster { background: rgba(143,168,200,0.2); }
+html[data-theme="dark"] .map-cluster div { background: var(--color-primary); }
+html[data-theme="dark"] .map-filter-pill { background:var(--color-surface);box-shadow:var(--shadow-elevated); }
 
 /* ══════════════════════════════════════════════════════════
    SAVED TAB — "Your Parishes" personal dashboard
