@@ -222,7 +222,8 @@ function initMap() {
     bounds.push([c.lat, c.lng]);
   }
 
-  // Initial population — respects current filter
+  // Add cluster group to map, then populate with filtered markers
+  _map.addLayer(_cluster);
   applyMapFilter();
 
   // If no filter active, fit all bounds
