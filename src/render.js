@@ -102,9 +102,9 @@ function renderCards() {
   var total = state.allChurches.length;
   var shown = state.filteredChurches.length;
 
-  // Sparse message — show when Today filter returns few results
+  // FT-19: Hide old sparse message element (moved inline below cards)
   var sparseEl = document.getElementById('sparseMsg');
-  if (sparseEl) sparseEl.style.display = (state.currentFilter === 'today' && shown < 10) ? 'block' : 'none';
+  if (sparseEl) sparseEl.style.display = 'none';
 
   var evts = require('./events.js');
 
@@ -128,8 +128,19 @@ function renderCards() {
   var _clearHtml = (state.currentFilter !== 'all' && _filterLabel)
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
   document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml && _countText ? ' ' : '') + _clearHtml;
+
+  // FT-18: No-results state with guided recovery
   if (!shown) {
-    el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>Try adjusting your search or filters.</p></div>';
+    var recoveryHtml = '';
+    if (state.searchQuery) {
+      recoveryHtml = '<button class="no-results-action" onclick="document.getElementById(\'searchInput\').value=\'\';document.getElementById(\'searchInput\').dispatchEvent(new Event(\'input\'))">Clear search</button>';
+    } else if (state.currentFilter !== 'all') {
+      recoveryHtml = '<button class="no-results-action" onclick="applyQuickFilter(\'all\')">Show all churches</button>';
+    }
+    if (data.hasAdv()) {
+      recoveryHtml += '<button class="no-results-action" onclick="clearAdvancedFilters();filterChurches();renderCards()">Clear all filters</button>';
+    }
+    el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>No parishes match your current search' + (state.currentFilter !== 'all' ? ' and ' + utils.esc(_quickFilterLabels[state.currentFilter] || '') + ' filter' : '') + '.</p><div class="no-results-actions">' + recoveryHtml + '</div></div>';
     return;
   }
 
@@ -141,46 +152,102 @@ function renderCards() {
     });
   }
 
+  var calSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>';
   var checkSvg = '<svg class="card-verified" viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>';
   var cards = state.filteredChurches.map(function(item, i) {
     var c = item.church, next = item.next, dist = item.distance;
-    var ver = utils.isVer(c), fav = data.isFav(c.id), d = Math.min(i * 25, 250);
+    var ver = utils.isVer(c), fav = data.isFav(c.id), d = Math.min(i * 15, 150); // FT-21: faster stagger
+
     var statusBadge = '';
     if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
     else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
+
+    // FT-09: Next service — combine time, label, and day on one line
     var nh;
     if (next) {
-      nh = '<div class="card-next-service"><span class="card-next-time">' + next.timeFormatted + '</span><span class="card-next-label">' + utils.esc(config.SVC_LABELS[next.service.type] || next.service.type) + '</span>' + statusBadge + '</div><div class="card-next-day">' + next.dayLabel + '</div>';
+      var dayCtx = next.dayLabel;
+      nh = '<div class="card-next-service">'
+        + '<span class="card-next-time">' + next.timeFormatted + '</span>'
+        + '<span class="card-next-label">' + utils.esc(config.SVC_LABELS[next.service.type] || next.service.type) + '</span>'
+        + statusBadge
+        + (dayCtx && !next.isLive && !next.isSoon ? '<span class="card-next-day">' + dayCtx + '</span>' : '')
+        + '</div>';
     } else {
-      nh = '<div class="card-next-service"><span class="card-next-label" style="color:var(--color-text-tertiary)">Check bulletin for times</span></div>';
+      // FT-11: Better fallback for no next service
+      var fallbackHtml = '';
+      if (c.bulletin_url) {
+        fallbackHtml = '<a class="card-bulletin-link" href="' + utils.esc(c.bulletin_url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">See bulletin for times</a>';
+      } else if (c.services && c.services.length) {
+        var hasSunday = c.services.some(function(s) { return s.type === 'sunday_mass'; });
+        var hasConf = c.services.some(function(s) { return s.type === 'confession'; });
+        var desc = hasSunday ? 'Sunday Mass' : 'Services';
+        if (hasConf) desc += ' \u00b7 Confession';
+        fallbackHtml = '<span style="color:var(--color-text-tertiary)">' + desc + ' available</span>';
+      } else {
+        fallbackHtml = '<span style="color:var(--color-text-tertiary)">Contact parish for times</span>';
+      }
+      nh = '<div class="card-next-service"><span class="card-next-label">' + fallbackHtml + '</span></div>';
     }
+
+    // FT-08: Service availability indicator tags
+    var svcGroups = {};
+    (c.services || []).forEach(function(s) {
+      if (s.type === 'confession') svcGroups.confession = true;
+      else if (s.type === 'adoration' || s.type === 'perpetual_adoration' || s.type === 'holy_hour') svcGroups.adoration = true;
+      if (s.rite === 'tridentine' || s.language === 'la' || s.type === 'mass_latin' || s.type === 'mass_traditional_latin') svcGroups.latin = true;
+      if (s.language === 'es' || s.type === 'mass_spanish') svcGroups.spanish = true;
+    });
+    var svcHtml = '';
+    if (svcGroups.confession || svcGroups.adoration || svcGroups.latin || svcGroups.spanish) {
+      svcHtml = '<div class="card-svc-dots">';
+      if (svcGroups.confession) svcHtml += '<span class="card-svc-tag card-svc-tag--sacr">Confession</span>';
+      if (svcGroups.adoration) svcHtml += '<span class="card-svc-tag card-svc-tag--ador">Adoration</span>';
+      if (svcGroups.latin) svcHtml += '<span class="card-svc-tag card-svc-tag--latin">Latin</span>';
+      if (svcGroups.spanish) svcHtml += '<span class="card-svc-tag card-svc-tag--lang">Spanish</span>';
+      svcHtml += '</div>';
+    }
+
+    // FT-12: Event row — show event titles, not just counts
     var evtHtml = '';
     if (evtCounts[c.id]) {
-      evtHtml = '<div class="card-evt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + evtCounts[c.id] + ' event' + (evtCounts[c.id] > 1 ? 's' : '') + ' this week</div>';
+      var churchEvts = (state.eventsData || []).filter(function(e) {
+        return e.church_id === c.id && e.category !== 'yc' && utils.isEventActive(e);
+      });
+      if (churchEvts.length === 1) {
+        evtHtml = '<div class="card-evt-row">' + calSvg + utils.esc(churchEvts[0].title) + '</div>';
+      } else if (churchEvts.length === 2) {
+        evtHtml = '<div class="card-evt-row">' + calSvg + utils.esc(churchEvts[0].title) + ' +1 more</div>';
+      } else if (churchEvts.length > 2) {
+        evtHtml = '<div class="card-evt-row">' + calSvg + utils.esc(churchEvts[0].title) + ' +' + (churchEvts.length - 1) + ' more</div>';
+      }
     }
+
     var searchCtx = _getSearchContext(c, state.searchQuery);
-    // Surface matching services for chip filters (same as search context but filter-driven)
+    // FT-14: Surface matching services for chip filters as structured rows
     if (!searchCtx && state.currentFilter && state.currentFilter !== 'all' && state.currentFilter !== 'today' && state.currentFilter !== 'weekend') {
       var _filterTypeMap = { confession: ['confession'], adoration: ['adoration','holy_hour'], latin: ['mass_latin','mass_traditional_latin'], spanish: ['mass_spanish'], lent: ['stations_of_the_cross','penance_service','gorzkie_zale'] };
       var _filterTypes = _filterTypeMap[state.currentFilter];
       if (_filterTypes) {
         var _fmatches = (c.services || []).filter(function(s) { return _filterTypes.indexOf(s.type) !== -1; });
         if (_fmatches.length) {
-          var _fparts = _fmatches.slice(0, 4).map(function(s) {
+          var _fparts = _fmatches.slice(0, 3).map(function(s) {
             var _dl = config.DAY_NAMES[s.day] || s.day || '';
             var _ts = s.time ? utils.fmt12(s.time) : 'See bulletin';
-            return _dl + (s.time ? ' ' + _ts : ' \u00b7 ' + _ts);
+            var _endTs = s.end_time ? ' \u2013 ' + utils.fmt12(s.end_time) : '';
+            return '<div class="card-match-row"><span class="card-match-time">' + utils.esc(_ts + _endTs) + '</span><span class="card-match-day">' + utils.esc(_dl) + '</span></div>';
           });
-          searchCtx = '<div class="card-search-match"><span class="card-match-label">' + utils.esc(config.SVC_LABELS[_fmatches[0].type]) + '</span> ' + utils.esc(_fparts.join(' \u00b7 ')) + '</div>';
+          searchCtx = '<div class="card-search-match"><span class="card-match-label">' + utils.esc(config.SVC_LABELS[_fmatches[0].type]) + '</span>' + _fparts.join('') + '</div>';
         }
       }
     }
-    return '<article class="parish-card" role="listitem" style="animation-delay:' + d + 'ms" onclick="openDetail(\'' + c.id + '\')">'
+
+    // FT-13: Favorited card visual distinction
+    return '<article class="parish-card' + (fav ? ' parish-card--saved' : '') + '" role="listitem" style="animation-delay:' + d + 'ms" onclick="openDetail(\'' + c.id + '\')">'
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')
       + '<button class="card-fav' + (fav ? ' is-fav' : '') + '" onclick="toggleFav(\'' + c.id + "',event)\" aria-label=\"Favorite\"><svg viewBox=\"0 0 24 24\" fill=\"" + (fav ? 'currentColor' : 'none') + "\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z\"/></svg></button>"
       + '<span class="card-chevron" aria-hidden="true">\u203A</span>'
-      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + nh + searchCtx + evtHtml
+      + '</div></div><div class="card-town">' + utils.esc(c.city) + ', ' + utils.esc(c.state) + '</div>' + svcHtml + nh + searchCtx + evtHtml
       + '</article>';
   });
 
@@ -189,8 +256,17 @@ function renderCards() {
     cards.splice(state._savedSplitIndex, 0, '<div class="card-list-separator" role="separator"><span>Nearby churches</span></div>');
   }
 
-  // Inline YC discovery strip — after 3rd card
-  if (['all', 'today'].indexOf(state.currentFilter) !== -1 && cards.length >= 3 && evts && typeof evts.getUpcomingYC === 'function') {
+  // FT-06: First-use tip card — after first card for new visitors
+  if (!localStorage.getItem('mf-welcome-dismissed') && cards.length >= 1) {
+    var tipCard = '<div class="first-use-tip" id="firstUseTip">'
+      + '<span>Tip: Tap \u2661 to save a church for quick access on the Saved tab</span>'
+      + '<button onclick="this.parentElement.remove();localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+      + '</div>';
+    cards.splice(1, 0, tipCard);
+  }
+
+  // FT-16: YC strip — only show when no filter/search active, after 4th card
+  if (state.currentFilter === 'all' && !state.searchQuery && cards.length >= 4 && evts && typeof evts.getUpcomingYC === 'function') {
     var upcoming = evts.getUpcomingYC().slice(0, 3);
     if (upcoming.length) {
       var ycCards = upcoming.map(function(e) {
@@ -213,11 +289,16 @@ function renderCards() {
         + '</div>'
         + '<div class="inline-yc-scroll">' + ycCards + '</div>'
         + '</div>';
-      cards.splice(3, 0, strip);
+      cards.splice(4, 0, strip);
     }
   }
 
   el.innerHTML = cards.join('');
+
+  // FT-19: Sparse message — inline below cards when Today filter has few results
+  if (state.currentFilter === 'today' && shown < 10 && shown > 0) {
+    el.innerHTML += '<div class="sparse-msg-inline">Fewer services on weekdays \u2014 <button onclick="document.querySelector(\'[data-filter=weekend]\').click()">try This Weekend</button> for Sunday Mass times.</div>';
+  }
 }
 
 // ── Pastor lookup ──

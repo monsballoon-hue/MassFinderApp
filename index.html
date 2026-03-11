@@ -40,23 +40,13 @@
 </div></div></header>
 
 <main id="panelFind" class="tab-panel active" role="tabpanel">
-  <div id="welcomeBanner" class="welcome-wrap" style="display:none"></div>
-  <div id="returnCard" class="return-card-wrap" style="display:none"></div>
   <div class="search-section"><div class="search-bar" role="search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input id="searchInput" type="text" placeholder="Search churches, events, or services…" aria-label="Search churches and events">
     <button id="searchClear" class="search-clear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div></div>
 
-  <div id="liturgicalTeaser" class="liturgical-teaser-wrap">
-    <div class="daily-card-skeleton">
-      <div class="skeleton-dot"></div>
-      <div class="skeleton-lines">
-        <div class="skeleton-line skeleton-line--long"></div>
-        <div class="skeleton-line skeleton-line--short"></div>
-      </div>
-    </div>
-  </div>
+  <div id="liturgicalContext" class="liturgical-context-wrap" style="display:none"></div>
 
   <div class="chip-bar-wrap">
   <div class="chip-bar" role="toolbar" aria-label="Quick filters">
@@ -72,8 +62,6 @@
     <button class="chip more-filters" id="moreFiltersBtn" onclick="openMoreFilters()">More</button>
   </div>
   </div>
-
-  <div id="confessionPrompt" class="conf-prompt-wrap" style="display:none"></div>
 
   <div id="activeFilters" class="active-filters" aria-live="polite" aria-label="Active filters"></div>
 

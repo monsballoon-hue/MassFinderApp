@@ -484,21 +484,19 @@ window.addEventListener('appinstalled', function() { window._deferredInstallProm
 
 // ── Daily Card on Find tab (liturgical day teaser) ──
 function _renderDailyStrip(events) {
-  var el = document.getElementById('liturgicalTeaser');
-  if (!el) return;
   var now = utils.getNow(), m = now.getMonth() + 1, d = now.getDate();
   var today = events.filter(function(e) { return e.month === m && e.day === d && !e.is_vigil_mass; });
   if (!today.length) return;
 
   var pick = today.sort(function(a, b) { return (b.grade || 0) - (a.grade || 0); })[0];
-  var color = (pick.color && pick.color[0]) || 'green';
-  var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
-  var colorHex = colorMap[color] || '#16A34A';
 
-  var progress = utils.getSeasonProgress();
-  var progressText = progress ? 'Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season : '';
+  // FT-01: Update search placeholder with liturgical context
+  var searchInput = document.getElementById('searchInput');
+  if (searchInput && !searchInput.value) {
+    searchInput.placeholder = pick.name + ' \u2014 search churches or services\u2026';
+  }
 
-  // Secondary line
+  // FT-01+07: Only render slim contextual line for actionable items or return message
   var secondary = '';
   var dow = now.getDay();
   var season = document.documentElement.getAttribute('data-season');
@@ -507,47 +505,34 @@ function _renderDailyStrip(events) {
   var tomorrowHDO = events.filter(function(e) {
     return e.month === (tomorrow.getMonth() + 1) && e.day === tomorrow.getDate() && e.holy_day_of_obligation;
   });
-  if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
+  if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day of Obligation)';
 
-  el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
-    + '<div class="daily-card-row">'
-    + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
-    + '<div class="daily-card-text">'
-    + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
-    + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
-    + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
-    + '</div>'
-    + '<span class="daily-card-arrow">\u203a</span>'
-    + '</div>'
-    + '</div>';
+  // FT-07: Merge return card message into context strip
+  if (window._returnMessage && !secondary) {
+    secondary = window._returnMessage;
+    window._returnMessage = null;
+  }
+
+  var el = document.getElementById('liturgicalContext');
+  if (!el) return;
+  if (secondary) {
+    el.innerHTML = '<div class="liturgical-context">' + utils.esc(secondary) + '</div>';
+    el.style.display = '';
+  } else {
+    el.style.display = 'none';
+  }
 }
 
-// ── Contextual confession prompt ──
+// FT-20: Contextual confession chip nudge — highlight chip on Saturdays and during Lent
 function _renderConfessionPrompt() {
-  var dismissed = localStorage.getItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
-  if (dismissed) return;
-  var welcome = document.getElementById('welcomeBanner');
-  var returnC = document.getElementById('returnCard');
-  if ((welcome && welcome.style.display !== 'none') || (returnC && returnC.style.display !== 'none')) return;
-
   var day = new Date().getDay();
   var season = document.documentElement.getAttribute('data-season');
   if (day !== 6 && season !== 'lent') return;
 
-  var el = document.getElementById('confessionPrompt');
-  if (!el) return;
-  var confMsg = '';
-  try {
-    var lastConf = localStorage.getItem('mf-last-confession');
-    if (lastConf) {
-      var daysSince = Math.floor((Date.now() - Number(lastConf)) / 86400000);
-      if (daysSince >= 14) confMsg = daysSince + ' days since your last confession \u2014 ';
-    }
-  } catch (e) {}
-  el.innerHTML = '<div class="conf-nudge" onclick="applyQuickFilter(\'confession\');this.parentElement.style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">'
-    + confMsg + 'Find a confessional nearby \u2192'
-    + '</div>';
-  el.style.display = '';
+  var confChip = document.querySelector('[data-filter="confession"]');
+  if (confChip && !confChip.classList.contains('active')) {
+    confChip.classList.add('chip--nudge');
+  }
 }
 
 // ── Daily Catholic Q&A (DAT-09: Baltimore Catechism) ──
@@ -633,26 +618,13 @@ function _renderDailySumma() {
 }
 
 // ── First-visit welcome banner (Change 4) ──
+// FT-06: Welcome banner removed — first-use tip card is injected inline by renderCards()
 function _renderWelcomeBanner() {
-  if (state._lastVisit) return; // not first visit
-  if (localStorage.getItem('mf-welcome-dismissed')) return;
-  var el = document.getElementById('welcomeBanner');
-  if (!el) return;
-  el.innerHTML = '<div class="welcome-banner">'
-    + '<div class="welcome-text">'
-    + '<div class="welcome-title">Welcome to MassFinder</div>'
-    + '<div class="welcome-desc">Mass times, Confession, Adoration, daily readings, prayer tools, and community events across Western New England. Save your parishes to build a personalized dashboard.</div>'
-    + '</div>'
-    + '<button class="welcome-dismiss" onclick="this.closest(\'.welcome-wrap\').style.display=\'none\';localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
-    + '</div>';
-  el.style.display = '';
+  // No-op: welcome experience is now a contextual tip card after the first church card
 }
 
-// ── Return-visit context card (Change 18) ──
+// FT-07: Return-visit context — store message for liturgical context strip
 function _renderReturnCard(daysMissed) {
-  var el = document.getElementById('returnCard');
-  if (!el) return;
-
   var missed = [];
   if (window._litcalCache && window._litcalCache.events) {
     var lastDate = new Date(state._lastVisit + 'T00:00:00');
@@ -669,11 +641,9 @@ function _renderReturnCard(daysMissed) {
     ? missed.slice(0, 3).join(', ') + (missed.length > 3 ? ' +' + (missed.length - 3) + ' more' : '')
     : '';
 
-  el.innerHTML = '<div class="return-card">'
-    + '<div class="return-text">Welcome back' + (missedText ? ' \u2014 ' + utils.esc(missedText) + ' since your last visit' : '') + '</div>'
-    + '<button class="return-dismiss" onclick="this.closest(\'.return-card-wrap\').style.display=\'none\'" aria-label="Dismiss">\u2715</button>'
-    + '</div>';
-  el.style.display = '';
+  if (missedText) {
+    window._returnMessage = 'Welcome back \u00b7 ' + missedText + ' since last visit';
+  }
 }
 
 
@@ -928,37 +898,37 @@ window._devToggle = function(key, checked) {
   _devState[key] = checked;
 
   if (key === 'welcome') {
-    var wb = document.getElementById('welcomeBanner');
     if (checked) {
       localStorage.removeItem('mf-welcome-dismissed');
-      var oldVisit = state._lastVisit;
-      state._lastVisit = null;
-      _renderWelcomeBanner();
-      state._lastVisit = oldVisit;
+      render.renderCards();
     } else {
-      if (wb) wb.style.display = 'none';
+      localStorage.setItem('mf-welcome-dismissed', '1');
+      var tip = document.getElementById('firstUseTip');
+      if (tip) tip.remove();
     }
   }
 
   if (key === 'returnCard') {
-    var rc = document.getElementById('returnCard');
     if (checked) {
-      _renderReturnCard(3);
+      window._returnMessage = 'Welcome back \u00b7 Test feast since last visit';
+      var ctxEl = document.getElementById('liturgicalContext');
+      if (ctxEl) {
+        ctxEl.innerHTML = '<div class="liturgical-context">' + window._returnMessage + '</div>';
+        ctxEl.style.display = '';
+        window._returnMessage = null;
+      }
     } else {
-      if (rc) rc.style.display = 'none';
+      var ctxEl2 = document.getElementById('liturgicalContext');
+      if (ctxEl2) ctxEl2.style.display = 'none';
     }
   }
 
   if (key === 'confession') {
-    var cp = document.getElementById('confessionPrompt');
+    var confChip = document.querySelector('[data-filter="confession"]');
     if (checked) {
-      localStorage.removeItem('mf-conf-prompt-' + new Date().toISOString().slice(0, 10));
-      if (cp) {
-        cp.innerHTML = '<div class="conf-nudge" onclick="applyQuickFilter(\'confession\');this.parentElement.style.display=\'none\'">Find confession times nearby \u2192</div>';
-        cp.style.display = '';
-      }
+      if (confChip) confChip.classList.add('chip--nudge');
     } else {
-      if (cp) cp.style.display = 'none';
+      if (confChip) confChip.classList.remove('chip--nudge');
     }
   }
 
