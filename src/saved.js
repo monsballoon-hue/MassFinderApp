@@ -62,8 +62,42 @@ function getTodayServices(favChurches) {
   return results;
 }
 
+// ── getTomorrowServices — services at saved churches for the next day ──
+function getTomorrowServices(favChurches) {
+  var now = getNow();
+  var tmrwDI = (now.getDay() + 1) % 7;
+  var tmrwDay = DAY_ORDER[tmrwDI];
+  var results = [];
+
+  for (var i = 0; i < favChurches.length; i++) {
+    var c = favChurches[i];
+    if (!c.services) continue;
+    for (var j = 0; j < c.services.length; j++) {
+      var s = c.services[j];
+      if (!s.time || !s.day) continue;
+      if (s.seasonal && s.seasonal.is_seasonal) continue;
+      var matchDay = s.day === tmrwDay || s.day === 'daily' || (s.day === 'weekday' && tmrwDI >= 1 && tmrwDI <= 5);
+      if (!matchDay) continue;
+      var sm = toMin(s.time);
+      if (sm === null) continue;
+      results.push({ church: c, service: s, minutes: sm, isPast: false, isLive: false, isSoon: false });
+    }
+  }
+
+  results.sort(function(a, b) { return a.minutes - b.minutes; });
+  return results;
+}
+
+// ── _getTypeGroup — service type color group for dot indicator ──
+function _getTypeGroup(type) {
+  if (['sunday_mass', 'daily_mass', 'communion_service'].indexOf(type) >= 0) return 'mass';
+  if (['confession', 'anointing_of_sick'].indexOf(type) >= 0) return 'sacr';
+  if (['adoration', 'perpetual_adoration', 'holy_hour'].indexOf(type) >= 0) return 'ador';
+  return 'devot';
+}
+
 // ── _renderSchedRow — single schedule timeline row ──
-function _renderSchedRow(item) {
+function _renderSchedRow(item, isHero) {
   var svcLabel = SVC_LABELS[item.service.type] || item.service.type;
   var timeStr = item.service.end_time
     ? fmt12(item.service.time) + ' \u2013 ' + fmt12(item.service.end_time)
@@ -80,11 +114,23 @@ function _renderSchedRow(item) {
     var minsAway = item.minutes - (getNow().getHours() * 60 + getNow().getMinutes());
     statusBadge = '<span class="sched-soon-badge">in ' + Math.max(1, minsAway) + ' min</span>';
   }
-  return '<div class="sched-row' + statusCls + '" onclick="openDetail(\'' + item.church.id + '\')">'
+
+  // Type dot indicator (ST-04)
+  var typeDot = '<span class="sched-type-dot sched-type-dot--' + _getTypeGroup(item.service.type) + '"></span>';
+
+  // Inline Directions for hero row (ST-01)
+  var directionsHtml = '';
+  if (isHero && (item.isLive || item.isSoon) && item.church.lat) {
+    var mapsUrl = 'https://maps.google.com/maps?daddr=' + item.church.lat + ',' + item.church.lng;
+    directionsHtml = '<a class="sched-row-directions" href="' + mapsUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Directions</a>';
+  }
+
+  return '<div class="sched-row' + statusCls + (isHero ? ' sched-row--hero' : '') + '" onclick="openDetail(\'' + item.church.id + '\')">'
     + '<div class="sched-time">' + timeStr + '</div>'
     + '<div class="sched-info">'
-    + '<span class="sched-type">' + esc(svcLabel) + '</span>' + statusBadge
+    + '<span class="sched-type">' + typeDot + esc(svcLabel) + '</span>' + statusBadge
     + '<span class="sched-church">' + esc(cName) + '</span>'
+    + directionsHtml
     + '</div>'
     + '</div>';
 }
@@ -232,50 +278,44 @@ function renderSaved() {
     var todayLongLabel = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
     html += '<div class="saved-today-label">Today<span class="saved-today-date"> \u00b7 ' + todayLongLabel + '</span></div>';
 
-    // Hero card for most urgent service
-    var curMinNow = now.getHours() * 60 + now.getMinutes();
-    var heroSvc = todaySvcs.filter(function(s) { return s.isLive; })[0]
-      || todaySvcs.filter(function(s) { return s.isSoon; })[0];
-    if (heroSvc) {
-      var heroLabel = SVC_LABELS[heroSvc.service.type] || heroSvc.service.type;
-      var heroCName = displayName(heroSvc.church.name);
-      var heroTimeStr = heroSvc.service.end_time
-        ? fmt12(heroSvc.service.time) + ' \u2013 ' + fmt12(heroSvc.service.end_time)
-        : fmt12(heroSvc.service.time);
-      var heroClass = 'sched-hero' + (heroSvc.isLive ? ' sched-hero--live' : '');
-      var heroBadge = heroSvc.isLive
-        ? '<span class="sched-hero-badge sched-hero-badge--live"><span class="pulse-dot"></span>Happening now</span>'
-        : '<span class="sched-hero-badge sched-hero-badge--soon">Starts in ' + Math.max(1, heroSvc.minutes - curMinNow) + ' min</span>';
-      var mapsUrl = heroSvc.church.lat ? 'https://maps.google.com/maps?daddr=' + heroSvc.church.lat + ',' + heroSvc.church.lng : '';
-      var directionsBtn = mapsUrl ? '<a class="sched-hero-directions" href="' + mapsUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Directions</a>' : '';
-      html += '<div class="' + heroClass + '" onclick="openDetail(\'' + heroSvc.church.id + '\')">'
-        + '<div class="sched-hero-top">' + heroBadge + '</div>'
-        + '<div class="sched-hero-time">' + esc(heroTimeStr) + '</div>'
-        + '<div class="sched-hero-info">' + esc(heroLabel) + ' at ' + esc(heroCName) + '</div>'
-        + directionsBtn
-        + '</div>';
-    }
-
-    // Schedule rows
+    // Schedule rows (ST-01: no hero card — inline hero treatment for first live/soon)
     if (todaySvcs.length) {
       var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
       var upSvcs = todaySvcs.filter(function(s) { return !s.isPast; });
 
       if (!upSvcs.length) {
-        html += '<div class="sched-done">Today\u2019s schedule is complete</div>';
+        // ST-05: Today done — show tomorrow preview inline
+        var tmrwPreview = getTomorrowServices(favChurches).slice(0, 2);
+        if (tmrwPreview.length) {
+          html += '<div class="sched-done-tomorrow">';
+          html += '<div class="sched-done-label">Today\u2019s schedule is complete</div>';
+          html += '<div class="sched-done-next-label">Tomorrow</div>';
+          for (var pi = 0; pi < tmrwPreview.length; pi++) {
+            html += _renderSchedRow(tmrwPreview[pi], false);
+          }
+          html += '</div>';
+        } else {
+          html += '<div class="sched-done">Today\u2019s schedule is complete</div>';
+        }
       } else {
-        var showPast = pastSvcs.length ? [pastSvcs[pastSvcs.length - 1]] : [];
-        var visibleSvcs = showPast.concat(upSvcs);
-        var maxShow = 5;
-        var overflow = visibleSvcs.length > maxShow ? visibleSvcs.length - maxShow : 0;
-        var showSvcs = overflow ? visibleSvcs.slice(0, maxShow) : visibleSvcs;
+        // ST-06: Past services — collapsed summary only
+        if (pastSvcs.length) {
+          html += '<div class="sched-past-summary">' + pastSvcs.length + ' service' + (pastSvcs.length !== 1 ? 's' : '') + ' earlier today</div>';
+        }
+        // Upcoming services with inline hero
+        var maxShow = 6;
+        var overflow = upSvcs.length > maxShow ? upSvcs.length - maxShow : 0;
+        var showSvcs = overflow ? upSvcs.slice(0, maxShow) : upSvcs;
+        var heroAssigned = false;
         for (var si = 0; si < showSvcs.length; si++) {
-          html += _renderSchedRow(showSvcs[si]);
+          var isHero = !heroAssigned && (showSvcs[si].isLive || showSvcs[si].isSoon);
+          if (isHero) heroAssigned = true;
+          html += _renderSchedRow(showSvcs[si], isHero);
         }
         if (overflow) {
           html += '<details class="sched-overflow-details"><summary class="sched-overflow">+' + overflow + ' more today</summary>';
-          for (var oi = maxShow; oi < visibleSvcs.length; oi++) {
-            html += _renderSchedRow(visibleSvcs[oi]);
+          for (var oi = maxShow; oi < upSvcs.length; oi++) {
+            html += _renderSchedRow(upSvcs[oi], false);
           }
           html += '</details>';
         }
@@ -291,6 +331,26 @@ function renderSaved() {
     }
 
     html += '</div>'; // close .saved-today-card
+  }
+
+  // ── 1.5. TOMORROW — preview of next day's first services (ST-03) ──
+  var tmrwSvcs = getTomorrowServices(favChurches);
+  if (tmrwSvcs.length) {
+    var tmrwDate = new Date(now);
+    tmrwDate.setDate(tmrwDate.getDate() + 1);
+    var tmrwLabel = tmrwDate.toLocaleDateString('en-US', { weekday: 'long' });
+
+    html += '<div class="saved-divider"><span>Tomorrow \u00b7 ' + tmrwLabel + '</span></div>';
+    html += '<div class="saved-tomorrow-card">';
+
+    var tmrwShow = Math.min(3, tmrwSvcs.length);
+    for (var tmi = 0; tmi < tmrwShow; tmi++) {
+      html += _renderSchedRow(tmrwSvcs[tmi], false);
+    }
+    if (tmrwSvcs.length > 3) {
+      html += '<div class="sched-more-count">+' + (tmrwSvcs.length - 3) + ' more services tomorrow</div>';
+    }
+    html += '</div>';
   }
 
   // ── 2. THIS WEEK — upcoming events ──
