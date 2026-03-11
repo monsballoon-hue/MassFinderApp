@@ -172,7 +172,7 @@ function _renderSection(section, key, isFirst, isLast) {
 
   var numBadge = section.number
     ? '<span class="exam-num">' + section.number + '</span>'
-    : '<span class="exam-num exam-num--icon">\u2690</span>';
+    : '<span class="exam-num exam-num--icon">P</span>';
 
   var html = '<div class="exam-row' + (isExpanded ? ' expanded' : '') + (isFirst ? ' exam-row--first' : '') + (isLast ? ' exam-row--last' : '') + '" data-key="' + key + '">';
   html += '<button class="exam-row-header" onclick="examToggleSection(\'' + key + '\')" aria-expanded="' + isExpanded + '">';
@@ -188,15 +188,13 @@ function _renderSection(section, key, isFirst, isLast) {
   section.questions.forEach(function(q) {
     var qRef = q.ccc ? refs.renderRef('ccc', q.ccc) : '';
     var isChecked = !!_checked[q.id];
-    html += '<div class="exam-q' + (isChecked ? ' checked' : '') + '" data-qid="' + q.id + '">';
-    html += '<label class="exam-check">';
+    html += '<label class="exam-q' + (isChecked ? ' checked' : '') + '" data-qid="' + q.id + '">';
     html += '<input type="checkbox" class="exam-checkbox" data-qid="' + q.id + '" data-cmd="' + _esc(cmdTitle) + '"' + (isChecked ? ' checked' : '') + '>';
     html += '<span class="exam-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>';
-    html += '</label>';
     html += '<div class="exam-q-content">';
     html += '<div class="exam-q-text">' + _esc(q.text) + '</div>';
     if (qRef) html += '<div class="exam-q-ref">' + qRef + '</div>';
-    html += '</div></div>';
+    html += '</div></label>';
   });
   html += '</div></div></div>';
   return html;
@@ -223,7 +221,7 @@ function _renderHowTo(howTo) {
   if (!howTo) return '';
   var html = '<details class="exam-howto">';
   html += '<summary class="exam-howto-header">';
-  html += '<span class="exam-num exam-num--icon">?</span>';
+  html += '<span class="exam-num exam-num--icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>';
   html += '<span class="exam-howto-label">' + _esc(howTo.title) + '</span>';
   html += '<svg class="exam-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 6 15 12 9 18"/></svg>';
   html += '</summary>';
@@ -327,6 +325,8 @@ function examScrollToSummary() {
   var summary = document.getElementById('examSummary');
   if (summary) {
     summary.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    summary.classList.add('exam-summary--revealed');
+    setTimeout(function() { summary.classList.remove('exam-summary--revealed'); }, 1500);
   }
   _haptic();
   // Log examination review (Change 19)
@@ -349,15 +349,11 @@ function _renderExamination(d) {
   var body = document.getElementById('examBody');
   var html = '';
 
-  // Prayer before confession
-  html += _renderPrayer(d.prayers.prayer_before);
-
   // How to Confess guide
   html += _renderHowTo(d.how_to_confess);
 
   // Ten Commandments — iOS inset grouped list
   html += '<div class="exam-group-label">The Ten Commandments</div>';
-  html += '<div class="exam-expand-hint">Tap a commandment to expand</div>';
   html += '<div class="exam-group">';
   d.commandments.forEach(function(cmd, i) {
     html += _renderSection(cmd, 'cmd-' + cmd.number, i === 0, i === d.commandments.length - 1);
@@ -432,20 +428,9 @@ function _renderExamination(d) {
           commandment: cb.dataset.cmd
         };
         qEl.classList.add('checked');
-        // Brief "Noted" feedback
-        var noteEl = qEl.querySelector('.exam-q-noted');
-        if (!noteEl) {
-          noteEl = document.createElement('span');
-          noteEl.className = 'exam-q-noted';
-          noteEl.textContent = '\u2713 Noted';
-          var content = qEl.querySelector('.exam-q-content');
-          if (content) content.appendChild(noteEl);
-        }
       } else {
         delete _checked[qid];
         qEl.classList.remove('checked');
-        var noteEl = qEl.querySelector('.exam-q-noted');
-        if (noteEl) noteEl.remove();
       }
       _haptic();
       _updateCheckedUI();
@@ -529,7 +514,7 @@ function openExamination() {
     // Show opening prayer as a centering moment
     var body = document.getElementById('examBody');
     body.innerHTML = '<div class="exam-opening">'
-      + '<div class="exam-opening-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2v20M5 9l7-7 7 7"/></svg></div>'
+      + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
       + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
       + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
       + '<button class="exam-opening-btn" onclick="window._examBeginReview()">Begin Examination</button>'

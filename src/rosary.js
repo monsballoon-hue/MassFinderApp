@@ -116,6 +116,7 @@ function openRosary(mysterySet) {
     _screen = mysterySet ? 'opening' : 'select';
     _set = mysterySet || _todaySet();
     _mysteries = _data.mysteries[_set];
+    document.getElementById('rosaryOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
     _decade = 0;
     _bead = 0;
     _render();
@@ -141,6 +142,7 @@ function rosarySelectSet(setName) {
   _decade = 0;
   _bead = 0;
   _screen = 'opening';
+  document.getElementById('rosaryOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
   _render();
   _scrollTop();
 }
@@ -194,8 +196,7 @@ function rosaryNext() {
     return;
   }
   _haptic();
-  _render();
-  _scrollTop();
+  _transitionTo(function() { _render(); });
 }
 
 function rosaryPrev() {
@@ -210,8 +211,7 @@ function rosaryPrev() {
     _screen = 'select';
   }
   _haptic();
-  _render();
-  _scrollTop();
+  _transitionTo(function() { _render(); });
 }
 
 // ── Jump to decade from progress dots ──
@@ -265,6 +265,20 @@ function _updateBeadUI() {
 function _scrollTop() {
   var b = document.getElementById('rosaryBody');
   if (b) b.scrollTop = 0;
+}
+
+// ── Crossfade transition for decade navigation (RC-03) ──
+function _transitionTo(renderFn) {
+  var body = document.getElementById('rosaryBody');
+  if (!body) { renderFn(); return; }
+  body.style.transition = 'opacity 150ms ease';
+  body.style.opacity = '0';
+  setTimeout(function() {
+    renderFn();
+    _scrollTop();
+    body.style.transition = 'opacity 200ms ease';
+    body.style.opacity = '1';
+  }, 150);
 }
 
 // ── Swipe gesture for decade navigation ──
@@ -386,13 +400,12 @@ function _renderSelect(title, body, progress, nav) {
   body.innerHTML = '<div class="rosary-select">'
     + '<div class="rosary-select-intro">'
     + '<svg class="rosary-cross-svg" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
-    + '<p>Today is <strong>' + dayName + '</strong></p>'
+    + '<p class="rosary-select-day">' + dayName + '</p>'
     + (isLent ? '<p class="rosary-select-season">Lenten Season</p>' : '')
-    + '<p class="rosary-select-rec">The traditional mysteries for today are the<br><strong>' + todaySet + ' Mysteries</strong></p>'
+    + '<p class="rosary-select-rec">The traditional mysteries for today<br><span class="rosary-select-set-name">' + todaySet + ' Mysteries</span></p>'
     + '</div>'
-    // Prominent CTA for today's recommendation
     + '<button class="rosary-begin-btn" onclick="rosarySelectSet(\'' + todaySet + '\')" style="--set-color:' + (SET_META[todaySet] || {}).color + '">'
-    + 'Begin ' + todaySet + ' Mysteries</button>'
+    + 'Begin</button>'
     + '<div class="rosary-select-divider"><span>or choose</span></div>'
     + '<div class="rosary-set-grid">'
     + Object.keys(_data.mysteries).map(function(s) {
@@ -430,25 +443,27 @@ function _renderDecade(title, body, progress, nav) {
   progress.innerHTML = _dotsHtml(_decade);
   var p = _data.prayers;
 
-  // CCC refs (inline expansion — avoids z-index collision)
-  var cccHtml = '';
+  // CCC refs for inline meta display (RC-06)
+  var cccSpans = '';
   if (m.ccc && m.ccc.length) {
-    cccHtml = '<div class="rosary-mystery-refs">' + m.ccc.map(function(n) {
+    cccSpans = m.ccc.map(function(n) {
       return '<span class="ccc-ref rosary-ccc-ref" data-ccc="' + n + '">CCC ' + n + '</span>';
-    }).join(' ') + '</div>';
+    }).join(' ');
   }
 
   body.innerHTML = '<div class="rosary-decade">'
-    // Mystery card
+    // Mystery card (RC-06: compact layout)
     + '<div class="rosary-mystery" style="--set-color:' + (meta.color || '#666') + '">'
-    + '<div class="rosary-mystery-num">' + _ordinal(_decade + 1) + ' ' + _set + ' Mystery</div>'
+    + '<div class="rosary-mystery-num">' + _ordinal(_decade + 1) + ' ' + _set + ' Mystery'
+    + '<span class="rosary-mystery-fruit-inline"> \u00b7 ' + utils.esc(m.fruit) + '</span></div>'
     + '<h3 class="rosary-mystery-title">' + utils.esc(m.title) + '</h3>'
-    + '<div class="rosary-mystery-scripture" onclick="window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\')">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> '
-    + utils.esc(m.scripture) + '</div>'
     + '<p class="rosary-mystery-meditation">' + utils.esc(m.meditation) + '</p>'
-    + '<div class="rosary-mystery-fruit"><strong>Fruit:</strong> ' + utils.esc(m.fruit) + '</div>'
-    + cccHtml
+    + '<div class="rosary-mystery-meta">'
+    + '<span class="rosary-mystery-scripture" onclick="window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\')">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> '
+    + utils.esc(m.scripture) + '</span>'
+    + (cccSpans ? '<span class="rosary-mystery-meta-sep">\u00b7</span><span class="rosary-mystery-refs">' + cccSpans + '</span>' : '')
+    + '</div>'
     + '</div>'
     // Our Father (collapsible)
     + _prayerBlockCollapsible('Our Father', p.our_father)
@@ -482,17 +497,19 @@ function _renderDecade(title, body, progress, nav) {
     setTimeout(function() { if (hintEl.parentNode) hintEl.remove(); }, 3000);
   }
 
-  // Attach bead handlers programmatically (avoids window.* exposure + touch/click double-fire)
-  var beadEl = document.getElementById('rosaryBeads');
-  if (beadEl) {
+  // Attach bead handlers to full section (RC-01: bigger tap target)
+  var hmSection = document.querySelector('.rosary-hm-section');
+  if (hmSection) {
     var _touchFired = false;
-    beadEl.addEventListener('touchstart', function() {
+    hmSection.addEventListener('touchstart', function(e) {
+      if (e.target.closest('.rosary-prayer-collapsible')) return;
       _longPressTimer = setTimeout(function() {
         rosaryBeadReset();
         _longPressTimer = null;
       }, 600);
     }, { passive: true });
-    beadEl.addEventListener('touchend', function() {
+    hmSection.addEventListener('touchend', function(e) {
+      if (e.target.closest('.rosary-prayer-collapsible')) return;
       _touchFired = true;
       setTimeout(function() { _touchFired = false; }, 300);
       if (_longPressTimer) {
@@ -501,8 +518,9 @@ function _renderDecade(title, body, progress, nav) {
         rosaryBeadTap();
       }
     }, { passive: true });
-    beadEl.addEventListener('click', function() {
-      if (_touchFired) return; // already handled by touch
+    hmSection.addEventListener('click', function(e) {
+      if (e.target.closest('.rosary-prayer-collapsible')) return;
+      if (_touchFired) return;
       rosaryBeadTap();
     });
   }
@@ -555,7 +573,8 @@ function _prayerBlockCollapsible(name, text, subtitle, isOpen) {
 }
 
 function _dotsHtml(active) {
-  var html = '<div class="rosary-dots" role="navigation" aria-label="Decade progress">';
+  var meta = SET_META[_set] || {};
+  var html = '<div class="rosary-dots" role="navigation" aria-label="Decade progress" style="--set-color:' + (meta.color || '#2C3E5A') + '">';
   for (var i = 0; i < 5; i++) {
     var cls = 'rosary-dot';
     if (i < active) cls += ' done';
