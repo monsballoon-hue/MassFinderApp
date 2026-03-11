@@ -42,14 +42,18 @@ function getTodayServices(favChurches) {
       if (!matchDay) continue;
       var sm = toMin(s.time);
       if (sm === null) continue;
-      var isPast = sm < curMin - 30; // Past if ended 30+ min ago
+      var em = s.end_time ? toMin(s.end_time) : null;
+      var effectiveEnd = em !== null ? em : sm + 60;
+      var isPast = curMin > effectiveEnd;
+      var isLive = !isPast && sm <= curMin;
+      var isSoon = !isPast && !isLive && sm > curMin && sm <= curMin + 60;
       results.push({
         church: c,
         service: s,
         minutes: sm,
         isPast: isPast,
-        isLive: !isPast && sm <= curMin,
-        isSoon: !isPast && sm > curMin && sm <= curMin + 60
+        isLive: isLive,
+        isSoon: isSoon
       });
     }
   }
@@ -61,7 +65,9 @@ function getTodayServices(favChurches) {
 // ── _renderSchedRow — single schedule timeline row ──
 function _renderSchedRow(item) {
   var svcLabel = SVC_LABELS[item.service.type] || item.service.type;
-  var timeStr = fmt12(item.service.time);
+  var timeStr = item.service.end_time
+    ? fmt12(item.service.time) + ' \u2013 ' + fmt12(item.service.end_time)
+    : fmt12(item.service.time);
   var cName = displayName(item.church.name);
   var statusCls = '';
   var statusBadge = '';
@@ -71,7 +77,8 @@ function _renderSchedRow(item) {
     statusBadge = '<span class="sched-live-badge"><span class="pulse-dot"></span>Now</span>';
   } else if (item.isSoon) {
     statusCls = ' sched-soon';
-    statusBadge = '<span class="sched-soon-badge">Soon</span>';
+    var minsAway = item.minutes - (getNow().getHours() * 60 + getNow().getMinutes());
+    statusBadge = '<span class="sched-soon-badge">in ' + Math.max(1, minsAway) + ' min</span>';
   }
   return '<div class="sched-row' + statusCls + '" onclick="openDetail(\'' + item.church.id + '\')">'
     + '<div class="sched-time">' + timeStr + '</div>'
@@ -223,6 +230,30 @@ function renderSaved() {
     html += '<div class="saved-today-card">';
     html += '<div class="saved-today-label">Today</div>';
 
+    // Hero card for most urgent service
+    var curMinNow = now.getHours() * 60 + now.getMinutes();
+    var heroSvc = todaySvcs.filter(function(s) { return s.isLive; })[0]
+      || todaySvcs.filter(function(s) { return s.isSoon; })[0];
+    if (heroSvc) {
+      var heroLabel = SVC_LABELS[heroSvc.service.type] || heroSvc.service.type;
+      var heroCName = displayName(heroSvc.church.name);
+      var heroTimeStr = heroSvc.service.end_time
+        ? fmt12(heroSvc.service.time) + ' \u2013 ' + fmt12(heroSvc.service.end_time)
+        : fmt12(heroSvc.service.time);
+      var heroClass = 'sched-hero' + (heroSvc.isLive ? ' sched-hero--live' : '');
+      var heroBadge = heroSvc.isLive
+        ? '<span class="sched-hero-badge sched-hero-badge--live"><span class="pulse-dot"></span>Happening now</span>'
+        : '<span class="sched-hero-badge sched-hero-badge--soon">Starts in ' + Math.max(1, heroSvc.minutes - curMinNow) + ' min</span>';
+      var mapsUrl = heroSvc.church.lat ? 'https://maps.google.com/maps?daddr=' + heroSvc.church.lat + ',' + heroSvc.church.lng : '';
+      var directionsBtn = mapsUrl ? '<a class="sched-hero-directions" href="' + mapsUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Directions</a>' : '';
+      html += '<div class="' + heroClass + '" onclick="openDetail(\'' + heroSvc.church.id + '\')">'
+        + '<div class="sched-hero-top">' + heroBadge + '</div>'
+        + '<div class="sched-hero-time">' + esc(heroTimeStr) + '</div>'
+        + '<div class="sched-hero-info">' + esc(heroLabel) + ' at ' + esc(heroCName) + '</div>'
+        + directionsBtn
+        + '</div>';
+    }
+
     // Schedule rows
     if (todaySvcs.length) {
       var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
@@ -319,8 +350,9 @@ function renderSaved() {
   }).join('');
   html += '</div>'; // close .saved-churches-card
 
-  // ── 4. ACTIVITY — prayer stats + confession reminder ──
-  var activityParts = [];
+  // ── 4. ACTIVITY — prayer journal card + confession reminder ──
+  var activityHtml = '';
+  var totalPrayers = 0;
   try {
     var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
     var thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
@@ -329,11 +361,24 @@ function renderSaved() {
     var examCount = recentEntries.filter(function(e) { return e.type === 'examination'; }).length;
     var stationsCount = recentEntries.filter(function(e) { return e.type === 'stations'; }).length;
     var novenaCount = recentEntries.filter(function(e) { return e.type === 'novena'; }).length;
-    var maxCount = Math.max(rosaryCount, examCount, stationsCount, novenaCount, 1);
-    if (rosaryCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Rosary</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(rosaryCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + rosaryCount + '</span></div>');
-    if (examCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Examen</span><div class="activity-bar-track"><div class="activity-bar-fill activity-bar-fill--alt" style="width:' + Math.round(examCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + examCount + '</span></div>');
-    if (stationsCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Stations</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(stationsCount / maxCount * 100) + '%;background:#8B2252"></div></div><span class="activity-bar-val">' + stationsCount + '</span></div>');
-    if (novenaCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Novena</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(novenaCount / maxCount * 100) + '%;background:#1E6B4A"></div></div><span class="activity-bar-val">' + novenaCount + '</span></div>');
+    totalPrayers = rosaryCount + examCount + stationsCount + novenaCount;
+
+    if (totalPrayers > 0) {
+      // Primary line
+      activityHtml += '<div class="activity-journal">';
+      activityHtml += '<span class="activity-journal-count">You\u2019ve prayed ' + totalPrayers + ' time' + (totalPrayers !== 1 ? 's' : '') + ' in the past 30 days</span>';
+      activityHtml += '</div>';
+
+      // Breakdown line
+      var parts = [];
+      if (rosaryCount) parts.push(rosaryCount + ' Rosar' + (rosaryCount !== 1 ? 'ies' : 'y'));
+      if (examCount) parts.push(examCount + ' Examen' + (examCount !== 1 ? 's' : ''));
+      if (stationsCount) parts.push(stationsCount + ' Station' + (stationsCount !== 1 ? 's' : ''));
+      if (novenaCount) parts.push(novenaCount + ' Novena' + (novenaCount !== 1 ? 's' : ''));
+      if (parts.length > 1) {
+        activityHtml += '<div class="activity-journal-breakdown">' + parts.join(' \u00b7 ') + '</div>';
+      }
+    }
   } catch (e) {}
 
   // Streak tracking (PAT-04)
@@ -343,7 +388,6 @@ function renderSaved() {
     var streakDates = {};
     streakLog.forEach(function(e) { if (e.date) streakDates[e.date] = true; });
     var d = new Date(now);
-    // Check if today has an entry, otherwise start from yesterday
     var todayKey = d.toISOString().slice(0, 10);
     if (!streakDates[todayKey]) {
       d.setDate(d.getDate() - 1);
@@ -354,8 +398,39 @@ function renderSaved() {
     }
   } catch (e) {}
 
-  if (streakDays > 1 && activityParts.length) {
-    activityParts.unshift('<div class="activity-streak">\uD83D\uDD25 ' + streakDays + '-day prayer streak</div>');
+  if (streakDays >= 3 && totalPrayers > 0) {
+    var streakText = '';
+    if (streakDays >= 30) {
+      streakText = 'A month of daily prayer';
+    } else if (streakDays >= 7) {
+      var streakStart = new Date(now);
+      streakStart.setDate(streakStart.getDate() - streakDays + 1);
+      var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      streakText = 'You\u2019ve prayed daily since last ' + dayNames[streakStart.getDay()];
+    } else {
+      streakText = streakDays + ' consecutive days of prayer';
+    }
+    activityHtml += '<div class="activity-streak-text">' + streakText + '</div>';
+  }
+
+  // 7-day dot row
+  if (totalPrayers > 0) {
+    var dotsHtml = '<div class="activity-week-dots">';
+    var streakDatesMap = {};
+    try {
+      var dotLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+      dotLog.forEach(function(e) { if (e.date) streakDatesMap[e.date] = true; });
+    } catch (e) {}
+    for (var di = 6; di >= 0; di--) {
+      var dotDate = new Date(now);
+      dotDate.setDate(dotDate.getDate() - di);
+      var dotKey = dotDate.toISOString().slice(0, 10);
+      var filled = streakDatesMap[dotKey] ? ' filled' : '';
+      var dayAbbr = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][dotDate.getDay()];
+      dotsHtml += '<div class="activity-week-col"><div class="activity-week-dot' + filled + '"></div><div class="activity-week-label">' + dayAbbr + '</div></div>';
+    }
+    dotsHtml += '</div>';
+    activityHtml += dotsHtml;
   }
 
   var confessionNote = '';
@@ -372,18 +447,13 @@ function renderSaved() {
     }
   } catch (e) {}
 
-  if (activityParts.length || confessionNote) {
-    html += '<div class="saved-divider"><span>Activity</span></div>';
+  if (activityHtml || confessionNote) {
+    html += '<div class="saved-divider"><span>Prayer life</span></div>';
     html += '<div class="saved-activity-card">';
-    if (activityParts.length) {
-      html += '<div class="activity-stats-header">Last 30 days</div>';
-      html += activityParts.join('');
-    }
-    if (activityParts.length && confessionNote) {
-      html += '<div class="activity-divider"></div>';
-    }
+    if (activityHtml) html += activityHtml;
+    if (activityHtml && confessionNote) html += '<div class="activity-divider"></div>';
     if (confessionNote) html += confessionNote;
-    html += '</div>'; // close .saved-activity-card
+    html += '</div>';
   }
 
   el.innerHTML = html;

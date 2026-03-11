@@ -138,10 +138,12 @@ function getNext(parish, filter) {
     else if (s.day === 'daily') days = [0, 1, 2, 3, 4, 5, 6];
     else { var di = config.DAY_ORDER.indexOf(s.day); if (di >= 0) days = [di]; }
     var sm = toMin(s.time); if (sm === null) continue;
+    var svcEnd = s.end_time ? toMin(s.end_time) : null;
+    var svcEffEnd = svcEnd !== null ? svcEnd : sm + 60;
     for (var j = 0; j < days.length; j++) {
       var dayI = days[j];
       var du = dayI - curDI; if (du < 0) du += 7;
-      if (du === 0 && sm <= curMin - 30) du = 7;
+      if (du === 0 && curMin > svcEffEnd) du = 7;
       if (filter === 'today' && du !== 0) continue;
       if (filter === 'weekend' && ![0, 6].includes(dayI)) continue;
       cands.push({ service: s, daysUntil: du, dayIdx: dayI, totalMin: du * 1440 + (du === 0 ? sm - curMin : sm) });
@@ -154,7 +156,7 @@ function getNext(parish, filter) {
     service: best.service,
     dayLabel: best.daysUntil === 0 ? 'Today' : best.daysUntil === 1 ? 'Tomorrow' : config.DAY_NAMES[config.DAY_ORDER[best.dayIdx]] || '',
     minutesUntil: best.totalMin,
-    isLive: best.totalMin <= 0 && best.totalMin >= -30,
+    isLive: best.daysUntil === 0 && toMin(best.service.time) <= curMin && curMin <= (best.service.end_time ? toMin(best.service.end_time) : toMin(best.service.time) + 60),
     isSoon: best.totalMin > 0 && best.totalMin <= 60,
     timeFormatted: fmt12(best.service.time)
   };

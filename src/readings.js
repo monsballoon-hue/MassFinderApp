@@ -375,7 +375,7 @@ function _renderLectionaryFallback(el, usccbLink) {
   });
 }
 
-// ── Fetch Liturgical Day (LitCal API) ──
+// ── Fetch Liturgical Day (local-first + API upgrade) ──
 function fetchLiturgicalDay() {
   if (!config.FEATURES.litcal) return Promise.resolve(null);
   var now = getNow();
@@ -384,7 +384,20 @@ function fetchLiturgicalDay() {
   if (window._litcalCache && window._litcalCache.year === year) {
     return Promise.resolve(filterToday(window._litcalCache.events, now));
   }
-  return fetch(
+
+  // Load local fallback first (instant from SW cache or disk)
+  var localPromise = fetch('/data/litcal-' + year + '.json')
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(d) {
+      if (d && d.litcal && !window._litcalCache) {
+        window._litcalCache = { year: year, events: d.litcal, source: 'local' };
+      }
+      return d;
+    })
+    .catch(function() { return null; });
+
+  // API upgrade (parallel, non-blocking — silently replaces local data)
+  fetch(
     'https://litcal.johnromanodorazio.com/api/v5/calendar/nation/US/' + year,
     { signal: AbortSignal.timeout(10000) }
   )
@@ -393,12 +406,33 @@ function fetchLiturgicalDay() {
     return resp.json();
   })
   .then(function(data) {
-    window._litcalCache = { year: year, events: data.litcal || [] };
-    return filterToday(window._litcalCache.events, now);
+    if (data && data.litcal) {
+      window._litcalCache = { year: year, events: data.litcal, source: 'api' };
+    }
   })
-  .catch(function(e) {
-    console.warn('[MassFinder] LitCal fetch failed:', e.message);
-    return null;
+  .catch(function() { /* API failure is non-fatal when local data exists */ });
+
+  return localPromise.then(function() {
+    if (window._litcalCache) {
+      return filterToday(window._litcalCache.events, now);
+    }
+    // Neither local nor API worked yet — wait for API
+    return fetch(
+      'https://litcal.johnromanodorazio.com/api/v5/calendar/nation/US/' + year,
+      { signal: AbortSignal.timeout(10000) }
+    )
+    .then(function(resp) {
+      if (!resp.ok) throw new Error('LitCal ' + resp.status);
+      return resp.json();
+    })
+    .then(function(data) {
+      window._litcalCache = { year: year, events: data.litcal || [], source: 'api' };
+      return filterToday(window._litcalCache.events, now);
+    })
+    .catch(function(e) {
+      console.warn('[MassFinder] LitCal fetch failed:', e.message);
+      return null;
+    });
   });
 }
 

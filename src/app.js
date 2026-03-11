@@ -498,7 +498,6 @@ function _renderDailyStrip(events) {
     + '<span class="daily-card-arrow">\u203a</span>'
     + '</div>'
     + '</div>';
-  el.style.display = '';
 }
 
 // ── Contextual confession prompt ──

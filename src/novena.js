@@ -1,4 +1,4 @@
-// src/novena.js — Novena Tracker (MOD-05)
+// src/novena.js — Novena Tracker (MOD-05) — Multi-novena tracking (OW-18)
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 
@@ -37,19 +37,51 @@ function _fmtPrayer(text) {
   return utils.esc(text).replace(/\r\n/g, '\n').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
 }
 
-// ── localStorage tracking ──
-function _getTracking() {
+// ── Multi-novena localStorage tracking ──
+// Storage key: mf-novena-tracking → { "sacred-heart": { startDate, completedDays }, ... }
+
+function _migrateOldTracking() {
   try {
-    return JSON.parse(localStorage.getItem('mf-novena-active'));
-  } catch (e) { return null; }
+    var old = localStorage.getItem('mf-novena-active');
+    if (!old) return;
+    var parsed = JSON.parse(old);
+    if (parsed && parsed.id) {
+      var all = _getAllTracking();
+      if (!all[parsed.id]) {
+        all[parsed.id] = { startDate: parsed.startDate, completedDays: parsed.completedDays || [] };
+        localStorage.setItem('mf-novena-tracking', JSON.stringify(all));
+      }
+    }
+    localStorage.removeItem('mf-novena-active');
+  } catch (e) {}
 }
 
-function _setTracking(obj) {
-  localStorage.setItem('mf-novena-active', JSON.stringify(obj));
+function _getAllTracking() {
+  try {
+    return JSON.parse(localStorage.getItem('mf-novena-tracking') || '{}');
+  } catch (e) { return {}; }
 }
 
-function _clearTracking() {
-  localStorage.removeItem('mf-novena-active');
+function _getTracking(id) {
+  var all = _getAllTracking();
+  return id ? (all[id] || null) : all;
+}
+
+function _setTracking(id, obj) {
+  var all = _getAllTracking();
+  all[id] = obj;
+  localStorage.setItem('mf-novena-tracking', JSON.stringify(all));
+}
+
+function _clearTracking(id) {
+  var all = _getAllTracking();
+  delete all[id];
+  localStorage.setItem('mf-novena-tracking', JSON.stringify(all));
+}
+
+function _getActiveList() {
+  var all = _getAllTracking();
+  return Object.keys(all).map(function(id) { return { id: id, tracking: all[id] }; });
 }
 
 // Determine which day the user should be on (0-indexed)
@@ -62,8 +94,9 @@ function _computeCurrentDay(tracking) {
   return Math.min(diff, 8); // 0-indexed, max day 9 = index 8
 }
 
-// ── Open Novena ──
+// ── Open Novena — always opens to select screen ──
 function openNovena(novenaId) {
+  _migrateOldTracking();
   var overlay = document.getElementById('novenaOverlay');
   document.getElementById('novenaBody').innerHTML = '<div class="novena-loading"><div class="novena-loading-spinner"></div><p>Loading novenas\u2026</p></div>';
   overlay.classList.add('open');
@@ -74,20 +107,7 @@ function openNovena(novenaId) {
     if (novenaId) {
       _selectNovena(novenaId);
     } else {
-      var tracking = _getTracking();
-      if (tracking && tracking.id) {
-        var found = _novenas.filter(function(n) { return n.id === tracking.id; })[0];
-        if (found) {
-          _active = found;
-          _activeId = found.id;
-          _currentDay = _computeCurrentDay(tracking);
-          _screen = 'prayer';
-        } else {
-          _screen = 'select';
-        }
-      } else {
-        _screen = 'select';
-      }
+      _screen = 'select';
     }
     _render();
     _acquireWakeLock();
@@ -111,32 +131,47 @@ function _render() {
   else if (_screen === 'complete') _renderComplete(title, body, nav);
 }
 
-// ── Render: Select screen ──
+// ── Render: Select screen with master progress card ──
 function _renderSelect(title, body, nav) {
   title.textContent = 'Novenas';
   nav.innerHTML = '';
-  var tracking = _getTracking();
+  var activeList = _getActiveList();
   var html = '<div class="novena-select">';
 
-  // Active novena card (if any)
-  if (tracking && tracking.id) {
-    var activeNov = _novenas.filter(function(n) { return n.id === tracking.id; })[0];
-    if (activeNov) {
-      var dayNum = _computeCurrentDay(tracking) + 1;
-      var completed = (tracking.completedDays || []).length;
-      html += '<div class="novena-active-card" onclick="novenaResume()">';
-      html += '<div class="novena-active-label">Continue</div>';
-      html += '<div class="novena-active-title">' + utils.esc(activeNov.title) + '</div>';
-      html += '<div class="novena-active-progress">Day ' + dayNum + ' of 9 \u00b7 ' + completed + ' completed</div>';
-      html += '<div class="novena-active-bar"><div class="novena-active-fill" style="width:' + Math.round(completed / 9 * 100) + '%"></div></div>';
-      html += '</div>';
-    }
+  // Master progress card — all active novenas
+  if (activeList.length) {
+    html += '<div class="novena-master-card">';
+    html += '<div class="novena-master-label">Your Active Novenas</div>';
+    activeList.forEach(function(item) {
+      var nov = _novenas.filter(function(n) { return n.id === item.id; })[0];
+      if (!nov) return;
+      var dayNum = _computeCurrentDay(item.tracking) + 1;
+      var completed = (item.tracking.completedDays || []).length;
+      // 9 tiny dots
+      var dotsHtml = '<div class="novena-master-dots">';
+      for (var d = 0; d < 9; d++) {
+        var dotCls = 'novena-master-dot';
+        if ((item.tracking.completedDays || []).indexOf(d + 1) >= 0) dotCls += ' done';
+        dotsHtml += '<div class="' + dotCls + '"></div>';
+      }
+      dotsHtml += '</div>';
+      html += '<div class="novena-master-row" onclick="novenaSelect(\'' + item.id + '\')">'
+        + '<div class="novena-master-info">'
+        + '<div class="novena-master-title">' + utils.esc(nov.title) + '</div>'
+        + '<div class="novena-master-progress">Day ' + dayNum + ' of 9 \u00b7 ' + completed + ' completed</div>'
+        + '</div>'
+        + dotsHtml
+        + '<span class="novena-master-chevron">\u203A</span>'
+        + '</div>';
+    });
+    html += '</div>';
   }
 
-  // All novenas
+  // All novenas list
   html += '<div class="novena-list-label">Available Novenas</div>';
+  var allTracking = _getAllTracking();
   _novenas.forEach(function(n) {
-    var isActive = tracking && tracking.id === n.id;
+    var isActive = !!allTracking[n.id];
     html += '<button class="novena-list-item' + (isActive ? ' active' : '') + '" onclick="novenaSelect(\'' + n.id + '\')">';
     html += '<div class="novena-list-item-body">';
     html += '<div class="novena-list-title">' + utils.esc(n.title) + '</div>';
@@ -153,7 +188,7 @@ function _renderSelect(title, body, nav) {
 function _renderPrayer(title, body, nav) {
   var dayData = _active.days[_currentDay];
   var dayNum = _currentDay + 1;
-  var tracking = _getTracking();
+  var tracking = _getTracking(_activeId);
   var isCompleted = tracking && (tracking.completedDays || []).indexOf(dayNum) >= 0;
   title.textContent = utils.esc(_active.title);
 
@@ -206,13 +241,13 @@ function _renderComplete(title, body, nav) {
 
 // ── Day Completion & Tracking ──
 function novenaMarkDay() {
-  var tracking = _getTracking();
+  var tracking = _getTracking(_activeId);
   if (!tracking) return;
   var dayNum = _currentDay + 1;
   if (!tracking.completedDays) tracking.completedDays = [];
   if (tracking.completedDays.indexOf(dayNum) < 0) {
     tracking.completedDays.push(dayNum);
-    _setTracking(tracking);
+    _setTracking(_activeId, tracking);
   }
   _haptic.confirm();
 
@@ -225,7 +260,7 @@ function novenaMarkDay() {
       log = log.filter(function(e) { return e.date >= cutoff; });
       localStorage.setItem('mf-prayer-log', JSON.stringify(log));
     } catch (e) {}
-    _clearTracking();
+    _clearTracking(_activeId);
     _screen = 'complete';
   }
   _render();
@@ -242,12 +277,12 @@ function _selectNovena(id) {
   _active = nov;
   _activeId = id;
 
-  var tracking = _getTracking();
-  if (tracking && tracking.id === id) {
+  var tracking = _getTracking(id);
+  if (tracking) {
     _currentDay = _computeCurrentDay(tracking);
   } else {
     var today = new Date().toISOString().slice(0, 10);
-    _setTracking({ id: id, startDate: today, completedDays: [] });
+    _setTracking(id, { startDate: today, completedDays: [] });
     _currentDay = 0;
   }
   _screen = 'prayer';
@@ -255,9 +290,9 @@ function _selectNovena(id) {
 }
 
 function novenaResume() {
-  var tracking = _getTracking();
-  if (!tracking) return;
-  _selectNovena(tracking.id);
+  // Legacy — no longer used but kept for backwards compat
+  _screen = 'select';
+  _render();
   _haptic();
 }
 
@@ -291,4 +326,6 @@ module.exports = {
   novenaGoToDay: novenaGoToDay,
   novenaBack: novenaBack,
   novenaStartNew: novenaStartNew,
+  // Expose for more.js subtitle
+  _computeCurrentDay: _computeCurrentDay,
 };

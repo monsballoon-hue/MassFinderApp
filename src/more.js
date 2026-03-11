@@ -20,8 +20,15 @@ var renderGuide = devotions.renderGuide;
 
 function _getNovenaSubtitle() {
   try {
-    var t = JSON.parse(localStorage.getItem('mf-novena-active'));
-    if (t && t.completedDays) return 'Day ' + (t.completedDays.length + 1) + ' of 9';
+    var all = JSON.parse(localStorage.getItem('mf-novena-tracking') || '{}');
+    var active = Object.keys(all);
+    if (active.length === 1) {
+      var novena = require('./novena.js');
+      var t = all[active[0]];
+      var dayNum = novena._computeCurrentDay(t) + 1;
+      return 'Day ' + dayNum + ' of 9';
+    }
+    if (active.length > 1) return active.length + ' novenas in progress';
   } catch (e) {}
   return '9-day guided prayer';
 }
