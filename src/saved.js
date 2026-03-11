@@ -290,7 +290,6 @@ function renderSaved() {
       var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
       if (daysSince >= 30) {
         confessionNote = '<div class="activity-confession-nudge" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">'
-          + '<span class="activity-confession-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="18" height="18"><path d="M12 2v20M5 7h14"/></svg></span>'
           + '<span>It\'s been ' + daysSince + ' days since your last confession</span>'
           + '<span class="activity-confession-link">Find times \u203A</span>'
           + '</div>';

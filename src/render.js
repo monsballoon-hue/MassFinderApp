@@ -106,10 +106,10 @@ function renderCards() {
   // Normal mode — show count + clear button when a quick filter is active
   var _quickFilterLabels = { confession:'Confession', adoration:'Adoration', latin:'Latin Mass', spanish:'Spanish Mass', lent:'Lent', today:'Today', weekend:'This Weekend', yc:'YC' };
   var _filterLabel = _quickFilterLabels[state.currentFilter];
-  var _countText = shown === total ? 'All ' + total : shown + ' of ' + total;
+  var _countText = shown === total ? '' : shown + ' of ' + total;
   var _clearHtml = (state.currentFilter !== 'all' && _filterLabel)
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
-  document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml ? ' ' : '') + _clearHtml;
+  document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml && _countText ? ' ' : '') + _clearHtml;
   if (!shown) {
     el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>Try adjusting your search or filters.</p></div>';
     return;
@@ -141,6 +141,22 @@ function renderCards() {
       evtHtml = '<div class="card-evt-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + evtCounts[c.id] + ' event' + (evtCounts[c.id] > 1 ? 's' : '') + ' this week</div>';
     }
     var searchCtx = _getSearchContext(c, state.searchQuery);
+    // Surface matching services for chip filters (same as search context but filter-driven)
+    if (!searchCtx && state.currentFilter && state.currentFilter !== 'all' && state.currentFilter !== 'today' && state.currentFilter !== 'weekend') {
+      var _filterTypeMap = { confession: ['confession'], adoration: ['adoration','holy_hour'], latin: ['mass_latin','mass_traditional_latin'], spanish: ['mass_spanish'], lent: ['stations_of_the_cross','penance_service','gorzkie_zale'] };
+      var _filterTypes = _filterTypeMap[state.currentFilter];
+      if (_filterTypes) {
+        var _fmatches = (c.services || []).filter(function(s) { return _filterTypes.indexOf(s.type) !== -1; });
+        if (_fmatches.length) {
+          var _fparts = _fmatches.slice(0, 4).map(function(s) {
+            var _dl = config.DAY_NAMES[s.day] || s.day || '';
+            var _ts = s.time ? utils.fmt12(s.time) : 'See bulletin';
+            return _dl + (s.time ? ' ' + _ts : ' \u00b7 ' + _ts);
+          });
+          searchCtx = '<div class="card-search-match"><span class="card-match-label">' + utils.esc(config.SVC_LABELS[_fmatches[0].type]) + '</span> ' + utils.esc(_fparts.join(' \u00b7 ')) + '</div>';
+        }
+      }
+    }
     return '<article class="parish-card" role="listitem" style="animation-delay:' + d + 'ms" onclick="openDetail(\'' + c.id + '\')">'
       + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + utils.esc(utils.displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
       + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + utils.fmtDist(dist) + '</span>' : '')

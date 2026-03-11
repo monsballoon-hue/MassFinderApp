@@ -2,23 +2,8 @@
 var utils = require('./utils.js');
 var esc = utils.esc;
 
-// SVG icons for top-level guides only (consistent cross-platform rendering)
-var _svg = function(d) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="20" height="20">' + d + '</svg>'; };
-var ICONS = {
-  // Chalice — Sunday Mass obligation
-  chalice: _svg('<path d="M8 2h8v6a4 4 0 01-8 0V2z"/><path d="M4 2h16"/><path d="M12 12v4"/><path d="M8 20h8"/><path d="M7 22h10"/>'),
-  // Two keys crossed — Confession / keys of absolution
-  keys: _svg('<circle cx="8" cy="6" r="3"/><path d="M10.5 8.5L20 18"/><path d="M17 15l3 3"/><circle cx="16" cy="6" r="3"/><path d="M13.5 8.5L4 18"/><path d="M7 15l-3 3"/>'),
-  // Ashes / palm — Lent
-  palm: _svg('<path d="M12 22V8"/><path d="M8 12c-3-2-5-5-4-8 3 1 5 4 6 7"/><path d="M16 12c3-2 5-5 4-8-3 1-5 4-6 7"/><path d="M9 18c-2-1-4-3-3-6 2 1 4 3 4 5"/><path d="M15 18c2-1 4-3 3-6-2 1-4 3-4 5"/>'),
-  // Book — Traditional Latin Mass / missal
-  book: _svg('<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M4 4.5A2.5 2.5 0 016.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15z"/><path d="M12 6v8"/><path d="M9 10h6"/>'),
-  // Folded hands — Devotions group
-  pray: _svg('<path d="M12 2C10 7 6 10 6 14a6 6 0 0012 0c0-4-4-7-6-12z"/><path d="M12 10v8"/>'),
-};
-
 var DEVOTIONAL_GUIDES = [
-  {icon:ICONS.church,title:'The Sunday Obligation',findLabel:'Mass',filter:'weekend',body:
+  {icon:'',title:'The Sunday Obligation',findLabel:'Mass',filter:'weekend',body:
 '<p>The Catholic Church teaches that attending Mass on Sundays and Holy Days of Obligation is a serious duty for every baptized Catholic. This obligation flows from the Third Commandment \u2014 \u201cRemember to keep holy the Lord\u2019s Day\u201d \u2014 and from the Church\u2019s own precepts.</p>'
 +'<p><strong>CCC 2180:</strong> \u201cOn Sundays and other holy days of obligation, the faithful are bound to participate in the Mass.\u201d The Sunday Eucharist is the foundation of Christian life and the heart of the Church\u2019s week.</p>'
 +'<p><strong>CCC 2181:</strong> \u201cThose who deliberately fail in this obligation commit a grave sin.\u201d Missing Mass without a serious reason is considered a mortal sin requiring Confession before receiving Communion again.</p>'
@@ -54,7 +39,7 @@ var DEVOTIONAL_GUIDES = [
 +'  </div>'
 +'</details>'
   },
-  {icon:ICONS.keys,title:'How to go to Confession',body:
+  {icon:'',title:'How to go to Confession',body:
 '<p>Confession \u2014 also called the Sacrament of Reconciliation \u2014 is how Catholics receive God\u2019s forgiveness for sins committed after Baptism. It is required for mortal sins and strongly recommended for all sins. If you\u2019ve been away for a long time, a gentle priest will be happy to help you through it.</p>'
 +'<p>The basic steps:</p>'
 +'<ol>'
@@ -96,7 +81,7 @@ var DEVOTIONAL_GUIDES = [
 +'  <div class="conf-act-text">O my God, I am heartily sorry for having offended Thee, and I detest all my sins because I dread the loss of heaven and the pains of hell; but most of all because they offend Thee, my God, who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to confess my sins, to do penance, and to amend my life. Amen.</div>'
 +'</div>'
   ,findLabel:'Confession',filter:'confession'},
-  {icon:ICONS.palm,title:'Lent',findLabel:'Lent',filter:'lent',body:
+  {icon:'',title:'Lent',findLabel:'Lent',filter:'lent',body:
 '<p><strong>Lent</strong> is the 40-day liturgical season of prayer, fasting, and almsgiving that prepares Catholics for Easter \u2014 the celebration of Christ\u2019s Resurrection. It begins on <strong>Ash Wednesday</strong> and ends on the evening of <strong>Holy Thursday</strong>, the start of the Sacred Paschal Triduum.</p>'
 +'<p>The 40 days recall Christ\u2019s 40 days of fasting in the desert before beginning His public ministry (Matthew 4:1\u201311). Sundays are not counted among the 40 days of penance, as every Sunday is a celebration of the Resurrection.</p>'
 +'<h4>The Three Pillars of Lent</h4>'
@@ -126,28 +111,28 @@ var DEVOTIONAL_GUIDES = [
 +'<p><strong>CCC 1438:</strong> \u201cThe seasons and days of penance in the course of the liturgical year (Lent, and each Friday in memory of the death of the Lord) are intense moments of the Church\u2019s penitential practice.\u201d</p>'
 +'<p><strong>CCC 1095:</strong> Lent is a time when the Church \u201cre-reads and re-lives the great events of salvation history\u201d as a preparation for the Easter sacraments.</p>'
   },
-  {icon:ICONS.book,title:'The Traditional Latin Mass',body:
+  {icon:'',title:'The Traditional Latin Mass',body:
 '<p>The Traditional Latin Mass \u2014 also known as the <em>Extraordinary Form</em> or the <em>Usus Antiquior</em> \u2014 is the form of the Roman Rite that was the universal norm before the liturgical reforms of the Second Vatican Council (1962\u20131965). It is celebrated entirely in Latin, with the priest facing the altar (<em>ad orientem</em>) for much of the liturgy.</p>'
 +'<p>Key differences from the Ordinary Form (the standard Mass most Catholics attend): the prayers are from the 1962 Roman Missal, the congregation participates primarily through interior prayer and sung responses, and the structure includes prayers like the <strong>Last Gospel</strong> and the <strong>Prayers at the Foot of the Altar</strong> that are not part of the newer form.</p>'
 +'<p>Catholics who attend the Traditional Latin Mass do so for a variety of reasons, including its contemplative character, its continuity with centuries of Catholic worship, and its rich musical tradition of Gregorian chant and polyphony. The Mass fulfills the Sunday obligation. Missals with Latin-English translations are usually available at the church to help you follow along.</p>'
   ,findLabel:'Latin Mass',filter:'latin'},
-  {icon:ICONS.pray,title:'Devotions',isGroup:true,children:[
+  {icon:'',title:'Devotions',isGroup:true,children:[
     {icon:'',title:'Eucharistic Adoration',body:
 '<p><strong>Eucharistic Adoration</strong> is time spent in prayer before the Blessed Sacrament \u2014 the consecrated host \u2014 which Catholics believe is truly the Body of Christ. The host is placed in a vessel called a monstrance and displayed on the altar. You simply sit, kneel, or stand in its presence.</p>'
 +'<p>There\u2019s no required prayer or posture. Many people read Scripture, pray the Rosary, journal, or simply sit in silence. Adoration chapels are typically quiet spaces open for individual prayer, sometimes for extended hours.</p>'
 +'<p>If a parish offers <strong>Perpetual Adoration</strong>, it means the chapel is open 24 hours a day, 7 days a week, kept continuous by volunteers who sign up for hourly slots. Many people find regular Adoration to be the most transformative spiritual practice of their week.</p>'
     ,findLabel:'Adoration',filter:'adoration'},
-    {icon:'',title:'Divine Mercy Chaplet',findLabel:'Adoration',filter:'adoration',body:
+    {icon:'',title:'Divine Mercy Chaplet',findLabel:'Divine Mercy Chaplet',searchTerm:'divine mercy',body:
 '<p>The Divine Mercy Chaplet is a short prayer given to St. Faustina Kowalska in the 1930s, centred on trust in God\u2019s mercy. It is prayed on ordinary Rosary beads and takes about 10\u201315 minutes.</p>'
 +'<p>Begin with one <strong>Our Father</strong>, one <strong>Hail Mary</strong>, and the <strong>Apostles\u2019 Creed</strong>. On each large bead, pray: <em>\u201cEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\u201d</em> On each small bead: <em>\u201cFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\u201d</em> Conclude with: <em>\u201cHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world\u201d</em> \u2014 said three times.</p>'
 +'<p>The traditional time for this prayer is 3:00 PM \u2014 the Hour of Mercy \u2014 marking the time of Christ\u2019s death. Many parishes offer a communal chaplet at this hour during Adoration.</p>'
     },
-    {icon:'',title:'Novena',findLabel:'a parish near me',filter:'all',body:
+    {icon:'',title:'Novena',findLabel:'Novena',searchTerm:'novena',body:
 '<p>A Novena is nine consecutive days of prayer for a specific intention \u2014 the name comes from the Latin <em>novem</em>, meaning nine. The practice traces back to the nine days the apostles and Mary prayed together between the Ascension and Pentecost.</p>'
 +'<p>Novenas can be prayed privately at any time, or communally at a parish. Common novenas include the <strong>Novena to the Holy Spirit</strong> (before Pentecost), the <strong>Divine Mercy Novena</strong> (beginning Good Friday), and novenas to specific saints like St. Joseph, St. Anthony, or Our Lady of Guadalupe.</p>'
 +'<p>To begin a novena, simply choose a prayer \u2014 many are available in prayer books or online \u2014 commit to praying it on nine consecutive days, and bring your intention before God with trust. The power of a novena is less in the number of days and more in the sustained, intentional attention you bring to prayer.</p>'
     },
-    {icon:'',title:'Miraculous Medal',findLabel:'Miraculous Medal devotions',filter:'all',body:
+    {icon:'',title:'Miraculous Medal',findLabel:'Miraculous Medal',searchTerm:'miraculous medal',body:
 '<p>The Miraculous Medal devotion stems from apparitions of the Blessed Virgin Mary to St. Catherine Labour\u00e9 in Paris in 1830. Mary appeared standing on a globe, with rays of light streaming from her hands, and asked that a medal be struck in this image. The front bears the prayer: <em>\u201cO Mary, conceived without sin, pray for us who have recourse to thee.\u201d</em></p>'
 +'<p>The medal was approved by the Church and quickly became one of the most widely worn sacramentals in Catholic life. It is not a good-luck charm \u2014 it is a sign of devotion to Mary and trust in her intercession. Those who wear it are encouraged to pray the inscription daily.</p>'
 +'<p>Many parishes hold a weekly <strong>Miraculous Medal Novena</strong>, often on Mondays, consisting of prayers, hymns, and the Novena prayer to Our Lady of the Miraculous Medal. These services are typically brief \u2014 about 15 to 20 minutes.</p>'
@@ -185,9 +170,12 @@ function renderGuide(g, sub) {
   var switchTab = require('./ui.js').switchTab;
   var cls = 'devot-card' + (sub ? ' devot-sub' : '');
   var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-  var findLink = g.filter
-    ? '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>'
-    : '';
+  var findLink = '';
+  if (g.searchTerm) {
+    findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'' + g.searchTerm + '\';si.dispatchEvent(new Event(\'input\'));}">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
+  } else if (g.filter) {
+    findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
+  }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
   return '<details class="' + cls + '"><summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
     + '<div class="devot-body">' + g.body + findLink + '</div>'

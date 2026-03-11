@@ -55,6 +55,7 @@ function matchSearch(c, q) {
   var f = [c.name, c.city, c.county, c.address].concat(
     (c.services || []).map(function(s) { return s.notes || ''; }),
     (c.services || []).map(function(s) { return config.LANG_NAMES[s.language] || ''; }),
+    (c.services || []).map(function(s) { return config.SVC_LABELS[s.type] || ''; }),
     c.staff || [],
     [_evtSearchCache[c.id] || '']
   ).join(' ').toLowerCase();

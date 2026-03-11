@@ -339,7 +339,7 @@ function _renderExamination(d) {
   var html = '';
 
   // Prayer before confession
-  html += _renderPrayer(d.prayers.prayer_before, '\uD83D\uDD6F');
+  html += _renderPrayer(d.prayers.prayer_before);
 
   // How to Confess guide
   html += _renderHowTo(d.how_to_confess);
@@ -369,8 +369,8 @@ function _renderExamination(d) {
 
   // Prayers section
   html += '<div class="exam-group-label">Prayers</div>';
-  html += _renderPrayer(d.prayers.act_of_contrition, '\u2720');
-  html += _renderPrayer(d.prayers.thanksgiving, '\uD83D\uDE4F');
+  html += _renderPrayer(d.prayers.act_of_contrition);
+  html += _renderPrayer(d.prayers.thanksgiving);
 
   // Confession tracker
   var lastConf = localStorage.getItem('mf-last-confession');

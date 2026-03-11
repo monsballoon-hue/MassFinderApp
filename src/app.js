@@ -205,7 +205,7 @@ window.toggleTheme = function() {
   html.setAttribute('data-theme', next);
   localStorage.setItem('mf-theme', next);
   var btn = document.getElementById('theme-toggle-btn');
-  if (btn) btn.textContent = next === 'dark' ? '\u2600\uFE0F Light Mode' : '\uD83C\uDF19 Dark Mode';
+  if (btn) btn.textContent = next === 'dark' ? 'Light Mode' : 'Dark Mode';
   var meta = document.getElementById('metaThemeColor');
   if (meta) meta.setAttribute('content', next === 'dark' ? '#1A1C22' : '#F8F7F4');
 };
@@ -573,7 +573,7 @@ async function init() {
     if (seasonChip) {
       var sp = utils.getSeasonProgress();
       if (sp) {
-        var seasonLabels = { Lent: '\uD83C\uDF3F Lent', 'Easter Season': '\u2720 Easter', Advent: '\uD83D\uDD6F Advent' };
+        var seasonLabels = { Lent: 'Lent', 'Easter Season': 'Easter', Advent: 'Advent' };
         seasonChip.textContent = seasonLabels[sp.season] || sp.season;
         seasonChip.dataset.filter = sp.season === 'Lent' ? 'lent' : sp.season === 'Advent' ? 'advent' : 'easter';
         seasonChip.style.display = '';

@@ -127,19 +127,15 @@ function renderMore() {
     var confStatus = exam.getConfessionStatus();
     var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
 
-    var svgRosary = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><circle cx="12" cy="6" r="3"/><line x1="12" y1="9" x2="12" y2="21"/><line x1="8" y1="14" x2="16" y2="14"/></svg>';
-    var svgExamen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg>';
-    var svgStations = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M12 2v20M5 5h14M8 2v6M16 2v6"/></svg>';
     var ptCards = [
-      { id: 'rosary', icon: svgRosary, title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
-      { id: 'examination', icon: svgExamen, title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
-      { id: 'stations', icon: svgStations, title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
+      { id: 'rosary', title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
+      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
         + (c.active ? ' onclick="' + c.action + '" role="button" tabindex="0"' : '')
         + '>'
-        + '<div class="prayer-tool-icon">' + c.icon + '</div>'
         + '<div class="prayer-tool-body">'
         + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
         + '<div class="prayer-tool-subtitle">' + esc(c.subtitle) + '</div>'
@@ -186,7 +182,7 @@ function renderMore() {
     var curSize = localStorage.getItem('mf-text-size') || 'default';
     footer.innerHTML = '<div class="footer-controls">'
       + '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
-      + (isDark ? '\u2600\uFE0F Light Mode' : '\uD83C\uDF19 Dark Mode')
+      + (isDark ? 'Light Mode' : 'Dark Mode')
       + '</button>'
       + '<div class="text-size-control">'
       + '<span class="text-size-label">Text size</span>'
