@@ -408,7 +408,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Active dot indicator for CSS scroll-snap containers. Shows progress through rosary decades (5 dots), stations (14 dots), commandments (10 dots).
 - **Alternative:** Pure CSS scroll-snap handles the scrolling; this library only adds the dots. Can be built manually with IntersectionObserver if preferred.
 
-### ~~LIB-05: pure-web-bottom-sheet — Native-Feel Sheets~~ ✓ DONE
+### LIB-05: pure-web-bottom-sheet — Native-Feel Sheets (REVERTED — existing CCC sheet works well)
 - **Priority:** P2 — Phase 2+
 - **Effort:** 1 hour
 - **Size impact:** 3KB

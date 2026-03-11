@@ -170,21 +170,6 @@ function cccGoBack() {
   _crossfadeTo(prev);
 }
 
-function _initDialogDismiss() {
-  var sheet = document.getElementById('cccSheet');
-  if (!sheet || sheet._dialogInit) return;
-  sheet._dialogInit = true;
-  // Backdrop click — dialog click fires on the dialog itself when backdrop is clicked
-  sheet.addEventListener('click', function(e) {
-    if (e.target === sheet) closeCCC();
-  });
-  // Native Escape key — dialog fires 'cancel' event
-  sheet.addEventListener('cancel', function(e) {
-    e.preventDefault(); // prevent default close to run our cleanup
-    closeCCC();
-  });
-}
-
 function _initSwipeDismiss() {
   var sheet = document.getElementById('cccSheet');
   if (!sheet || sheet._swipeInit) return;
@@ -204,39 +189,49 @@ function _initSwipeDismiss() {
 
 function openCCC(numStr) {
   _cccHistory = [];
-  var sheet = document.getElementById('cccSheet');
   document.getElementById('cccBackBtn').style.display = 'none';
+  document.getElementById('cccOverlay').classList.add('open');
+  document.getElementById('cccSheet').classList.add('open');
+  document.body.style.overflow = 'hidden';
   window._lastFocused = document.activeElement;
-  // LIB-05: native <dialog> — showModal() handles backdrop, scroll-lock, focus trap, Escape
-  if (!sheet.open) sheet.showModal();
-  _initDialogDismiss();
   _initSwipeDismiss();
   _initSearch();
   var input = document.getElementById('cccSearchInput');
   if (input) input.value = '';
   _hideSearchResults();
   _renderCCCContent(numStr);
+  // Focus trap
+  var ui = require('./ui.js');
+  ui.trapFocus(document.getElementById('cccSheet'));
 }
 
 function closeCCC() {
+  var overlay = document.getElementById('cccOverlay');
   var sheet = document.getElementById('cccSheet');
-  // LIB-05: native <dialog> — close() handles backdrop removal + focus restore
-  if (sheet.open) sheet.close();
+  overlay.classList.remove('open');
+  sheet.classList.remove('open');
   // Restore z-index if boosted for above-exam display
-  if (sheet._aboveExam) {
+  if (overlay._origZ) {
+    overlay.style.zIndex = '';
     sheet.style.zIndex = '';
-    sheet._aboveExam = false;
+    overlay._origZ = false;
     // Restore body lock since exam is still open underneath
     document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
   }
+  var ui = require('./ui.js');
+  ui.releaseFocus();
   if (window._lastFocused) window._lastFocused.focus();
 }
 
 // Open CCC above the exam overlay (z-index 2000) without closing exam
 function openCCCAboveExam(numStr) {
+  var overlay = document.getElementById('cccOverlay');
   var sheet = document.getElementById('cccSheet');
+  overlay.style.zIndex = '2010';
   sheet.style.zIndex = '2011';
-  sheet._aboveExam = true;
+  overlay._origZ = true;
   openCCC(numStr);
 }
 
