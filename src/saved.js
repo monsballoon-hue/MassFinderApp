@@ -199,28 +199,31 @@ function renderSaved() {
   var favChurches = state.allChurches.filter(function(c) { return isFav(c.id); });
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
 
-  // Update badges — dot if any events today at favorited churches
+  // Update badges — dot only for live services or today events (ST-14)
   var now = getNow();
   var todayStr = now.toISOString().slice(0, 10);
-  var hasToday = (state.eventsData || []).some(function(e) {
-    if (!favIds.has(e.church_id)) return false;
-    if (e.date) return e.date === todayStr;
-    if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
-    return false;
-  });
-  if (!hasToday && favChurches.length) {
+  var hasLive = false;
+  if (favChurches.length) {
     var todaySvcsCheck = getTodayServices(favChurches);
-    hasToday = todaySvcsCheck.some(function(s) { return !s.isPast; });
+    hasLive = todaySvcsCheck.some(function(s) { return s.isLive; });
+  }
+  if (!hasLive) {
+    hasLive = (state.eventsData || []).some(function(e) {
+      if (!favIds.has(e.church_id)) return false;
+      if (e.date) return e.date === todayStr;
+      if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
+      return false;
+    });
   }
   var countBadge = document.getElementById('savedCountBadge');
   if (countBadge) {
     countBadge.textContent = '';
-    countBadge.classList.toggle('visible', hasToday);
+    countBadge.classList.toggle('visible', hasLive);
   }
   var tabBadge = document.getElementById('savedTabBadge');
   if (tabBadge) {
     tabBadge.textContent = '';
-    tabBadge.classList.toggle('visible', hasToday);
+    tabBadge.classList.toggle('visible', hasLive);
   }
 
   // ── Empty state ──
@@ -353,20 +356,54 @@ function renderSaved() {
     html += '</div>';
   }
 
-  // ── 2. THIS WEEK — upcoming events ──
+  // ── 2. THIS WEEK — upcoming events, grouped by date (ST-07) ──
   if (upcomingEvents.length) {
     html += '<div class="saved-divider"><span>This week</span></div>';
-    var showCount = Math.min(3, upcomingEvents.length);
-    for (var ui = 0; ui < showCount; ui++) {
-      html += renderUnifiedEvt(upcomingEvents[ui].evt, upcomingEvents[ui].isYC);
+
+    var dateGroups = {};
+    var dateOrder = [];
+    var tmrwStr = (function() { var d2 = new Date(now); d2.setDate(d2.getDate() + 1); return d2.toISOString().slice(0, 10); })();
+
+    for (var ui = 0; ui < upcomingEvents.length; ui++) {
+      var uEvt = upcomingEvents[ui].evt;
+      var evtDate = getNextEventDate(uEvt) || uEvt.date || '9999-99-99';
+      if (!dateGroups[evtDate]) { dateGroups[evtDate] = []; dateOrder.push(evtDate); }
+      dateGroups[evtDate].push(upcomingEvents[ui]);
     }
-    if (upcomingEvents.length > 3) {
-      var moreCount = upcomingEvents.length - 3;
-      html += '<details class="saved-more-details"><summary class="saved-more-toggle">' + moreCount + ' more</summary>';
-      for (var mi = 3; mi < upcomingEvents.length; mi++) {
-        html += renderUnifiedEvt(upcomingEvents[mi].evt, upcomingEvents[mi].isYC);
+
+    var shownCount = 0;
+    var maxVisible = 4;
+    var overflowHtml = '';
+
+    for (var dgi = 0; dgi < dateOrder.length; dgi++) {
+      var dateKey = dateOrder[dgi];
+      var dateLabel = '';
+      if (dateKey === tmrwStr) {
+        dateLabel = 'Tomorrow';
+      } else {
+        var dgd = new Date(dateKey + 'T12:00:00');
+        dateLabel = dgd.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
       }
-      html += '</details>';
+
+      var groupItems = dateGroups[dateKey];
+      for (var gi = 0; gi < groupItems.length; gi++) {
+        var rowHtml = '';
+        if (gi === 0) {
+          rowHtml += '<div class="saved-week-date-header">' + dateLabel + '</div>';
+        }
+        rowHtml += renderUnifiedEvt(groupItems[gi].evt, groupItems[gi].isYC);
+
+        if (shownCount < maxVisible) {
+          html += rowHtml;
+        } else {
+          overflowHtml += rowHtml;
+        }
+        shownCount++;
+      }
+    }
+
+    if (overflowHtml) {
+      html += '<details class="saved-more-details"><summary class="saved-more-toggle">' + (shownCount - maxVisible) + ' more</summary>' + overflowHtml + '</details>';
     }
   }
 
@@ -389,7 +426,7 @@ function renderSaved() {
     return aMin - bMin;
   });
 
-  html += '<div class="saved-divider"><span>Your churches \u00b7 ' + favChurches.length + '</span></div>';
+  html += '<div class="saved-divider saved-divider--editable"><span>Your churches \u00b7 ' + favChurches.length + '</span><button class="saved-edit-btn" id="savedEditBtn" onclick="toggleSavedEdit()">Edit</button></div>';
   html += '<div class="saved-churches-card">';
   html += sortedFav.map(function(item) {
     var c = item.c, next = item.next, dist = item.dist;
@@ -401,12 +438,28 @@ function renderSaved() {
     if (dist !== null) metaParts.push(fmtDist(dist));
     var ec = evtCounts[c.id];
     if (ec) metaParts.push('<span class="saved-evt-count">' + ec + ' event' + (ec !== 1 ? 's' : '') + '</span>');
+
+    // ST-02: Next service line
+    var nextLine = '';
+    if (next) {
+      var nextLabel = SVC_LABELS[next.service.type] || '';
+      nextLine = '<div class="saved-church-next">'
+        + '<span class="saved-church-next-time">' + next.timeFormatted + '</span>'
+        + '<span class="saved-church-next-label">' + esc(nextLabel) + '</span>'
+        + '<span class="saved-church-next-day">' + next.dayLabel + '</span>'
+        + '</div>';
+    } else {
+      nextLine = '<div class="saved-church-next"><span class="saved-church-next-label" style="color:var(--color-text-tertiary)">Check bulletin</span></div>';
+    }
+
     return '<div class="saved-church-row" onclick="openDetail(\'' + c.id + '\')">'
       + '<div class="saved-church-info">'
       + '<div class="saved-church-name">' + esc(displayName(c.name)) + (ver ? checkSvg : '') + '</div>'
       + '<div class="saved-church-meta">' + metaParts.join(' \u00b7 ') + '</div>'
+      + nextLine
       + '</div>'
       + '<div class="saved-church-status">' + statusBadge + '</div>'
+      + '<button class="saved-church-remove" onclick="event.stopPropagation();toggleFav(\'' + c.id + '\');renderSaved()" aria-label="Remove"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></button>'
       + '<svg class="saved-church-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
       + '</div>';
   }).join('');
@@ -524,6 +577,17 @@ function renderSaved() {
 
   el.innerHTML = html;
 }
+
+// ── ST-10: Edit mode toggle for church rows ──
+function toggleSavedEdit() {
+  var card = document.querySelector('.saved-churches-card');
+  if (!card) return;
+  var editing = card.classList.toggle('editing');
+  var btn = document.getElementById('savedEditBtn');
+  if (btn) btn.textContent = editing ? 'Done' : 'Edit';
+}
+window.toggleSavedEdit = toggleSavedEdit;
+window.renderSaved = renderSaved;
 
 module.exports = {
   renderUnifiedEvt: renderUnifiedEvt,
