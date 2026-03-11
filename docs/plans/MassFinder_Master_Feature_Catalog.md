@@ -193,14 +193,16 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Build script:** `scripts/build-lectionary.js` — parses reference tables into structured JSON.
 - **Fallback chain:** LitCal API → lectionary index → BibleGet for NABRE text → local DRB if BibleGet fails.
 
-### DAT-07: Bible Cross-Reference Database
+### ~~DAT-07: Bible Cross-Reference Database~~ ✓ DONE
 - **Priority:** P3 — Phase 4+
 - **Effort:** 2 hours
-- **Size impact:** ~100KB gzipped (selective)
+- **Size impact:** ~4MB (lazy-loaded)
 - **Repo:** `scrollmapper/bible_databases`
 - **License:** Varies; DRC cross-refs are public domain
 - **What:** 340,000+ verse-to-verse cross-references. Maps related passages across the entire Bible.
-- **Use case:** When showing a reading, offer "Related passages" — tap to navigate. Deep exploration for power users.
+- **Output file:** `data/bible-xrefs.json`
+- **Build script:** `scripts/build-xrefs.js` — fetches TSV, maps Protestant 66-book numbers to MassFinder abbreviations, outputs keyed by `Abbr:Ch:Vs`.
+- **Used in:** `src/bible.js` (Related Passages), `src/explore.js` (connection generation).
 
 ### DAT-08: Summa Theologica (Curated Subset)
 - **Priority:** P3 — Phase 6
@@ -226,15 +228,14 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 
 # CATEGORY 3: LITURGICAL COMPUTATION
 
-### LIT-01: romcal — Offline Liturgical Calendar Engine
+### ~~LIT-01: Offline Liturgical Calendar~~ ✓ DONE
 - **Priority:** P1 — Phase 4
 - **Effort:** 3 hours (build-time integration + output JSON)
 - **Size impact:** 0 runtime (build-time only)
-- **Repo:** `romcal/romcal`
-- **License:** MIT
-- **What:** Computes complete Roman Catholic liturgical calendar for any year. Movable feasts, seasonal boundaries, saint days, precedence rules, liturgical colors, psalter week. US national calendar plugin available.
-- **Use:** Build-time script generates `data/litcal-{year}.json`. Removes LitCal API as a hard dependency. LitCal API becomes Layer 3 enhancement for rich saint metadata.
-- **Build script:** `scripts/build-litcal.js` — uses romcal to generate current + next year's calendar.
+- **What:** Pre-built liturgical calendar JSON for offline use. Removes LitCal API as a hard dependency. LitCal API becomes Layer 3 enhancement for rich saint metadata.
+- **Build script:** `scripts/build-litcal.js` — fetches from LitCal API v5, writes `data/litcal-{year}.json` for current + next year.
+- **Output:** `data/litcal-2026.json`, `data/litcal-2027.json` (~70KB each).
+- **Note:** Used LitCal API fetch approach instead of romcal npm package (simpler, CJS-compatible).
 
 ### LIT-02: LitCal API — Keep as Enhancement Layer
 - **Priority:** Already integrated
@@ -325,12 +326,12 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Wrap panel transitions in `document.startViewTransition()`. Cross-fade between tabs, slide-up for detail panels. Falls back to instant switch.
 - **Support:** Chrome 111+, Safari 18+.
 
-### UX-04: Web Speech API — Read Aloud for Readings
+### ~~UX-04: Web Speech API — Read Aloud for Readings~~ ✓ DONE
 - **Priority:** P2 — Phase 4
 - **Effort:** 30 minutes
 - **Size impact:** 0
-- **File:** `src/readings.js`
-- **What:** "Listen" button on reading cards. `var utt = new SpeechSynthesisUtterance(text); utt.rate = 0.9; speechSynthesis.speak(utt);`. Toggle play/pause. Accessibility win for low-vision users and drivers.
+- **Files:** `src/readings.js`, `src/bible.js`
+- **What:** "Listen" button on reading cards and Bible sheet. Toggle play/pause via `SpeechSynthesisUtterance`. Accessibility win for low-vision users and drivers.
 - **Support:** All modern browsers.
 
 ### ~~UX-05: Screen Wake Lock — Keep Screen On During Prayer~~ ✓ DONE
@@ -485,10 +486,10 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** CCC references in guide content wrapped as `<span class="ccc-ref" onclick="window.openCCC(N)">CCC N</span>`. Tapping opens CCC bottom sheet.
 - **Current state:** Implemented inline (no refs.js dependency). ccc.js still reads from ccc-mini.json (23 paragraphs). Full upgrade to 2,865 paragraphs pending DAT-01.
 
-### XREF-02: Tappable Scripture References in Devotional Guides
+### ~~XREF-02: Tappable Scripture References in Devotional Guides~~ ✓ DONE
 - **Priority:** P1 — Phase 4 (after Bible data is local)
 - **Effort:** 1 hour
-- **What:** Same pattern as XREF-01 but for Bible references. "Matthew 4:1-11" becomes a tappable span that opens a reading sheet with DRB text (or NABRE if online).
+- **What:** Same pattern as XREF-01 but for Bible references. "Matthew 4:1-11" becomes a tappable span that opens Bible bottom sheet with DRB/CPDV text. Implemented via `src/refs.js` — `initRefTaps()` scans for Bible reference patterns and wires tap handlers.
 
 ### ~~XREF-03: More Tab Redesign — Card Grid~~ ✓ DONE
 - **Priority:** P2 — Phase 2+
@@ -508,21 +509,21 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Priority:** Phase 2
 - **What:** Fetches openPrayers JSON files, normalizes structure, merges with handwritten core prayers, adds CCC/Scripture refs, writes `data/prayers.json`.
 
-### BLD-03: `scripts/build-examination.js`
+### ~~BLD-03: `scripts/build-examination.js`~~ ✓ DONE
 - **Priority:** Phase 3
 - **What:** Transforms ConfessIt translation JSON into MassFinder format, writes `data/examination.json`.
 
-### BLD-04: `scripts/build-bible-drb.js`
+### ~~BLD-04: `scripts/build-bible-drb.js`~~ ✓ DONE
 - **Priority:** Phase 4
-- **What:** Processes DRB verses into per-book JSON files in `data/bible-drb/`.
+- **What:** Processes DRB verses into per-book JSON files in `data/bible-drb/`. Also `build-bible-cpdv.js` for CPDV translation.
 
-### BLD-05: `scripts/build-lectionary.js`
+### ~~BLD-05: `scripts/build-lectionary.js`~~ ✓ DONE
 - **Priority:** Phase 4
 - **What:** Compiles lectionary reference index from public tables, writes `data/lectionary-index.json`.
 
-### BLD-06: `scripts/build-litcal.js`
+### ~~BLD-06: `scripts/build-litcal.js`~~ ✓ DONE
 - **Priority:** Phase 4
-- **What:** Uses romcal to generate current + next year liturgical calendar, writes `data/litcal-{year}.json`.
+- **What:** Fetches LitCal API for current + next year, writes `data/litcal-{year}.json`.
 
 ---
 
@@ -606,10 +607,10 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 |----|------|--------|--------|
 | ~~DAT-04~~ | ~~DRB Bible per-book JSON~~ | 3 hours | ✓ Done |
 | ~~DAT-06~~ | ~~Lectionary reference index~~ | 4 hours | ✓ Done |
-| LIT-01 | romcal build-time calendar | 3 hours | |
+| ~~LIT-01~~ | ~~Offline liturgical calendar~~ | 3 hours | ✓ Done |
 | ~~MOD-06~~ | ~~Refactored readings.js~~ | 4 hours | ✓ Done |
-| UX-04 | Text-to-Speech for readings | 30 min | |
-| XREF-02 | Tappable Scripture refs in guides | 1 hour | |
+| ~~UX-04~~ | ~~Text-to-Speech for readings~~ | 30 min | ✓ Done |
+| ~~XREF-02~~ | ~~Tappable Scripture refs in guides~~ | 1 hour | ✓ Done |
 
 ## Phase 5 — Seasonal Features
 | ID | Item | Effort | Status |

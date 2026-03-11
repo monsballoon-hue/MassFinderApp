@@ -54,6 +54,7 @@
 |-------|-------|-----|
 | `--font-display` | `'Playfair Display', Georgia, serif` | Headings, parish names in detail panel, section titles |
 | `--font-body` | `'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif` | Everything else |
+| `--font-prayer` | `Georgia, 'Playfair Display', serif` | Sacred/contemplative text — rosary prayers, stations meditations, examination reflections, Bible verse text, CCC paragraph body |
 | `--text-xs` | `0.8125rem` (13px) | Meta labels, badges, timestamps, distances |
 | `--text-sm` | `0.9375rem` (15px) | Secondary text, card subtitles, button labels |
 | `--text-base` | `1.0625rem` (17px) | Body text, input text |
@@ -67,6 +68,7 @@
 
 **Rules:**
 - `--font-display` (Playfair) is ONLY for headings and names. Never for body text, labels, or UI chrome.
+- `--font-prayer` (Georgia) is for sacred/contemplative text. Use it in prayer modules, Bible sheets, CCC paragraphs, and devotional content. Never for UI labels or buttons.
 - Font sizes use rem tokens. Never use `px` for font sizes.
 - Never use `font-weight: bold` or `700` in body text. Use `--weight-semibold` (`600`) maximum.
 - Playfair Display loads at weights 600 and 700 only. Do not request other weights.
@@ -226,6 +228,39 @@
 - Technique: use `min-width: 44px; min-height: 44px` or pad smaller visuals with transparent hit area.
 - Favorite hearts, close buttons, calendar buttons all use this pattern.
 
+### Prayer Overlays (Rosary, Stations, Novena, Examination)
+
+- Full-screen on mobile: `position: fixed; inset: 0; z-index: 2000`
+- Gradient backgrounds per module (warm tones matching liturgical context)
+- Header: close button + title + invisible spacer (centers title)
+- Body: `overflow-y: auto`, content max-width `540px` (exam: `600px`), centered
+- Footer/nav: sticky bottom, border-top
+- **Desktop (768px+):** Transparent backdrop with blur, children constrained to `min(600px, 90vw)` forming a centered card with rounded corners and shadow
+- Each module has its own gradient/color personality
+
+### Settings Overlay
+
+- Full-screen on mobile, centered 520px card on desktop
+- Groups: section title (uppercase label) + rows with toggles or segmented controls
+- Toggle switch: 44×26px, green when on, knob slides right
+- Segmented control: button group with active state `--color-primary`
+- Action buttons (privacy): text-only, left-aligned, danger variant in `--color-fav`
+- **Desktop:** backdrop blur + centered card with rounded corners
+
+### Bottom Sheets (CCC, Bible)
+
+- Slide up from bottom: `transform: translateY(100%)` → `translateY(0)`
+- Max-height: `88vh`
+- Top corners: `16px` border-radius
+- Handle bar: centered decorative bar
+- **Desktop (768px+):** centered at `--max-width` via `left: 50%; transform: translate(-50%, 0)`
+
+### Explore Overlay
+
+- Slides in from right on mobile, centered 640px card on desktop
+- Breadcrumb trail below header for navigation history
+- Connection cards with pivot buttons for deep cross-reference navigation
+
 ### Toast Messages
 
 - Fixed bottom-center, above tab bar
@@ -243,7 +278,7 @@
 3. **Body padding-bottom:** Account for tab bar: `calc(var(--tab-bar-height) + var(--safe-bottom) + var(--space-4))`.
 4. **No horizontal scroll** on the page body. Only chip bars and carousels scroll horizontally.
 5. **Sticky header:** `.top-header` is `position: sticky; top: 0; z-index: 90`.
-6. **Z-index scale:** Header: 90, Tab bar: 100, Detail panel: 1001, Event panel: 1002, Filters overlay: uses backdrop at 1000. Do not introduce z-indexes outside this range without documenting.
+6. **Z-index scale:** Header: 90, Tab bar: 100, CCC/Bible sheets: 901, Detail panel: 1001, Event panel: 1002, Filters: 1100, Explore: 1500, Prayer overlays: 2000, Settings: 9500. New overlays should slot into this hierarchy.
 
 ---
 
@@ -273,9 +308,14 @@ The palette is **warm, muted, and restrained**. It communicates trust and calm �
 
 ## Responsive Behavior
 
-- **Mobile-first.** All CSS is written for mobile, then enhanced with `@media (min-width: 768px)` for desktop.
-- Desktop adjustments are minimal: detail panel centering, slightly more breathing room.
-- No breakpoints below 768px — the mobile layout works from 320px up.
+- **Mobile-first.** All CSS is written for mobile, then enhanced with media queries for larger screens.
+- **Breakpoints:**
+  - `480px` — Prayer tools grid: 2 columns. Rosary mystery grid: 2 columns.
+  - `680px` — Prayer tools grid: 3 columns.
+  - `768px` — Detail panels, CCC/Bible sheets: centered at `--max-width`. Prayer overlays, settings, explore: centered floating cards with dimmed backdrop + blur. Slightly more horizontal padding.
+  - `769px` — Filters overlay: centered 560px modal instead of fullscreen.
+- **Desktop overlay pattern:** On 768px+, fullscreen overlays become centered cards (520–640px wide) with `backdrop-filter: blur(4px)` behind them. Children (header, body, footer) each get explicit `width` and `background` so they form a cohesive card shape. Top corners get `border-radius`, bottom corners on the last child.
+- No breakpoints below 480px — the mobile layout works from 320px up.
 - Touch behaviors (`:active` transforms, `-webkit-tap-highlight-color: transparent`) apply everywhere.
 - `-webkit-overflow-scrolling: touch` on scrollable panels for iOS momentum.
 - `overscroll-behavior: contain` on panels to prevent background scroll bleed.

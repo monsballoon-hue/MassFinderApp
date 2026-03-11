@@ -53,16 +53,6 @@
 
 ---
 
-## Node.js v12 Syntax Failures (Severity: LOW)
-
-**The Bug:** `node --check index.html` or running JS files through Node fails with syntax errors.
-
-**Why:** The container/CI environment runs Node.js v12, which doesn't support optional chaining (`?.`) or nullish coalescing (`??`). These work fine in all modern browsers.
-
-**Fix:** This is a non-issue for production. Browser code can use `?.` and `??` freely. Only maintenance scripts in `scripts/` need to avoid these operators if they're run via Node on this machine.
-
----
-
 ## Body Scroll Bleed on iOS (Severity: MEDIUM)
 
 **The Bug:** When a modal panel is open, scrolling to the end of the panel content causes the background page to scroll.
@@ -159,7 +149,9 @@ const data = await res.json();
 1. ☐ Does it require a new external dependency? (Probably shouldn't)
 2. ☐ Does it add an overlay/backdrop? (Needs `pointer-events: none` in closed state)
 3. ☐ Does it add a modal/panel? (Needs focus trap, Escape key handler, body scroll lock)
-4. ☐ Does it fetch from a new API? (Add hostname to SW `NETWORK_ONLY_HOSTS`)
-5. ☐ Does it use Web3Forms? (Include `to:` field, avoid `type` field name)
-6. ☐ Does it generate HTML from data? (Use `esc()` for all data-derived strings)
-7. ☐ Will service worker cache it? (Bump `CACHE_NAME` on deploy)
+4. ☐ Does it add a full-screen overlay? (Needs desktop responsive `@media (min-width:768px)` — centered card with backdrop, not fullscreen edge-to-edge)
+5. ☐ Does it fetch from a new API? (Add hostname to SW `NETWORK_ONLY_HOSTS`)
+6. ☐ Does it use Web3Forms? (Include `to:` field, avoid `type` field name)
+7. ☐ Does it generate HTML from data? (Use `esc()` for all data-derived strings)
+8. ☐ Will service worker cache it? (Bump `CACHE_NAME` on deploy)
+9. ☐ Does it need dark mode? (Add `html[data-theme="dark"]` overrides for any hardcoded colors)

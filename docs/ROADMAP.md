@@ -1,7 +1,7 @@
 # MassFinder Development Roadmap
 
-**Last updated:** 2026-03-09
-**Status:** V2 modular rebuild deployed. Batch 1 (Supabase) complete, Batch 2 (bulletin parsing) in progress.
+**Last updated:** 2026-03-11
+**Status:** V2 modular rebuild deployed. 26 modules, full prayer toolset, CCC Explore, desktop responsive overlays. Batch 1 (Supabase) complete, Batch 2 (bulletin parsing) in progress.
 
 ---
 
@@ -13,17 +13,19 @@ MassFinder is a vanilla JS PWA with CommonJS modules bundled via esbuild. Static
 |--------|-------|
 | Parishes | 93 active |
 | Churches (worship sites) | 119 |
-| Services tracked | ~1,407 |
-| Community events | ~203 |
-| Parishes validated | 28 of 93 |
+| Services tracked | 1,690 |
+| Community events | 203 |
+| Parishes verified | 91 of 93 |
 | States covered | MA, CT, VT, NH |
+| App modules | 26 (CommonJS) |
+| Data files | 14 (lazy-loaded JSON) |
 
 **Stack:** CommonJS modules → esbuild → `dist/app.min.js` (IIFE) → Vercel → service worker for offline
 
-**Completed:** V2 modular rebuild, Batch 1 (database migration), Batch 2 (bulletin parsing pipeline — core engine working, review UI built)
-**In progress:** UI polish, feature parity with production, Batch 2 refinement
+**Completed:** V2 modular rebuild, Batch 1 (database migration), Batch 2 (bulletin parsing pipeline — core engine working, review UI built), full prayer toolset (rosary, stations, novena, examination), CCC Explore with cross-referencing, Bible bottom sheet (DRB + CPDV), settings panel, desktop responsive overlays.
+**In progress:** P3 portal projects (validation, event submission, parish management), Batch 2 refinement.
 
-**What works well:** Find tab with filters/search/sort, Map tab with Leaflet markers, Saved tab with favorites, More tab with readings/liturgical calendar/devotional guides, deep linking, distance-based sorting, language badges, seasonal (Lent) filtering, multi-location parish support, admin panel for data editing.
+**What works well:** Find tab with filters/search/sort, Map tab with Leaflet markers, Saved tab with favorites/today timeline/activity tracking, More tab with readings/liturgical calendar/devotional guides/prayer tools/settings, guided rosary with haptics, stations of the cross, novena tracker, examination of conscience, CCC bottom sheet with search/Baltimore companion/explore connections, Bible bottom sheet with DRB/CPDV and cross-references, deep linking, distance-based sorting, language badges, seasonal filtering, multi-location parish support, dark mode, desktop responsive cards.
 
 ---
 
