@@ -54,6 +54,7 @@ data/lectionary-index.json  22KB  Sunday/weekday lectionary mappings (lazy-loade
 data/litcal-2026.json  70KB    Pre-built liturgical calendar for 2026 (lazy-loaded)
 data/litcal-2027.json  70KB    Pre-built liturgical calendar for 2027 (lazy-loaded)
 data/baltimore-catechism.json  48KB  Q&A format catechism (lazy-loaded)
+data/summa-daily.json  300KB   366 curated Summa Theologica articles (lazy-loaded)
 ```
 
 **All data/ files are lazy-loaded on first use and SW-cached. Users who never use a feature pay zero download cost.**
@@ -79,6 +80,7 @@ node scripts/build-xrefs.js        # Build cross-reference index → data/bible-
 node scripts/build-lectionary.js   # Build lectionary index → data/lectionary-index.json
 node scripts/build-litcal.js       # Fetch LitCal API → data/litcal-YYYY.json
 node scripts/build-baltimore.js    # Process Baltimore Catechism → data/baltimore-catechism.json
+node scripts/build-summa.js        # Fetch Summa Theologica → data/summa-daily.json (366 articles)
 node scripts/enrich-events.js      # Claude-powered event note parsing
 node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_data.json
 ```

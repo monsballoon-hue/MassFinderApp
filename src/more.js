@@ -136,6 +136,9 @@ function renderMore() {
   // Daily CCC Reflection (Change 16)
   if (typeof window.renderDailyReflection === 'function') window.renderDailyReflection();
 
+  // Daily Summa Wisdom (DAT-08)
+  if (typeof window.renderDailySumma === 'function') window.renderDailySumma();
+
   // Prayer Tools grid
   var exam = require('./examination.js');
   var ptGrid = document.getElementById('prayerToolsGrid');

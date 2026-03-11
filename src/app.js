@@ -283,6 +283,7 @@ window.toggleTheme = function() {
 
 window.init = init;
 window.renderDailyReflection = _renderDailyReflection;
+window.renderDailySumma = _renderDailySumma;
 window.setTextSize = function(size) {
   document.documentElement.setAttribute('data-text-size', size === 'default' ? '' : size);
   if (size === 'default') document.documentElement.removeAttribute('data-text-size');
@@ -580,6 +581,51 @@ function _renderDailyReflection() {
       + '<div class="reflection-question">' + utils.esc(qa.question) + '</div>'
       + '<div class="reflection-answer">' + utils.esc(qa.answer) + '</div>'
       + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>'
+      + '</div>';
+    el.style.display = '';
+  }).catch(function() { el.style.display = 'none'; });
+}
+
+// ── Daily Summa Wisdom (DAT-08: Summa Theologica) ──
+// Cycles through 366 curated articles from the Summa Theologica daily.
+var _summaCache = null;
+
+function _renderDailySumma() {
+  var el = document.getElementById('dailySumma');
+  if (!el) return;
+
+  var loadData = _summaCache
+    ? Promise.resolve(_summaCache)
+    : fetch('/data/summa-daily.json').then(function(r) { return r.json(); })
+        .then(function(d) { _summaCache = d; return d; });
+
+  loadData.then(function(d) {
+    var articles = d.articles;
+    if (!articles || !articles.length) { el.style.display = 'none'; return; }
+
+    var now = utils.getNow();
+    var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
+    var idx = daysSinceEpoch % articles.length;
+    var art = articles[idx];
+
+    var bodyText = utils.esc(art.body);
+
+    // Counter (sed contra) — the "On the contrary..." argument
+    var counterHtml = art.counter
+      ? '<div class="summa-counter">' + utils.esc(art.counter) + '</div>'
+      : '';
+
+    el.innerHTML = '<div class="summa-card" role="article">'
+      + '<div class="summa-label">Daily Wisdom from the Summa</div>'
+      + '<div class="summa-topic">' + utils.esc(art.topic) + '</div>'
+      + '<div class="summa-question">' + utils.esc(art.q) + '</div>'
+      + '<div class="summa-article">' + utils.esc(art.a) + '</div>'
+      + counterHtml
+      + '<div class="summa-body">' + bodyText + '</div>'
+      + '<div class="summa-cite">'
+      + 'St. Thomas Aquinas \u00b7 ' + utils.esc(art.part) + ' \u00b7 Q.' + utils.esc(art.id.split('.')[1].replace('Q', ''))
+      + ', A.' + utils.esc(art.id.split('.')[2].replace('A', ''))
+      + '</div>'
       + '</div>';
     el.style.display = '';
   }).catch(function() { el.style.display = 'none'; });
