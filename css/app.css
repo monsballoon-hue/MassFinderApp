@@ -2235,3 +2235,157 @@ html[data-theme="dark"] .settings-row { border-color:var(--color-border); }
 html[data-theme="dark"] .more-settings-card { background:var(--color-surface);border-color:var(--color-border); }
 html[data-theme="dark"] .more-settings-card:active { background:var(--color-surface-hover); }
 html[data-theme="dark"] .more-settings-icon { background:var(--color-bg); }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   DESKTOP RESPONSIVE — centered panels, contained overlays, better grids
+   ══════════════════════════════════════════════════════════════════════════════ */
+
+/* ── Bible sheet: center on desktop (matches CCC sheet pattern) ── */
+@media (min-width:768px) {
+  .bible-sheet { left:50%;right:auto;width:100%;max-width:var(--max-width);transform:translate(-50%,100%); }
+  .bible-sheet.open { transform:translate(-50%,0); }
+}
+
+/* ── Explore overlay: constrained centered panel on desktop ── */
+@media (min-width:768px) {
+  .explore-overlay { background:rgba(26,30,38,0.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);justify-content:flex-start;align-items:center;padding-top:2vh;transform:translateY(100%); }
+  .explore-overlay.open { transform:translateY(0); }
+  .explore-header { width:min(640px,90vw);background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;flex-shrink:0; }
+  .explore-trail { width:min(640px,90vw);background:var(--color-bg); }
+  .explore-body { width:min(640px,90vw);max-height:calc(96vh - 100px);background:var(--color-bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);box-shadow:0 8px 40px rgba(0,0,0,0.12); }
+}
+
+/* ── Settings overlay: backdrop + centered card on desktop ── */
+@media (min-width:768px) {
+  .settings-overlay { background:rgba(26,30,38,0.35);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);justify-content:flex-start;align-items:center;padding-top:5vh; }
+  .settings-overlay.active { opacity:1; }
+  .settings-header { width:min(520px,90vw);background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;flex-shrink:0; }
+  .settings-body { width:min(520px,90vw);max-height:calc(90vh - 60px);background:var(--color-bg);border-radius:0 0 var(--radius-lg) var(--radius-lg);box-shadow:0 8px 40px rgba(0,0,0,0.15); }
+}
+
+/* ── Prayer overlays: backdrop + centered card on desktop ── */
+@media (min-width:768px) {
+  .rosary-overlay,
+  .stations-overlay,
+  .novena-overlay,
+  .exam-overlay {
+    /* Overlay stays fullscreen but becomes a transparent backdrop */
+    background:rgba(26,30,38,0.35);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    justify-content:flex-start;
+    align-items:center;
+    padding-top:3vh;
+  }
+  .rosary-overlay.open,
+  .stations-overlay.open,
+  .novena-overlay.open,
+  .exam-overlay.open {
+    transform:translateY(0);
+  }
+
+  /* Headers become top of the card */
+  .rosary-header,
+  .stations-header,
+  .novena-header,
+  .exam-header {
+    padding-top:var(--space-3);
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0;
+    width:min(600px,90vw);
+    flex-shrink:0;
+  }
+
+  /* Progress bars constrain to card width */
+  .rosary-progress,
+  .stations-progress,
+  .exam-progress-track {
+    width:min(600px,90vw);
+    background:var(--color-bg);
+  }
+
+  /* Bodies scroll within a constrained card */
+  .rosary-body,
+  .stations-body,
+  .novena-body,
+  .exam-body {
+    width:min(600px,90vw);
+    max-height:calc(94vh - 140px);
+    background:var(--color-bg);
+  }
+
+  /* Footer nav rounds bottom */
+  .rosary-nav,
+  .stations-nav,
+  .novena-nav,
+  .exam-footer {
+    width:min(600px,90vw);
+    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+  }
+}
+
+/* ── Prayer overlay backgrounds on desktop (override gradients to card-like) ── */
+@media (min-width:768px) {
+  .rosary-overlay { background:rgba(26,30,38,0.35); }
+  .stations-overlay { background:rgba(26,30,38,0.35); }
+  .novena-overlay { background:rgba(26,30,38,0.35); }
+  .exam-overlay { background:rgba(26,30,38,0.35); }
+
+  .rosary-header { background:rgba(245,243,238,0.97); }
+  .stations-header { background:rgba(245,241,238,0.97); }
+  .novena-header { background:rgba(242,245,241,0.97); }
+  .exam-header { background:rgba(245,243,238,0.97); }
+
+  .rosary-body { background:linear-gradient(180deg, #F5F3EE 0%, #EDE8DF 100%); }
+  .stations-body { background:linear-gradient(180deg, #F5F1EE 0%, #EDE6DF 100%); }
+  .novena-body { background:linear-gradient(180deg, #F2F5F1 0%, #E8EDE6 100%); }
+  .exam-body { background:linear-gradient(180deg, #F5F3EE 0%, #EDE8DF 100%); }
+
+  .rosary-nav,
+  .stations-nav,
+  .novena-nav { background:rgba(245,243,238,0.97); }
+  .exam-footer { background:rgba(245,243,238,0.97); }
+}
+
+/* ── Prayer tools grid: 3 columns on wider screens ── */
+@media (min-width:680px) {
+  .prayer-tools-grid { grid-template-columns:1fr 1fr 1fr; }
+}
+
+/* ── Rosary mystery grid: 2x2 on wider screens ── */
+@media (min-width:680px) {
+  .rosary-set-grid { grid-template-columns:1fr 1fr; }
+}
+
+/* ── Dark mode desktop overrides ── */
+@media (min-width:768px) {
+  html[data-theme="dark"] .rosary-overlay,
+  html[data-theme="dark"] .stations-overlay,
+  html[data-theme="dark"] .novena-overlay,
+  html[data-theme="dark"] .exam-overlay,
+  html[data-theme="dark"] .settings-overlay,
+  html[data-theme="dark"] .explore-overlay { background:rgba(0,0,0,0.5); }
+
+  html[data-theme="dark"] .rosary-header,
+  html[data-theme="dark"] .stations-header,
+  html[data-theme="dark"] .novena-header,
+  html[data-theme="dark"] .exam-header { background:rgba(26,28,34,0.97); }
+
+  html[data-theme="dark"] .rosary-body,
+  html[data-theme="dark"] .stations-body,
+  html[data-theme="dark"] .novena-body,
+  html[data-theme="dark"] .exam-body { background:var(--color-bg); }
+
+  html[data-theme="dark"] .rosary-nav,
+  html[data-theme="dark"] .stations-nav,
+  html[data-theme="dark"] .novena-nav,
+  html[data-theme="dark"] .exam-footer { background:rgba(26,28,34,0.97); }
+
+  html[data-theme="dark"] .settings-header,
+  html[data-theme="dark"] .settings-body { background:var(--color-bg); }
+  html[data-theme="dark"] .settings-body { box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+
+  html[data-theme="dark"] .explore-header,
+  html[data-theme="dark"] .explore-trail,
+  html[data-theme="dark"] .explore-body { background:var(--color-bg); }
+  html[data-theme="dark"] .explore-body { box-shadow:0 8px 40px rgba(0,0,0,0.5); }
+}

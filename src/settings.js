@@ -10,6 +10,10 @@ function openSettings() {
   overlay.style.display = 'flex';
   requestAnimationFrame(function() { overlay.classList.add('active'); });
   document.body.style.overflow = 'hidden';
+  // Close on backdrop click (desktop)
+  overlay.onclick = function(e) {
+    if (e.target === overlay) closeSettings();
+  };
 }
 
 function closeSettings() {
