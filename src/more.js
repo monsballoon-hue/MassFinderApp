@@ -33,6 +33,13 @@ function _getNovenaSubtitle() {
   return '9-day guided prayer';
 }
 
+function _getRosarySubtitle() {
+  var mysteries = { sunday: 'Glorious', monday: 'Joyful', tuesday: 'Sorrowful', wednesday: 'Glorious', thursday: 'Luminous', friday: 'Sorrowful', saturday: 'Joyful' };
+  var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+  var today = days[new Date().getDay()];
+  return mysteries[today] + ' Mysteries today';
+}
+
 // ── renderMore ──
 function renderMore() {
   // Lazy requires
@@ -133,11 +140,8 @@ function renderMore() {
     }
   })();
 
-  // Daily CCC Reflection (Change 16)
-  if (typeof window.renderDailyReflection === 'function') window.renderDailyReflection();
-
-  // Daily Summa Wisdom (DAT-08)
-  if (typeof window.renderDailySumma === 'function') window.renderDailySumma();
+  // Daily Formation (MT-02: combined Baltimore Q&A + Summa)
+  if (typeof window.renderDailyFormation === 'function') window.renderDailyFormation();
 
   // Prayer Tools grid
   var exam = require('./examination.js');
@@ -147,11 +151,11 @@ function renderMore() {
     var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
 
     var ptCards = [
-      { id: 'rosary', title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
+      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
-      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Traditional Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
+      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
       { id: 'novena', title: 'Novena Tracker', subtitle: _getNovenaSubtitle(), action: 'openNovena()', active: true },
-      { id: 'explore', title: 'Explore', subtitle: 'CCC, Scripture, and Baltimore connections', action: 'openExplore(\'ccc\',\'1\')', active: true }
+      { id: 'explore', title: 'Explore', subtitle: 'CCC \u00b7 Scripture \u00b7 Baltimore', action: 'openExplore(\'ccc\',\'1\')', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
@@ -161,7 +165,6 @@ function renderMore() {
         + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
         + '<div class="prayer-tool-subtitle">' + esc(c.subtitle) + '</div>'
         + '</div>'
-        + (c.active ? '<span class="prayer-tool-chevron" aria-hidden="true">\u203A</span>' : '')
         + '</div>';
     }).join('');
 
@@ -203,26 +206,14 @@ function renderMore() {
     });
   }
 
-  // Footer — Settings card + version
+  // Footer — simple link rows + version
   var footer = document.getElementById('moreFooter');
   if (footer) {
-    footer.innerHTML = '<div class="more-settings-card" onclick="window.open(\'/subscribe.html\',\'_blank\')" role="button" tabindex="0">'
-      + '<div class="more-settings-body">'
-      + '<div class="more-settings-icon" style="color:var(--color-accent)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>'
-      + '<div><div class="more-settings-title">Weekly Email</div>'
-      + '<div class="more-settings-sub">Know someone without the app? Share the weekly parish update.</div></div>'
+    footer.innerHTML = '<div class="more-footer-links">'
+      + '<button class="more-footer-link" onclick="window.open(\'/subscribe.html\',\'_blank\')"><span>Weekly Email Signup</span><span class="more-footer-chevron">\u203A</span></button>'
+      + '<button class="more-footer-link" onclick="openSettings()"><span>Settings</span><span class="more-footer-chevron">\u203A</span></button>'
       + '</div>'
-      + '<span class="prayer-tool-chevron" aria-hidden="true">\u203A</span>'
-      + '</div>'
-      + '<div class="more-settings-card" onclick="openSettings()" role="button" tabindex="0">'
-      + '<div class="more-settings-body">'
-      + '<div class="more-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
-      + '<div><div class="more-settings-title">Settings</div>'
-      + '<div class="more-settings-sub">Theme, text size, notifications, privacy</div></div>'
-      + '</div>'
-      + '<span class="prayer-tool-chevron" aria-hidden="true">\u203A</span>'
-      + '</div>'
-      + '<div onclick="window._devTap && window._devTap()" style="cursor:default">MassFinder v2</div>';
+      + '<div onclick="window._devTap && window._devTap()" style="cursor:default" class="more-version">MassFinder v2</div>';
   }
 
   // Trigger readings and saint card fetches

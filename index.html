@@ -110,16 +110,15 @@
     <!-- FASTING & ABSTINENCE BANNER — Ash Wednesday, Good Friday, Lenten Fridays -->
     <div id="fastingBanner"></div>
 
-    <!-- Saint/celebration card (first content section) -->
+    <!-- Saint/celebration card -->
     <div class="more-section more-section--tight" id="saintSection">
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
     </div>
 
-    <!-- DAILY CCC REFLECTION -->
-    <div id="dailyReflection" class="more-section more-section--tight" style="display:none"></div>
-
-    <!-- DAILY SUMMA WISDOM -->
-    <div id="dailySumma" class="more-section more-section--tight" style="display:none"></div>
+    <!-- PRAYER TOOLS — moved up, no section title -->
+    <div class="more-section more-section--tight" id="prayerToolsSection">
+      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
+    </div>
 
     <!-- DAILY READINGS -->
     <div class="more-section">
@@ -127,22 +126,17 @@
       <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
     </div>
 
-    <!-- PRAYER TOOLS — interactive prayer features -->
-    <div class="more-section" id="prayerToolsSection">
-      <h2 class="more-section-title">Prayer Tools</h2>
-      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
-    </div>
+    <!-- DAILY FORMATION — combined Baltimore Q&A + Summa -->
+    <div id="dailyFormation" class="more-section more-section--tight" style="display:none"></div>
 
-    <!-- PWA INSTALL CARD — below content, above reference sections -->
-    <div id="moreInstallCard"></div>
-
-    <!-- DEVOTIONAL GUIDES -->
-    <details class="more-section" open>
+    <!-- DEVOTIONAL GUIDES — collapsed by default -->
+    <details class="more-section">
       <summary class="more-section-title more-section-collapsible">Faith Guides<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
       <div id="devotionalCards"></div>
     </details>
 
-    <div class="more-about-text">MassFinder is a community project built for Catholics across Western New England. Find Mass times, Confession, Adoration, and local events at parishes throughout the region &mdash; plus daily readings, reflections, prayer tools, and guides to help you grow in faith. All free, always improving, and made with care for this community.</div>
+    <!-- PWA INSTALL CARD — after Faith Guides -->
+    <div id="moreInstallCard"></div>
 
     <div class="more-footer" id="moreFooter"></div>
   </div>

@@ -283,8 +283,7 @@ window.toggleTheme = function() {
 // Dark mode only activates when user explicitly toggles via theme button.
 
 window.init = init;
-window.renderDailyReflection = _renderDailyReflection;
-window.renderDailySumma = _renderDailySumma;
+window.renderDailyFormation = _renderDailyFormation;
 window.setTextSize = function(size) {
   document.documentElement.setAttribute('data-text-size', size === 'default' ? '' : size);
   if (size === 'default') document.documentElement.removeAttribute('data-text-size');
@@ -534,84 +533,65 @@ function _renderConfessionPrompt() {
   }
 }
 
-// ── Daily Catholic Q&A (DAT-09: Baltimore Catechism) ──
-// Replaces the CCC paragraph reflection with a more accessible Q&A format.
-// Cycles through Baltimore Catechism questions daily, with link to related CCC paragraph.
+// ── Daily Formation (MT-02: combined Baltimore Q&A + Summa "Go Deeper") ──
+// Baltimore Q&A always visible. Summa collapsed behind a <details> toggle.
 var _baltimoreCache = null;
+var _summaCache = null;
 
-function _renderDailyReflection() {
-  var el = document.getElementById('dailyReflection');
+function _renderDailyFormation() {
+  var el = document.getElementById('dailyFormation');
   if (!el) return;
 
-  var loadData = _baltimoreCache
+  var baltimoreReady = _baltimoreCache
     ? Promise.resolve(_baltimoreCache)
     : fetch('/data/baltimore-catechism.json').then(function(r) { return r.json(); })
         .then(function(d) { _baltimoreCache = d; return d; });
 
-  loadData.then(function(d) {
-    var questions = d.questions;
-    if (!questions || !questions.length) { el.style.display = 'none'; return; }
-
-    var now = utils.getNow();
-    var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
-    var idx = daysSinceEpoch % questions.length;
-    var qa = questions[idx];
-
-    var cccLink = qa.ccc
-      ? '<span class="reflection-ccc-link" onclick="event.stopPropagation();openCCC(\'' + qa.ccc + '\')">CCC \u00A7' + qa.ccc + '</span>'
-      : '';
-
-    el.innerHTML = '<div class="reflection-card" role="article">'
-      + '<div class="reflection-label">Daily Catholic Q&amp;A</div>'
-      + '<div class="reflection-question">' + utils.esc(qa.question) + '</div>'
-      + '<div class="reflection-answer">' + utils.esc(qa.answer) + '</div>'
-      + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>'
-      + '</div>';
-    el.style.display = '';
-  }).catch(function() { el.style.display = 'none'; });
-}
-
-// ── Daily Summa Wisdom (DAT-08: Summa Theologica) ──
-// Cycles through 366 curated articles from the Summa Theologica daily.
-var _summaCache = null;
-
-function _renderDailySumma() {
-  var el = document.getElementById('dailySumma');
-  if (!el) return;
-
-  var loadData = _summaCache
+  var summaReady = _summaCache
     ? Promise.resolve(_summaCache)
     : fetch('/data/summa-daily.json').then(function(r) { return r.json(); })
         .then(function(d) { _summaCache = d; return d; });
 
-  loadData.then(function(d) {
-    var articles = d.articles;
-    if (!articles || !articles.length) { el.style.display = 'none'; return; }
-
+  Promise.all([baltimoreReady, summaReady]).then(function(results) {
+    var balt = results[0], summa = results[1];
     var now = utils.getNow();
     var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
-    var idx = daysSinceEpoch % articles.length;
-    var art = articles[idx];
 
-    var bodyText = utils.esc(art.body);
+    var html = '<div class="formation-card">';
 
-    // Counter (sed contra) — the "On the contrary..." argument
-    var counterHtml = art.counter
-      ? '<div class="summa-counter">' + utils.esc(art.counter) + '</div>'
-      : '';
+    // Baltimore Q&A — always visible
+    var questions = balt.questions;
+    if (questions && questions.length) {
+      var bIdx = daysSinceEpoch % questions.length;
+      var qa = questions[bIdx];
+      var cccLink = qa.ccc
+        ? '<span class="reflection-ccc-link" onclick="event.stopPropagation();openCCC(\'' + qa.ccc + '\')">CCC \u00A7' + qa.ccc + '</span>'
+        : '';
+      html += '<div class="formation-label">Daily Catholic Q&amp;A</div>'
+        + '<div class="reflection-question">' + utils.esc(qa.question) + '</div>'
+        + '<div class="reflection-answer">' + utils.esc(qa.answer) + '</div>'
+        + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>';
+    }
 
-    el.innerHTML = '<div class="summa-card" role="article">'
-      + '<div class="summa-label">Daily Wisdom from the Summa</div>'
-      + '<div class="summa-topic">' + utils.esc(art.topic) + '</div>'
-      + '<div class="summa-question">' + utils.esc(art.q) + '</div>'
-      + '<div class="summa-article">' + utils.esc(art.a) + '</div>'
-      + counterHtml
-      + '<div class="summa-body">' + bodyText + '</div>'
-      + '<div class="summa-cite">'
-      + 'St. Thomas Aquinas \u00b7 ' + utils.esc(art.part) + ' \u00b7 Q.' + utils.esc(art.id.split('.')[1].replace('Q', ''))
-      + ', A.' + utils.esc(art.id.split('.')[2].replace('A', ''))
-      + '</div>'
-      + '</div>';
+    // Summa — collapsed "Go Deeper"
+    var articles = summa.articles;
+    if (articles && articles.length) {
+      var sIdx = daysSinceEpoch % articles.length;
+      var art = articles[sIdx];
+      html += '<details class="formation-deeper">'
+        + '<summary class="formation-deeper-toggle">Go Deeper \u00b7 Summa Theologica<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>'
+        + '<div class="formation-deeper-body">'
+        + '<div class="summa-topic">' + utils.esc(art.topic) + '</div>'
+        + '<div class="summa-question">' + utils.esc(art.q) + '</div>'
+        + '<div class="summa-article">' + utils.esc(art.a) + '</div>'
+        + (art.counter ? '<div class="summa-counter">' + utils.esc(art.counter) + '</div>' : '')
+        + '<div class="summa-body">' + utils.esc(art.body) + '</div>'
+        + '<div class="summa-cite">St. Thomas Aquinas \u00b7 ' + utils.esc(art.part) + ' \u00b7 Q.' + utils.esc(art.id.split('.')[1].replace('Q', '')) + ', A.' + utils.esc(art.id.split('.')[2].replace('A', '')) + '</div>'
+        + '</div></details>';
+    }
+
+    html += '</div>';
+    el.innerHTML = html;
     el.style.display = '';
   }).catch(function() { el.style.display = 'none'; });
 }
@@ -1000,7 +980,7 @@ window._devQANav = function(dir) {
 };
 
 function _devRenderQA() {
-  var el = document.getElementById('dailyReflection');
+  var el = document.getElementById('dailyFormation');
   if (!el || !_baltimoreCache) return;
   var questions = _baltimoreCache.questions;
   if (!questions || !questions.length) return;

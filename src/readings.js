@@ -490,23 +490,20 @@ function renderSaintCard(events) {
     if (otherSaints.length) alsoToday = '<div class="saint-also">Also: ' + otherSaints.join(', ') + '</div>';
   }
 
-  // Build upcoming observances section (folded into saint card)
+  // Build upcoming observances — compact inline rows, max 2 (MT-07)
   var upcomingHtml = '';
   var upcomingEvts = getLiturgicalEvents().filter(function(e) { return e.daysAway > 0; });
   if (upcomingEvts.length) {
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    var evtItems = upcomingEvts.map(function(e) {
-      var soon = e.daysAway <= 7 ? '<span class="litu-soon">' + (e.daysAway === 1 ? 'Tomorrow' : 'In ' + e.daysAway + ' days') + '</span>' : '';
-      var hdoBadge = e.hdo ? '<span class="litu-hdo">Obligation</span>' : '';
-      return '<div class="saint-upcoming-item">'
-        + '<div class="litu-date-badge" style="background:' + e.colorHex + '"><div class="litu-month">' + months[e.date.getMonth()] + '</div><div class="litu-day">' + e.date.getDate() + '</div></div>'
-        + '<div class="saint-upcoming-info"><div class="litu-name">' + esc(e.name) + '</div>' + (hdoBadge ? '<div class="litu-type">' + hdoBadge + '</div>' : '') + soon + '</div>'
+    var items = upcomingEvts.slice(0, 2).map(function(e) {
+      var when = e.daysAway === 1 ? 'Tomorrow' : 'In ' + e.daysAway + ' days';
+      var hdoBadge = e.hdo ? ' <span class="litu-hdo">Obligation</span>' : '';
+      return '<div class="saint-upcoming-row">'
+        + '<span class="saint-upcoming-when">' + when + '</span>'
+        + '<span class="saint-upcoming-name">' + esc(e.name) + '</span>'
+        + hdoBadge
         + '</div>';
     }).join('');
-    var chevSvg = '<svg class="saint-upcoming-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>';
-    upcomingHtml = '<details class="saint-upcoming"><summary class="saint-upcoming-toggle">Coming up' + chevSvg + '</summary>'
-      + '<div class="saint-upcoming-list">' + evtItems + '</div>'
-      + '</details>';
+    upcomingHtml = '<div class="saint-upcoming-compact">' + items + '</div>';
   }
 
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
