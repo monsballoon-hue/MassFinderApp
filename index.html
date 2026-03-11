@@ -40,13 +40,14 @@
 </div></div></header>
 
 <main id="panelFind" class="tab-panel active" role="tabpanel">
+  <div id="returnCard" class="return-card-wrap" style="display:none"></div>
   <div class="search-section"><div class="search-bar" role="search">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input id="searchInput" type="text" placeholder="Search churches, events, or services…" aria-label="Search churches and events">
     <button id="searchClear" class="search-clear" aria-label="Clear search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div></div>
 
-  <div id="liturgicalContext" class="liturgical-context-wrap" style="display:none"></div>
+  <div id="liturgicalTeaser" class="liturgical-teaser-wrap"></div>
 
   <div class="chip-bar-wrap">
   <div class="chip-bar" role="toolbar" aria-label="Quick filters">
@@ -74,7 +75,6 @@
   </div>
 
   <div id="pullIndicator" class="pull-indicator"><div class="pull-indicator-inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg><span id="pullText">Pull to refresh</span></div></div>
-  <div id="sparseMsg" class="sparse-msg" style="display:none"><div class="sparse-msg-inner">Fewer services on weekdays — <button onclick="document.querySelector('[data-filter=weekend]').click()">try This Weekend</button> for Sunday Mass times.</div></div>
   <div id="cardList" class="card-list" role="list" aria-label="Churches">
     <div class="loading-placeholder" style="display:flex;flex-direction:column;gap:var(--space-3)">
       <div class="skel-card"><div class="skel-title"></div><div class="skel-line"></div><div class="skel-line skel-line--short"></div><div class="skel-badges"><div class="skel-badge"></div><div class="skel-badge"></div></div></div>

@@ -484,19 +484,21 @@ window.addEventListener('appinstalled', function() { window._deferredInstallProm
 
 // ── Daily Card on Find tab (liturgical day teaser) ──
 function _renderDailyStrip(events) {
+  var el = document.getElementById('liturgicalTeaser');
+  if (!el) return;
   var now = utils.getNow(), m = now.getMonth() + 1, d = now.getDate();
   var today = events.filter(function(e) { return e.month === m && e.day === d && !e.is_vigil_mass; });
   if (!today.length) return;
 
   var pick = today.sort(function(a, b) { return (b.grade || 0) - (a.grade || 0); })[0];
+  var color = (pick.color && pick.color[0]) || 'green';
+  var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
+  var colorHex = colorMap[color] || '#16A34A';
 
-  // FT-01: Update search placeholder with liturgical context
-  var searchInput = document.getElementById('searchInput');
-  if (searchInput && !searchInput.value) {
-    searchInput.placeholder = pick.name + ' \u2014 search churches or services\u2026';
-  }
+  var progress = utils.getSeasonProgress();
+  var progressText = progress ? 'Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season : '';
 
-  // FT-01+07: Only render slim contextual line for actionable items or return message
+  // Secondary line
   var secondary = '';
   var dow = now.getDay();
   var season = document.documentElement.getAttribute('data-season');
@@ -505,22 +507,19 @@ function _renderDailyStrip(events) {
   var tomorrowHDO = events.filter(function(e) {
     return e.month === (tomorrow.getMonth() + 1) && e.day === tomorrow.getDate() && e.holy_day_of_obligation;
   });
-  if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day of Obligation)';
+  if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
-  // FT-07: Merge return card message into context strip
-  if (window._returnMessage && !secondary) {
-    secondary = window._returnMessage;
-    window._returnMessage = null;
-  }
-
-  var el = document.getElementById('liturgicalContext');
-  if (!el) return;
-  if (secondary) {
-    el.innerHTML = '<div class="liturgical-context">' + utils.esc(secondary) + '</div>';
-    el.style.display = '';
-  } else {
-    el.style.display = 'none';
-  }
+  el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
+    + '<div class="daily-card-row">'
+    + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
+    + '<div class="daily-card-text">'
+    + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
+    + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
+    + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
+    + '</div>'
+    + '<span class="daily-card-arrow">\u203a</span>'
+    + '</div>'
+    + '</div>';
 }
 
 // FT-20: Contextual confession chip nudge — highlight chip on Saturdays and during Lent
@@ -623,8 +622,11 @@ function _renderWelcomeBanner() {
   // No-op: welcome experience is now a contextual tip card after the first church card
 }
 
-// FT-07: Return-visit context — store message for liturgical context strip
+// ── Return-visit context card ──
 function _renderReturnCard(daysMissed) {
+  var el = document.getElementById('returnCard');
+  if (!el) return;
+
   var missed = [];
   if (window._litcalCache && window._litcalCache.events) {
     var lastDate = new Date(state._lastVisit + 'T00:00:00');
@@ -641,9 +643,11 @@ function _renderReturnCard(daysMissed) {
     ? missed.slice(0, 3).join(', ') + (missed.length > 3 ? ' +' + (missed.length - 3) + ' more' : '')
     : '';
 
-  if (missedText) {
-    window._returnMessage = 'Welcome back \u00b7 ' + missedText + ' since last visit';
-  }
+  el.innerHTML = '<div class="return-card">'
+    + '<div class="return-text">Welcome back' + (missedText ? ' \u2014 ' + utils.esc(missedText) + ' since your last visit' : '') + '</div>'
+    + '<button class="return-dismiss" onclick="this.closest(\'.return-card-wrap\').style.display=\'none\'" aria-label="Dismiss">\u2715</button>'
+    + '</div>';
+  el.style.display = '';
 }
 
 
@@ -731,14 +735,13 @@ async function init() {
     readings.fetchLiturgicalDay().then(function() {
       if (window._litcalCache) {
         readings.setLiturgicalSeason(window._litcalCache.events);
-        // FT-07: Return card must run before daily strip to populate window._returnMessage
-        if (state._isReturning && state._lastVisit) {
-          var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
-          if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
-        }
         _renderDailyStrip(window._litcalCache.events);
       }
       _renderConfessionPrompt();
+      if (state._isReturning && state._lastVisit) {
+        var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
+        if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
+      }
     }).catch(function() {});
 
     // Register service worker
@@ -909,17 +912,14 @@ window._devToggle = function(key, checked) {
   }
 
   if (key === 'returnCard') {
+    var rcEl = document.getElementById('returnCard');
     if (checked) {
-      window._returnMessage = 'Welcome back \u00b7 Test feast since last visit';
-      var ctxEl = document.getElementById('liturgicalContext');
-      if (ctxEl) {
-        ctxEl.innerHTML = '<div class="liturgical-context">' + window._returnMessage + '</div>';
-        ctxEl.style.display = '';
-        window._returnMessage = null;
+      if (rcEl) {
+        rcEl.innerHTML = '<div class="return-card"><div class="return-text">Welcome back \u2014 Test feast since last visit</div><button class="return-dismiss" onclick="this.closest(\'.return-card-wrap\').style.display=\'none\'" aria-label="Dismiss">\u2715</button></div>';
+        rcEl.style.display = '';
       }
     } else {
-      var ctxEl2 = document.getElementById('liturgicalContext');
-      if (ctxEl2) ctxEl2.style.display = 'none';
+      if (rcEl) rcEl.style.display = 'none';
     }
   }
 
