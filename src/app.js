@@ -538,6 +538,50 @@ function _renderConfessionPrompt() {
 var _baltimoreCache = null;
 var _summaCache = null;
 
+// MR-03: CCC section -> Summa topic mapping for topical "Go Deeper"
+var _CCC_SUMMA_MAP = {
+  'Jesus Christ, Son of God': ['Life of Christ', 'The Incarnation'],
+  'The Trinity': ['The Trinity'],
+  'Creator of Heaven and Earth': ['Creation', 'Angels'],
+  'The Dignity of the Human Person': ['Human Acts', 'Habits & Virtues', 'Human Nature'],
+  'The Human Community, The Law, Grace': ['Justice', 'Habits & Virtues'],
+  'The Ten Commandments': ['Justice', 'Temperance', 'Prudence', 'Charity'],
+  'The Desire for God': ['God'],
+  'God Comes to Meet Man': ['God', 'Faith'],
+  'The Response of Faith': ['Faith'],
+  'The Creeds': ['The Trinity', 'Creation', 'God'],
+  'The Holy Spirit': ['God', 'The Trinity'],
+  'The Church': ['Faith', 'Charity'],
+  'Forgiveness, Resurrection, Eternal Life': ['Life of Christ', 'Hope'],
+  'The Sacramental Economy': ['The Sacraments'],
+  'Baptism, Confirmation, Eucharist': ['Baptism', 'Confirmation & Eucharist', 'The Eucharist'],
+  'Penance, Anointing of the Sick': ['Penance'],
+  'Holy Orders, Matrimony': ['Justice', 'Charity'],
+  'Christian Prayer': ['Charity', 'Hope', 'Faith'],
+  'The Lord\u2019s Prayer': ['Charity', 'Hope']
+};
+var _CCC_SECTIONS_F = [
+  [1, 25, 'Prologue'], [26, 49, 'The Desire for God'], [50, 141, 'God Comes to Meet Man'],
+  [142, 184, 'The Response of Faith'], [185, 278, 'The Creeds'],
+  [279, 421, 'Creator of Heaven and Earth'], [422, 682, 'Jesus Christ, Son of God'],
+  [683, 747, 'The Holy Spirit'], [748, 975, 'The Church'],
+  [976, 1065, 'Forgiveness, Resurrection, Eternal Life'],
+  [1066, 1209, 'The Sacramental Economy'], [1210, 1419, 'Baptism, Confirmation, Eucharist'],
+  [1420, 1532, 'Penance, Anointing of the Sick'], [1533, 1666, 'Holy Orders, Matrimony'],
+  [1667, 1690, 'Sacramentals, Funerals'],
+  [1691, 1876, 'The Dignity of the Human Person'],
+  [1877, 2051, 'The Human Community, The Law, Grace'],
+  [2052, 2557, 'The Ten Commandments'], [2558, 2758, 'Christian Prayer'],
+  [2759, 2865, 'The Lord\u2019s Prayer']
+];
+function _getCCCSection(num) {
+  var n = parseInt(num, 10);
+  for (var i = 0; i < _CCC_SECTIONS_F.length; i++) {
+    if (n >= _CCC_SECTIONS_F[i][0] && n <= _CCC_SECTIONS_F[i][1]) return _CCC_SECTIONS_F[i][2];
+  }
+  return '';
+}
+
 function _renderDailyFormation() {
   var el = document.getElementById('dailyFormation');
   if (!el) return;
@@ -573,21 +617,26 @@ function _renderDailyFormation() {
         + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>';
     }
 
-    // Summa — collapsed "Go Deeper"
+    // Summa — topically linked "Go Deeper" (MR-03)
     var articles = summa.articles;
-    if (articles && articles.length) {
-      var sIdx = daysSinceEpoch % articles.length;
-      var art = articles[sIdx];
-      html += '<details class="formation-deeper">'
-        + '<summary class="formation-deeper-toggle">Go Deeper \u00b7 Summa Theologica<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>'
-        + '<div class="formation-deeper-body">'
-        + '<div class="summa-topic">' + utils.esc(art.topic) + '</div>'
-        + '<div class="summa-question">' + utils.esc(art.q) + '</div>'
-        + '<div class="summa-article">' + utils.esc(art.a) + '</div>'
-        + (art.counter ? '<div class="summa-counter">' + utils.esc(art.counter) + '</div>' : '')
-        + '<div class="summa-body">' + utils.esc(art.body) + '</div>'
-        + '<div class="summa-cite">St. Thomas Aquinas \u00b7 ' + utils.esc(art.part) + ' \u00b7 Q.' + utils.esc(art.id.split('.')[1].replace('Q', '')) + ', A.' + utils.esc(art.id.split('.')[2].replace('A', '')) + '</div>'
-        + '</div></details>';
+    if (articles && articles.length && qa && qa.ccc) {
+      var section = _getCCCSection(qa.ccc);
+      var matchingTopics = _CCC_SUMMA_MAP[section] || [];
+      var matchingArticles = articles.filter(function(a) {
+        return matchingTopics.indexOf(a.topic) >= 0;
+      });
+
+      if (matchingArticles.length) {
+        var art = matchingArticles[daysSinceEpoch % matchingArticles.length];
+        html += '<details class="formation-deeper">'
+          + '<summary class="formation-deeper-toggle">Go Deeper<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>'
+          + '<div class="formation-deeper-body">'
+          + '<div class="summa-question">' + utils.esc(art.q) + '</div>'
+          + '<div class="summa-article">' + utils.esc(art.a) + '</div>'
+          + '<div class="summa-body">' + utils.esc(art.body) + '</div>'
+          + '<div class="summa-cite">St. Thomas Aquinas \u00b7 ' + utils.esc(art.part) + '</div>'
+          + '</div></details>';
+      }
     }
 
     html += '</div>';

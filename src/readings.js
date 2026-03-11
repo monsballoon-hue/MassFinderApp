@@ -490,22 +490,6 @@ function renderSaintCard(events) {
     if (otherSaints.length) alsoToday = '<div class="saint-also">Also: ' + otherSaints.join(', ') + '</div>';
   }
 
-  // Build upcoming observances — compact inline rows, max 2 (MT-07)
-  var upcomingHtml = '';
-  var upcomingEvts = getLiturgicalEvents().filter(function(e) { return e.daysAway > 0; });
-  if (upcomingEvts.length) {
-    var items = upcomingEvts.slice(0, 2).map(function(e) {
-      var when = e.daysAway === 1 ? 'Tomorrow' : 'In ' + e.daysAway + ' days';
-      var hdoBadge = e.hdo ? ' <span class="litu-hdo">Obligation</span>' : '';
-      return '<div class="saint-upcoming-row">'
-        + '<span class="saint-upcoming-when">' + when + '</span>'
-        + '<span class="saint-upcoming-name">' + esc(e.name) + '</span>'
-        + hdoBadge
-        + '</div>';
-    }).join('');
-    upcomingHtml = '<div class="saint-upcoming-compact">' + items + '</div>';
-  }
-
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
     + '<div class="saint-feast">' + esc(feastLabel) + '</div>'
     + '<div class="saint-name">' + esc(pick.name) + '</div>'
@@ -513,7 +497,6 @@ function renderSaintCard(events) {
     + alsoToday
     + '<div id="saintVerse"></div>'
     + (typeof window._getDailyPrompt === 'function' ? '<div class="saint-prompt">' + esc(window._getDailyPrompt()) + '</div>' : '')
-    + upcomingHtml
     + '</div>';
 
   // Fetch gospel acclamation verse async (non-blocking)
