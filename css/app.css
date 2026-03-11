@@ -1375,19 +1375,19 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .conf-exam-body ul li { margin-bottom: var(--space-1); }
 
 /* ── GUIDED ROSARY ── */
-.rosary-overlay { position:fixed;inset:0;z-index:2000;background:var(--color-bg);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
+.rosary-overlay { position:fixed;inset:0;z-index:2000;background:linear-gradient(180deg, #F5F3EE 0%, #EDE8DF 100%);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
 .rosary-overlay.open { transform:translateY(0); }
-.rosary-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);border-bottom:0.5px solid var(--color-border-light);padding-top:max(var(--space-3),env(safe-area-inset-top));gap:var(--space-2);background:var(--color-bg);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px); }
+.rosary-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);border-bottom:0.5px solid var(--color-border-light);padding-top:max(var(--space-3),env(safe-area-inset-top));gap:var(--space-2);background:rgba(245,243,238,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px); }
 .rosary-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
 .rosary-close-btn:active { background:rgba(142,142,147,0.24); }
 .rosary-close-btn svg { display:block; }
 .rosary-title { flex:1;text-align:center;font-family:var(--font-heading);font-weight:var(--weight-bold);font-size:var(--text-lg);color:var(--color-text-primary); }
 .rosary-progress { padding:var(--space-2) 0; }
-.rosary-dots { display:flex;justify-content:center;gap:10px;padding:var(--space-2); }
-.rosary-dot { width:12px;height:12px;border-radius:50%;background:var(--color-border);border:none;padding:0;cursor:pointer;transition:all 0.3s;-webkit-tap-highlight-color:transparent; }
+.rosary-dots { display:flex;justify-content:center;gap:12px;padding:var(--space-3); }
+.rosary-dot { width:10px;height:10px;border-radius:50%;background:var(--color-border-light);border:none;padding:0;cursor:pointer;transition:all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);-webkit-tap-highlight-color:transparent; }
 .rosary-dot:hover { background:var(--color-primary-muted); }
-.rosary-dot.active { background:var(--color-primary);transform:scale(1.4);box-shadow:0 0 0 3px rgba(44,62,90,0.15); }
-.rosary-dot.done { background:var(--color-primary);opacity:0.45; }
+.rosary-dot.active { background:var(--color-primary);transform:scale(1.5);box-shadow:0 0 0 3px rgba(44,62,90,0.12); }
+.rosary-dot.done { background:var(--color-primary); }
 .rosary-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-4);padding-bottom:var(--space-6);overscroll-behavior:contain; }
 .rosary-body > * { max-width:540px;margin-left:auto;margin-right:auto; }
 .rosary-nav { display:flex;gap:var(--space-3);padding:var(--space-3) var(--space-4);border-top:1px solid var(--color-border-light);padding-bottom:max(var(--space-4),env(safe-area-inset-bottom)); }
@@ -1423,12 +1423,16 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-set-day { display:block;font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:2px; }
 
 /* Mystery card */
-.rosary-mystery { border-left:3px solid var(--set-color);padding:var(--space-4);margin-bottom:var(--space-4);background:var(--color-surface);border-radius:0 var(--radius-md) var(--radius-md) 0; }
+.rosary-mystery { border-left:3px solid var(--set-color);padding:var(--space-5);margin-bottom:var(--space-4);background:var(--color-surface);border-radius:0 var(--radius-md) var(--radius-md) 0; }
+.rosary-mystery[style*="--set-color: #4A90D9"] { background-image:linear-gradient(135deg, rgba(74,144,217,0.05) 0%, transparent 60%); }
+.rosary-mystery[style*="--set-color: #C0392B"] { background-image:linear-gradient(135deg, rgba(192,57,43,0.05) 0%, transparent 60%); }
+.rosary-mystery[style*="--set-color: #D4A017"] { background-image:linear-gradient(135deg, rgba(212,160,23,0.05) 0%, transparent 60%); }
+.rosary-mystery[style*="--set-color: #27AE60"] { background-image:linear-gradient(135deg, rgba(39,174,96,0.05) 0%, transparent 60%); }
 .rosary-mystery-num { font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.05em;color:var(--set-color);font-weight:var(--weight-semibold);margin-bottom:var(--space-1); }
-.rosary-mystery-title { font-family:var(--font-heading);font-size:var(--text-lg);font-weight:var(--weight-bold);color:var(--color-text-primary);margin-bottom:var(--space-2);line-height:1.3; }
+.rosary-mystery-title { font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--color-text-primary);margin-bottom:var(--space-3);line-height:1.25; }
 .rosary-mystery-scripture { display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);color:var(--color-info);cursor:pointer;margin-bottom:var(--space-2);padding:var(--space-1) 0; }
 .rosary-mystery-scripture:hover { text-decoration:underline; }
-.rosary-mystery-meditation { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.65;font-style:italic;margin-bottom:var(--space-2); }
+.rosary-mystery-meditation { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.75;font-style:italic;margin:var(--space-3) 0;padding:var(--space-3) 0;border-top:1px solid var(--color-border-light);border-bottom:1px solid var(--color-border-light); }
 .rosary-mystery-fruit { font-size:var(--text-sm);color:var(--color-text-secondary); }
 .rosary-mystery-refs { margin-top:var(--space-2);display:flex;gap:var(--space-2);flex-wrap:wrap; }
 
@@ -1436,11 +1440,11 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-hm-section { text-align:center;margin-bottom:var(--space-4);padding:var(--space-3);background:var(--color-surface);border-radius:var(--radius-md);transition:background 0.3s; }
 .rosary-hm-section.complete { background:rgba(44,62,90,0.06); }
 .rosary-hm-header { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-2); }
-.rosary-beads { display:flex;justify-content:center;gap:8px;padding:var(--space-3);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none; }
-.rosary-bead { width:26px;height:26px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all 0.2s ease; }
-.rosary-bead.filled { background:var(--color-primary);border-color:var(--color-primary); }
-.rosary-bead.latest { animation:beadPop 0.25s ease; }
-@keyframes beadPop { 0% { transform:scale(1); } 50% { transform:scale(1.3); } 100% { transform:scale(1); } }
+.rosary-beads { display:flex;justify-content:center;gap:10px;padding:var(--space-4);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none; }
+.rosary-bead { width:28px;height:28px;border-radius:50%;border:2px solid var(--color-border);background:transparent;transition:all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);box-shadow:inset 0 1px 2px rgba(0,0,0,0.06); }
+.rosary-bead.filled { background:var(--set-color, var(--color-primary));border-color:var(--set-color, var(--color-primary));box-shadow:0 1px 3px rgba(0,0,0,0.15); }
+.rosary-bead.latest { animation:beadPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes beadPop { 0% { transform:scale(1); } 50% { transform:scale(1.25); } 100% { transform:scale(1); } }
 .rosary-hm-section.complete .rosary-bead.filled { background:var(--color-verified);border-color:var(--color-verified); }
 .rosary-bead-label { font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:var(--space-1);font-weight:var(--weight-semibold); }
 .rosary-hm-section.complete .rosary-bead-label { color:var(--color-verified); }
@@ -1452,7 +1456,7 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-prayer-name { font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary);margin-bottom:var(--space-2);list-style:none; }
 .rosary-prayer-name::-webkit-details-marker { display:none; }
 .rosary-prayer-sub { font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;margin-bottom:var(--space-2); }
-.rosary-prayer-text { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.8; }
+.rosary-prayer-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.85; }
 .rosary-prayer-text p { margin-bottom:var(--space-2); }
 
 /* Collapsible prayer blocks (decade screen) */
@@ -1467,9 +1471,9 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-complete-cross { width:28px;height:38px;color:var(--color-primary);margin-bottom:var(--space-3); }
 .rosary-complete p { font-size:var(--text-sm);color:var(--color-text-secondary);font-style:italic;line-height:1.7; }
 .rosary-complete-screen { display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:var(--space-6);animation:rosary-fadein 0.5s ease; }
-.rosary-complete-title { font-size:var(--text-xl);font-weight:var(--weight-bold);color:var(--color-text-primary);margin:var(--space-4) 0 var(--space-2); }
+.rosary-complete-title { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-text-primary);margin:var(--space-4) 0 var(--space-2); }
 .rosary-complete-sub { font-size:var(--text-sm);color:var(--color-text-tertiary);margin-bottom:var(--space-4); }
-.rosary-complete-msg { font-size:var(--text-base);color:var(--color-text-secondary);font-style:italic;line-height:1.7; }
+.rosary-complete-msg { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);font-style:italic;line-height:1.8; }
 @keyframes rosary-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 .rosary-bead-nudge { color:var(--color-accent-text);font-weight:var(--weight-semibold);animation:rosary-nudge 0.3s ease; }
 @keyframes rosary-nudge { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
@@ -1481,18 +1485,22 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-start-btn:active { transform:scale(0.98); }
 
 /* Dark mode overrides for rosary */
-html[data-theme="dark"] .rosary-overlay { background:var(--color-bg); }
+html[data-theme="dark"] .rosary-overlay { background:linear-gradient(180deg, #1A1C22 0%, #16181E 100%); }
 html[data-theme="dark"] .rosary-header { background:rgba(26,28,34,0.85); }
 html[data-theme="dark"] .rosary-close-btn { background:rgba(142,142,147,0.2); }
 html[data-theme="dark"] .rosary-close-btn:active { background:rgba(142,142,147,0.35); }
 html[data-theme="dark"] .rosary-set-btn { background:var(--color-surface);border-color:var(--color-border); }
 html[data-theme="dark"] .rosary-begin-btn { opacity:0.95; }
 html[data-theme="dark"] .rosary-mystery { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .rosary-mystery[style*="--set-color: #4A90D9"] { background-image:linear-gradient(135deg, rgba(74,144,217,0.08) 0%, transparent 60%); }
+html[data-theme="dark"] .rosary-mystery[style*="--set-color: #C0392B"] { background-image:linear-gradient(135deg, rgba(192,57,43,0.08) 0%, transparent 60%); }
+html[data-theme="dark"] .rosary-mystery[style*="--set-color: #D4A017"] { background-image:linear-gradient(135deg, rgba(212,160,23,0.08) 0%, transparent 60%); }
+html[data-theme="dark"] .rosary-mystery[style*="--set-color: #27AE60"] { background-image:linear-gradient(135deg, rgba(39,174,96,0.08) 0%, transparent 60%); }
 html[data-theme="dark"] .rosary-prayer-block { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .rosary-hm-section { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .rosary-hm-section.complete { background:rgba(74,124,89,0.12); }
-html[data-theme="dark"] .rosary-bead { border-color:var(--color-border); }
-html[data-theme="dark"] .rosary-bead.filled { background:var(--color-accent);border-color:var(--color-accent); }
+html[data-theme="dark"] .rosary-bead { border-color:var(--color-border);box-shadow:inset 0 1px 2px rgba(0,0,0,0.2); }
+html[data-theme="dark"] .rosary-bead.filled { background:var(--color-accent);border-color:var(--color-accent);box-shadow:0 1px 4px rgba(0,0,0,0.3); }
 html[data-theme="dark"] .rosary-hm-section.complete .rosary-bead.filled { background:#5DAE73;border-color:#5DAE73; }
 html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,255,0.1); }
 
@@ -1535,8 +1543,9 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-row-header:active { background:rgba(0,0,0,0.04); }
 
 /* Commandment number badge */
-.exam-num { width:28px;height:28px;border-radius:8px;background:var(--color-primary);color:white;font-size:13px;font-weight:var(--weight-semibold);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1; }
-.exam-num--icon { background:var(--color-text-tertiary);font-size:14px; }
+.exam-num { width:28px;height:28px;border-radius:50%;background:var(--color-surface-hover);color:var(--color-text-secondary);font-size:13px;font-weight:var(--weight-semibold);display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;border:1.5px solid var(--color-border); }
+.exam-row.expanded > .exam-row-header .exam-num { background:var(--color-primary);color:white;border-color:var(--color-primary); }
+.exam-num--icon { background:var(--color-surface-hover);color:var(--color-text-tertiary);font-size:14px; }
 
 /* Row title */
 .exam-row-title { flex:1;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-heading);line-height:1.35; }
@@ -1555,9 +1564,10 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-ccc-ref { margin-bottom:var(--space-2);padding-top:var(--space-1); }
 
 /* Questions — with checkbox and inline CCC */
-.exam-q { padding:var(--space-3) 0;border-top:0.5px solid var(--color-border-light);display:flex;align-items:flex-start;gap:var(--space-3);transition:background 0.2s; }
+.exam-q { padding:var(--space-4) 0;border-top:1px solid var(--color-border-light);display:flex;align-items:flex-start;gap:var(--space-3);transition:background 0.2s; }
 .exam-q:first-of-type { border-top:none; }
-.exam-q.checked { background:rgba(74,124,89,0.12);margin:0 calc(var(--space-3) * -1);padding-left:var(--space-3);padding-right:var(--space-3);border-radius:var(--radius-sm); }
+.exam-q.checked { background:var(--color-verified-bg);margin:0 calc(var(--space-4) * -1);padding-left:var(--space-4);padding-right:var(--space-4);border-radius:var(--radius-sm);border-left:3px solid var(--color-verified); }
+.exam-q.checked .exam-q-text { color:var(--color-text-secondary); }
 
 /* iOS-style round checkbox */
 .exam-check { flex-shrink:0;display:flex;align-items:center;padding-top:2px;cursor:pointer;-webkit-tap-highlight-color:transparent; }
@@ -1568,7 +1578,7 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-checkbox:checked + .exam-checkmark svg { opacity:1;transform:scale(1);stroke:white; }
 
 .exam-q-content { flex:1;min-width:0;display:flex;flex-direction:column;gap:4px; }
-.exam-q-text { font-size:var(--text-base);line-height:1.55;color:var(--color-text); }
+.exam-q-text { font-size:var(--text-base);line-height:1.6;color:var(--color-text-primary); }
 .exam-q-ref { align-self:flex-start; }
 .exam-q-noted { display:inline-block;font-size:var(--text-xs);color:var(--color-verified);font-weight:var(--weight-semibold);margin-left:var(--space-2);white-space:nowrap; }
 .exam-expand-hint { font-size:var(--text-xs);color:var(--color-text-tertiary);text-align:center;margin-bottom:var(--space-2);font-style:italic; }
@@ -1610,11 +1620,30 @@ html[data-theme="dark"] .rosary-dot.active { box-shadow:0 0 0 3px rgba(255,255,2
 .exam-howto-steps li:first-child { border-top:none; }
 
 /* ── Tracker ── */
+/* ── Act of Contrition — elevated presentation ── */
+.exam-contrition { text-align:center;padding:var(--space-6) var(--space-4);margin:var(--space-4) 0;border-top:1px solid var(--color-border-light);border-bottom:1px solid var(--color-border-light); }
+.exam-contrition-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-4); }
+.exam-contrition-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);line-height:1.8;color:var(--color-text-secondary);margin-bottom:var(--space-3); }
+.exam-contrition-text:last-child { margin-bottom:0; }
+
+/* ── Opening prayer centering screen ── */
+.exam-opening { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-8) var(--space-4);max-width:420px;margin:0 auto; }
+.exam-opening-icon { color:var(--color-primary);margin-bottom:var(--space-4);opacity:0.6; }
+.exam-opening-title { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-4); }
+.exam-opening-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.75;margin-bottom:var(--space-6); }
+.exam-opening-btn { padding:var(--space-3) var(--space-6);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
+.exam-opening-btn:active { transform:scale(0.97); }
+
+/* ── Summary preamble — confessional format ── */
+.exam-summary-preamble { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.7;font-style:italic;margin-bottom:var(--space-4);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-border-light); }
+.exam-summary-preamble p { margin-bottom:var(--space-2); }
+.exam-summary-preamble p:last-child { margin-bottom:0; }
+
 .exam-tracker { text-align:center;padding:var(--space-5) 0 var(--space-3); }
 .exam-tracker-status { font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3); }
 .exam-tracker-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-5);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text);cursor:pointer;min-height:44px;transition:all 0.2s cubic-bezier(0.28,0.11,0.32,1);-webkit-tap-highlight-color:transparent; }
 .exam-tracker-btn:active { transform:scale(0.96);background:var(--color-surface-hover); }
-.exam-tracker-btn.confirmed { background:var(--color-accent);color:white;border-color:var(--color-accent);transform:scale(1.02); }
+.exam-tracker-btn.confirmed { background:var(--color-verified-bg);color:var(--color-verified);border-color:var(--color-verified);transform:scale(1.02); }
 
 /* ── Summary section ── */
 .exam-summary { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin:var(--space-4) 0; }
@@ -1655,8 +1684,8 @@ html[data-theme="dark"] .exam-group { background:var(--color-surface); }
 html[data-theme="dark"] .exam-row-header:active { background:rgba(255,255,255,0.06); }
 html[data-theme="dark"] .exam-prayer { background:var(--color-surface); }
 html[data-theme="dark"] .exam-howto { background:var(--color-surface); }
-html[data-theme="dark"] .exam-tracker-btn.confirmed { background:var(--color-accent);border-color:var(--color-accent); }
-html[data-theme="dark"] .exam-q.checked { background:rgba(74,124,89,0.1); }
+html[data-theme="dark"] .exam-tracker-btn.confirmed { background:rgba(74,124,89,0.15);color:var(--color-verified);border-color:var(--color-verified); }
+html[data-theme="dark"] .exam-q.checked { background:rgba(74,124,89,0.1);border-left:3px solid var(--color-verified); }
 html[data-theme="dark"] .exam-checkmark { border-color:var(--color-border); }
 html[data-theme="dark"] .exam-ccc-card { background:var(--color-surface);box-shadow:0 1px 4px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.15); }
 html[data-theme="dark"] .exam-ccc-card-header { background:rgba(74,124,89,0.1); }

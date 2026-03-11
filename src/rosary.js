@@ -174,24 +174,23 @@ function rosaryNext() {
       log = log.filter(function(e) { return e.date >= cutoff; });
       localStorage.setItem('mf-prayer-log', JSON.stringify(log));
     } catch (e) {}
-    // Show completion screen briefly
+    // Show completion screen — let the user decide when to leave
     var bodyEl = document.getElementById('rosaryBody');
     var navEl = document.getElementById('rosaryNav');
     var titleEl = document.getElementById('rosaryTitle');
     var progressEl = document.getElementById('rosaryProgress');
-    if (titleEl) titleEl.textContent = 'Rosary Complete';
+    if (titleEl) titleEl.textContent = '';
     if (progressEl) progressEl.innerHTML = '';
-    if (navEl) navEl.innerHTML = '';
+    if (navEl) navEl.innerHTML = '<button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button>';
     if (bodyEl) {
       bodyEl.innerHTML = '<div class="rosary-complete-screen">'
         + '<svg class="rosary-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
         + '<h3 class="rosary-complete-title">' + utils.esc(_set) + ' Mysteries</h3>'
-        + '<p class="rosary-complete-sub">5 Decades \u00b7 53 Hail Marys \u00b7 6 Our Fathers</p>'
+        + '<p class="rosary-complete-sub">5 decades \u00b7 53 Hail Marys \u00b7 6 Our Fathers</p>'
         + '<p class="rosary-complete-msg">May the Holy Rosary bring you peace<br>and draw you closer to our Lord.</p>'
         + '</div>';
     }
     _haptic.confirm();
-    setTimeout(closeRosary, 3000);
     return;
   }
   _haptic();
@@ -230,8 +229,15 @@ function rosaryBeadTap() {
   if (_screen !== 'decade' || _bead >= 10) return;
   _bead++;
   _updateBeadUI();
-  // Haptic: confirm on decade completion, light tap otherwise
-  if (_bead >= 10) _haptic.confirm(); else _haptic();
+  // Haptic rhythm: confirm on decade complete, slightly stronger at halfway, light tap otherwise
+  if (_bead >= 10) {
+    _haptic.confirm();
+  } else if (_bead === 5) {
+    if (navigator.vibrate) navigator.vibrate(15);
+    else _haptic();
+  } else {
+    _haptic();
+  }
 }
 
 // ── Bead reset (long press) ──
@@ -447,7 +453,7 @@ function _renderDecade(title, body, progress, nav) {
     // Our Father (collapsible)
     + _prayerBlockCollapsible('Our Father', p.our_father)
     // Hail Mary bead counter
-    + '<div class="rosary-hm-section' + (_bead >= 10 ? ' complete' : '') + '">'
+    + '<div class="rosary-hm-section' + (_bead >= 10 ? ' complete' : '') + '" style="--set-color:' + (meta.color || '#2C3E5A') + '">'
     + '<div class="rosary-hm-header">10 Hail Marys</div>'
     + '<div class="rosary-beads" id="rosaryBeads" role="group" aria-label="Hail Mary bead counter, ' + _bead + ' of 10">'
     + _beadDotsHtml() + '</div>'

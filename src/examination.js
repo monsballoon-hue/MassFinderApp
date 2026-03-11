@@ -271,7 +271,18 @@ function _renderSummaryHTML() {
     groups[item.commandment].push(item.text);
   });
 
-  var html = '';
+  // Preamble in confessional format
+  var lastConf = localStorage.getItem('mf-last-confession');
+  var daysSince = lastConf ? Math.floor((Date.now() - parseInt(lastConf, 10)) / 86400000) : null;
+  var html = '<div class="exam-summary-preamble">';
+  html += '<p>Bless me, Father, for I have sinned.';
+  if (daysSince !== null) {
+    html += ' It has been ' + (daysSince === 0 ? 'less than a day' : daysSince + ' day' + (daysSince !== 1 ? 's' : '')) + ' since my last confession.';
+  }
+  html += '</p>';
+  html += '<p>These are my sins:</p>';
+  html += '</div>';
+
   order.forEach(function(cmd) {
     html += '<div class="exam-summary-group">';
     html += '<div class="exam-summary-cmd">' + _esc(_shortCmdLabel(cmd)) + '</div>';
@@ -369,7 +380,16 @@ function _renderExamination(d) {
 
   // Prayers section
   html += '<div class="exam-group-label">Prayers</div>';
-  html += _renderPrayer(d.prayers.act_of_contrition);
+
+  // Act of Contrition — elevated presentation
+  html += '<div class="exam-contrition">';
+  html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
+  var actText = d.prayers.act_of_contrition.text.split('\n\n');
+  actText.forEach(function(p) {
+    html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+  });
+  html += '</div>';
+
   html += _renderPrayer(d.prayers.thanksgiving);
 
   // Confession tracker
@@ -382,8 +402,7 @@ function _renderExamination(d) {
   html += '<div class="exam-tracker">';
   html += trackerHtml;
   html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">';
-  html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><polyline points="20 6 9 17 4 12"/></svg>';
-  html += 'I went to Confession today</button>';
+  html += 'I received the Sacrament of Reconciliation</button>';
   html += '</div>';
 
   // Find Confession Near Me
@@ -500,13 +519,27 @@ function openExamination() {
   window._lastFocused = document.activeElement;
   _loadData(function(d) {
     _expanded['cmd-1'] = true;
-    _renderExamination(d);
     var overlay = document.getElementById('examOverlay');
     overlay.classList.add('open');
     document.body.style.overflow = 'hidden';
     _initSwipeDismiss();
     ui.trapFocus(overlay);
     _haptic();
+
+    // Show opening prayer as a centering moment
+    var body = document.getElementById('examBody');
+    body.innerHTML = '<div class="exam-opening">'
+      + '<div class="exam-opening-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32" height="32"><path d="M12 2v20M5 9l7-7 7 7"/></svg></div>'
+      + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
+      + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
+      + '<button class="exam-opening-btn" onclick="window._examBeginReview()">Begin Examination</button>'
+      + '</div>';
+
+    window._examBeginReview = function() {
+      delete window._examBeginReview;
+      _haptic();
+      _renderExamination(d);
+    };
   });
 }
 
@@ -532,7 +565,7 @@ function examMarkConfession() {
   localStorage.setItem('mf-last-confession', String(Date.now()));
   _haptic();
   var render = require('./render.js');
-  render.showToast('God bless you! Recorded for your reference.');
+  render.showToast('Recorded. God\u2019s mercy is with you.');
   var status = document.querySelector('.exam-tracker-status');
   if (status) {
     status.textContent = 'Last Confession: Today';
