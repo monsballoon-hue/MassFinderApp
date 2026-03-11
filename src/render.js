@@ -277,6 +277,7 @@ function openDetail(id, trapFocus, releaseFocus) {
   if (mapUrl) qa += '<a class="quick-action" href="' + mapUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>Directions</span></a>';
   if (thirdActionUrl) qa += '<a class="quick-action" href="' + utils.esc(thirdActionUrl) + '" target="_blank" rel="noopener">' + thirdActionIcon + '<span>' + thirdActionLabel + '</span></a>';
   qa += '<button class="quick-action" onclick="shareParish(\'' + utils.esc(utils.displayName(c.name)) + "','" + c.id + "')\">" + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>';
+  qa += '<button class="quick-action" onclick="showQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg><span>QR</span></button>';
   qa += '</div>';
 
   // D-07: Visitation data — CSS classes, no inline styles, no bell emoji
@@ -428,6 +429,57 @@ function shareParish(name, id) {
   } else {
     navigator.clipboard.writeText(url).then(function() { showToast('Link copied!'); }).catch(function() {});
   }
+}
+
+// ── QR Code (LIB-03) — lazy-loads qr-creator from CDN ──
+var _qrScriptLoaded = false;
+function _loadQRCreator() {
+  if (_qrScriptLoaded) return Promise.resolve();
+  return new Promise(function(resolve, reject) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/qr-creator@1.0.0/dist/qr-creator.min.js';
+    s.onload = function() { _qrScriptLoaded = true; resolve(); };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+function showQR(churchId) {
+  var url = location.origin + location.pathname + '#' + churchId;
+  // Show a modal with the QR code
+  var existing = document.getElementById('qrModal');
+  if (existing) existing.remove();
+
+  var modal = document.createElement('div');
+  modal.id = 'qrModal';
+  modal.className = 'qr-modal';
+  modal.innerHTML = '<div class="qr-modal-card">'
+    + '<div class="qr-modal-title">Scan to open this parish</div>'
+    + '<div class="qr-canvas-wrap" id="qrCanvasWrap"><div class="qr-loading">Generating\u2026</div></div>'
+    + '<div class="qr-modal-url">' + utils.esc(url) + '</div>'
+    + '<button class="qr-modal-close" onclick="document.getElementById(\'qrModal\').remove()">Close</button>'
+    + '</div>';
+  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+
+  _loadQRCreator().then(function() {
+    var wrap = document.getElementById('qrCanvasWrap');
+    if (!wrap || !window.QrCreator) return;
+    wrap.innerHTML = '';
+    var canvas = document.createElement('canvas');
+    window.QrCreator.render({
+      text: url,
+      radius: 0.3,
+      ecLevel: 'M',
+      fill: document.documentElement.getAttribute('data-theme') === 'dark' ? '#E5E7EB' : '#1F2937',
+      background: 'transparent',
+      size: 200
+    }, canvas);
+    wrap.appendChild(canvas);
+  }).catch(function() {
+    var wrap = document.getElementById('qrCanvasWrap');
+    if (wrap) wrap.innerHTML = '<div class="qr-loading">Could not generate QR code</div>';
+  });
 }
 
 function showToast(msg) {
@@ -689,6 +741,7 @@ module.exports = {
   openDetail: openDetail,
   closeDetail: closeDetail,
   shareParish: shareParish,
+  showQR: showQR,
   showToast: showToast,
   getMapsUrl: getMapsUrl,
   getMapsUrlCoords: getMapsUrlCoords,

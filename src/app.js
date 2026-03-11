@@ -155,6 +155,7 @@ window.applyAdvancedFilters = ui.applyAdvancedFilters;
 window.toggleSort = ui.toggleSort;
 window.closeAllPanels = ui.closeAllPanels;
 window.shareParish = render.shareParish;
+window.showQR = render.showQR;
 window.toggleAcc = render.toggleAcc;
 window.closeEventDetail = events.closeEventDetail;
 window.openEventDetail = events.openEventDetail;
@@ -190,6 +191,7 @@ window.closeCCC = ccc.closeCCC;
 window.openCCCAboveExam = ccc.openCCCAboveExam;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
+window.cccSearchSelect = ccc.cccSearchSelect;
 window._refTap = refs.handleRefTap;
 window.openRosary = rosary.openRosary;
 window.closeRosary = rosary.closeRosary;
@@ -468,33 +470,38 @@ function _renderConfessionPrompt() {
   el.style.display = '';
 }
 
-// ── Daily CCC Reflection (Change 16) ──
-function _getDailyCCCNumber() {
-  var now = utils.getNow();
-  var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
-  // Pool: paragraphs 27-2865 (skip introductory/meta paragraphs)
-  var poolSize = 2865 - 27 + 1;
-  return 27 + (daysSinceEpoch % poolSize);
-}
+// ── Daily Catholic Q&A (DAT-09: Baltimore Catechism) ──
+// Replaces the CCC paragraph reflection with a more accessible Q&A format.
+// Cycles through Baltimore Catechism questions daily, with link to related CCC paragraph.
+var _baltimoreCache = null;
 
 function _renderDailyReflection() {
   var el = document.getElementById('dailyReflection');
   if (!el) return;
-  var num = _getDailyCCCNumber();
-  fetch('/data/catechism.json').then(function(r) { return r.json(); }).then(function(d) {
-    var text = d.paragraphs[String(num)];
-    if (!text) { el.style.display = 'none'; return; }
-    // Truncate to ~120 chars at a sentence boundary
-    var preview = text.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '');
-    if (preview.length > 140) {
-      var cut = preview.lastIndexOf('.', 120);
-      if (cut > 50) preview = preview.slice(0, cut + 1);
-      else preview = preview.slice(0, 120).trim() + '\u2026';
-    }
-    el.innerHTML = '<div class="reflection-card" onclick="openCCC(\'' + num + '\')" role="button" tabindex="0">'
-      + '<div class="reflection-label">Daily Reflection</div>'
-      + '<div class="reflection-text">\u201C' + utils.esc(preview) + '\u201D</div>'
-      + '<div class="reflection-cite">Catechism \u00A7' + num + ' \u2014 Tap to read more</div>'
+
+  var loadData = _baltimoreCache
+    ? Promise.resolve(_baltimoreCache)
+    : fetch('/data/baltimore-catechism.json').then(function(r) { return r.json(); })
+        .then(function(d) { _baltimoreCache = d; return d; });
+
+  loadData.then(function(d) {
+    var questions = d.questions;
+    if (!questions || !questions.length) { el.style.display = 'none'; return; }
+
+    var now = utils.getNow();
+    var daysSinceEpoch = Math.floor(now.getTime() / 86400000);
+    var idx = daysSinceEpoch % questions.length;
+    var qa = questions[idx];
+
+    var cccLink = qa.ccc
+      ? '<span class="reflection-ccc-link" onclick="event.stopPropagation();openCCC(\'' + qa.ccc + '\')">CCC \u00A7' + qa.ccc + '</span>'
+      : '';
+
+    el.innerHTML = '<div class="reflection-card" role="article">'
+      + '<div class="reflection-label">Daily Catholic Q&amp;A</div>'
+      + '<div class="reflection-question">' + utils.esc(qa.question) + '</div>'
+      + '<div class="reflection-answer">' + utils.esc(qa.answer) + '</div>'
+      + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>'
       + '</div>';
     el.style.display = '';
   }).catch(function() { el.style.display = 'none'; });
@@ -671,7 +678,10 @@ var _devState = {
   returnCard: false,
   confession: false,
   moreBadge: false,
-  season: null
+  season: null,
+  fastingMode: null,
+  hdoBanner: false,
+  qaOffset: 0
 };
 
 function _toggleDevPanel() {
@@ -693,6 +703,7 @@ function _toggleDevPanel() {
     { key: 'returnCard', label: 'Return Card', active: _devState.returnCard },
     { key: 'confession', label: 'Confession Prompt', active: _devState.confession },
     { key: 'moreBadge', label: 'More Tab Badge', active: _devState.moreBadge },
+    { key: 'hdoBanner', label: 'HDO Banner (fake)', active: _devState.hdoBanner },
   ];
 
   var seasons = ['lent', 'advent', 'easter', 'ordinary'];
@@ -714,6 +725,42 @@ function _toggleDevPanel() {
     }).join('')
     + '</div></div>';
 
+  // Fasting banner override
+  var fastingModes = [
+    { key: null, label: 'Off' },
+    { key: 'ashwed', label: 'Ash Wed' },
+    { key: 'goodfri', label: 'Good Fri' },
+    { key: 'lentfri', label: 'Lent Fri' }
+  ];
+  var fastingHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Fasting Banner</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap">'
+    + fastingModes.map(function(fm) {
+      var isActive = _devState.fastingMode === fm.key;
+      return '<button onclick="window._devSetFasting(' + (fm.key ? '\'' + fm.key + '\'' : 'null') + ')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid ' + (isActive ? 'var(--color-primary)' : 'var(--color-border)') + ';background:' + (isActive ? 'var(--color-primary)' : 'var(--color-surface)') + ';color:' + (isActive ? 'white' : 'var(--color-text-secondary)') + ';cursor:pointer;min-height:32px">' + fm.label + '</button>';
+    }).join('')
+    + '</div></div>';
+
+  // Daily Q&A navigation
+  var qaHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Daily Q&A Override</div>'
+    + '<div style="display:flex;gap:var(--space-2);align-items:center">'
+    + '<button onclick="window._devQANav(-1)" style="padding:4px 16px;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">\u2190 Prev</button>'
+    + '<span style="font-size:var(--text-xs);color:var(--color-text-tertiary)">' + (_devState.qaOffset ? 'offset: ' + _devState.qaOffset : 'today') + '</span>'
+    + '<button onclick="window._devQANav(1)" style="padding:4px 16px;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Next \u2192</button>'
+    + '<button onclick="window._devQANav(0)" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Reset</button>'
+    + '</div></div>';
+
+  // Seed data buttons
+  var seedHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Seed Test Data</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap">'
+    + '<button onclick="window._devSeed(\'streak\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">7-Day Streak</button>'
+    + '<button onclick="window._devSeed(\'confession30\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Confession 45d Ago</button>'
+    + '<button onclick="window._devSeed(\'novena\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Active Novena (Day 4)</button>'
+    + '<button onclick="window._devSeed(\'clear-prayer\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Clear Prayer Data</button>'
+    + '</div></div>';
+
   var resetHtml = '<button onclick="localStorage.clear();location.reload()" style="display:block;width:100%;padding:var(--space-3);margin-top:var(--space-3);background:#DC2626;color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);border-radius:var(--radius-md);cursor:pointer;min-height:44px">Clear All localStorage &amp; Reload</button>';
 
   panel.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)">'
@@ -722,6 +769,9 @@ function _toggleDevPanel() {
     + '</div>'
     + featureHtml
     + seasonHtml
+    + fastingHtml
+    + qaHtml
+    + seedHtml
     + resetHtml;
 
   document.body.appendChild(panel);
@@ -777,11 +827,130 @@ window._devToggle = function(key, checked) {
     var mb = document.getElementById('moreTabBadge');
     if (mb) mb.classList.toggle('visible', checked);
   }
+
+  if (key === 'hdoBanner') {
+    var hb = document.getElementById('hdoBanner');
+    if (hb) {
+      if (checked) {
+        hb.innerHTML = '<div class="hdo-banner">'
+          + '<div class="hdo-banner-label">Holy Day of Obligation \u2014 Dev Test</div>'
+          + '<div class="hdo-banner-title">The Immaculate Conception</div>'
+          + '<button class="hdo-banner-cta" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Find a Mass near you \u2192</button>'
+          + '</div>';
+      } else {
+        hb.innerHTML = '';
+      }
+    }
+  }
 };
 
 window._devSetSeason = function(season) {
   _devState.season = season;
   document.documentElement.setAttribute('data-season', season);
+  _closeDevPanel();
+  _toggleDevPanel();
+};
+
+window._devSetFasting = function(mode) {
+  _devState.fastingMode = mode;
+  var el = document.getElementById('fastingBanner');
+  if (!el) { _closeDevPanel(); _toggleDevPanel(); return; }
+  if (mode === 'ashwed' || mode === 'goodfri') {
+    el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
+      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-text">'
+      + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
+      + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
+      + '</div></div>';
+  } else if (mode === 'lentfri') {
+    el.innerHTML = '<div class="fasting-banner">'
+      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-text">'
+      + '<div class="fasting-banner-title">Day of Abstinence</div>'
+      + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
+      + '</div></div>';
+  } else {
+    el.innerHTML = '';
+  }
+  _closeDevPanel();
+  _toggleDevPanel();
+};
+
+window._devQANav = function(dir) {
+  if (dir === 0) { _devState.qaOffset = 0; }
+  else { _devState.qaOffset += dir; }
+  // Re-render the daily reflection with offset
+  if (!_baltimoreCache) {
+    fetch('/data/baltimore-catechism.json').then(function(r) { return r.json(); })
+      .then(function(d) { _baltimoreCache = d; _devRenderQA(); });
+  } else {
+    _devRenderQA();
+  }
+  _closeDevPanel();
+  _toggleDevPanel();
+};
+
+function _devRenderQA() {
+  var el = document.getElementById('dailyReflection');
+  if (!el || !_baltimoreCache) return;
+  var questions = _baltimoreCache.questions;
+  if (!questions || !questions.length) return;
+  var daysSinceEpoch = Math.floor(utils.getNow().getTime() / 86400000);
+  var idx = ((daysSinceEpoch + _devState.qaOffset) % questions.length + questions.length) % questions.length;
+  var qa = questions[idx];
+  var cccLink = qa.ccc
+    ? '<span class="reflection-ccc-link" onclick="event.stopPropagation();openCCC(\'' + qa.ccc + '\')">CCC \u00A7' + qa.ccc + '</span>'
+    : '';
+  el.innerHTML = '<div class="reflection-card" role="article">'
+    + '<div class="reflection-label">Daily Catholic Q&amp;A</div>'
+    + '<div class="reflection-question">' + utils.esc(qa.question) + '</div>'
+    + '<div class="reflection-answer">' + utils.esc(qa.answer) + '</div>'
+    + '<div class="reflection-cite">Baltimore Catechism #' + qa.id + (cccLink ? ' \u00b7 ' + cccLink : '') + '</div>'
+    + '</div>';
+  el.style.display = '';
+}
+
+window._devSeed = function(type) {
+  var now = new Date();
+  if (type === 'streak') {
+    var log = [];
+    var types = ['rosary', 'examination', 'stations', 'novena'];
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(now);
+      d.setDate(d.getDate() - i);
+      log.push({ type: types[i % types.length], date: d.toISOString().slice(0, 10) });
+    }
+    // Add a few extra rosary entries for variety
+    for (var j = 0; j < 3; j++) {
+      var d2 = new Date(now);
+      d2.setDate(d2.getDate() - j);
+      log.push({ type: 'rosary', date: d2.toISOString().slice(0, 10) });
+    }
+    localStorage.setItem('mf-prayer-log', JSON.stringify(log));
+    alert('Seeded 7-day streak with mixed prayer types. Switch to Saved tab to see it.');
+  }
+  if (type === 'confession30') {
+    var ts = now.getTime() - 45 * 86400000;
+    localStorage.setItem('mf-last-confession', String(ts));
+    alert('Set last confession to 45 days ago. Switch to Saved tab to see the nudge.');
+  }
+  if (type === 'novena') {
+    var startDate = new Date(now);
+    startDate.setDate(startDate.getDate() - 3);
+    var novenaData = {
+      id: 'divine_mercy',
+      startDate: startDate.toISOString().slice(0, 10),
+      completedDays: [1, 2, 3]
+    };
+    localStorage.setItem('mf-novena-active', JSON.stringify(novenaData));
+    alert('Seeded active Divine Mercy Novena (Day 4 of 9). Check More tab or open Novena.');
+  }
+  if (type === 'clear-prayer') {
+    localStorage.removeItem('mf-prayer-log');
+    localStorage.removeItem('mf-last-confession');
+    localStorage.removeItem('mf-novena-active');
+    alert('Cleared prayer log, confession tracker, and active novena.');
+  }
   _closeDevPanel();
   _toggleDevPanel();
 };

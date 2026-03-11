@@ -88,7 +88,7 @@ These are defects or gaps in the current repo that could cause confusion, break 
 - **Problem:** `CACHE_NAME` is manually incremented (`'massfinder-v3_20260309_02'`). If code changes ship without a bump, returning users get stale content indefinitely.
 - **Fix:** In `scripts/build.js`, generate a hash from build timestamp. Use esbuild's `--define` to inject `BUILD_HASH` into `sw.js`. Cache name becomes `'mf-' + BUILD_HASH`.
 
-### ARC-08: Schema Template Not Validated in CI
+### ~~ARC-08: Schema Template Not Validated in CI~~ ✓ DONE
 - **Priority:** P2
 - **Effort:** 5 minutes
 - **Size impact:** 0
@@ -96,7 +96,7 @@ These are defects or gaps in the current repo that could cause confusion, break 
 - **Problem:** CI validates the generated schema against data but doesn't validate that the template itself is valid JSON. A broken template silently produces corrupt output.
 - **Fix:** Add step: `node -e "JSON.parse(require('fs').readFileSync('parish_data.schema.template.json','utf8'));console.log('✓ Template valid')"` before `npm run schema`.
 
-### ARC-09: Feature Flags for External APIs
+### ~~ARC-09: Feature Flags for External APIs~~ ✓ DONE
 - **Priority:** P2
 - **Effort:** 20 minutes
 - **Size impact:** 0
@@ -104,7 +104,7 @@ These are defects or gaps in the current repo that could cause confusion, break 
 - **Problem:** `readings.js` has LitCal, BibleGet, and readings API integrations with no way to disable individual features. Forkers who don't want BibleGet have to edit module code.
 - **Fix:** Add to config.js: `var FEATURES = { litcal: true, bibleget: true, readings_api: true, hdo_banner: true };`. Check flags before API calls in `readings.js`.
 
-### ARC-10: apply-changes.js Uses Array Index Not Service ID
+### ~~ARC-10: apply-changes.js Uses Array Index Not Service ID~~ ✓ DONE
 - **Priority:** P2
 - **Effort:** 30 minutes
 - **Size impact:** 0
@@ -182,7 +182,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Output files:** `data/bible-cpdv/` (same structure as DRB)
 - **Feature:** Translation toggle: DRB (traditional) ↔ CPDV (modern). Both offline, both free.
 
-### DAT-06: Lectionary Reference Index
+### ~~DAT-06: Lectionary Reference Index~~ ✓ DONE
 - **Priority:** P1 — Phase 4
 - **Effort:** 4 hours (compile from public tables)
 - **Size impact:** ~25KB gzipped
@@ -212,13 +212,15 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Output file:** `data/summa-daily.json`
 - **Feature:** "Daily Wisdom" card in More tab — one Summa article per day.
 
-### DAT-09: Baltimore Catechism Q&A
+### ~~DAT-09: Baltimore Catechism Q&A~~ ✓ DONE
 - **Priority:** P3 — Phase 6
 - **Effort:** 1 hour
 - **Size impact:** ~30KB gzipped
 - **Source:** awesome-catholic list reference
-- **What:** 421 Q&A pairs in accessible format. More digestible than CCC for everyday questions.
-- **Feature:** "Catholic Q&A" daily card — one question per day with linked CCC paragraph.
+- **What:** 220 Q&A pairs with CCC cross-references. Daily Q&A card rotates through questions.
+- **Output file:** `data/baltimore-catechism.json`
+- **Build script:** `scripts/build-baltimore.js` — validates structure and reports stats.
+- **Feature:** "Daily Catholic Q&A" card on home tab — one question per day with linked CCC paragraph.
 
 ---
 
@@ -271,7 +273,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Data source:** `data/examination.json` (from DAT-03)
 - **Cross-references:** Every question links to CCC paragraph. Tapping opens CCC bottom sheet → related teachings → deeper exploration.
 
-### MOD-04: `src/stations.js` — Stations of the Cross
+### ~~MOD-04: `src/stations.js` — Stations of the Cross~~ ✓ DONE
 - **Priority:** P2 — Phase 5
 - **Effort:** 4 hours
 - **Size impact:** ~2KB in bundle (data in `data/prayers.json`)
@@ -279,7 +281,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Data source:** `data/prayers.json` (from DAT-02)
 - **Seasonal trigger:** LitCal/romcal detects Lent → card appears in More tab.
 
-### MOD-05: `src/novena.js` — Novena Tracker
+### ~~MOD-05: `src/novena.js` — Novena Tracker~~ ✓ DONE
 - **Priority:** P2 — Phase 5
 - **Effort:** 4 hours
 - **Size impact:** ~3KB in bundle (data in `data/prayers.json`)
@@ -287,12 +289,12 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Data source:** `data/prayers.json` under `novenas` key
 - **Liturgical triggers:** `litcal_trigger: { after: "Ascension", days: 9 }` in novena data.
 
-### MOD-06: Refactored `src/readings.js` — Offline Readings
+### ~~MOD-06: Refactored `src/readings.js` — Offline Readings~~ ✓ DONE
 - **Priority:** P1 — Phase 4
 - **Effort:** 4 hours (refactor existing ~650 lines)
 - **Size impact:** 0 (refactoring, not adding)
-- **What:** Current flow: readings API → render. New flow: readings API → enhance with BibleGet NABRE text → fall back to lectionary index + local DRB. Uses `refs.js` for Bible text resolution.
-- **Fallback chain:** (1) Readings API → NABRE. (2) If API fails → LitCal + BibleGet. (3) If BibleGet fails → lectionary index + local DRB. (4) If everything fails → USCCB link.
+- **What:** Added lectionary fallback chain: API → lectionary-index.json references → USCCB link. Uses LitCal event keys to match lectionary entries and display Scripture references when API is unavailable.
+- **Fallback chain:** (1) Readings API → NABRE. (2) If API fails → lectionary index references. (3) If everything fails → USCCB link.
 
 ---
 
@@ -340,13 +342,13 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Why:** Without it, screen dims/locks while user is praying — they lose their place.
 - **Support:** Chrome 84+, Safari 16.4+.
 
-### UX-06: CSS scroll-timeline — Liturgical Color Bar
+### ~~UX-06: CSS scroll-timeline — Liturgical Color Bar~~ ✓ DONE
 - **Priority:** P3 — Phase 6
 - **Effort:** 20 minutes
 - **Size impact:** 0
 - **File:** `css/app.css`
-- **What:** Thin 3px bar at top of app showing liturgical color (purple Lent, white Easter, green Ordinary Time). Animates with scroll. Pure CSS — zero JavaScript.
-- **Support:** Chrome 115+, Safari 18.4+. Falls back to static bar.
+- **What:** Upgraded existing 1.5px bar to 3px with full liturgical color support (Advent/Lent purple, Christmas/Easter white/gold, Ordinary Time green). Dark mode variants. Driven by `data-season` attribute set from LitCal data.
+- **Support:** All browsers (static bar, no scroll-timeline dependency).
 
 ### UX-07: Popover API — Inline Term Definitions
 - **Priority:** P3
@@ -377,23 +379,23 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Triggers iOS haptic engine via Safari 18's `<input switch>` trick. Falls back to `navigator.vibrate()` on Android.
 - **Use cases:** Rosary bead taps (light pulse), decade completion (medium pulse), mystery transition (distinct pattern), station advance, examination commandment transition.
 
-### LIB-02: microfuzz — Fuzzy Search for Content
+### ~~LIB-02: microfuzz — Fuzzy Search for Content~~ ✓ DONE
 - **Priority:** P2 — Phase 3+
 - **Effort:** 1 hour
 - **Size impact:** 2KB
 - **Repo:** `Nozbe/microfuzz`
 - **License:** MIT
-- **What:** Once full CCC and Bible data are local, users need a way to search them. Fuzzy matching with highlight ranges for the results UI.
-- **Integration:** `createFuzzySearch(paragraphs, { getText: function(p) { return [p.text]; } })`
+- **What:** Fuzzy search over full CCC paragraphs in the bottom sheet. Search input at top of CCC sheet, debounced 200ms, results with paragraph number and context preview. Tapping a result navigates to that paragraph.
+- **Integration:** `@nozbe/microfuzz` npm package, `createFuzzySearch()` in `src/ccc.js`.
 
-### LIB-03: QR Creator — Shareable Parish QR Codes
+### ~~LIB-03: QR Creator — Shareable Parish QR Codes~~ ✓ DONE
 - **Priority:** P2
 - **Effort:** 1 hour
-- **Size impact:** 4KB (CDN-loaded)
+- **Size impact:** 4KB (CDN-loaded on demand)
 - **Repo:** `nimiq/qr-creator`
 - **License:** MIT
-- **What:** Generate QR code in parish detail panel. Scan → opens MassFinder at that parish (`massfinder.app/#parish-id`). For bulletin boards, vestibule flyers, parish office.
-- **Integration:** CDN script tag. Generate on demand when user taps "QR Code" in share options.
+- **What:** QR code button in parish detail panel quick actions. Generates QR code for `massfinder.app/#parish-id` URL. Modal overlay with QR canvas and URL display. CDN script lazy-loaded on first use.
+- **Integration:** `src/render.js` — `showQR(churchId)` function, CDN loaded via `_loadQRCreator()`.
 
 ### ~~LIB-04: scroll-snap-carousel — Progress Dots~~ ✓ DONE
 - **Priority:** P2 — Phase 2+
@@ -433,19 +435,19 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Storage:** localStorage only. Nothing leaves the device.
 - **What:** After examination module, user can tap "I went to Confession today." More tab shows "Last Confession: 12 days ago." Gentle nudge near confession filter chip after 30+ days.
 
-### PAT-03: Fasting & Abstinence Calculator
+### ~~PAT-03: Fasting & Abstinence Calculator~~ ✓ DONE
 - **Priority:** P2 — Phase 5
 - **Effort:** 20 minutes
 - **Size impact:** 0
-- **File:** `src/readings.js` or `src/app.js`
-- **What:** On Ash Wednesday and all Fridays of Lent, show banner: "Today is a day of abstinence from meat." On Ash Wednesday and Good Friday: "Today is a day of fasting and abstinence." Three lines of logic using LitCal/romcal data.
+- **File:** `src/readings.js` (`renderFastingBanner()`)
+- **What:** Detects Ash Wednesday, Good Friday (full fast + abstinence), and Lent Fridays (abstinence) from LitCal data. Renders banner in home tab with appropriate messaging and styling.
 
-### PAT-04: Streak Tracking
+### ~~PAT-04: Streak Tracking~~ ✓ DONE
 - **Priority:** P3
 - **Effort:** 30 minutes
 - **Size impact:** 0
-- **Storage:** localStorage
-- **What:** "Day 3 of daily prayer" in More tab header. Track rosary streaks, daily reading engagement. Simple `{ count, lastDate }` object. Subtle — no gamification pressure.
+- **Storage:** localStorage (`mf-prayer-log`)
+- **What:** Computes consecutive-day prayer streak from rolling 90-day prayer log. Shows "X-day prayer streak" badge in Saved tab activity section when streak > 1 day.
 
 ### ~~PAT-05: Offline Fallback Page~~ ✓ DONE
 - **Priority:** P2
@@ -523,12 +525,12 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 
 # CATEGORY 10: DOCUMENTATION & CONTRIBUTOR EXPERIENCE
 
-### DOC-01: Add `.editorconfig`
+### ~~DOC-01: Add `.editorconfig`~~ ✓ DONE
 - **Priority:** P3
 - **Effort:** 5 minutes
 - **What:** Enforce consistent indentation (2 spaces), EOL (LF), charset (utf-8) across contributors.
 
-### DOC-02: Add Husky Pre-commit Hook
+### ~~DOC-02: Add Husky Pre-commit Hook~~ ✓ DONE
 - **Priority:** P3 — when contributors arrive
 - **Effort:** 15 minutes
 - **Repo:** `typicode/husky`
@@ -594,24 +596,24 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 | ~~DAT-03~~ | ~~ConfessIt examination data~~ | 2 hours | ✓ Done |
 | ~~MOD-03~~ | ~~`src/examination.js`~~ | 6 hours | ✓ Done |
 | ~~PAT-02~~ | ~~Confession tracker~~ | 30 min | ✓ Done |
-| LIB-02 | microfuzz for CCC search | 1 hour | |
+| ~~LIB-02~~ | ~~microfuzz for CCC search~~ | 1 hour | ✓ Done |
 
 ## Phase 4 — Offline Readings & Bible
-| ID | Item | Effort |
-|----|------|--------|
-| DAT-04 | DRB Bible per-book JSON | 3 hours |
-| DAT-06 | Lectionary reference index | 4 hours |
-| LIT-01 | romcal build-time calendar | 3 hours |
-| MOD-06 | Refactored readings.js | 4 hours |
-| UX-04 | Text-to-Speech for readings | 30 min |
-| XREF-02 | Tappable Scripture refs in guides | 1 hour |
+| ID | Item | Effort | Status |
+|----|------|--------|--------|
+| DAT-04 | DRB Bible per-book JSON | 3 hours | |
+| ~~DAT-06~~ | ~~Lectionary reference index~~ | 4 hours | ✓ Done |
+| LIT-01 | romcal build-time calendar | 3 hours | |
+| ~~MOD-06~~ | ~~Refactored readings.js~~ | 4 hours | ✓ Done |
+| UX-04 | Text-to-Speech for readings | 30 min | |
+| XREF-02 | Tappable Scripture refs in guides | 1 hour | |
 
 ## Phase 5 — Seasonal Features
 | ID | Item | Effort | Status |
 |----|------|--------|--------|
-| MOD-04 | `src/stations.js` | 4 hours | |
-| MOD-05 | `src/novena.js` tracker | 4 hours | |
-| PAT-03 | Fasting/abstinence calculator | 20 min | |
+| ~~MOD-04~~ | ~~`src/stations.js`~~ | 4 hours | ✓ Done |
+| ~~MOD-05~~ | ~~`src/novena.js` tracker~~ | 4 hours | ✓ Done |
+| ~~PAT-03~~ | ~~Fasting/abstinence calculator~~ | 20 min | ✓ Done |
 | ~~UX-02~~ | ~~HDO app badge~~ | 15 min | ✓ Done |
 | ~~PAT-05~~ | ~~Offline fallback page~~ | 30 min | ✓ Done |
 
@@ -620,10 +622,10 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 |----|------|--------|--------|
 | DAT-05 | CPDV Bible (translation toggle) | 2 hours | |
 | DAT-08 | Summa daily subset | 3 hours | |
-| DAT-09 | Baltimore Catechism Q&A | 1 hour | |
-| LIB-03 | QR Creator for parish sharing | 1 hour | |
+| ~~DAT-09~~ | ~~Baltimore Catechism Q&A~~ | 1 hour | ✓ Done |
+| ~~LIB-03~~ | ~~QR Creator for parish sharing~~ | 1 hour | ✓ Done |
 | ~~UX-03~~ | ~~View Transitions API~~ | 1 hour | ✓ Done |
-| UX-06 | Liturgical color scroll bar | 20 min | |
+| ~~UX-06~~ | ~~Liturgical color scroll bar~~ | 20 min | ✓ Done |
 | ~~PAT-01~~ | ~~Dark mode~~ | 2 hours | ✓ Done |
 | ~~PAT-06~~ | ~~Font self-hosting~~ | 1 hour | ✓ Done |
 
@@ -632,13 +634,13 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 |----|------|--------|--------|
 | ~~ARC-05~~ | ~~LANG_NAMES dedup~~ | 10 min | ✓ Done |
 | ~~ARC-06~~ | ~~Split more.js~~ | 1 hour | ✓ Done |
-| ARC-08 | CI template validation | 5 min | |
-| ARC-09 | Feature flags | 20 min | |
-| ARC-10 | apply-changes.js composite key | 30 min | |
+| ~~ARC-08~~ | ~~CI template validation~~ | 5 min | ✓ Done |
+| ~~ARC-09~~ | ~~Feature flags~~ | 20 min | ✓ Done |
+| ~~ARC-10~~ | ~~apply-changes.js composite key~~ | 30 min | ✓ Done |
 | ~~ARC-11~~ | ~~Remove ccc-mini.json from SHELL_ASSETS~~ | 2 min | ✓ Done |
-| DOC-01 | .editorconfig | 5 min | |
-| DOC-02 | Husky pre-commit | 15 min | |
-| PAT-04 | Streak tracking | 30 min | |
+| ~~DOC-01~~ | ~~.editorconfig~~ | 5 min | ✓ Done |
+| ~~DOC-02~~ | ~~Husky pre-commit~~ | 15 min | ✓ Done |
+| ~~PAT-04~~ | ~~Streak tracking~~ | 30 min | ✓ Done |
 | PAT-07 | Pray for me counter | 2 hours | |
 | UX-07 | Popover API definitions | 1 hour | |
 | UX-08 | Daily reading notification | 2 hours | |

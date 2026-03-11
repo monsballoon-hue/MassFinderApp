@@ -27,6 +27,28 @@ function saveJSON(data) {
   fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2) + '\n');
 }
 
+// Match service by composite key (type + day + time + location_id), fallback to service_num index
+function findService(parish, ch) {
+  // Primary: match by composite key
+  if (ch.service_type && ch.church_id) {
+    var match = parish.services.filter(function(s) {
+      return s.type === ch.service_type
+        && s.location_id === ch.church_id
+        && (ch.day ? s.day === ch.day : true)
+        && (ch.time ? s.time === ch.time : true);
+    });
+    if (match.length === 1) return match[0];
+    // If multiple matches, prefer exact day+time match
+    if (match.length > 1 && ch.day && ch.time) {
+      var exact = match.filter(function(s) { return s.day === ch.day && s.time === ch.time; });
+      if (exact.length === 1) return exact[0];
+    }
+  }
+  // Fallback: legacy service_num index (1-indexed)
+  if (ch.service_num) return parish.services[ch.service_num - 1] || null;
+  return null;
+}
+
 function findParishByChurchId(data, churchId) {
   for (var i = 0; i < data.parishes.length; i++) {
     var p = data.parishes[i];
@@ -82,12 +104,14 @@ async function main() {
         break;
 
       case 'modified':
-        if (ch.service_num && ch.field_changed) {
-          var svc = parish.services[ch.service_num - 1];
+        if (ch.field_changed) {
+          var svc = findService(parish, ch);
           if (svc) {
             var old = svc[ch.field_changed];
             svc[ch.field_changed] = ch.new_value;
             changelog.push(parish.name + ': ' + ch.field_changed + ' ' + old + ' → ' + ch.new_value);
+          } else {
+            console.warn('  SKIP: no matching service for change in ' + parish.name);
           }
         }
         break;
@@ -108,12 +132,10 @@ async function main() {
         break;
 
       case 'not_found':
-        if (ch.service_num) {
-          var notFoundSvc = parish.services[ch.service_num - 1];
-          if (notFoundSvc) {
-            notFoundSvc._needs_review = true;
-            changelog.push(parish.name + ': NOT FOUND IN BULLETIN — ' + (notFoundSvc.type || ''));
-          }
+        var notFoundSvc = findService(parish, ch);
+        if (notFoundSvc) {
+          notFoundSvc._needs_review = true;
+          changelog.push(parish.name + ': NOT FOUND IN BULLETIN — ' + (notFoundSvc.type || ''));
         }
         break;
     }

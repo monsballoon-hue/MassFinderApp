@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+// scripts/build-lectionary.js — Build lectionary reference index
+// Maps liturgical day keys to Scripture references (no copyrighted text — just references).
+// Source: Public lectionary tables (Fr. Felix Just, S.J., catholic-resources.org)
+// Output: data/lectionary-index.json
+//
+// Usage: node scripts/build-lectionary.js
+
+var fs = require('fs');
+var path = require('path');
+
+// Sunday Lectionary — 3-year cycle (A, B, C)
+// Each entry: { first_reading, psalm, second_reading, gospel }
+// References use standard abbreviations matching BIBLE_BOOK_MAP in readings.js
+
+var SUNDAYS = {
+  A: {
+    // ADVENT
+    advent_1: { first_reading: 'Isaiah 2:1-5', psalm: 'Psalm 122:1-9', second_reading: 'Romans 13:11-14', gospel: 'Matthew 24:37-44' },
+    advent_2: { first_reading: 'Isaiah 11:1-10', psalm: 'Psalm 72:1-2,7-8,12-13,17', second_reading: 'Romans 15:4-9', gospel: 'Matthew 3:1-12' },
+    advent_3: { first_reading: 'Isaiah 35:1-6,10', psalm: 'Psalm 146:6-10', second_reading: 'James 5:7-10', gospel: 'Matthew 11:2-11' },
+    advent_4: { first_reading: 'Isaiah 7:10-14', psalm: 'Psalm 24:1-6', second_reading: 'Romans 1:1-7', gospel: 'Matthew 1:18-24' },
+    // CHRISTMAS
+    christmas_vigil: { first_reading: 'Isaiah 62:1-5', psalm: 'Psalm 89:4-5,16-17,27,29', second_reading: 'Acts 13:16-17,22-25', gospel: 'Matthew 1:1-25' },
+    christmas_night: { first_reading: 'Isaiah 9:1-6', psalm: 'Psalm 96:1-3,11-13', second_reading: 'Titus 2:11-14', gospel: 'Luke 2:1-14' },
+    christmas_dawn: { first_reading: 'Isaiah 62:11-12', psalm: 'Psalm 97:1,6,11-12', second_reading: 'Titus 3:4-7', gospel: 'Luke 2:15-20' },
+    christmas_day: { first_reading: 'Isaiah 52:7-10', psalm: 'Psalm 98:1-6', second_reading: 'Hebrews 1:1-6', gospel: 'John 1:1-18' },
+    // LENT
+    lent_1: { first_reading: 'Genesis 2:7-9,3:1-7', psalm: 'Psalm 51:3-6,12-14,17', second_reading: 'Romans 5:12-19', gospel: 'Matthew 4:1-11' },
+    lent_2: { first_reading: 'Genesis 12:1-4', psalm: 'Psalm 33:4-5,18-20,22', second_reading: '2 Timothy 1:8-10', gospel: 'Matthew 17:1-9' },
+    lent_3: { first_reading: 'Exodus 17:3-7', psalm: 'Psalm 95:1-2,6-9', second_reading: 'Romans 5:1-2,5-8', gospel: 'John 4:5-42' },
+    lent_4: { first_reading: '1 Samuel 16:1,6-7,10-13', psalm: 'Psalm 23:1-6', second_reading: 'Ephesians 5:8-14', gospel: 'John 9:1-41' },
+    lent_5: { first_reading: 'Ezekiel 37:12-14', psalm: 'Psalm 130:1-8', second_reading: 'Romans 8:8-11', gospel: 'John 11:1-45' },
+    // EASTER
+    easter_vigil: { first_reading: 'Genesis 1:1-2:2', psalm: 'Psalm 104:1-2,5-6,10,12-14,24,35', second_reading: 'Romans 6:3-11', gospel: 'Matthew 28:1-10' },
+    easter: { first_reading: 'Acts 10:34,37-43', psalm: 'Psalm 118:1-2,16-17,22-23', second_reading: 'Colossians 3:1-4', gospel: 'John 20:1-9' },
+    easter_2: { first_reading: 'Acts 2:42-47', psalm: 'Psalm 118:2-4,13-15,22-24', second_reading: '1 Peter 1:3-9', gospel: 'John 20:19-31' },
+    easter_3: { first_reading: 'Acts 2:14,22-33', psalm: 'Psalm 16:1-2,5,7-11', second_reading: '1 Peter 1:17-21', gospel: 'Luke 24:13-35' },
+    easter_4: { first_reading: 'Acts 2:14,36-41', psalm: 'Psalm 23:1-6', second_reading: '1 Peter 2:20-25', gospel: 'John 10:1-10' },
+    easter_5: { first_reading: 'Acts 6:1-7', psalm: 'Psalm 33:1-2,4-5,18-19', second_reading: '1 Peter 2:4-9', gospel: 'John 14:1-12' },
+    easter_6: { first_reading: 'Acts 8:5-8,14-17', psalm: 'Psalm 66:1-7,16,20', second_reading: '1 Peter 3:15-18', gospel: 'John 14:15-21' },
+    easter_7: { first_reading: 'Acts 1:12-14', psalm: 'Psalm 27:1,4,7-8', second_reading: '1 Peter 4:13-16', gospel: 'John 17:1-11' },
+    // ORDINARY TIME
+    ordinary_2: { first_reading: 'Isaiah 49:3,5-6', psalm: 'Psalm 40:2,4,7-10', second_reading: '1 Corinthians 1:1-3', gospel: 'John 1:29-34' },
+    ordinary_3: { first_reading: 'Isaiah 8:23-9:3', psalm: 'Psalm 27:1,4,13-14', second_reading: '1 Corinthians 1:10-13,17', gospel: 'Matthew 4:12-23' },
+    ordinary_4: { first_reading: 'Zephaniah 2:3,3:12-13', psalm: 'Psalm 146:6-10', second_reading: '1 Corinthians 1:26-31', gospel: 'Matthew 5:1-12' },
+    ordinary_5: { first_reading: 'Isaiah 58:7-10', psalm: 'Psalm 112:4-9', second_reading: '1 Corinthians 2:1-5', gospel: 'Matthew 5:13-16' },
+    ordinary_6: { first_reading: 'Sirach 15:15-20', psalm: 'Psalm 119:1-2,4-5,17-18,33-34', second_reading: '1 Corinthians 2:6-10', gospel: 'Matthew 5:17-37' },
+    ordinary_7: { first_reading: 'Leviticus 19:1-2,17-18', psalm: 'Psalm 103:1-4,8,10,12-13', second_reading: '1 Corinthians 3:16-23', gospel: 'Matthew 5:38-48' },
+    ordinary_8: { first_reading: 'Isaiah 49:14-15', psalm: 'Psalm 62:2-3,6-9', second_reading: '1 Corinthians 4:1-5', gospel: 'Matthew 6:24-34' },
+    ordinary_9: { first_reading: 'Deuteronomy 11:18,26-28,32', psalm: 'Psalm 31:2-4,17,25', second_reading: 'Romans 3:21-25,28', gospel: 'Matthew 7:21-27' },
+    ordinary_10: { first_reading: 'Hosea 6:3-6', psalm: 'Psalm 50:1,8,12-15', second_reading: 'Romans 4:18-25', gospel: 'Matthew 9:9-13' },
+    ordinary_11: { first_reading: 'Exodus 19:2-6', psalm: 'Psalm 100:1-3,5', second_reading: 'Romans 5:6-11', gospel: 'Matthew 9:36-10:8' },
+    ordinary_12: { first_reading: 'Jeremiah 20:10-13', psalm: 'Psalm 69:8-10,14,17,33-35', second_reading: 'Romans 5:12-15', gospel: 'Matthew 10:26-33' },
+    ordinary_13: { first_reading: '2 Kings 4:8-11,14-16', psalm: 'Psalm 89:2-3,16-19', second_reading: 'Romans 6:3-4,8-11', gospel: 'Matthew 10:37-42' },
+    ordinary_14: { first_reading: 'Zechariah 9:9-10', psalm: 'Psalm 145:1-2,8-11,13-14', second_reading: 'Romans 8:9,11-13', gospel: 'Matthew 11:25-30' },
+    ordinary_15: { first_reading: 'Isaiah 55:10-11', psalm: 'Psalm 65:10-14', second_reading: 'Romans 8:18-23', gospel: 'Matthew 13:1-23' },
+    ordinary_16: { first_reading: 'Wisdom 12:13,16-19', psalm: 'Psalm 86:5-6,9-10,15-16', second_reading: 'Romans 8:26-27', gospel: 'Matthew 13:24-43' },
+    ordinary_17: { first_reading: '1 Kings 3:5,7-12', psalm: 'Psalm 119:57,72,76-77,127-130', second_reading: 'Romans 8:28-30', gospel: 'Matthew 13:44-52' },
+    ordinary_18: { first_reading: 'Isaiah 55:1-3', psalm: 'Psalm 145:8-9,15-18', second_reading: 'Romans 8:35,37-39', gospel: 'Matthew 14:13-21' },
+    ordinary_19: { first_reading: '1 Kings 19:9,11-13', psalm: 'Psalm 85:9-14', second_reading: 'Romans 9:1-5', gospel: 'Matthew 14:22-33' },
+    ordinary_20: { first_reading: 'Isaiah 56:1,6-7', psalm: 'Psalm 67:2-3,5-6,8', second_reading: 'Romans 11:13-15,29-32', gospel: 'Matthew 15:21-28' },
+    ordinary_21: { first_reading: 'Isaiah 22:19-23', psalm: 'Psalm 138:1-3,6,8', second_reading: 'Romans 11:33-36', gospel: 'Matthew 16:13-20' },
+    ordinary_22: { first_reading: 'Jeremiah 20:7-9', psalm: 'Psalm 63:2-6,8-9', second_reading: 'Romans 12:1-2', gospel: 'Matthew 16:21-27' },
+    ordinary_23: { first_reading: 'Ezekiel 33:7-9', psalm: 'Psalm 95:1-2,6-9', second_reading: 'Romans 13:8-10', gospel: 'Matthew 18:15-20' },
+    ordinary_24: { first_reading: 'Sirach 27:30-28:7', psalm: 'Psalm 103:1-4,9-12', second_reading: 'Romans 14:7-9', gospel: 'Matthew 18:21-35' },
+    ordinary_25: { first_reading: 'Isaiah 55:6-9', psalm: 'Psalm 145:2-3,8-9,17-18', second_reading: 'Philippians 1:20-24,27', gospel: 'Matthew 20:1-16' },
+    ordinary_26: { first_reading: 'Ezekiel 18:25-28', psalm: 'Psalm 25:4-9', second_reading: 'Philippians 2:1-11', gospel: 'Matthew 21:28-32' },
+    ordinary_27: { first_reading: 'Isaiah 5:1-7', psalm: 'Psalm 80:9,12-16,19-20', second_reading: 'Philippians 4:6-9', gospel: 'Matthew 21:33-43' },
+    ordinary_28: { first_reading: 'Isaiah 25:6-10', psalm: 'Psalm 23:1-6', second_reading: 'Philippians 4:12-14,19-20', gospel: 'Matthew 22:1-14' },
+    ordinary_29: { first_reading: 'Isaiah 45:1,4-6', psalm: 'Psalm 96:1,3-5,7-10', second_reading: '1 Thessalonians 1:1-5', gospel: 'Matthew 22:15-21' },
+    ordinary_30: { first_reading: 'Exodus 22:20-26', psalm: 'Psalm 18:2-4,47,51', second_reading: '1 Thessalonians 1:5-10', gospel: 'Matthew 22:34-40' },
+    ordinary_31: { first_reading: 'Malachi 1:14-2:2,8-10', psalm: 'Psalm 131:1-3', second_reading: '1 Thessalonians 2:7-9,13', gospel: 'Matthew 23:1-12' },
+    ordinary_32: { first_reading: 'Wisdom 6:12-16', psalm: 'Psalm 63:2-8', second_reading: '1 Thessalonians 4:13-18', gospel: 'Matthew 25:1-13' },
+    ordinary_33: { first_reading: 'Proverbs 31:10-13,19-20,30-31', psalm: 'Psalm 128:1-5', second_reading: '1 Thessalonians 5:1-6', gospel: 'Matthew 25:14-30' },
+    christ_the_king: { first_reading: 'Ezekiel 34:11-12,15-17', psalm: 'Psalm 23:1-6', second_reading: '1 Corinthians 15:20-26,28', gospel: 'Matthew 25:31-46' }
+  },
+  B: {
+    advent_1: { first_reading: 'Isaiah 63:16-17,19,64:2-7', psalm: 'Psalm 80:2-3,15-16,18-19', second_reading: '1 Corinthians 1:3-9', gospel: 'Mark 13:33-37' },
+    advent_2: { first_reading: 'Isaiah 40:1-5,9-11', psalm: 'Psalm 85:9-14', second_reading: '2 Peter 3:8-14', gospel: 'Mark 1:1-8' },
+    advent_3: { first_reading: 'Isaiah 61:1-2,10-11', psalm: 'Luke 1:46-50,53-54', second_reading: '1 Thessalonians 5:16-24', gospel: 'John 1:6-8,19-28' },
+    advent_4: { first_reading: '2 Samuel 7:1-5,8-12,14,16', psalm: 'Psalm 89:2-5,27,29', second_reading: 'Romans 16:25-27', gospel: 'Luke 1:26-38' },
+    lent_1: { first_reading: 'Genesis 9:8-15', psalm: 'Psalm 25:4-9', second_reading: '1 Peter 3:18-22', gospel: 'Mark 1:12-15' },
+    lent_2: { first_reading: 'Genesis 22:1-2,9-13,15-18', psalm: 'Psalm 116:10,15-19', second_reading: 'Romans 8:31-34', gospel: 'Mark 9:2-10' },
+    lent_3: { first_reading: 'Exodus 20:1-17', psalm: 'Psalm 19:8-11', second_reading: '1 Corinthians 1:22-25', gospel: 'John 2:13-25' },
+    lent_4: { first_reading: '2 Chronicles 36:14-16,19-23', psalm: 'Psalm 137:1-6', second_reading: 'Ephesians 2:4-10', gospel: 'John 3:14-21' },
+    lent_5: { first_reading: 'Jeremiah 31:31-34', psalm: 'Psalm 51:3-4,12-15', second_reading: 'Hebrews 5:7-9', gospel: 'John 12:20-33' },
+    easter: { first_reading: 'Acts 10:34,37-43', psalm: 'Psalm 118:1-2,16-17,22-23', second_reading: 'Colossians 3:1-4', gospel: 'John 20:1-9' },
+    easter_2: { first_reading: 'Acts 4:32-35', psalm: 'Psalm 118:2-4,13-15,22-24', second_reading: '1 John 5:1-6', gospel: 'John 20:19-31' },
+    easter_3: { first_reading: 'Acts 3:13-15,17-19', psalm: 'Psalm 4:2,4,7-9', second_reading: '1 John 2:1-5', gospel: 'Luke 24:35-48' },
+    easter_4: { first_reading: 'Acts 4:8-12', psalm: 'Psalm 118:1,8-9,21-23,26,28-29', second_reading: '1 John 3:1-2', gospel: 'John 10:11-18' },
+    easter_5: { first_reading: 'Acts 9:26-31', psalm: 'Psalm 22:26-28,30-32', second_reading: '1 John 3:18-24', gospel: 'John 15:1-8' },
+    easter_6: { first_reading: 'Acts 10:25-26,34-35,44-48', psalm: 'Psalm 98:1-4', second_reading: '1 John 4:7-10', gospel: 'John 15:9-17' },
+    easter_7: { first_reading: 'Acts 1:15-17,20-26', psalm: 'Psalm 103:1-2,11-12,19-20', second_reading: '1 John 4:11-16', gospel: 'John 17:11-19' },
+    ordinary_2: { first_reading: '1 Samuel 3:3-10,19', psalm: 'Psalm 40:2,4,7-10', second_reading: '1 Corinthians 6:13-15,17-20', gospel: 'John 1:35-42' },
+    ordinary_3: { first_reading: 'Jonah 3:1-5,10', psalm: 'Psalm 25:4-9', second_reading: '1 Corinthians 7:29-31', gospel: 'Mark 1:14-20' },
+    ordinary_4: { first_reading: 'Deuteronomy 18:15-20', psalm: 'Psalm 95:1-2,6-9', second_reading: '1 Corinthians 7:32-35', gospel: 'Mark 1:21-28' },
+    ordinary_5: { first_reading: 'Job 7:1-4,6-7', psalm: 'Psalm 147:1-6', second_reading: '1 Corinthians 9:16-19,22-23', gospel: 'Mark 1:29-39' },
+    ordinary_6: { first_reading: 'Leviticus 13:1-2,44-46', psalm: 'Psalm 32:1-2,5,11', second_reading: '1 Corinthians 10:31-11:1', gospel: 'Mark 1:40-45' },
+    ordinary_7: { first_reading: 'Isaiah 43:18-19,21-22,24-25', psalm: 'Psalm 41:2-5,13-14', second_reading: '2 Corinthians 1:18-22', gospel: 'Mark 2:1-12' },
+    christ_the_king: { first_reading: 'Daniel 7:13-14', psalm: 'Psalm 93:1-2,5', second_reading: 'Revelation 1:5-8', gospel: 'John 18:33-37' }
+  },
+  C: {
+    advent_1: { first_reading: 'Jeremiah 33:14-16', psalm: 'Psalm 25:4-5,8-10,14', second_reading: '1 Thessalonians 3:12-4:2', gospel: 'Luke 21:25-28,34-36' },
+    advent_2: { first_reading: 'Baruch 5:1-9', psalm: 'Psalm 126:1-6', second_reading: 'Philippians 1:4-6,8-11', gospel: 'Luke 3:1-6' },
+    advent_3: { first_reading: 'Zephaniah 3:14-18', psalm: 'Isaiah 12:2-6', second_reading: 'Philippians 4:4-7', gospel: 'Luke 3:10-18' },
+    advent_4: { first_reading: 'Micah 5:1-4', psalm: 'Psalm 80:2-3,15-16,18-19', second_reading: 'Hebrews 10:5-10', gospel: 'Luke 1:39-45' },
+    lent_1: { first_reading: 'Deuteronomy 26:4-10', psalm: 'Psalm 91:1-2,10-15', second_reading: 'Romans 10:8-13', gospel: 'Luke 4:1-13' },
+    lent_2: { first_reading: 'Genesis 15:5-12,17-18', psalm: 'Psalm 27:1,7-9,13-14', second_reading: 'Philippians 3:17-4:1', gospel: 'Luke 9:28-36' },
+    lent_3: { first_reading: 'Exodus 3:1-8,13-15', psalm: 'Psalm 103:1-4,6-8,11', second_reading: '1 Corinthians 10:1-6,10-12', gospel: 'Luke 13:1-9' },
+    lent_4: { first_reading: 'Joshua 5:9,10-12', psalm: 'Psalm 34:2-7', second_reading: '2 Corinthians 5:17-21', gospel: 'Luke 15:1-3,11-32' },
+    lent_5: { first_reading: 'Isaiah 43:16-21', psalm: 'Psalm 126:1-6', second_reading: 'Philippians 3:8-14', gospel: 'John 8:1-11' },
+    easter: { first_reading: 'Acts 10:34,37-43', psalm: 'Psalm 118:1-2,16-17,22-23', second_reading: 'Colossians 3:1-4', gospel: 'John 20:1-9' },
+    easter_2: { first_reading: 'Acts 5:12-16', psalm: 'Psalm 118:2-4,13-15,22-24', second_reading: 'Revelation 1:9-13,17-19', gospel: 'John 20:19-31' },
+    easter_3: { first_reading: 'Acts 5:27-32,40-41', psalm: 'Psalm 30:2,4-6,11-13', second_reading: 'Revelation 5:11-14', gospel: 'John 21:1-19' },
+    easter_4: { first_reading: 'Acts 13:14,43-52', psalm: 'Psalm 100:1-3,5', second_reading: 'Revelation 7:9,14-17', gospel: 'John 10:27-30' },
+    easter_5: { first_reading: 'Acts 14:21-27', psalm: 'Psalm 145:8-13', second_reading: 'Revelation 21:1-5', gospel: 'John 13:31-35' },
+    easter_6: { first_reading: 'Acts 15:1-2,22-29', psalm: 'Psalm 67:2-3,5-6,8', second_reading: 'Revelation 21:10-14,22-23', gospel: 'John 14:23-29' },
+    easter_7: { first_reading: 'Acts 7:55-60', psalm: 'Psalm 97:1-2,6-7,9', second_reading: 'Revelation 22:12-14,16-17,20', gospel: 'John 17:20-26' },
+    ordinary_2: { first_reading: 'Isaiah 62:1-5', psalm: 'Psalm 96:1-3,7-10', second_reading: '1 Corinthians 12:4-11', gospel: 'John 2:1-11' },
+    ordinary_3: { first_reading: 'Nehemiah 8:2-4,5-6,8-10', psalm: 'Psalm 19:8-10,15', second_reading: '1 Corinthians 12:12-30', gospel: 'Luke 1:1-4,4:14-21' },
+    ordinary_4: { first_reading: 'Jeremiah 1:4-5,17-19', psalm: 'Psalm 71:1-6,15,17', second_reading: '1 Corinthians 12:31-13:13', gospel: 'Luke 4:21-30' },
+    ordinary_5: { first_reading: 'Isaiah 6:1-8', psalm: 'Psalm 138:1-5,7-8', second_reading: '1 Corinthians 15:1-11', gospel: 'Luke 5:1-11' },
+    christ_the_king: { first_reading: '2 Samuel 5:1-3', psalm: 'Psalm 122:1-5', second_reading: 'Colossians 1:12-20', gospel: 'Luke 23:35-43' }
+  }
+};
+
+// FIXED FEASTS (same readings every year)
+var FEASTS = {
+  ash_wednesday: { first_reading: 'Joel 2:12-18', psalm: 'Psalm 51:3-6,12-14,17', second_reading: '2 Corinthians 5:20-6:2', gospel: 'Matthew 6:1-6,16-18' },
+  palm_sunday: { first_reading: 'Isaiah 50:4-7', psalm: 'Psalm 22:8-9,17-20,23-24', second_reading: 'Philippians 2:6-11', gospel: 'varies by cycle' },
+  holy_thursday: { first_reading: 'Exodus 12:1-8,11-14', psalm: 'Psalm 116:12-13,15-18', second_reading: '1 Corinthians 11:23-26', gospel: 'John 13:1-15' },
+  good_friday: { first_reading: 'Isaiah 52:13-53:12', psalm: 'Psalm 31:2,6,12-13,15-17,25', second_reading: 'Hebrews 4:14-16,5:7-9', gospel: 'John 18:1-19:42' },
+  ascension: { first_reading: 'Acts 1:1-11', psalm: 'Psalm 47:2-3,6-9', second_reading: 'Ephesians 1:17-23', gospel: 'varies by cycle' },
+  pentecost: { first_reading: 'Acts 2:1-11', psalm: 'Psalm 104:1,24,29-31,34', second_reading: '1 Corinthians 12:3-7,12-13', gospel: 'John 20:19-23' },
+  trinity_sunday: { first_reading: 'varies by cycle', psalm: 'varies', second_reading: 'varies by cycle', gospel: 'varies by cycle' },
+  corpus_christi: { first_reading: 'varies by cycle', psalm: 'varies', second_reading: 'varies by cycle', gospel: 'varies by cycle' },
+  // Fixed-date solemnities
+  immaculate_conception: { first_reading: 'Genesis 3:9-15,20', psalm: 'Psalm 98:1-4', second_reading: 'Ephesians 1:3-6,11-12', gospel: 'Luke 1:26-38' },
+  christmas: { first_reading: 'Isaiah 52:7-10', psalm: 'Psalm 98:1-6', second_reading: 'Hebrews 1:1-6', gospel: 'John 1:1-18' },
+  mary_mother_of_god: { first_reading: 'Numbers 6:22-27', psalm: 'Psalm 67:2-3,5-6,8', second_reading: 'Galatians 4:4-7', gospel: 'Luke 2:16-21' },
+  epiphany: { first_reading: 'Isaiah 60:1-6', psalm: 'Psalm 72:1-2,7-8,10-13', second_reading: 'Ephesians 3:2-3,5-6', gospel: 'Matthew 2:1-12' },
+  assumption: { first_reading: 'Revelation 11:19,12:1-6,10', psalm: 'Psalm 45:10-12,16', second_reading: '1 Corinthians 15:20-27', gospel: 'Luke 1:39-56' },
+  all_saints: { first_reading: 'Revelation 7:2-4,9-14', psalm: 'Psalm 24:1-6', second_reading: '1 John 3:1-3', gospel: 'Matthew 5:1-12' }
+};
+
+var output = {
+  _meta: {
+    description: 'Lectionary reference index — Scripture citations for the Roman Catholic liturgical calendar',
+    source: 'Public lectionary tables (USCCB, catholic-resources.org)',
+    note: 'References only, no copyrighted text. Use with Bible data (DRB/CPDV) for offline reading display.',
+    generated: new Date().toISOString().slice(0, 10)
+  },
+  sundays: SUNDAYS,
+  feasts: FEASTS
+};
+
+var outPath = path.join(__dirname, '..', 'data', 'lectionary-index.json');
+fs.writeFileSync(outPath, JSON.stringify(output, null, 2) + '\n');
+
+var sundayCount = Object.keys(SUNDAYS.A).length + Object.keys(SUNDAYS.B).length + Object.keys(SUNDAYS.C).length;
+var feastCount = Object.keys(FEASTS).length;
+console.log('✓ Lectionary index written: ' + outPath);
+console.log('  ' + sundayCount + ' Sunday entries (A/B/C), ' + feastCount + ' feast entries');

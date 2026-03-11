@@ -80,6 +80,39 @@ function updateHDOBadge(events) {
   else navigator.clearAppBadge().catch(function() {});
 }
 
+// ── Fasting & Abstinence Banner (PAT-03) ──
+function renderFastingBanner(events) {
+  var el = document.getElementById('fastingBanner');
+  if (!el) return;
+  var now = getNow(), m = now.getMonth() + 1, d = now.getDate(), dow = now.getDay();
+  var today = events.filter(function(e) { return e.month === m && e.day === d; });
+
+  // Check for Ash Wednesday or Good Friday by event_key
+  var isAshWed = today.some(function(e) { return e.event_key === 'AshWednesday'; });
+  var isGoodFri = today.some(function(e) { return e.event_key === 'GoodFri'; });
+  // Check if it's a Friday during Lent
+  var season = (today[0] && today[0].liturgical_season) || '';
+  var isLentFriday = dow === 5 && (season === 'LENT' || season === 'HOLY_WEEK');
+
+  if (isAshWed || isGoodFri) {
+    el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
+      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-text">'
+      + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
+      + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
+      + '</div></div>';
+  } else if (isLentFriday) {
+    el.innerHTML = '<div class="fasting-banner">'
+      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-text">'
+      + '<div class="fasting-banner-title">Day of Abstinence</div>'
+      + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
+      + '</div></div>';
+  } else {
+    el.innerHTML = '';
+  }
+}
+
 // ── Liturgical Events ──
 function getLiturgicalEvents() {
   if (window._litcalCache && window._litcalCache.events) {
@@ -219,9 +252,116 @@ function fetchReadings() {
         bgDelay += 2500;
       });
     })
-    .catch(function(e) {
-      el.innerHTML = usccbLink;
+    .catch(function() {
+      // Fallback: lectionary index references (MOD-06)
+      _renderLectionaryFallback(el, usccbLink);
     });
+}
+
+// ── Lectionary Fallback (MOD-06) ──
+// When readings API fails, show references from local lectionary-index.json
+var _lectionaryCache = null;
+
+function _loadLectionary() {
+  if (_lectionaryCache) return Promise.resolve(_lectionaryCache);
+  return fetch('/data/lectionary-index.json').then(function(r) { return r.json(); })
+    .then(function(d) { _lectionaryCache = d; return d; })
+    .catch(function() { return null; });
+}
+
+function _getLiturgicalCycleYear() {
+  var year = getNow().getFullYear();
+  // Liturgical year starts on Advent 1 of prior calendar year
+  // Cycle: A = year%3===1, B = year%3===2, C = year%3===0
+  var mod = year % 3;
+  if (mod === 1) return 'A';
+  if (mod === 2) return 'B';
+  return 'C';
+}
+
+function _matchLectionaryKey(litcalEvents) {
+  if (!litcalEvents || !litcalEvents.length) return null;
+  var pick = litcalEvents.sort(function(a, b) { return (b.grade || 0) - (a.grade || 0); })[0];
+  var key = pick.event_key || '';
+
+  // Map known LitCal event keys to lectionary keys
+  var keyMap = {
+    'AshWednesday': 'ash_wednesday',
+    'PalmSun': 'palm_sunday',
+    'HolyThurs': 'holy_thursday',
+    'GoodFri': 'good_friday',
+    'EasterVigil': 'easter_vigil',
+    'Easter': 'easter',
+    'Easter2': 'easter_2',
+    'Pentecost': 'pentecost',
+    'Ascension': 'ascension',
+    'ImmaculateConception': 'immaculate_conception',
+    'ChristmasDay': 'christmas',
+    'Christmas': 'christmas',
+    'MaryMotherOfGod': 'mary_mother_of_god',
+    'Epiphany': 'epiphany',
+    'Assumption': 'assumption',
+    'AllSaints': 'all_saints'
+  };
+  if (keyMap[key]) return { type: 'feast', key: keyMap[key] };
+
+  // Try to match Sunday by season + week
+  var season = (pick.liturgical_season || '').toLowerCase();
+  var seasonMap = { 'advent': 'advent', 'lent': 'lent', 'easter': 'easter', 'easter_season': 'easter', 'ordinary_time': 'ordinary' };
+  var mappedSeason = seasonMap[season];
+  if (mappedSeason && pick.liturgical_week) {
+    var sundayKey = mappedSeason + '_' + pick.liturgical_week;
+    return { type: 'sunday', key: sundayKey };
+  }
+
+  // Christ the King
+  if (key === 'ChristTheKing' || (pick.name && pick.name.indexOf('Christ the King') !== -1)) {
+    return { type: 'sunday', key: 'christ_the_king' };
+  }
+
+  return null;
+}
+
+function _renderLectionaryFallback(el, usccbLink) {
+  _loadLectionary().then(function(lect) {
+    if (!lect) { el.innerHTML = usccbLink; return; }
+
+    var litEvents = (window._litcalCache && window._litcalCache.events) || [];
+    var now = getNow(), m = now.getMonth() + 1, d = now.getDate();
+    var todayEvents = litEvents.filter(function(e) { return e.month === m && e.day === d; });
+    var match = _matchLectionaryKey(todayEvents);
+
+    if (!match) { el.innerHTML = usccbLink; return; }
+
+    var readings = null;
+    if (match.type === 'feast') {
+      readings = lect.feasts[match.key];
+    } else if (match.type === 'sunday') {
+      var cycle = _getLiturgicalCycleYear();
+      readings = lect.sundays[cycle] && lect.sundays[cycle][match.key];
+    }
+
+    if (!readings) { el.innerHTML = usccbLink; return; }
+
+    var html = '<div class="reading-fallback-note">Readings API unavailable \u2014 showing references from the lectionary</div>';
+    var labels = [
+      { key: 'first_reading', label: 'First Reading' },
+      { key: 'psalm', label: 'Responsorial Psalm' },
+      { key: 'second_reading', label: 'Second Reading' },
+      { key: 'gospel', label: 'Gospel' }
+    ];
+    labels.forEach(function(item) {
+      var ref = readings[item.key];
+      if (!ref || ref === 'varies by cycle' || ref === 'varies') return;
+      html += '<div class="reading-entry">'
+        + '<div class="reading-entry-header"><div>'
+        + '<div class="reading-heading">' + esc(item.label) + '</div>'
+        + '<div class="reading-ref">' + esc(ref) + '</div>'
+        + '</div></div></div>';
+    });
+    html += usccbLink;
+    el.innerHTML = html;
+  });
 }
 
 // ── Fetch Liturgical Day (LitCal API) ──
@@ -697,4 +837,5 @@ module.exports = {
   setLiturgicalSeason: setLiturgicalSeason,
   renderHDOBanner: renderHDOBanner,
   updateHDOBadge: updateHDOBadge,
+  renderFastingBanner: renderFastingBanner,
 };

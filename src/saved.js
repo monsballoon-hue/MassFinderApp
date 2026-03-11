@@ -336,6 +336,28 @@ function renderSaved() {
     if (novenaCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Novena</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(novenaCount / maxCount * 100) + '%;background:#1E6B4A"></div></div><span class="activity-bar-val">' + novenaCount + '</span></div>');
   } catch (e) {}
 
+  // Streak tracking (PAT-04)
+  var streakDays = 0;
+  try {
+    var streakLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var streakDates = {};
+    streakLog.forEach(function(e) { if (e.date) streakDates[e.date] = true; });
+    var d = new Date(now);
+    // Check if today has an entry, otherwise start from yesterday
+    var todayKey = d.toISOString().slice(0, 10);
+    if (!streakDates[todayKey]) {
+      d.setDate(d.getDate() - 1);
+    }
+    while (streakDates[d.toISOString().slice(0, 10)]) {
+      streakDays++;
+      d.setDate(d.getDate() - 1);
+    }
+  } catch (e) {}
+
+  if (streakDays > 1 && activityParts.length) {
+    activityParts.unshift('<div class="activity-streak">\uD83D\uDD25 ' + streakDays + '-day prayer streak</div>');
+  }
+
   var confessionNote = '';
   try {
     var lastConf = localStorage.getItem('mf-last-confession');

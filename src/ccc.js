@@ -3,7 +3,9 @@
 
 var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
+var createFuzzySearch = require('@nozbe/microfuzz').default;
 var _cccData = null, _cccXrefs = null, _cccHistory = [], _cccCurrentNum = '';
+var _cccSearchIndex = null, _cccSearchTimer = null;
 
 // CCC-06: Section context lookup — paragraph number ranges to section labels
 var _CCC_SECTIONS = [
@@ -193,6 +195,10 @@ function openCCC(numStr) {
   document.body.style.overflow = 'hidden';
   window._lastFocused = document.activeElement;
   _initSwipeDismiss();
+  _initSearch();
+  var input = document.getElementById('cccSearchInput');
+  if (input) input.value = '';
+  _hideSearchResults();
   _renderCCCContent(numStr);
   // Focus trap
   var ui = require('./ui.js');
@@ -229,10 +235,104 @@ function openCCCAboveExam(numStr) {
   openCCC(numStr);
 }
 
+// ── CCC Search (LIB-02: microfuzz) ──
+function _buildSearchIndex() {
+  if (_cccSearchIndex || !_cccData) return;
+  var items = [];
+  Object.keys(_cccData).forEach(function(num) {
+    var text = _cccData[num].replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '').replace(/\n/g, ' ');
+    items.push({ num: num, text: text });
+  });
+  _cccSearchIndex = createFuzzySearch(items, {
+    getText: function(item) { return [item.text]; }
+  });
+}
+
+function _initSearch() {
+  var input = document.getElementById('cccSearchInput');
+  if (!input || input._searchInit) return;
+  input._searchInit = true;
+  input.addEventListener('input', function() {
+    clearTimeout(_cccSearchTimer);
+    var q = input.value.trim();
+    if (!q) { _hideSearchResults(); return; }
+    // If user types a paragraph number directly, navigate to it
+    if (/^\d+$/.test(q) && parseInt(q) >= 1 && parseInt(q) <= 2865) {
+      _cccSearchTimer = setTimeout(function() {
+        _showSearchResults([{ item: { num: q, text: _cccData && _cccData[q] ? _cccData[q].slice(0, 140) : '' } }]);
+      }, 200);
+      return;
+    }
+    _cccSearchTimer = setTimeout(function() { _doSearch(q); }, 250);
+  });
+}
+
+function _doSearch(query) {
+  if (!_cccData) {
+    _loadCCCData().then(function() {
+      _buildSearchIndex();
+      _doSearch(query);
+    });
+    return;
+  }
+  _buildSearchIndex();
+  if (!_cccSearchIndex) return;
+  var results = _cccSearchIndex(query);
+  _showSearchResults(results.slice(0, 12));
+}
+
+function _showSearchResults(results) {
+  var el = document.getElementById('cccSearchResults');
+  var body = document.getElementById('cccSheetBody');
+  var related = document.getElementById('cccSheetRelated');
+  if (!el) return;
+  if (!results.length) {
+    el.innerHTML = '<div class="ccc-search-empty">No results found</div>';
+    el.style.display = '';
+    body.style.display = 'none';
+    related.style.display = 'none';
+    return;
+  }
+  el.innerHTML = results.map(function(r) {
+    var num = r.item.num;
+    var text = r.item.text || '';
+    var preview = text.slice(0, 120);
+    if (text.length > 120) preview += '\u2026';
+    var ctx = _getSectionContext(num);
+    return '<div class="ccc-search-item" onclick="cccSearchSelect(\'' + num + '\')">'
+      + '<div class="ccc-search-item-top">'
+      + '<span class="ccc-search-num">\u00A7' + num + '</span>'
+      + (ctx ? '<span class="ccc-search-ctx">' + utils.esc(ctx) + '</span>' : '')
+      + '</div>'
+      + '<div class="ccc-search-preview">' + utils.esc(preview) + '</div>'
+      + '</div>';
+  }).join('');
+  el.style.display = '';
+  body.style.display = 'none';
+  related.style.display = 'none';
+}
+
+function _hideSearchResults() {
+  var el = document.getElementById('cccSearchResults');
+  var body = document.getElementById('cccSheetBody');
+  var related = document.getElementById('cccSheetRelated');
+  if (el) el.style.display = 'none';
+  if (body) body.style.display = '';
+  if (related) related.style.display = '';
+}
+
+function cccSearchSelect(numStr) {
+  var input = document.getElementById('cccSearchInput');
+  if (input) input.value = '';
+  _hideSearchResults();
+  cccNavigate(numStr);
+}
+
 module.exports = {
   openCCC: openCCC,
   closeCCC: closeCCC,
   openCCCAboveExam: openCCCAboveExam,
   cccNavigate: cccNavigate,
   cccGoBack: cccGoBack,
+  cccSearchSelect: cccSearchSelect,
 };

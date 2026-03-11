@@ -109,6 +109,9 @@
     <!-- HOLY DAY OF OBLIGATION BANNER — shown day-of and day-before -->
     <div id="hdoBanner"></div>
 
+    <!-- FASTING & ABSTINENCE BANNER — Ash Wednesday, Good Friday, Lenten Fridays -->
+    <div id="fastingBanner"></div>
+
     <!-- Saint/celebration card (first content section) -->
     <div class="more-section more-section--tight" id="saintSection">
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
@@ -185,6 +188,10 @@
   <div class="ccc-sheet-scroll" id="cccSheetScroll">
     <button class="ccc-back-btn" id="cccBackBtn" onclick="cccGoBack()">&#8592; Back</button>
     <div class="ccc-sheet-title">Catechism of the Catholic Church</div>
+    <div class="ccc-search-wrap" id="cccSearchWrap">
+      <input type="search" class="ccc-search-input" id="cccSearchInput" placeholder="Search the Catechism&#x2026;" autocomplete="off">
+    </div>
+    <div id="cccSearchResults" class="ccc-search-results" style="display:none"></div>
     <div id="cccSheetBody"></div>
     <div id="cccSheetRelated"></div>
   </div>

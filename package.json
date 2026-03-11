@@ -8,15 +8,20 @@
     "dev": "node scripts/build.js --watch",
     "schema": "node scripts/generate-schema.js",
     "validate": "npx ajv-cli validate --spec=draft7 -s parish_data.schema.json -d parish_data.json --errors=text --all-errors -c ajv-formats",
-    "precommit": "npm run build && npm run schema && npm run validate"
+    "precommit": "npm run build && npm run schema && npm run validate",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.49.0",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.0",
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "husky": "^9.1.7"
   },
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "@nozbe/microfuzz": "^1.0.0"
   }
 }

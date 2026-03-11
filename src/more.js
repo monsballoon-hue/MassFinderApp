@@ -42,6 +42,7 @@ function renderMore() {
   var fetchLiturgicalDay = readings.fetchLiturgicalDay;
   var setLiturgicalSeason = readings.setLiturgicalSeason;
   var renderHDOBanner = readings.renderHDOBanner;
+  var renderFastingBanner = readings.renderFastingBanner;
   var updateHDOBadge = readings.updateHDOBadge;
   var renderSaintCard = readings.renderSaintCard;
   var switchTab = require('./ui.js').switchTab;
@@ -208,6 +209,7 @@ function renderMore() {
   fetchLiturgicalDay().then(function(events) {
     setLiturgicalSeason(events);
     renderHDOBanner(events);
+    renderFastingBanner(events);
     updateHDOBadge(events);
     renderSaintCard(events);
   });
