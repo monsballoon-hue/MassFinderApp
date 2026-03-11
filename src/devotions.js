@@ -36,22 +36,37 @@ function _wrapTerms(html) {
   var keys = Object.keys(TERM_DEFS);
   // Sort by length descending so longer terms match first
   keys.sort(function(a, b) { return b.length - a.length; });
-  keys.forEach(function(term) {
-    // Match term as whole word (case-insensitive), but NOT inside HTML tags or existing popovers
-    var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    var re = new RegExp('(?<![<\\w])(' + escaped + ')(?![\\w>])', 'gi');
-    var def = TERM_DEFS[term];
-    html = html.replace(re, function(match) {
-      _popId++;
-      var id = 'td' + _popId;
-      return '<span class="term-trigger" popovertarget="' + id + '">' + match + '</span>'
-        + '<span popover id="' + id + '" class="term-popover">'
-        + '<span class="term-popover-word">' + match + '</span>'
-        + '<span class="term-popover-def">' + esc(def) + '</span>'
-        + '</span>';
+
+  // Split HTML into tags and text segments to avoid matching inside HTML tags
+  var parts = html.split(/(<[^>]+>)/);
+  var inTag = false;
+  var tagDepth = {};  // track tags we've inserted to avoid double-wrapping
+
+  for (var p = 0; p < parts.length; p++) {
+    // Skip HTML tags
+    if (parts[p].charAt(0) === '<') continue;
+    // Skip empty text
+    if (!parts[p].trim()) continue;
+
+    var text = parts[p];
+    keys.forEach(function(term) {
+      var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Word boundary match (case-insensitive), only first occurrence per segment
+      var re = new RegExp('\\b(' + escaped + ')\\b', 'gi');
+      var def = TERM_DEFS[term];
+      text = text.replace(re, function(match) {
+        _popId++;
+        var id = 'td' + _popId;
+        return '<span class="term-trigger" popovertarget="' + id + '">' + match + '</span>'
+          + '<span popover id="' + id + '" class="term-popover">'
+          + '<span class="term-popover-word">' + match + '</span>'
+          + '<span class="term-popover-def">' + esc(def) + '</span>'
+          + '</span>';
+      });
     });
-  });
-  return html;
+    parts[p] = text;
+  }
+  return parts.join('');
 }
 
 var DEVOTIONAL_GUIDES = [

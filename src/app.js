@@ -796,6 +796,17 @@ function _toggleDevPanel() {
     + '<button onclick="window._devSeed(\'clear-prayer\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Clear Prayer Data</button>'
     + '</div></div>';
 
+  // Notification testing
+  var notifPerm = ('Notification' in window) ? Notification.permission : 'unsupported';
+  var notifEnabled = localStorage.getItem('mf-notifications') === 'enabled';
+  var notifHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Notifications</div>'
+    + '<div style="font-size:var(--text-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-2)">Permission: <strong>' + notifPerm + '</strong> &middot; Reminder: <strong>' + (notifEnabled ? 'ON' : 'OFF') + '</strong></div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap">'
+    + '<button onclick="window._devTestNotif()" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Fire Test Notification</button>'
+    + '<button onclick="window._devToggleNotif()" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid ' + (notifEnabled ? 'var(--color-primary)' : 'var(--color-border)') + ';background:' + (notifEnabled ? 'var(--color-primary)' : 'var(--color-surface)') + ';color:' + (notifEnabled ? 'white' : 'var(--color-text-secondary)') + ';cursor:pointer;min-height:32px">' + (notifEnabled ? 'Disable' : 'Enable') + ' Reminder</button>'
+    + '</div></div>';
+
   var resetHtml = '<button onclick="localStorage.clear();location.reload()" style="display:block;width:100%;padding:var(--space-3);margin-top:var(--space-3);background:#DC2626;color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);border-radius:var(--radius-md);cursor:pointer;min-height:44px">Clear All localStorage &amp; Reload</button>';
 
   panel.innerHTML = '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-2)">'
@@ -806,6 +817,7 @@ function _toggleDevPanel() {
     + seasonHtml
     + fastingHtml
     + qaHtml
+    + notifHtml
     + seedHtml
     + resetHtml;
 
@@ -986,6 +998,28 @@ window._devSeed = function(type) {
     localStorage.removeItem('mf-novena-active');
     alert('Cleared prayer log, confession tracker, and active novena.');
   }
+  _closeDevPanel();
+  _toggleDevPanel();
+};
+
+window._devTestNotif = function() {
+  if (!('Notification' in window)) { alert('Notifications not supported in this browser.'); return; }
+  if (Notification.permission !== 'granted') {
+    Notification.requestPermission().then(function(perm) {
+      if (perm === 'granted') window._devTestNotif();
+      else alert('Notification permission denied.');
+    });
+    return;
+  }
+  new Notification('MassFinder \u2014 Daily Reading', {
+    body: 'Today\u2019s readings and reflections are ready. (Dev test)',
+    icon: '/assets/icon-192.png',
+    tag: 'dev-test'
+  });
+};
+
+window._devToggleNotif = function() {
+  window.toggleNotifications();
   _closeDevPanel();
   _toggleDevPanel();
 };

@@ -1366,9 +1366,10 @@ html[data-theme="dark"] .fasting-banner--full { background:rgba(239,68,68,0.12);
 .ics-card-btn--outline { background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary); }
 
 /* CCC REFERENCE BOTTOM SHEET (LIB-05: native <dialog>) */
-.ccc-sheet { border:none;padding:0;margin:0;margin-top:auto;max-height:88vh;max-height:88dvh;width:100%;background:var(--color-surface);border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06);position:fixed;bottom:0;left:0;right:0; }
+/* showModal() places in top layer — use margin to anchor bottom, inset for full coverage */
+.ccc-sheet { border:none;padding:0;margin:0 0 0 0;inset:auto 0 0 0;max-height:88vh;max-height:88dvh;width:100%;max-width:100%;background:var(--color-surface);border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06); }
 .ccc-sheet::backdrop { background:rgba(0,0,0,0.45);-webkit-tap-highlight-color:transparent; }
-@media (min-width:768px) { .ccc-sheet { left:50%;right:auto;max-width:var(--max-width);transform:translateX(-50%); } }
+@media (min-width:768px) { .ccc-sheet { inset:auto auto 0 50%;max-width:var(--max-width);transform:translateX(-50%); } }
 /* CCC-10: Enlarged handle area */
 .ccc-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:var(--space-4) auto var(--space-2);flex-shrink:0; }
 /* CCC-12: Generous bottom scroll padding */
