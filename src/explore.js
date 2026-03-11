@@ -13,6 +13,7 @@ var _bibleXrefs = null;  // cached bible-xrefs.json
 var _lectionary = null;  // cached lectionary-index.json
 var _cccVerseIndex = null; // reverse index: Bible ref -> [ccc par]
 var _summaCache = null;   // cached summa-daily.json
+var _cccHierarchy = null; // cached ccc-hierarchy.json
 
 // CCC Section context (duplicated from ccc.js for independence)
 var _CCC_SECTIONS = [
@@ -89,6 +90,15 @@ function _loadAll() {
       .then(function(r) { return r.json(); })
       .then(function(d) { _summaCache = d; })
       .catch(function() { _summaCache = null; })
+    );
+  }
+
+  // CCC Hierarchy
+  if (!_cccHierarchy) {
+    promises.push(fetch('/data/ccc-hierarchy.json')
+      .then(function(r) { return r.json(); })
+      .then(function(d) { _cccHierarchy = d; })
+      .catch(function() { _cccHierarchy = null; })
     );
   }
 
@@ -217,7 +227,7 @@ function _generateConnections(type, id) {
       });
       if (lectResults.length) {
         connections.push({
-          group: 'At Mass',
+          group: 'When You\u2019ll Hear This at Mass',
           items: lectResults.map(function(lr) {
             return { type: 'info', label: lr.label, detail: lr.type };
           })
@@ -291,7 +301,7 @@ function _generateConnections(type, id) {
     var lectMatches = _findInLectionary(id);
     if (lectMatches.length) {
       connections.push({
-        group: 'At Mass',
+        group: 'When You\u2019ll Hear This at Mass',
         items: lectMatches.map(function(lr) {
           return { type: 'info', label: lr.label, detail: lr.type };
         })
@@ -308,6 +318,91 @@ function _refToXrefKey(ref) {
   if (!m) return ref;
   var book = m[1].trim();
   return book + ':' + m[2] + ':' + m[3];
+}
+
+// ── P2-03: Prev/Next navigation ──
+function _getCCCPrev(id) {
+  var num = parseInt(id, 10);
+  for (var i = num - 1; i >= 1; i--) {
+    if (_cccParas && _cccParas[i]) return String(i);
+  }
+  return null;
+}
+
+function _getCCCNext(id) {
+  var num = parseInt(id, 10);
+  for (var i = num + 1; i <= 2865; i++) {
+    if (_cccParas && _cccParas[i]) return String(i);
+  }
+  return null;
+}
+
+function _getSummaPrev(id) {
+  if (!_summaCache || !_summaCache.articles) return null;
+  for (var i = 0; i < _summaCache.articles.length; i++) {
+    if (_summaCache.articles[i].id === id) {
+      return i > 0 ? _summaCache.articles[i - 1].id : null;
+    }
+  }
+  return null;
+}
+
+function _getSummaNext(id) {
+  if (!_summaCache || !_summaCache.articles) return null;
+  for (var i = 0; i < _summaCache.articles.length; i++) {
+    if (_summaCache.articles[i].id === id) {
+      return i < _summaCache.articles.length - 1 ? _summaCache.articles[i + 1].id : null;
+    }
+  }
+  return null;
+}
+
+function _renderPageNav(sourceType, currentId) {
+  var prev = null;
+  var next = null;
+  var posLabel = '';
+
+  if (sourceType === 'ccc') {
+    prev = _getCCCPrev(currentId);
+    next = _getCCCNext(currentId);
+    posLabel = '\u00A7' + currentId + ' of 2,865';
+  } else if (sourceType === 'summa') {
+    prev = _getSummaPrev(currentId);
+    next = _getSummaNext(currentId);
+    posLabel = currentId;
+  }
+
+  if (!prev && !next) return '';
+
+  var html = '<div class="explore-page-nav">';
+  if (prev) {
+    html += '<button class="explore-nav-btn" onclick="explorePivot(\'' + sourceType + '\',\'' + utils.esc(prev) + '\')">\u2190</button>';
+  } else {
+    html += '<div class="explore-nav-spacer"></div>';
+  }
+  html += '<span class="explore-nav-pos">' + utils.esc(posLabel) + '</span>';
+  if (next) {
+    html += '<button class="explore-nav-btn" onclick="explorePivot(\'' + sourceType + '\',\'' + utils.esc(next) + '\')">\u2192</button>';
+  } else {
+    html += '<div class="explore-nav-spacer"></div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+// ── Hierarchy breadcrumb path for CCC paragraphs ──
+function _getHierarchyPath(num) {
+  if (!_cccHierarchy || !_cccHierarchy.lookup || !_cccHierarchy.hierarchy) return '';
+  var idx = _cccHierarchy.lookup[num];
+  if (!idx) return '';
+  var h = _cccHierarchy.hierarchy;
+  var parts = [];
+  if (idx[0] >= 0 && h[idx[0]]) parts.push(h[idx[0]].title);
+  if (idx[1] >= 0 && h[idx[0]] && h[idx[0]].sections[idx[1]]) parts.push(h[idx[0]].sections[idx[1]].title);
+  if (idx[2] >= 0 && h[idx[0]] && h[idx[0]].sections[idx[1]] && h[idx[0]].sections[idx[1]].chapters[idx[2]]) {
+    parts.push(h[idx[0]].sections[idx[1]].chapters[idx[2]].title);
+  }
+  return parts.join(' \u203A ');
 }
 
 function _getPreview(raw) {
@@ -333,12 +428,18 @@ function _openCCCFromExplore(num) {
   }, 100);
 }
 
-// ── REF-02: Connection tab switching ──
+// ── Connection tab switching ──
 function _switchConnTab(idx) {
-  var tabs = document.querySelectorAll('.explore-conn-tab');
-  var panels = document.querySelectorAll('.explore-conn-panel');
-  tabs.forEach(function(t, i) { t.classList.toggle('explore-conn-tab--active', i === idx); });
-  panels.forEach(function(p, i) { p.style.display = i === idx ? '' : 'none'; });
+  var container = document.getElementById('exploreConnTabs');
+  if (!container) return;
+  var tabs = container.querySelectorAll('.explore-conn-tab');
+  var panels = container.querySelectorAll('.explore-conn-panel');
+  for (var i = 0; i < tabs.length; i++) {
+    tabs[i].classList.toggle('explore-conn-tab--active', i === idx);
+  }
+  for (var i = 0; i < panels.length; i++) {
+    panels[i].style.display = i === idx ? '' : 'none';
+  }
 }
 
 // ── Rendering ──
@@ -367,7 +468,7 @@ function _render() {
 
   if (_current.type === 'ccc') {
     var num = parseInt(_current.id, 10);
-    var ctx = _getSectionContext(num);
+    var ctx = _getHierarchyPath(num) || _getSectionContext(num);
     var text = _cccParas && _cccParas[num];
 
     // BT-03: Drop-cap heading
@@ -421,23 +522,35 @@ function _render() {
     }
   }
 
-  // REF-02: Connection tabs instead of stacked groups
+  // P2-04: Connection tabs with counts and overflow
   var connections = _generateConnections(_current.type, _current.id);
   if (connections.length) {
-    html += '<div class="explore-conn-tabs" id="exploreConnTabs">';
-    html += '<div class="explore-conn-tab-bar">';
+    html += '<div class="explore-conn" id="exploreConnTabs">';
+    html += '<div class="explore-conn-tabs">';
     connections.forEach(function(group, gi) {
       var activeClass = gi === 0 ? ' explore-conn-tab--active' : '';
-      html += '<button class="explore-conn-tab' + activeClass + '" onclick="_switchConnTab(' + gi + ')">' + utils.esc(group.group) + '</button>';
+      html += '<button class="explore-conn-tab' + activeClass + '" onclick="_switchConnTab(' + gi + ')">'
+        + utils.esc(group.group)
+        + '<span class="explore-conn-tab-count">' + group.items.length + '</span>'
+        + '</button>';
     });
     html += '</div>';
 
     connections.forEach(function(group, gi) {
       var visClass = gi === 0 ? '' : ' style="display:none"';
       html += '<div class="explore-conn-panel" data-conn-idx="' + gi + '"' + visClass + '>';
-      group.items.forEach(function(item) {
-        html += _renderConnectionItem(item);
-      });
+      var showCount = Math.min(5, group.items.length);
+      for (var ci = 0; ci < showCount; ci++) {
+        html += _renderConnectionItem(group.items[ci]);
+      }
+      if (group.items.length > showCount) {
+        html += '<details class="explore-conn-overflow"><summary class="explore-conn-overflow-btn">'
+          + (group.items.length - showCount) + ' more</summary>';
+        for (var oi = showCount; oi < group.items.length; oi++) {
+          html += _renderConnectionItem(group.items[oi]);
+        }
+        html += '</details>';
+      }
       html += '</div>';
     });
     html += '</div>';
@@ -445,6 +558,11 @@ function _render() {
 
   if (!connections.length && _current.type !== 'summa') {
     html += '<div class="explore-empty">No connections found for this reference.</div>';
+  }
+
+  // P2-03: Prev/Next navigation footer
+  if (_current.type === 'ccc' || _current.type === 'summa') {
+    html += _renderPageNav(_current.type, _current.id);
   }
 
   body.innerHTML = html;
@@ -536,24 +654,14 @@ function _renderLanding() {
     + '<div id="exploreSearchResults" class="explore-search-results"></div>'
     + '</div>';
 
-  // REF-01: Content sources — CCC collapsed, then 4 source cards
+  // P2-06: Five source cards in clean grid
   html += '<div class="explore-section-label">Content</div>';
   html += '<div class="explore-source-grid">';
 
-  // CCC as collapsible first card spanning full width
-  html += '<details class="explore-source-card explore-source-card--ccc">'
-    + '<summary class="explore-source-summary">'
-    + '<div><div class="explore-source-title">Catechism (CCC)</div>'
-    + '<div class="explore-source-sub">2,865 paragraphs \u00b7 20 sections</div></div>'
-    + '</summary>'
-    + '<div class="explore-ccc-sections">';
-  _TOPICS.forEach(function(t) {
-    html += '<button class="explore-ccc-section-btn" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
-      + utils.esc(t.label) + '<span class="explore-ccc-range">\u00A7' + t.start + '\u2013' + t.end + '</span>'
-      + '</button>';
-  });
-  html += '</div></details>';
-
+  html += '<button class="explore-source-card" onclick="_exploreCCCLanding()">'
+    + '<div class="explore-source-title">Catechism (CCC)</div>'
+    + '<div class="explore-source-sub">2,865 paragraphs</div>'
+    + '</button>';
   html += '<button class="explore-source-card" onclick="_exploreBibleLanding()">'
     + '<div class="explore-source-title">Sacred Scripture</div>'
     + '<div class="explore-source-sub">73 books \u00b7 DRB &amp; CPDV</div>'
@@ -679,6 +787,78 @@ function _exploreSearch(query) {
     });
     el.innerHTML = html;
   }, 200);
+}
+
+// ── P2-05: CCC Hierarchy TOC ──
+function _exploreCCCLanding() {
+  _current = null;
+  _history = [];
+  var body = document.getElementById('exploreBody');
+  var trail = document.getElementById('exploreTrail');
+  if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Catechism (CCC)</span>';
+
+  if (_cccHierarchy && _cccHierarchy.hierarchy) {
+    var html = '';
+    _cccHierarchy.hierarchy.forEach(function(part, pi) {
+      html += '<details class="explore-hier-part"' + (pi === 0 ? ' open' : '') + '>'
+        + '<summary class="explore-hier-part-header">'
+        + '<span class="explore-hier-part-title">' + utils.esc(part.title) + '</span>'
+        + '<span class="explore-hier-range">\u00A7' + part.range[0] + '\u2013' + part.range[1] + '</span>'
+        + '</summary>';
+
+      part.sections.forEach(function(section) {
+        if (section.chapters.length === 0) {
+          // Flat section — just a tappable row
+          html += '<div class="explore-item explore-item--tap" onclick="exploreTopic(' + section.range[0] + ',' + section.range[1] + ')">'
+            + '<div class="explore-item-label">' + utils.esc(section.title) + '</div>'
+            + '<div class="explore-item-context">\u00A7' + section.range[0] + '\u2013' + section.range[1] + '</div>'
+            + '</div>';
+        } else {
+          html += '<details class="explore-hier-section">'
+            + '<summary class="explore-hier-section-header">'
+            + '<span>' + utils.esc(section.title) + '</span>'
+            + '<span class="explore-hier-range">\u00A7' + section.range[0] + '\u2013' + section.range[1] + '</span>'
+            + '</summary>';
+
+          section.chapters.forEach(function(chapter) {
+            if (chapter.articles.length === 0) {
+              html += '<div class="explore-item explore-item--tap" style="padding-left:var(--space-3)" onclick="exploreTopic(' + chapter.range[0] + ',' + chapter.range[1] + ')">'
+                + '<div class="explore-item-label">' + utils.esc(chapter.title) + '</div>'
+                + '<div class="explore-item-context">\u00A7' + chapter.range[0] + '\u2013' + chapter.range[1] + '</div>'
+                + '</div>';
+            } else {
+              html += '<details class="explore-hier-chapter">'
+                + '<summary class="explore-hier-chapter-header">' + utils.esc(chapter.title)
+                + '<span class="explore-hier-range">\u00A7' + chapter.range[0] + '\u2013' + chapter.range[1] + '</span></summary>';
+              chapter.articles.forEach(function(article) {
+                html += '<div class="explore-item explore-item--tap" style="padding-left:var(--space-4)" onclick="exploreTopic(' + article.range[0] + ',' + article.range[1] + ')">'
+                  + '<div class="explore-item-label">' + utils.esc(article.title) + '</div>'
+                  + '<div class="explore-item-context">\u00A7' + article.range[0] + '\u2013' + article.range[1] + '</div>'
+                  + '</div>';
+              });
+              html += '</details>';
+            }
+          });
+          html += '</details>';
+        }
+      });
+      html += '</details>';
+    });
+
+    body.innerHTML = html;
+    body.scrollTop = 0;
+  } else {
+    // Fallback to section chips if hierarchy not loaded
+    var html = '';
+    _TOPICS.forEach(function(t) {
+      html += '<div class="explore-item explore-item--tap" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
+        + '<div class="explore-item-label">' + utils.esc(t.label) + '</div>'
+        + '<div class="explore-item-context">\u00A7' + t.start + '\u2013' + t.end + '</div>'
+        + '</div>';
+    });
+    body.innerHTML = html;
+    body.scrollTop = 0;
+  }
 }
 
 // ── REF-05: Bible genre grouping ──
@@ -1077,6 +1257,7 @@ function exploreTopic(startNum, endNum) {
 
 // ── Window bindings for onclick handlers ──
 window._exploreSearch = _exploreSearch;
+window._exploreCCCLanding = _exploreCCCLanding;
 window._exploreBibleLanding = _exploreBibleLanding;
 window._exploreBaltLanding = _exploreBaltLanding;
 window._exploreSummaLanding = _exploreSummaLanding;
