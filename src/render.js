@@ -245,7 +245,7 @@ function _locationDisplay(locId) {
   }).join(' ').replace(/ Church .*$/, ' Church');
 }
 
-function _getComingUp(church) {
+function _getComingUp(church, nextSvc) {
   var now = utils.getNow();
   var curDI = now.getDay();
   var curDay = config.DAY_ORDER[curDI];
@@ -281,10 +281,14 @@ function _getComingUp(church) {
   cands.sort(function(a, b) { return a.totalMin - b.totalMin; });
   // Dedupe same type+time+day
   var seen = {}, results = [];
+  // DC-R2-06: Build key for the next service hero to skip it in Coming Up
+  var nextSvcKey = nextSvc ? (nextSvc.service.type + '|' + nextSvc.service.time) : '';
   for (var k = 0; k < cands.length && results.length < 3; k++) {
     var key = cands[k].service.type + '|' + cands[k].service.time + '|' + cands[k].dayIdx;
     if (seen[key]) continue;
     seen[key] = true;
+    // DC-R2-06: Skip the entry that matches the Next Service hero (same type+time, today only)
+    if (nextSvcKey && cands[k].daysUntil === 0 && (cands[k].service.type + '|' + cands[k].service.time) === nextSvcKey) continue;
     results.push(cands[k]);
   }
 
@@ -297,7 +301,19 @@ function _getComingUp(church) {
       ? utils.fmt12(r.service.time) + ' \u2013 ' + utils.fmt12(r.service.end_time)
       : utils.fmt12(r.service.time);
     var typeLabel = config.SVC_LABELS[r.service.type] || r.service.type;
-    var dayLabel = r.daysUntil === 0 ? 'Today' : 'Tomorrow';
+    // DC-R2-02: Use relative time for today instead of "Today"
+    var dayLabel = 'Tomorrow';
+    if (r.daysUntil === 0) {
+      var minsLeft = r.startMin - curMin;
+      if (minsLeft <= 0) {
+        dayLabel = 'Now';
+      } else if (minsLeft <= 60) {
+        dayLabel = 'in ' + minsLeft + ' min';
+      } else {
+        var hrsLeft = Math.floor(minsLeft / 60);
+        dayLabel = 'in ' + hrsLeft + (hrsLeft === 1 ? ' hr' : ' hrs');
+      }
+    }
     var locLabel = isMultiLoc && r.service.location_id ? _locationDisplay(r.service.location_id) : '';
 
     html += '<div class="detail-coming-row">';
@@ -440,6 +456,7 @@ function openDetail(id, trapFocus, releaseFocus) {
   var _autoOpenSection = _filterSectionMap[state.currentFilter] || 'mass';
 
   var secHtml = '';
+  var _renderedSecs = [];
   for (var si = 0; si < secs.length; si++) {
     var sec = secs[si];
     var svcs;
@@ -501,11 +518,23 @@ function openDetail(id, trapFocus, releaseFocus) {
       bodyInner = renderSched(svcs, locL, ml, sec.types, _curDay);
     }
 
-    secHtml += '<div class="detail-section"><button class="accordion-header" aria-expanded="' + isFirst + '" onclick="toggleAcc(this)">'
+    secHtml += '<div class="detail-section" id="sec-' + sec.k + '"><button class="accordion-header" aria-expanded="' + isFirst + '" onclick="toggleAcc(this)">'
       + '<div class="accordion-header-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="' + sec.ic + '"/></svg>'
       + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeText + '</span>' + todayDot + '</div>'
       + '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
       + '</button><div class="accordion-body' + (isFirst ? ' open' : '') + '"><div class="accordion-body-inner">' + bodyInner + '</div></div></div>';
+    _renderedSecs.push({ k: sec.k, t: sec.t });
+  }
+
+  // DC-R2-08: Jump nav strip for complex parishes (3+ accordion sections)
+  var jumpNav = '';
+  if (_renderedSecs.length >= 3) {
+    jumpNav = '<div class="detail-jump-nav">';
+    for (var ji = 0; ji < _renderedSecs.length; ji++) {
+      var shortLabel = _renderedSecs[ji].t.replace(' & Holy Hour', '').replace(' & Devotion', '').replace(' Schedule', '');
+      jumpNav += '<button class="detail-jump-chip" onclick="document.getElementById(\'sec-' + _renderedSecs[ji].k + '\').scrollIntoView({behavior:\'smooth\',block:\'start\'})">' + shortLabel + '</button>';
+    }
+    jumpNav += '</div>';
   }
 
   // Community events section — lazy require to avoid circular dep
@@ -561,7 +590,7 @@ function openDetail(id, trapFocus, releaseFocus) {
     + '<div class="detail-actions"><button class="detail-action-btn fav-btn' + (fav ? ' fav-active' : '') + '" data-id="' + c.id + '" onclick="toggleFav(\'' + c.id + '\')" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="' + (fav ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
     + '<button class="detail-action-btn" onclick="closeDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
     + '</div></div><div class="detail-town">' + townHtml + '</div>' + nextHtml + '<div class="detail-badges">' + bg + '</div></div>'
-    + '<div class="detail-body">' + _getComingUp(c) + visitHtml + qa + chtml + secHtml + ceHtml + vp + footer + '</div>';
+    + '<div class="detail-body">' + _getComingUp(c, nextSvc) + visitHtml + qa + chtml + jumpNav + secHtml + ceHtml + vp + footer + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');
@@ -812,9 +841,11 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
   }
 
   // Collapsed weekday rows right after Sunday
+  var _collapsedShowedToday = false;
   if (collapsed.length) {
     collapsed.sort(function(a, b) { return (utils.toMin(a.svc.time) || 0) - (utils.toMin(b.svc.time) || 0); });
     var weekdayIsToday = ['monday','tuesday','wednesday','thursday','friday'].indexOf(todayDay) >= 0;
+    _collapsedShowedToday = weekdayIsToday;
     var collapsedTodayCls = weekdayIsToday ? ' schedule-day--today' : '';
     html += '<div class="schedule-day' + collapsedTodayCls + '"><div class="schedule-day-label">Weekdays' + (weekdayIsToday ? '<span class="schedule-today-tag">Today</span>' : '') + '</div>';
     for (var ci = 0; ci < collapsed.length; ci++) {
@@ -824,10 +855,11 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
   }
 
   // Individual uncollapsed weekdays (Mon-Fri that didn't collapse), in day order
+  // DC-R2-01: suppress TODAY tag if collapsed weekdays already showed it (keep highlight, skip tag)
   for (var wdi = 0; wdi < week.length; wdi++) {
     var day = week[wdi];
     if (day === 'sunday' || day === 'saturday') continue;
-    if (dayGrp[day]) html += renderDayGroup(day, config.DAY_NAMES[day] || day, dayGrp[day], locL, ml);
+    if (dayGrp[day]) html += renderDayGroup(day, config.DAY_NAMES[day] || day, dayGrp[day], locL, ml, _collapsedShowedToday);
   }
 
   // Saturday
@@ -869,7 +901,7 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
   return html;
 
   // === Nested Helper: render a day group ===
-  function renderDayGroup(day, label, ss, locL, ml) {
+  function renderDayGroup(day, label, ss, locL, ml, suppressTodayTag) {
     if (!ss || !ss.length) return '';
     ss.sort(function(a, b) { return (utils.toMin(a.time) || 0) - (utils.toMin(b.time) || 0); });
     var merged = mergeSameTime(ss);
@@ -879,7 +911,8 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
       (day === 'weekday' && ['monday','tuesday','wednesday','thursday','friday'].indexOf(todayDay) >= 0) ||
       (day === 'daily');
     var todayCls = isToday ? ' schedule-day--today' : '';
-    var todayTag = isToday ? '<span class="schedule-today-tag">Today</span>' : '';
+    // DC-R2-01: suppress tag text if collapsed weekdays already showed TODAY, but keep highlight
+    var todayTag = (isToday && !suppressTodayTag) ? '<span class="schedule-today-tag">Today</span>' : '';
     var sub = day === 'first_friday' ? '<div class="schedule-day-subtitle">Devotion to the Sacred Heart of Jesus</div>'
       : day === 'first_saturday' ? '<div class="schedule-day-subtitle">Devotion to the Immaculate Heart of Mary</div>' : '';
     var h = '<div class="schedule-day' + dayCls + todayCls + '"><div class="schedule-day-label">' + utils.esc(label) + todayTag + '</div>' + sub;
