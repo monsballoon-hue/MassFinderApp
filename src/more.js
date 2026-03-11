@@ -200,28 +200,17 @@ function renderMore() {
     });
   }
 
-  // Footer
+  // Footer — Settings card + version
   var footer = document.getElementById('moreFooter');
   if (footer) {
-    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-    var curSize = localStorage.getItem('mf-text-size') || 'default';
-    var notifEnabled = localStorage.getItem('mf-notifications') === 'enabled';
-    var notifSupported = 'Notification' in window;
-    footer.innerHTML = '<div class="footer-controls">'
-      + '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
-      + (isDark ? 'Light Mode' : 'Dark Mode')
-      + '</button>'
-      + '<div class="text-size-control">'
-      + '<span class="text-size-label">Text size</span>'
-      + '<div class="text-size-btns">'
-      + '<button class="text-size-btn' + (curSize === 'small' ? ' active' : '') + '" onclick="window.setTextSize(\'small\')" aria-label="Small text">A</button>'
-      + '<button class="text-size-btn text-size-btn--md' + (curSize === 'default' ? ' active' : '') + '" onclick="window.setTextSize(\'default\')" aria-label="Default text">A</button>'
-      + '<button class="text-size-btn text-size-btn--lg' + (curSize === 'large' ? ' active' : '') + '" onclick="window.setTextSize(\'large\')" aria-label="Large text">A</button>'
-      + '</div></div></div>'
-      + (notifSupported ? '<div class="footer-controls" style="margin-top:var(--space-2)">'
-        + '<button id="notif-toggle-btn" class="theme-toggle" onclick="window.toggleNotifications()">'
-        + 'Daily Reminder: ' + (notifEnabled ? 'On' : 'Off')
-        + '</button></div>' : '')
+    footer.innerHTML = '<div class="more-settings-card" onclick="openSettings()" role="button" tabindex="0">'
+      + '<div class="more-settings-body">'
+      + '<div class="more-settings-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>'
+      + '<div><div class="more-settings-title">Settings</div>'
+      + '<div class="more-settings-sub">Theme, text size, notifications, privacy</div></div>'
+      + '</div>'
+      + '<span class="prayer-tool-chevron" aria-hidden="true">\u203A</span>'
+      + '</div>'
       + '<div onclick="window._devTap && window._devTap()" style="cursor:default">MassFinder v2</div>';
   }
 

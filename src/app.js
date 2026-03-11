@@ -37,6 +37,7 @@ var novena = require('./novena.js');
 var installGuide = require('./install-guide.js');
 var bible = require('./bible.js');
 var explore = require('./explore.js');
+var settings = require('./settings.js');
 
 var state = data.state;
 
@@ -252,6 +253,16 @@ window.explorePivot = explore.explorePivot;
 window.explorePop = explore.explorePop;
 window.exploreBack = explore.exploreBack;
 window.exploreTopic = explore.exploreTopic;
+window.openSettings = settings.openSettings;
+window.closeSettings = settings.closeSettings;
+window.setSettingTheme = settings.setSettingTheme;
+window.setSettingSize = settings.setSettingSize;
+window.toggleSettingNotif = settings.toggleSettingNotif;
+window.setSettingRosary = settings.setSettingRosary;
+window.toggleSettingConf = settings.toggleSettingConf;
+window.settingsClearPrayer = settings.settingsClearPrayer;
+window.settingsClearSaved = settings.settingsClearSaved;
+window.settingsClearAll = settings.settingsClearAll;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -353,7 +364,8 @@ if (sC) {
 // ── Keyboard ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('exploreOverlay').classList.contains('open')) explore.closeExplore();
+    if (document.getElementById('settingsOverlay').classList.contains('active')) settings.closeSettings();
+    else if (document.getElementById('exploreOverlay').classList.contains('open')) explore.closeExplore();
     else if (document.getElementById('stationsOverlay').classList.contains('open')) stations.closeStations();
     else if (document.getElementById('novenaOverlay').classList.contains('open')) novena.closeNovena();
     else if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();

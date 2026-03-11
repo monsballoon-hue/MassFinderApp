@@ -567,6 +567,18 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .detail-visitation-hours { font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:2px; }
 .contact-role { font-size:var(--text-xs);color:var(--color-text-tertiary); }
 .detail-body { padding: 0 var(--space-5) var(--space-8); }
+/* OW-23: Coming Up section */
+.detail-coming-up { margin:var(--space-3) 0 var(--space-4);padding:var(--space-3) var(--space-4);background:var(--color-surface-hover);border-radius:var(--radius-md);border-left:3px solid var(--color-accent); }
+.detail-coming-label { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-accent-text, var(--color-accent));text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-2); }
+.detail-coming-row { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-2) 0; }
+.detail-coming-row + .detail-coming-row { border-top:1px solid var(--color-border-light); }
+.detail-coming-time { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);white-space:nowrap;min-width:70px; }
+.detail-coming-info { flex:1;min-width:0; }
+.detail-coming-type { font-size:var(--text-sm);color:var(--color-text-secondary);display:block; }
+.detail-coming-loc { font-size:var(--text-xs);color:var(--color-text-tertiary);display:block; }
+.detail-coming-day { font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-text-tertiary);white-space:nowrap; }
+html[data-theme="dark"] .detail-coming-up { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .detail-coming-row + .detail-coming-row { border-top-color:var(--color-border); }
 
 /* EVENT DETAIL PANEL */
 .event-detail-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1002; background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 92vh; max-height: 92dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateY(100%); transition: transform 0.35s var(--ease-out); box-shadow: var(--shadow-elevated); overscroll-behavior: contain; }
@@ -2164,3 +2176,62 @@ html[data-theme="dark"] .bible-handle { background:var(--color-border); }
 html[data-theme="dark"] .bible-listen-btn { background:var(--color-surface);border-color:var(--color-border); }
 html[data-theme="dark"] .bible-related-item:hover { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .bible-related-item:active { background:rgba(255,255,255,0.08); }
+
+/* ── Settings Overlay (OW-25) ── */
+.settings-overlay { position:fixed;inset:0;z-index:9500;background:var(--color-bg);flex-direction:column;opacity:0;transition:opacity 0.25s ease; }
+.settings-overlay.active { opacity:1; }
+.settings-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-4) var(--space-5);border-bottom:1px solid var(--color-border-light);flex-shrink:0; }
+.settings-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading); }
+.settings-close-btn { display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:none;background:none;color:var(--color-text-tertiary);cursor:pointer;border-radius:var(--radius-full);-webkit-tap-highlight-color:transparent; }
+.settings-close-btn:active { background:rgba(0,0,0,0.06); }
+.settings-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-4) var(--space-5) var(--space-8);overscroll-behavior:contain; }
+
+.settings-group { margin-bottom:var(--space-5); }
+.settings-group-title { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-3); }
+.settings-row { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light); }
+.settings-label { font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text-secondary); }
+
+/* Toggle switch */
+.settings-toggle { position:relative;width:44px;height:26px;border-radius:13px;background:var(--color-border);border:none;cursor:pointer;transition:background 0.2s;-webkit-tap-highlight-color:transparent;flex-shrink:0; }
+.settings-toggle.on { background:var(--color-verified); }
+.settings-toggle-knob { position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:white;box-shadow:0 1px 3px rgba(0,0,0,0.2);transition:transform 0.2s; }
+.settings-toggle.on .settings-toggle-knob { transform:translateX(18px); }
+
+/* Segmented control */
+.settings-seg { display:flex;background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-sm);overflow:hidden; }
+.settings-seg-btn { padding:var(--space-2) var(--space-4);border:none;background:none;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text-tertiary);cursor:pointer;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
+.settings-seg-btn.active { background:var(--color-primary);color:white; }
+.settings-seg-btn:not(:last-child) { border-right:1px solid var(--color-border-light); }
+.settings-seg-sm { font-size:var(--text-xs); }
+.settings-seg-lg { font-size:var(--text-base);font-weight:var(--weight-semibold); }
+
+/* Action buttons (privacy) */
+.settings-action-btn { display:block;width:100%;text-align:left;padding:var(--space-3) 0;border:none;background:none;font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-primary);cursor:pointer;border-bottom:1px solid var(--color-border-light);-webkit-tap-highlight-color:transparent; }
+.settings-action-btn:active { opacity:0.7; }
+.settings-action-danger { color:var(--color-fav); }
+
+/* About section */
+.settings-about { opacity:0.7; }
+.settings-about-row { font-size:var(--text-xs);color:var(--color-text-tertiary);padding:var(--space-1) 0; }
+.settings-about-row a { color:var(--color-primary);text-decoration:none; }
+.settings-link-btn { background:none;border:none;color:var(--color-primary);font-size:var(--text-xs);font-weight:var(--weight-medium);cursor:pointer;padding:0;-webkit-tap-highlight-color:transparent; }
+
+/* More tab — Settings card */
+.more-settings-card { display:flex;align-items:center;justify-content:space-between;padding:var(--space-4);margin-bottom:var(--space-3);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s; }
+.more-settings-card:active { background:var(--color-surface-hover); }
+.more-settings-body { display:flex;align-items:center;gap:var(--space-3); }
+.more-settings-icon { display:flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-bg);color:var(--color-text-tertiary); }
+.more-settings-title { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-heading); }
+.more-settings-sub { font-size:var(--text-xs);color:var(--color-text-tertiary); }
+
+/* Dark mode — Settings */
+html[data-theme="dark"] .settings-close-btn:active { background:rgba(255,255,255,0.08); }
+html[data-theme="dark"] .settings-toggle { background:var(--color-border); }
+html[data-theme="dark"] .settings-toggle.on { background:var(--color-verified); }
+html[data-theme="dark"] .settings-seg { background:var(--color-surface);border-color:var(--color-border); }
+html[data-theme="dark"] .settings-seg-btn:not(:last-child) { border-color:var(--color-border); }
+html[data-theme="dark"] .settings-action-btn { border-color:var(--color-border); }
+html[data-theme="dark"] .settings-row { border-color:var(--color-border); }
+html[data-theme="dark"] .more-settings-card { background:var(--color-surface);border-color:var(--color-border); }
+html[data-theme="dark"] .more-settings-card:active { background:var(--color-surface-hover); }
+html[data-theme="dark"] .more-settings-icon { background:var(--color-bg); }

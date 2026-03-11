@@ -237,6 +237,82 @@ function isFirstDevotionMass(s) {
   return FIRST_DEVOTION_DAYS.indexOf(s.day) >= 0 && MASS_TYPES.indexOf(s.type) >= 0;
 }
 
+// ── OW-23: "Coming Up" — next 3 services chronologically ──
+function _locationDisplay(locId) {
+  if (!locId) return '';
+  return locId.split('-').map(function(w) {
+    return w.charAt(0).toUpperCase() + w.slice(1);
+  }).join(' ').replace(/ Church .*$/, ' Church');
+}
+
+function _getComingUp(church) {
+  var now = utils.getNow();
+  var curDI = now.getDay();
+  var curDay = config.DAY_ORDER[curDI];
+  var curMin = now.getHours() * 60 + now.getMinutes();
+  var isMultiLoc = (church.locations && church.locations.length > 1);
+  var cands = [];
+
+  for (var i = 0; i < church.services.length; i++) {
+    var s = church.services[i];
+    if (!s.time || !s.day) continue;
+    if (s.seasonal && s.seasonal.is_seasonal) continue;
+    var sm = utils.toMin(s.time);
+    if (sm === null) continue;
+    var em = s.end_time ? utils.toMin(s.end_time) : null;
+    var effectiveEnd = em !== null ? em : sm + 60;
+
+    var days = [];
+    if (s.day === 'weekday') days = [1, 2, 3, 4, 5];
+    else if (s.day === 'daily') days = [0, 1, 2, 3, 4, 5, 6];
+    else { var di = config.DAY_ORDER.indexOf(s.day); if (di >= 0) days = [di]; }
+
+    for (var j = 0; j < days.length; j++) {
+      var dayI = days[j];
+      var du = dayI - curDI;
+      if (du < 0) du += 7;
+      if (du === 0 && curMin > effectiveEnd) du = 7;
+      if (du > 1) continue; // only today + tomorrow
+      var totalMin = du * 1440 + (du === 0 ? sm - curMin : sm);
+      cands.push({ service: s, daysUntil: du, dayIdx: dayI, totalMin: totalMin, startMin: sm });
+    }
+  }
+
+  cands.sort(function(a, b) { return a.totalMin - b.totalMin; });
+  // Dedupe same type+time+day
+  var seen = {}, results = [];
+  for (var k = 0; k < cands.length && results.length < 3; k++) {
+    var key = cands[k].service.type + '|' + cands[k].service.time + '|' + cands[k].dayIdx;
+    if (seen[key]) continue;
+    seen[key] = true;
+    results.push(cands[k]);
+  }
+
+  if (!results.length) return '';
+
+  var html = '<div class="detail-coming-up">';
+  html += '<div class="detail-coming-label">Coming Up</div>';
+  results.forEach(function(r) {
+    var timeStr = r.service.end_time
+      ? utils.fmt12(r.service.time) + ' \u2013 ' + utils.fmt12(r.service.end_time)
+      : utils.fmt12(r.service.time);
+    var typeLabel = config.SVC_LABELS[r.service.type] || r.service.type;
+    var dayLabel = r.daysUntil === 0 ? 'Today' : 'Tomorrow';
+    var locLabel = isMultiLoc && r.service.location_id ? _locationDisplay(r.service.location_id) : '';
+
+    html += '<div class="detail-coming-row">';
+    html += '<div class="detail-coming-time">' + timeStr + '</div>';
+    html += '<div class="detail-coming-info">';
+    html += '<span class="detail-coming-type">' + utils.esc(typeLabel) + '</span>';
+    if (locLabel) html += '<span class="detail-coming-loc">at ' + utils.esc(locLabel) + '</span>';
+    html += '</div>';
+    html += '<span class="detail-coming-day">' + dayLabel + '</span>';
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
 // ── Detail Panel ──
 function openDetail(id, trapFocus, releaseFocus) {
   var c = state.allChurches.find(function(x) { return x.id === id; });
@@ -410,7 +486,7 @@ function openDetail(id, trapFocus, releaseFocus) {
     + '<div class="detail-actions"><button class="detail-action-btn fav-btn' + (fav ? ' fav-active' : '') + '" data-id="' + c.id + '" onclick="toggleFav(\'' + c.id + '\')" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="' + (fav ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
     + '<button class="detail-action-btn" onclick="closeDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
     + '</div></div><div class="detail-town">' + townHtml + '</div><div class="detail-badges">' + bg + '</div>' + nextHtml + '</div>'
-    + '<div class="detail-body">' + qa + chtml + visitHtml + secHtml + vp + ceHtml + footer + '</div>';
+    + '<div class="detail-body">' + qa + chtml + visitHtml + _getComingUp(c) + secHtml + vp + ceHtml + footer + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');

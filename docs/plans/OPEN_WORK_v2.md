@@ -659,7 +659,7 @@ if (hidden.length) {
 
 ---
 
-### OW-23: Church Detail — Services Layout Restructuring
+### OW-23: Church Detail — Services Layout Restructuring [DONE]
 
 **Priority:** P2
 **Effort:** 4 hours (UI) + 2 hours (data schema planning)
@@ -831,7 +831,7 @@ The skeleton is replaced when `_renderDailyStrip()` writes to `el.innerHTML`.
 
 ---
 
-### OW-25: Notification Preferences & System Settings Panel
+### OW-25: Notification Preferences & System Settings Panel [DONE]
 
 **Priority:** P2
 **Effort:** 3 hours
@@ -1134,8 +1134,8 @@ Design document (`docs/plans/Portal_Auth_Infrastructure_Spec.md`) + Supabase mig
 | ~~OW-20~~ | ~~Baltimore language modernization~~ | ~~2 hrs~~ | ✅ Done |
 | ~~OW-21~~ | ~~CCC Explore module~~ | ~~6–8 hrs~~ | ✅ Done |
 | ~~OW-22~~ | ~~Bible refs progressive disclosure~~ | ~~1 hr~~ | ✅ Done |
-| OW-23 | Church detail services restructuring | 4+2 hrs | None (data planning doc) |
-| OW-25 | Settings panel | 3 hrs | None |
+| ~~OW-23~~ | ~~Church detail services restructuring~~ | ~~4+2 hrs~~ | ✅ Done |
+| ~~OW-25~~ | ~~Settings panel~~ | ~~3 hrs~~ | ✅ Done |
 
 ### P3 — Scoped projects (design now, build later)
 | ID | Summary | Effort | Dependencies |
