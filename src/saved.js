@@ -128,7 +128,7 @@ function _renderSchedRow(item, isHero) {
   return '<div class="sched-row' + statusCls + (isHero ? ' sched-row--hero' : '') + '" onclick="openDetail(\'' + item.church.id + '\')">'
     + '<div class="sched-time">' + timeStr + '</div>'
     + '<div class="sched-info">'
-    + '<span class="sched-type">' + typeDot + esc(svcLabel) + '</span>' + statusBadge
+    + '<span class="sched-type">' + typeDot + esc(svcLabel) + statusBadge + '</span>'
     + '<span class="sched-church">' + esc(cName) + '</span>'
     + directionsHtml
     + '</div>'
@@ -301,10 +301,7 @@ function renderSaved() {
           html += '<div class="sched-done">Today\u2019s schedule is complete</div>';
         }
       } else {
-        // ST-06: Past services — collapsed summary only
-        if (pastSvcs.length) {
-          html += '<div class="sched-past-summary">' + pastSvcs.length + ' service' + (pastSvcs.length !== 1 ? 's' : '') + ' earlier today</div>';
-        }
+        // ST-06: Past services removed — clean timeline
         // Upcoming services with inline hero
         var maxShow = 6;
         var overflow = upSvcs.length > maxShow ? upSvcs.length - maxShow : 0;
@@ -346,12 +343,9 @@ function renderSaved() {
     html += '<div class="saved-divider"><span>Tomorrow \u00b7 ' + tmrwLabel + '</span></div>';
     html += '<div class="saved-tomorrow-card">';
 
-    var tmrwShow = Math.min(3, tmrwSvcs.length);
+    var tmrwShow = Math.min(2, tmrwSvcs.length);
     for (var tmi = 0; tmi < tmrwShow; tmi++) {
       html += _renderSchedRow(tmrwSvcs[tmi], false);
-    }
-    if (tmrwSvcs.length > 3) {
-      html += '<div class="sched-more-count">+' + (tmrwSvcs.length - 3) + ' more services tomorrow</div>';
     }
     html += '</div>';
   }
