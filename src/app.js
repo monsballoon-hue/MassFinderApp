@@ -35,6 +35,7 @@ var examination = require('./examination.js');
 var stations = require('./stations.js');
 var novena = require('./novena.js');
 var installGuide = require('./install-guide.js');
+var bible = require('./bible.js');
 
 var state = data.state;
 
@@ -195,6 +196,7 @@ window.openInstallGuide = installGuide.openInstallGuide;
 window.closeInstallGuide = installGuide.closeInstallGuide;
 // installGuideNav is set dynamically inside openInstallGuide()
 window.toggleReading = readings.toggleReading;
+window._readingReadAloud = readings.readingReadAloud;
 window.exportLitCalICS = readings.exportLitCalICS;
 window.removeAdv = ui.removeAdv;
 window.updateMFChip = ui.updateMFChip;
@@ -210,6 +212,11 @@ window.openCCCAboveExam = ccc.openCCCAboveExam;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
 window.cccSearchSelect = ccc.cccSearchSelect;
+window.openBible = bible.openBible;
+window.closeBible = bible.closeBible;
+window.bibleNavigate = bible.bibleNavigate;
+window.bibleGoBack = bible.bibleGoBack;
+window.bibleReadAloud = bible.bibleReadAloud;
 window._refTap = refs.handleRefTap;
 window.openRosary = rosary.openRosary;
 window.closeRosary = rosary.closeRosary;
@@ -343,6 +350,7 @@ document.addEventListener('keydown', function(e) {
     else if (document.getElementById('novenaOverlay').classList.contains('open')) novena.closeNovena();
     else if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
     else if (document.getElementById('examOverlay').classList.contains('open')) examination.closeExamination();
+    else if (document.getElementById('bibleSheet').classList.contains('open')) bible.closeBible();
     else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();

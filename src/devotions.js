@@ -1,6 +1,19 @@
 // src/devotions.js — Devotional guide content and rendering
 var utils = require('./utils.js');
 var esc = utils.esc;
+var refs = require('./refs.js');
+
+// Wrap Scripture citations in devotional guide HTML with tappable ref spans.
+// Applied after esc() so the text is already safe. Scripture refs contain no HTML chars.
+function _wrapScriptureRefs(html) {
+  // Matches full book names and common abbreviations with chapter:verse
+  var pattern = /\b((?:1\s*|2\s*|3\s*)?(?:Matthew|Mark|Luke|John|Acts|Romans|Corinthians|Galatians|Ephesians|Philippians|Colossians|Thessalonians|Timothy|Titus|Philemon|Hebrews|James|Peter|Revelation|Genesis|Exodus|Leviticus|Numbers|Deuteronomy|Joshua|Judges|Ruth|Samuel|Kings|Chronicles|Ezra|Nehemiah|Tobit|Judith|Esther|Maccabees|Job|Psalms?|Proverbs|Ecclesiastes|Song\s+of\s+Solomon|Song\s+of\s+Songs|Wisdom|Sirach|Isaiah|Jeremiah|Lamentations|Baruch|Ezekiel|Daniel|Hosea|Joel|Amos|Obadiah|Jonah|Micah|Nahum|Habakkuk|Zephaniah|Haggai|Zechariah|Malachi|Matt|Mk|Lk|Jn|Rom|Cor|Gal|Eph|Phil|Col|Thess|Tim|Heb|Jas|Pet|Rev|Gen|Exod?|Lev|Num|Deut?|Isa|Jer|Ezek?|Dan|Ps)\s+\d+:\d+(?:\s*[-\u2013]\s*\d+)?)\b/g;
+
+  return html.replace(pattern, function(ref) {
+    var escaped = ref.replace(/'/g, '&#39;');
+    return refs.renderRef('bible', ref);
+  });
+}
 
 // ── UX-07: Theological Term Definitions (Popover API) ──
 var TERM_DEFS = {
@@ -280,7 +293,7 @@ function renderGuide(g, sub) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
   }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
-  var body = _wrapTerms(g.body);
+  var body = _wrapScriptureRefs(_wrapTerms(g.body));
   return '<details class="' + cls + '"><summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
     + '<div class="devot-body">' + body + findLink + '</div>'
     + '</details>';

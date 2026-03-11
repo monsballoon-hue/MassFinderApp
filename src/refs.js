@@ -45,7 +45,10 @@ function handleRefTap(type, val) {
     if (window.openCCC) window.openCCC(String(val));
     return;
   }
-  // Phase 4: type === 'bible' — lazy-load from data/bible-drb/[book].json
+  if (type === 'bible') {
+    if (window.openBible) window.openBible(String(val));
+    return;
+  }
 }
 
 // Wire keyboard activation (Enter/Space) for ref-tap spans in a container.

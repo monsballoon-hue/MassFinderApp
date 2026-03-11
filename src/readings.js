@@ -227,6 +227,17 @@ function fetchReadings() {
       html += sections.map(function(s, i) {
         var id = 'reading-entry-' + i;
         var hasText = s.text && s.text.length > 0;
+        var listenHtml = '';
+        if (hasText && typeof speechSynthesis !== 'undefined') {
+          // Strip any embedded markup from text for TTS (plain text only)
+          var plainText = s.text.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+          listenHtml = '<button class="reading-listen-btn" onclick="event.stopPropagation();_readingReadAloud(this)" data-text="' + esc(plainText) + '">'
+            + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">'
+            + '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>'
+            + '<path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+            + '</svg>'
+            + ' Listen</button>';
+        }
         return '<div class="reading-entry" id="' + id + '" ' + (hasText ? 'onclick="toggleReading(\'' + id + '\')"' : '') + '>'
           + '<div class="reading-entry-header">'
           + '<div>'
@@ -235,7 +246,7 @@ function fetchReadings() {
           + '</div>'
           + (hasText ? chevron : '')
           + '</div>'
-          + (hasText ? '<div class="reading-text" id="reading-text-' + i + '">' + formatReadingText(s.text, s.heading) + '</div>' : '')
+          + (hasText ? '<div class="reading-text" id="reading-text-' + i + '">' + formatReadingText(s.text, s.heading) + listenHtml + '</div>' : '')
           + '</div>';
       }).join('');
       el.innerHTML = html;
@@ -810,6 +821,32 @@ function exportLitCalICS(preset) {
   return Promise.resolve();
 }
 
+// ── C-04: Read Aloud for daily readings ──
+var _readingSpeaking = false;
+
+function _readingReadAloud(btn) {
+  if (_readingSpeaking) {
+    speechSynthesis.cancel();
+    _readingSpeaking = false;
+    document.querySelectorAll('.reading-listen-btn.speaking').forEach(function(b) {
+      b.classList.remove('speaking');
+    });
+    return;
+  }
+  var text = btn.getAttribute('data-text');
+  if (!text) return;
+  var utt = new SpeechSynthesisUtterance(text);
+  utt.rate = 0.9;
+  utt.lang = 'en-US';
+  utt.onend = function() {
+    _readingSpeaking = false;
+    btn.classList.remove('speaking');
+  };
+  speechSynthesis.speak(utt);
+  _readingSpeaking = true;
+  btn.classList.add('speaking');
+}
+
 module.exports = {
   getLiturgicalEvents: getLiturgicalEvents,
   getLiturgicalEventsFromLitCal: getLiturgicalEventsFromLitCal,
@@ -838,4 +875,5 @@ module.exports = {
   renderHDOBanner: renderHDOBanner,
   updateHDOBadge: updateHDOBadge,
   renderFastingBanner: renderFastingBanner,
+  readingReadAloud: _readingReadAloud,
 };

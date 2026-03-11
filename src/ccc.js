@@ -47,6 +47,20 @@ async function _loadCCCData() {
 
 function _mdItalic(t) { return t.replace(/\*([^*]+)\*/g, '<em>$1</em>'); }
 
+// Wrap Scripture citations embedded in CCC paragraph text with tappable ref spans.
+// CCC uses formats: "Mt 26:26", "cf. Jn 3:16", "1 Cor 11:24-25", "Ps 22:1"
+// Runs against already-HTML-escaped text — safe because Scripture refs contain no HTML chars.
+function _wrapCCCScriptureRefs(html) {
+  // Matches standard Bible Book Abbr + Chapter:Verse(-Verse)
+  // Preceded by optional "cf." or "Cf." prefix (kept in match, not captured separately)
+  var pattern = /\b((?:1\s*|2\s*|3\s*)?(?:Mt|Mk|Lk|Jn|Acts|Rom|(?:1\s*|2\s*)?Cor|Gal|Eph|Phil|Col|(?:1\s*|2\s*)?Thess|(?:1\s*|2\s*)?Tim|Tit|Phlm|Heb|Jas|(?:1\s*|2\s*)?Pet|(?:1\s*|2\s*|3\s*)?Jn|Jude|Rev|Gen|Exod?|Lev|Num|Deut?|Josh|Judg|Ruth|(?:1\s*|2\s*)?Sam|(?:1\s*|2\s*|3\s*|4\s*)?Kgs|(?:1\s*|2\s*)?Chr|Ezra|Neh|Tob|Jdt|Esth|(?:1\s*|2\s*)?Macc|Job|Ps[s]?|Prov|Eccl(?:es)?|Song|Wis|Sir|Is[a]?|Jer|Lam|Bar|Ezek?|Dan|Hos|Joel|Amos|Obad|Jon[ah]?|Mic|Nah|Hab|Zeph|Hag|Zech|Mal|Matt(?:hew)?|Mark|Luke|John|Romans|(?:First|Second|Third|1st|2nd|3rd)\s+\w+|Matthew|Revelation)\s+\d+:\d+(?:\s*[-\u2013]\s*\d+)?)\b/g;
+
+  return html.replace(pattern, function(ref) {
+    var escaped = ref.replace(/'/g, '&#39;');
+    return '<span class="ref-tap ref-tap--bible" role="button" tabindex="0" onclick="window._refTap(\'bible\',\'' + escaped + '\')" aria-label="Scripture: ' + escaped + '">' + ref + '</span>';
+  });
+}
+
 function _renderParaText(raw) {
   var clean = utils.stripCCCRefs(raw).trim();
   var lines = clean.split('\n');
@@ -63,7 +77,7 @@ function _renderParaText(raw) {
     }
   }
   if (bq) html += '</blockquote>';
-  return html;
+  return _wrapCCCScriptureRefs(html);
 }
 
 function _getPreview(raw) {

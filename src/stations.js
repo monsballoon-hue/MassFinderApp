@@ -193,13 +193,20 @@ function _renderIntro(title, body, progress, nav) {
 
 // ── Render: Station prayer screen ──
 function _renderStation(title, body, progress, nav) {
+  var refs = require('./refs.js');
   var s = _data.stations[_station];
   title.textContent = 'Station ' + s.id + ' of 14';
   progress.innerHTML = _dotsHtml(_station);
 
+  var scriptureHtml = '';
+  if (s.scripture) {
+    scriptureHtml = '<div class="stations-scripture">' + refs.renderRef('bible', s.scripture) + '</div>';
+  }
+
   body.innerHTML = '<div class="stations-prayer">'
     + '<div class="stations-num">Station ' + s.id + '</div>'
     + '<h3 class="stations-station-title">' + utils.esc(s.title) + '</h3>'
+    + scriptureHtml
     + '<div class="stations-versicle">'
     + '<div class="stations-v-label">V.</div>'
     + '<div class="stations-v-text">' + utils.esc(s.verse) + '</div>'
@@ -217,6 +224,8 @@ function _renderStation(title, body, progress, nav) {
     + '<div class="stations-prayer-text"><p>' + _fmtPrayer(s.prayer) + '</p></div>'
     + '</div>'
     + '</div>';
+
+  refs.initRefTaps(body);
 
   var prevLabel = _station === 0 ? '\u2190 Introduction' : '\u2190 Station ' + _station;
   var nextLabel = _station < 13 ? 'Station ' + (s.id + 1) + ' \u2192' : 'Closing \u2192';

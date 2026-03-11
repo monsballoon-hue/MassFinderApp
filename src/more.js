@@ -175,6 +175,10 @@ function renderMore() {
     // Wire term definition taps (UX-07)
     devotions.initTermClicks(devotEl);
 
+    // Wire Scripture reference taps (B-06)
+    var refs = require('./refs.js');
+    refs.initRefTaps(devotEl);
+
     // Wire CCC reference taps
     devotEl.querySelectorAll('strong').forEach(function(el) {
       var m = el.textContent.trim().match(/^CCC ([\d\u2013\-]+):?$/);

@@ -197,6 +197,18 @@
   </div>
 </div>
 
+<!-- Bible Bottom Sheet -->
+<div id="bibleOverlay" class="bible-overlay" onclick="closeBible()"></div>
+<div id="bibleSheet" class="bible-sheet" role="dialog" aria-modal="true" aria-label="Scripture Reference">
+  <div class="bible-handle"></div>
+  <div class="bible-sheet-scroll" id="bibleSheetScroll">
+    <button class="bible-back-btn" id="bibleBackBtn" onclick="bibleGoBack()">&#8592; Back</button>
+    <div class="bible-sheet-title">Sacred Scripture</div>
+    <div id="bibleSheetBody"></div>
+    <div id="bibleSheetRelated"></div>
+  </div>
+</div>
+
 <!-- Examination of Conscience Overlay -->
 <div id="examOverlay" class="exam-overlay" role="dialog" aria-modal="true" aria-label="Examination of Conscience">
   <div class="exam-header">
