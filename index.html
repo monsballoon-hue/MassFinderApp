@@ -221,6 +221,33 @@
   <div class="rosary-nav" id="rosaryNav"></div>
 </div>
 
+<!-- Stations of the Cross Overlay -->
+<div id="stationsOverlay" class="stations-overlay" role="dialog" aria-modal="true" aria-label="Stations of the Cross">
+  <div class="stations-header">
+    <button class="stations-close-btn" onclick="closeStations()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="stations-title" id="stationsTitle">Stations of the Cross</div>
+    <div class="stations-close-btn" style="visibility:hidden" aria-hidden="true"></div>
+  </div>
+  <div class="stations-progress" id="stationsProgress"></div>
+  <div class="stations-body" id="stationsBody"></div>
+  <div class="stations-nav" id="stationsNav"></div>
+</div>
+
+<!-- Novena Tracker Overlay -->
+<div id="novenaOverlay" class="novena-overlay" role="dialog" aria-modal="true" aria-label="Novena">
+  <div class="novena-header">
+    <button class="novena-close-btn" onclick="closeNovena()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="novena-title" id="novenaTitle">Novenas</div>
+    <div class="novena-close-btn" style="visibility:hidden" aria-hidden="true"></div>
+  </div>
+  <div class="novena-body" id="novenaBody"></div>
+  <div class="novena-nav" id="novenaNav"></div>
+</div>
+
 <!-- Toast -->
 <div id="toast" class="mf-toast"></div>
 

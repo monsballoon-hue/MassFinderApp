@@ -14,6 +14,8 @@ var ccc = require('./ccc.js');
 var refs = require('./refs.js');
 var rosary = require('./rosary.js');
 var examination = require('./examination.js');
+var stations = require('./stations.js');
+var novena = require('./novena.js');
 var installGuide = require('./install-guide.js');
 
 var state = data.state;
@@ -203,6 +205,19 @@ window.examMarkConfession = examination.examMarkConfession;
 window.examFindConfession = examination.examFindConfession;
 window.examGracefulClose = examination.examGracefulClose;
 window.examScrollToSummary = examination.examScrollToSummary;
+window.openStations = stations.openStations;
+window.closeStations = stations.closeStations;
+window.stationsNext = stations.stationsNext;
+window.stationsPrev = stations.stationsPrev;
+window.stationsGoTo = stations.stationsGoTo;
+window.openNovena = novena.openNovena;
+window.closeNovena = novena.closeNovena;
+window.novenaSelect = novena.novenaSelect;
+window.novenaResume = novena.novenaResume;
+window.novenaMarkDay = novena.novenaMarkDay;
+window.novenaGoToDay = novena.novenaGoToDay;
+window.novenaBack = novena.novenaBack;
+window.novenaStartNew = novena.novenaStartNew;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
@@ -271,7 +286,9 @@ if (sC) {
 // ── Keyboard ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
+    if (document.getElementById('stationsOverlay').classList.contains('open')) stations.closeStations();
+    else if (document.getElementById('novenaOverlay').classList.contains('open')) novena.closeNovena();
+    else if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
     else if (document.getElementById('examOverlay').classList.contains('open')) examination.closeExamination();
     else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();

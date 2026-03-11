@@ -327,9 +327,13 @@ function renderSaved() {
     var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
     var rosaryCount = recentEntries.filter(function(e) { return e.type === 'rosary'; }).length;
     var examCount = recentEntries.filter(function(e) { return e.type === 'examination'; }).length;
-    var maxCount = Math.max(rosaryCount, examCount, 1);
+    var stationsCount = recentEntries.filter(function(e) { return e.type === 'stations'; }).length;
+    var novenaCount = recentEntries.filter(function(e) { return e.type === 'novena'; }).length;
+    var maxCount = Math.max(rosaryCount, examCount, stationsCount, novenaCount, 1);
     if (rosaryCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Rosary</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(rosaryCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + rosaryCount + '</span></div>');
     if (examCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Examen</span><div class="activity-bar-track"><div class="activity-bar-fill activity-bar-fill--alt" style="width:' + Math.round(examCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + examCount + '</span></div>');
+    if (stationsCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Stations</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(stationsCount / maxCount * 100) + '%;background:#8B2252"></div></div><span class="activity-bar-val">' + stationsCount + '</span></div>');
+    if (novenaCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Novena</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(novenaCount / maxCount * 100) + '%;background:#1E6B4A"></div></div><span class="activity-bar-val">' + novenaCount + '</span></div>');
   } catch (e) {}
 
   var confessionNote = '';

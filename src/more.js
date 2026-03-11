@@ -18,6 +18,14 @@ var state = data.state;
 var DEVOTIONAL_GUIDES = devotions.DEVOTIONAL_GUIDES;
 var renderGuide = devotions.renderGuide;
 
+function _getNovenaSubtitle() {
+  try {
+    var t = JSON.parse(localStorage.getItem('mf-novena-active'));
+    if (t && t.completedDays) return 'Day ' + (t.completedDays.length + 1) + ' of 9';
+  } catch (e) {}
+  return '9-day guided prayer';
+}
+
 // ── renderMore ──
 function renderMore() {
   // Lazy requires
@@ -130,7 +138,8 @@ function renderMore() {
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: 'Mysteries, meditations, bead counter', action: 'openRosary()', active: true },
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
-      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : 'Coming soon', action: '', active: false }
+      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Traditional Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
+      { id: 'novena', title: 'Novena Tracker', subtitle: _getNovenaSubtitle(), action: 'openNovena()', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
