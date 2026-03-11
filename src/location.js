@@ -107,7 +107,7 @@ function refreshApp() {
   var pull = document.getElementById('pullIndicator');
   if (pull) { pull.className = 'pull-indicator refreshing'; pull.style.height = '36px'; document.getElementById('pullText').textContent = 'Refreshing\u2026'; }
   refreshLocation(function() {
-    fetch('parish_data.json', { cache: 'no-store', signal: AbortSignal.timeout(8000) }).then(function(r) {
+    fetch('/parish_data.json', { cache: 'no-store', signal: AbortSignal.timeout(8000) }).then(function(r) {
       if (!r.ok) throw new Error('fetch failed');
       return r.json();
     }).then(function(d) {

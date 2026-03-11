@@ -464,7 +464,7 @@ function _renderDailyReflection() {
   var el = document.getElementById('dailyReflection');
   if (!el) return;
   var num = _getDailyCCCNumber();
-  fetch('data/catechism.json').then(function(r) { return r.json(); }).then(function(d) {
+  fetch('/data/catechism.json').then(function(r) { return r.json(); }).then(function(d) {
     var text = d.paragraphs[String(num)];
     if (!text) { el.style.display = 'none'; return; }
     // Truncate to ~120 chars at a sentence boundary
@@ -543,7 +543,7 @@ async function init() {
     // Load parish data from static JSON
     var controller = new AbortController();
     var timeout = setTimeout(function() { controller.abort(); }, 8000);
-    var r = await fetch('parish_data.json', { signal: controller.signal });
+    var r = await fetch('/parish_data.json', { signal: controller.signal });
     clearTimeout(timeout);
     var jsonData = await r.json();
     var churches = data.parishesToChurches(jsonData.parishes || []);
@@ -560,7 +560,7 @@ async function init() {
 
     // Load events from static JSON
     try {
-      var evtResp = await fetch('events.json', { signal: AbortSignal.timeout(5000) });
+      var evtResp = await fetch('/events.json', { signal: AbortSignal.timeout(5000) });
       if (evtResp.ok) {
         var evtData = await evtResp.json();
         state.eventsData = (evtData.events || []).sort(function(a, b) { return (a.date || '9999').localeCompare(b.date || '9999') || (a.time || '').localeCompare(b.time || ''); });

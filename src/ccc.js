@@ -1,6 +1,8 @@
 // src/ccc.js — CCC (Catechism of the Catholic Church) bottom sheet
 // Loads data/catechism.json (2,865 paragraphs) and renders paragraph references in a bottom sheet
 
+var utils = require('./utils.js');
+var cccData = require('./ccc-data.js');
 var _cccData = null, _cccXrefs = null, _cccHistory = [], _cccCurrentNum = '';
 
 // CCC-06: Section context lookup — paragraph number ranges to section labels
@@ -37,22 +39,14 @@ function _getSectionContext(num) {
 
 async function _loadCCCData() {
   if (_cccData) return;
-  try {
-    var resp = await fetch('/data/catechism.json');
-    var json = await resp.json();
-    _cccData = {};
-    Object.keys(json.paragraphs).forEach(function(k) { _cccData[parseInt(k, 10)] = json.paragraphs[k]; });
-    _cccXrefs = {};
-    Object.keys(json.xrefs).forEach(function(k) { _cccXrefs[parseInt(k, 10)] = json.xrefs[k]; });
-  } catch (e) {}
+  var d = await cccData.load();
+  if (d) { _cccData = d.paragraphs; _cccXrefs = d.xrefs; }
 }
 
-function _cccEsc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function _stripRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
 function _mdItalic(t) { return t.replace(/\*([^*]+)\*/g, '<em>$1</em>'); }
 
 function _renderParaText(raw) {
-  var clean = _stripRefs(raw).trim();
+  var clean = utils.stripCCCRefs(raw).trim();
   var lines = clean.split('\n');
   var html = '', bq = false;
   for (var i = 0; i < lines.length; i++) {
@@ -60,10 +54,10 @@ function _renderParaText(raw) {
     if (!line) continue;
     if (line.charAt(0) === '>') {
       if (!bq) { html += '<blockquote class="ccc-blockquote">'; bq = true; }
-      html += '<p>' + _mdItalic(_cccEsc(line.slice(1).trim())) + '</p>';
+      html += '<p>' + _mdItalic(utils.esc(line.slice(1).trim())) + '</p>';
     } else {
       if (bq) { html += '</blockquote>'; bq = false; }
-      html += '<p class="ccc-para-text">' + _mdItalic(_cccEsc(line)) + '</p>';
+      html += '<p class="ccc-para-text">' + _mdItalic(utils.esc(line)) + '</p>';
     }
   }
   if (bq) html += '</blockquote>';
@@ -71,7 +65,7 @@ function _renderParaText(raw) {
 }
 
 function _getPreview(raw) {
-  var clean = _stripRefs(raw).replace(/>/g, '').replace(/\*/g, '').trim();
+  var clean = utils.stripCCCRefs(raw).replace(/>/g, '').replace(/\*/g, '').trim();
   var m = clean.match(/^(.{10,160}[.!?]["\u201d]?)(\s|$)/);
   var preview = m ? m[1].trim() : clean.slice(0, 140).trim();
   if (preview.length < clean.length) preview += '\u2026';
@@ -101,7 +95,7 @@ async function _renderCCCContent(numStr) {
   // CCC-06: Show section context once for the primary paragraph
   var context = _getSectionContext(ids[0]);
   if (context) {
-    bodyHtml += '<div class="ccc-section-context">' + _cccEsc(context) + '</div>';
+    bodyHtml += '<div class="ccc-section-context">' + utils.esc(context) + '</div>';
   }
 
   ids.forEach(function(id, idx) {
@@ -137,9 +131,9 @@ async function _renderCCCContent(numStr) {
       relHtml += '<div class="ccc-related-item" onclick="cccNavigate(\'' + id + '\')">'
         + '<div class="ccc-related-top">'
         + '<span class="ccc-related-num">&#167;&nbsp;' + id + '</span>'
-        + (ctx ? '<span class="ccc-related-context">' + _cccEsc(ctx) + '</span>' : '')
+        + (ctx ? '<span class="ccc-related-context">' + utils.esc(ctx) + '</span>' : '')
         + '</div>'
-        + '<div class="ccc-related-preview">' + _cccEsc(preview) + '</div>'
+        + '<div class="ccc-related-preview">' + utils.esc(preview) + '</div>'
         + '</div>';
     });
     relHtml += '</div>';

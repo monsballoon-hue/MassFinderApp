@@ -1,34 +1,7 @@
 // src/rosary.js — Guided Rosary Module (MOD-02 + UX-05 + LIB-01)
 var utils = require('./utils.js');
-
-// ── Haptic feedback (LIB-01) ──
-// Inline implementation based on ios-haptics (MIT, tijnjh)
-// iOS Safari 17.4+: uses <input switch> trick for native haptics
-// Android: falls back to navigator.vibrate()
-// Desktop/unsupported: silent no-op
-function _haptic() {
-  try {
-    if (navigator.vibrate) { navigator.vibrate(10); return; }
-    var label = document.createElement('label');
-    label.ariaHidden = 'true';
-    label.style.display = 'none';
-    var input = document.createElement('input');
-    input.type = 'checkbox';
-    input.setAttribute('switch', '');
-    label.appendChild(input);
-    document.head.appendChild(label);
-    label.click();
-    document.head.removeChild(label);
-  } catch (e) {}
-}
-_haptic.confirm = function() {
-  if (navigator.vibrate) { navigator.vibrate([10, 70, 10]); return; }
-  _haptic(); setTimeout(_haptic, 120);
-};
-_haptic.error = function() {
-  if (navigator.vibrate) { navigator.vibrate([10, 70, 10, 70, 10]); return; }
-  _haptic(); setTimeout(_haptic, 120); setTimeout(_haptic, 240);
-};
+var _haptic = require('./haptics.js');
+var cccData = require('./ccc-data.js');
 
 // ── State ──
 var _data = null;
@@ -321,20 +294,18 @@ function _onTouchEnd(e) {
 }
 
 // ── Inline CCC expansion (avoids z-index collision with z-2000 overlay) ──
+// TD-04: shared loader — single copy of catechism.json across all modules
 function _loadCCC(cb) {
   if (_cccParagraphs) return cb();
-  fetch('data/catechism.json').then(function(r) { return r.json(); })
-    .then(function(d) {
-      _cccParagraphs = {};
-      Object.keys(d.paragraphs).forEach(function(k) {
-        _cccParagraphs[parseInt(k, 10)] = d.paragraphs[k];
-      });
-      cb();
-    }).catch(function() { cb(); });
+  cccData.load(function(d) {
+    if (d) _cccParagraphs = d.paragraphs;
+    cb();
+  });
 }
 
-function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-function _stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+// TD-02+03: Use shared utils
+function _esc(s) { return utils.esc(s); }
+function _stripCCCRefs(t) { return utils.stripCCCRefs(t); }
 
 function _toggleInlineCCC(span, numStr) {
   // Insert CCC card after the mystery card, not inside the refs inline-flex container

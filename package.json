@@ -11,12 +11,10 @@
     "precommit": "npm run build && npm run schema && npm run validate"
   },
   "devDependencies": {
+    "@supabase/supabase-js": "^2.49.0",
     "ajv-cli": "^5.0.0",
     "ajv-formats": "^3.0.0",
     "esbuild": "^0.24.0"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.49.0"
   },
   "engines": {
     "node": ">=18"

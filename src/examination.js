@@ -7,6 +7,8 @@
 
 var refs = require('./refs.js');
 var ui = require('./ui.js');
+var _haptic = require('./haptics.js');
+var cccData = require('./ccc-data.js');
 
 // ── State ──
 var _examData = null;
@@ -14,42 +16,21 @@ var _expanded = {};         // section key → bool
 var _checked = {};          // question id → { text, commandment }
 var _cccParagraphs = null;  // lazy-loaded catechism paragraph map
 
-// ── Haptic feedback ──
-function _haptic() {
-  try {
-    if (navigator.vibrate) { navigator.vibrate(10); return; }
-    var label = document.createElement('label');
-    label.ariaHidden = 'true';
-    label.style.display = 'none';
-    var input = document.createElement('input');
-    input.type = 'checkbox';
-    input.setAttribute('switch', '');
-    label.appendChild(input);
-    document.head.appendChild(label);
-    label.click();
-    document.head.removeChild(label);
-  } catch (e) {}
-}
-
 // ── Load examination data ──
 function _loadData(cb) {
   if (_examData) return cb(_examData);
-  fetch('data/examination.json').then(function(r) { return r.json(); })
+  fetch('/data/examination.json').then(function(r) { return r.json(); })
     .then(function(d) { _examData = d; cb(d); })
     .catch(function(e) { console.warn('[Examination] Failed to load data:', e); });
 }
 
-// ── Load catechism data for inline CCC ──
+// ── Load catechism data for inline CCC (TD-04: shared loader) ──
 function _loadCCC(cb) {
   if (_cccParagraphs) return cb();
-  fetch('data/catechism.json').then(function(r) { return r.json(); })
-    .then(function(d) {
-      _cccParagraphs = {};
-      Object.keys(d.paragraphs).forEach(function(k) {
-        _cccParagraphs[parseInt(k, 10)] = d.paragraphs[k];
-      });
-      cb();
-    }).catch(function() { cb(); });
+  cccData.load(function(d) {
+    if (d) _cccParagraphs = d.paragraphs;
+    cb();
+  });
 }
 
 // ── Parse CCC range — always returns topline paragraph only ──
@@ -62,13 +43,10 @@ function _parseCCCRange(numStr) {
 }
 
 // ── Escape HTML ──
-function _esc(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// ── Strip CCC internal reference markers ──
-function _stripRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+// TD-02: Use shared utils.esc and utils.stripCCCRefs
+var utils = require('./utils.js');
+function _esc(s) { return utils.esc(s); }
+function _stripRefs(t) { return utils.stripCCCRefs(t); }
 
 // ── Toggle inline CCC expansion ──
 function _toggleInlineCCC(span, numStr) {

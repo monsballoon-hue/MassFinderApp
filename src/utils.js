@@ -319,6 +319,9 @@ function smartDefault() {
 
 function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 
+// TD-03: Shared CCC reference-stripping (used by ccc.js, examination.js, rosary.js)
+function stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+
 module.exports = {
   displayName: displayName, getNow: getNow,
   isEventActive: isEventActive, getNextEventDate: getNextEventDate,
@@ -327,6 +330,6 @@ module.exports = {
   getNext: getNext, hav: hav, getDist: getDist, fmtDist: fmtDist,
   isVer: isVer, generateICS: generateICS,
   svcKey: svcKey, cleanNote: cleanNote, escRe: escRe, makeRangeLabel: makeRangeLabel,
-  smartDefault: smartDefault, esc: esc,
+  smartDefault: smartDefault, esc: esc, stripCCCRefs: stripCCCRefs,
   getEaster: getEaster, getSeasonProgress: getSeasonProgress,
 };

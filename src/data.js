@@ -19,9 +19,15 @@ var state = {
   mapInitialized: false,
 };
 
-// ── Favorites ──
-function loadFav() { try { state.favorites = JSON.parse(localStorage.getItem('mf_fav') || '[]'); } catch (e) { state.favorites = []; } }
-function saveFav() { try { localStorage.setItem('mf_fav', JSON.stringify(state.favorites)); } catch (e) { /* noop */ } }
+// ── Favorites (TD-15: migrated mf_fav → mf-fav) ──
+function loadFav() {
+  try {
+    var raw = localStorage.getItem('mf-fav');
+    if (!raw) { raw = localStorage.getItem('mf_fav'); if (raw) { localStorage.setItem('mf-fav', raw); localStorage.removeItem('mf_fav'); } }
+    state.favorites = JSON.parse(raw || '[]');
+  } catch (e) { state.favorites = []; }
+}
+function saveFav() { try { localStorage.setItem('mf-fav', JSON.stringify(state.favorites)); } catch (e) { /* noop */ } }
 function isFav(id) { return state.favorites.includes(id); }
 function toggleFav(id, ev) {
   if (ev) { ev.stopPropagation(); ev.preventDefault(); }

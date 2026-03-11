@@ -14,14 +14,18 @@ var REGION = config.REGION;
   try {
     var d = new Date();
     var today = String(d.getFullYear()) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2);
-    if (localStorage.getItem('bg_date') !== today) {
+    // TD-15: migrate old bg_date → mf-bg-date
+    if (localStorage.getItem('bg_date')) { localStorage.removeItem('bg_date'); }
+    if (localStorage.getItem('mf-bg-date') !== today) {
       var toRemove = [];
       for (var i = 0; i < localStorage.length; i++) {
         var k = localStorage.key(i);
-        if (k && k.slice(0, 3) === 'bg_' && k !== 'bg_date') toRemove.push(k);
+        if (k && k.indexOf('mf-bg-') === 0 && k !== 'mf-bg-date') toRemove.push(k);
+        // Clean up any legacy bg_ keys too
+        if (k && k.slice(0, 3) === 'bg_') toRemove.push(k);
       }
       toRemove.forEach(function(k) { localStorage.removeItem(k); });
-      localStorage.setItem('bg_date', today);
+      localStorage.setItem('mf-bg-date', today);
     }
   } catch (e) { /* noop */ }
 })();
@@ -404,7 +408,7 @@ function fetchAcclamationVerse(ref) {
 function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
   var query = convertRefToBibleGet(ref);
   if (!query) return Promise.resolve();
-  var cacheKey = 'bg_' + query;
+  var cacheKey = 'mf-bg-' + query;
   try {
     var cached = localStorage.getItem(cacheKey);
     if (cached) { console.log('[BibleGet] Cache HIT:', ref, '->', query); textEl.innerHTML = cached; return Promise.resolve(); }

@@ -62,10 +62,12 @@
   --color-primary-bg: rgba(44,62,90,0.04);
   --color-fav: #E11D48;
   --font-display: 'Playfair Display', Georgia, serif;
+  --font-heading: 'Playfair Display', Georgia, serif;
   --font-body: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-prayer: Georgia, 'Playfair Display', serif;
   --text-xs: 0.8125rem; --text-sm: 0.9375rem; --text-base: 1.0625rem;
   --text-lg: 1.125rem; --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.75rem;
-  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600;
+  --weight-regular: 400; --weight-medium: 500; --weight-semibold: 600; --weight-bold: 700;
   --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
   --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-12: 48px;
   --max-width: 680px;
@@ -1345,12 +1347,12 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .ccc-para-num { font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-accent-text);margin-bottom:var(--space-3);margin-top:var(--space-5);letter-spacing:0.02em; }
 .ccc-para-num--first { margin-top:0; }
 /* CCC-02: Body text in Georgia serif */
-.ccc-para-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-primary);line-height:1.9;margin-bottom:var(--space-4); }
+.ccc-para-text { font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-primary);line-height:1.9;margin-bottom:var(--space-4); }
 .ccc-para-text:last-child { margin-bottom:0; }
 /* CCC-11: Italic emphasis */
 .ccc-para-text em, .ccc-blockquote em { font-style:italic;color:var(--color-text-primary); }
 /* CCC-03: Elevated blockquotes — accent-colored border + pale background */
-.ccc-blockquote { margin:var(--space-4) 0;padding:var(--space-4) var(--space-5);border-left:3px solid var(--color-accent);background:var(--color-accent-pale);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:Georgia,'Playfair Display',serif;font-style:italic;color:var(--color-text-secondary);font-size:var(--text-sm);line-height:1.8; }
+.ccc-blockquote { margin:var(--space-4) 0;padding:var(--space-4) var(--space-5);border-left:3px solid var(--color-accent);background:var(--color-accent-pale);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--font-prayer);font-style:italic;color:var(--color-text-secondary);font-size:var(--text-sm);line-height:1.8; }
 .ccc-blockquote p { margin:0 0 var(--space-2); }
 .ccc-blockquote p:last-child { margin-bottom:0; }
 /* CCC-07: Related teachings — invitation cards */
@@ -1362,9 +1364,9 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .ccc-related-top { display:flex;align-items:baseline;gap:var(--space-2);margin-bottom:var(--space-1); }
 .ccc-related-num { font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-accent-text);white-space:nowrap; }
 .ccc-related-context { font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.ccc-related-preview { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.65;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden; }
+.ccc-related-preview { font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.65;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden; }
 /* CCC-13: Loading state — contemplative pause */
-.ccc-loading { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-sm);color:var(--color-text-tertiary);font-style:italic;padding:var(--space-8) 0;text-align:center; }
+.ccc-loading { font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-tertiary);font-style:italic;padding:var(--space-8) 0;text-align:center; }
 .ccc-ref { cursor:pointer;color:var(--color-text-tertiary);font-size:var(--text-xs);font-weight:var(--weight-medium);text-decoration:none;background:var(--color-surface-hover);padding:2px 8px;border-radius:var(--radius-full);white-space:nowrap;transition:background var(--transition-fast),color var(--transition-fast);display:inline-flex;align-items:center;line-height:1.4; }
 /* refs.js — tappable reference spans (CCC, Bible, etc.) */
 .ref-tap { cursor:pointer;color:var(--color-text-tertiary);font-size:var(--text-xs);font-weight:var(--weight-medium);text-decoration:none;background:var(--color-surface-hover);padding:2px 8px;border-radius:var(--radius-full);white-space:nowrap;-webkit-tap-highlight-color:transparent;transition:background var(--transition-fast),color var(--transition-fast);display:inline-flex;align-items:center;vertical-align:baseline;line-height:1.4; }
@@ -1474,7 +1476,7 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-mystery-title { font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--color-text-primary);margin-bottom:var(--space-3);line-height:1.25; }
 .rosary-mystery-scripture { display:inline-flex;align-items:center;gap:var(--space-1);font-size:var(--text-sm);color:var(--color-info);cursor:pointer;margin-bottom:var(--space-2);padding:var(--space-1) 0; }
 .rosary-mystery-scripture:hover { text-decoration:underline; }
-.rosary-mystery-meditation { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;font-style:italic;margin:var(--space-3) 0;padding:var(--space-3) 0;border-top:1px solid var(--color-border-light);border-bottom:1px solid var(--color-border-light); }
+.rosary-mystery-meditation { font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;font-style:italic;margin:var(--space-3) 0;padding:var(--space-3) 0;border-top:1px solid var(--color-border-light);border-bottom:1px solid var(--color-border-light); }
 .rosary-mystery-fruit { font-size:var(--text-sm);color:var(--color-text-secondary); }
 .rosary-mystery-fruit-inline { font-weight:var(--weight-normal);color:var(--color-text-tertiary); }
 .rosary-mystery-meta { display:flex;align-items:center;gap:var(--space-2);flex-wrap:wrap;margin-top:var(--space-2); }
@@ -1501,7 +1503,7 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-prayer-name { font-size:var(--text-base);font-weight:var(--weight-bold);color:var(--color-primary);margin-bottom:var(--space-2);list-style:none; }
 .rosary-prayer-name::-webkit-details-marker { display:none; }
 .rosary-prayer-sub { font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;margin-bottom:var(--space-2); }
-.rosary-prayer-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.85; }
+.rosary-prayer-text { font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.85; }
 .rosary-prayer-text p { margin-bottom:var(--space-2); }
 
 /* Collapsible prayer blocks (decade screen) */
@@ -1518,9 +1520,9 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .rosary-complete-screen { display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;text-align:center;padding:var(--space-6);animation:rosary-fadein 0.5s ease; }
 .rosary-complete-title { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-text-primary);margin:var(--space-4) 0 var(--space-2); }
 .rosary-complete-sub { font-size:var(--text-sm);color:var(--color-text-tertiary);margin-bottom:var(--space-4); }
-.rosary-complete-quote { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-lg);line-height:1.7;color:var(--color-text-secondary);font-style:italic;margin-bottom:var(--space-2);max-width:320px; }
+.rosary-complete-quote { font-family:var(--font-prayer);font-size:var(--text-lg);line-height:1.7;color:var(--color-text-secondary);font-style:italic;margin-bottom:var(--space-2);max-width:320px; }
 .rosary-complete-ref { font-size:var(--text-xs);color:var(--color-text-tertiary);font-weight:var(--weight-medium);letter-spacing:0.02em;margin-bottom:var(--space-5); }
-.rosary-complete-msg { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);font-style:italic;line-height:1.8; }
+.rosary-complete-msg { font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-secondary);font-style:italic;line-height:1.8; }
 @keyframes rosary-fadein { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 .rosary-bead-nudge { color:var(--color-accent-text);font-weight:var(--weight-semibold);animation:rosary-nudge 0.3s ease; }
 @keyframes rosary-nudge { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
@@ -1664,7 +1666,7 @@ html[data-theme="dark"] .rosary-overlay[data-rosary-set="luminous"] { background
 .exam-prayer-head { display:flex;align-items:center;gap:var(--space-2);margin-bottom:var(--space-3); }
 .exam-prayer-icon { font-size:20px;line-height:1; }
 .exam-prayer-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:var(--weight-semibold);color:var(--color-heading); }
-.exam-prayer-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-lg);line-height:1.8;color:var(--color-text-secondary);margin-bottom:var(--space-3); }
+.exam-prayer-text { font-family:var(--font-prayer);font-size:var(--text-lg);line-height:1.8;color:var(--color-text-secondary);margin-bottom:var(--space-3); }
 .exam-prayer-text:last-child { margin-bottom:0; }
 
 /* ── How to Confess (details/summary) ── */
@@ -1682,19 +1684,19 @@ html[data-theme="dark"] .rosary-overlay[data-rosary-set="luminous"] { background
 /* ── Act of Contrition — elevated presentation ── */
 .exam-contrition { text-align:center;padding:var(--space-6) var(--space-4);margin:var(--space-4) 0;border-top:1px solid var(--color-border-light);border-bottom:1px solid var(--color-border-light); }
 .exam-contrition-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-4); }
-.exam-contrition-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-lg);line-height:1.8;color:var(--color-text-secondary);margin-bottom:var(--space-3); }
+.exam-contrition-text { font-family:var(--font-prayer);font-size:var(--text-lg);line-height:1.8;color:var(--color-text-secondary);margin-bottom:var(--space-3); }
 .exam-contrition-text:last-child { margin-bottom:0; }
 
 /* ── Opening prayer centering screen ── */
 .exam-opening { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-5);max-width:420px;margin:0 auto;height:100%;overflow:hidden; }
 .exam-opening-icon { color:var(--color-primary);margin-bottom:var(--space-3);opacity:0.6;flex-shrink:0; }
 .exam-opening-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-3);flex-shrink:0; }
-.exam-opening-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.7;flex:1;min-height:0;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,black 80%,transparent);mask-image:linear-gradient(to bottom,black 80%,transparent); }
+.exam-opening-text { font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.7;flex:1;min-height:0;overflow:hidden;-webkit-mask-image:linear-gradient(to bottom,black 80%,transparent);mask-image:linear-gradient(to bottom,black 80%,transparent); }
 .exam-opening-btn { padding:var(--space-3) var(--space-6);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent;margin-top:var(--space-4);flex-shrink:0; }
 .exam-opening-btn:active { transform:scale(0.97); }
 
 /* ── Summary preamble — confessional format ── */
-.exam-summary-preamble { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.7;font-style:italic;margin-bottom:var(--space-4);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-border-light); }
+.exam-summary-preamble { font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.7;font-style:italic;margin-bottom:var(--space-4);padding-bottom:var(--space-3);border-bottom:1px solid var(--color-border-light); }
 .exam-summary-preamble p { margin-bottom:var(--space-2); }
 .exam-summary-preamble p:last-child { margin-bottom:0; }
 
@@ -1733,7 +1735,7 @@ html[data-theme="dark"] .rosary-overlay[data-rosary-set="luminous"] { background
 /* ── Exam graceful ending ── */
 .exam-ending { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-8) var(--space-5) var(--space-6);margin-top:var(--space-4);border-top:1px solid var(--color-border-light); }
 .exam-ending-icon { color:var(--color-primary);opacity:0.5;margin-bottom:var(--space-3); }
-.exam-ending-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);font-style:italic;color:var(--color-text-secondary);line-height:1.7;margin-bottom:var(--space-5); }
+.exam-ending-text { font-family:var(--font-prayer);font-size:var(--text-base);font-style:italic;color:var(--color-text-secondary);line-height:1.7;margin-bottom:var(--space-5); }
 .exam-ending-btn { padding:var(--space-3) var(--space-6);background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
 .exam-ending-btn:active { transform:scale(0.97);background:rgba(44,62,90,0.06); }
 
