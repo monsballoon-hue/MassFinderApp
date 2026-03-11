@@ -141,7 +141,6 @@ function renderUnifiedEvt(e, isYC) {
 function renderSaved() {
   var events = require('./events.js');
   var getUpcomingYC = events.getUpcomingYC;
-  var toggleFav = data.toggleFav;
 
   var el = document.getElementById('savedList');
   var favChurches = state.allChurches.filter(function(c) { return isFav(c.id); });
@@ -156,10 +155,9 @@ function renderSaved() {
     if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
     return false;
   });
-  // Also show dot if any services today
   if (!hasToday && favChurches.length) {
-    var todaySvcs = getTodayServices(favChurches);
-    hasToday = todaySvcs.some(function(s) { return !s.isPast; });
+    var todaySvcsCheck = getTodayServices(favChurches);
+    hasToday = todaySvcsCheck.some(function(s) { return !s.isPast; });
   }
   var countBadge = document.getElementById('savedCountBadge');
   if (countBadge) {
@@ -172,6 +170,7 @@ function renderSaved() {
     tabBadge.classList.toggle('visible', hasToday);
   }
 
+  // ── Empty state ──
   if (!favChurches.length) {
     el.innerHTML = '<div class="saved-empty">'
       + '<div class="saved-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>'
@@ -186,45 +185,20 @@ function renderSaved() {
 
   var html = '';
 
-  // ── 1. TODAY'S SCHEDULE — Mass times + services across all saved churches ──
+  // ── 1. TODAY CARD — schedule + today events in one surface ──
   var todaySvcs = getTodayServices(favChurches);
-  if (todaySvcs.length) {
-    html += '<div class="saved-section-label">TODAY\'S SCHEDULE</div>';
-    html += '<div class="saved-schedule">';
 
-    // Split into past vs upcoming
-    var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
-    var upSvcs = todaySvcs.filter(function(s) { return !s.isPast; });
-
-    // If all past, show compact summary
-    if (!upSvcs.length) {
-      html += '<div class="sched-done">Today\'s schedule complete</div>';
-    } else {
-      // Show last 1 past service for context, then all upcoming
-      var showPast = pastSvcs.length ? [pastSvcs[pastSvcs.length - 1]] : [];
-      var visibleSvcs = showPast.concat(upSvcs);
-      for (var si = 0; si < visibleSvcs.length; si++) {
-        var item = visibleSvcs[si];
-        html += _renderSchedRow(item);
-      }
-    }
-    html += '</div>';
-  }
-
-  // ── 2. TODAY'S EVENTS — events happening today with accent bar ──
+  // Gather today's events
   var allEvents = [];
-  // Community events at saved churches
   state.eventsData.filter(function(e) {
     return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
   }).forEach(function(e) {
     allEvents.push({ evt: e, isYC: false });
   });
-  // YC events at saved churches
   var upcomingYC = getUpcomingYC().filter(function(e) { return favIds.has(e.church_id); });
   upcomingYC.forEach(function(e) {
     allEvents.push({ evt: e, isYC: true });
   });
-  // Sort chronologically
   allEvents.sort(function(a, b) {
     var dateA = getNextEventDate(a.evt) || a.evt.date || '9999';
     var dateB = getNextEventDate(b.evt) || b.evt.date || '9999';
@@ -233,7 +207,6 @@ function renderSaved() {
     return (a.evt.time || '').localeCompare(b.evt.time || '');
   });
 
-  // Split into today vs upcoming
   var todayEvents = [];
   var upcomingEvents = [];
   for (var ei = 0; ei < allEvents.length; ei++) {
@@ -245,16 +218,51 @@ function renderSaved() {
     else upcomingEvents.push(allEvents[ei]);
   }
 
-  if (todayEvents.length) {
-    html += '<div class="saved-section-label">HAPPENING TODAY</div>';
+  var hasTodayContent = todaySvcs.length || todayEvents.length;
+  if (hasTodayContent) {
+    html += '<div class="saved-today-card">';
+    html += '<div class="saved-today-label">Today</div>';
+
+    // Schedule rows
+    if (todaySvcs.length) {
+      var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
+      var upSvcs = todaySvcs.filter(function(s) { return !s.isPast; });
+
+      if (!upSvcs.length) {
+        html += '<div class="sched-done">Today\u2019s schedule is complete</div>';
+      } else {
+        var showPast = pastSvcs.length ? [pastSvcs[pastSvcs.length - 1]] : [];
+        var visibleSvcs = showPast.concat(upSvcs);
+        var maxShow = 5;
+        var overflow = visibleSvcs.length > maxShow ? visibleSvcs.length - maxShow : 0;
+        var showSvcs = overflow ? visibleSvcs.slice(0, maxShow) : visibleSvcs;
+        for (var si = 0; si < showSvcs.length; si++) {
+          html += _renderSchedRow(showSvcs[si]);
+        }
+        if (overflow) {
+          html += '<details class="sched-overflow-details"><summary class="sched-overflow">+' + overflow + ' more today</summary>';
+          for (var oi = maxShow; oi < visibleSvcs.length; oi++) {
+            html += _renderSchedRow(visibleSvcs[oi]);
+          }
+          html += '</details>';
+        }
+      }
+    }
+
+    // Today events (below schedule, separated by divider)
+    if (todayEvents.length && todaySvcs.length) {
+      html += '<div class="saved-today-divider"></div>';
+    }
     for (var ti = 0; ti < todayEvents.length; ti++) {
       html += renderUnifiedEvt(todayEvents[ti].evt, todayEvents[ti].isYC);
     }
+
+    html += '</div>'; // close .saved-today-card
   }
 
-  // ── 3. COMING UP — future events ──
+  // ── 2. THIS WEEK — upcoming events ──
   if (upcomingEvents.length) {
-    html += '<div class="saved-section-label">COMING UP</div>';
+    html += '<div class="saved-divider"><span>This week</span></div>';
     var showCount = Math.min(3, upcomingEvents.length);
     for (var ui = 0; ui < showCount; ui++) {
       html += renderUnifiedEvt(upcomingEvents[ui].evt, upcomingEvents[ui].isYC);
@@ -269,7 +277,49 @@ function renderSaved() {
     }
   }
 
-  // ── 4. YOUR ACTIVITY — prayer stats + confession reminder ──
+  // ── 3. YOUR CHURCHES — compact rows in a single card ──
+  var evtCounts = {};
+  state.eventsData.filter(function(e) {
+    return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
+  }).forEach(function(e) {
+    evtCounts[e.church_id] = (evtCounts[e.church_id] || 0) + 1;
+  });
+
+  var sortedFav = favChurches.map(function(c) {
+    return { c: c, next: getNext(c, 'all'), dist: getDist(c, state.userLat, state.userLng) };
+  }).sort(function(a, b) {
+    var aC = a.dist !== null && a.dist <= 10;
+    var bC = b.dist !== null && b.dist <= 10;
+    if (aC !== bC) return aC ? -1 : 1;
+    var aMin = a.next ? a.next.minutesUntil : 99999;
+    var bMin = b.next ? b.next.minutesUntil : 99999;
+    return aMin - bMin;
+  });
+
+  html += '<div class="saved-divider"><span>Your churches</span></div>';
+  html += '<div class="saved-churches-card">';
+  html += sortedFav.map(function(item) {
+    var c = item.c, next = item.next, dist = item.dist;
+    var ver = isVer(c);
+    var statusBadge = '';
+    if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
+    else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
+    var metaParts = [esc(c.city)];
+    if (dist !== null) metaParts.push(fmtDist(dist));
+    var ec = evtCounts[c.id];
+    if (ec) metaParts.push('<span class="saved-evt-count">' + ec + ' event' + (ec !== 1 ? 's' : '') + '</span>');
+    return '<div class="saved-church-row" onclick="openDetail(\'' + c.id + '\')">'
+      + '<div class="saved-church-info">'
+      + '<div class="saved-church-name">' + esc(displayName(c.name)) + (ver ? checkSvg : '') + '</div>'
+      + '<div class="saved-church-meta">' + metaParts.join(' \u00b7 ') + '</div>'
+      + '</div>'
+      + '<div class="saved-church-status">' + statusBadge + '</div>'
+      + '<svg class="saved-church-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
+      + '</div>';
+  }).join('');
+  html += '</div>'; // close .saved-churches-card
+
+  // ── 4. ACTIVITY — prayer stats + confession reminder ──
   var activityParts = [];
   try {
     var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
@@ -282,7 +332,6 @@ function renderSaved() {
     if (examCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Examen</span><div class="activity-bar-track"><div class="activity-bar-fill activity-bar-fill--alt" style="width:' + Math.round(examCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + examCount + '</span></div>');
   } catch (e) {}
 
-  // Confession reminder
   var confessionNote = '';
   try {
     var lastConf = localStorage.getItem('mf-last-confession');
@@ -290,7 +339,7 @@ function renderSaved() {
       var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
       if (daysSince >= 30) {
         confessionNote = '<div class="activity-confession-nudge" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">'
-          + '<span>It\'s been ' + daysSince + ' days since your last confession</span>'
+          + '<span>It\u2019s been ' + daysSince + ' days since your last confession</span>'
           + '<span class="activity-confession-link">Find times \u203A</span>'
           + '</div>';
       }
@@ -298,69 +347,18 @@ function renderSaved() {
   } catch (e) {}
 
   if (activityParts.length || confessionNote) {
-    html += '<div class="saved-section-label">YOUR ACTIVITY</div>';
-    html += '<div class="saved-activity">';
+    html += '<div class="saved-divider"><span>Activity</span></div>';
+    html += '<div class="saved-activity-card">';
     if (activityParts.length) {
-      html += '<div class="activity-stats">'
-        + '<div class="activity-stats-header">Last 30 days</div>'
-        + activityParts.join('')
-        + '</div>';
+      html += '<div class="activity-stats-header">Last 30 days</div>';
+      html += activityParts.join('');
+    }
+    if (activityParts.length && confessionNote) {
+      html += '<div class="activity-divider"></div>';
     }
     if (confessionNote) html += confessionNote;
-    html += '</div>';
+    html += '</div>'; // close .saved-activity-card
   }
-
-  // ── 5. YOUR CHURCHES — compact cards ──
-  // Count active events per church for badges
-  var evtCounts = {};
-  state.eventsData.filter(function(e) {
-    return favIds.has(e.church_id) && e.category !== 'yc' && isEventActive(e);
-  }).forEach(function(e) {
-    evtCounts[e.church_id] = (evtCounts[e.church_id] || 0) + 1;
-  });
-
-  // Sort: within 10mi by next service, then beyond 10mi by next service
-  var sortedFav = favChurches.map(function(c) {
-    return { c: c, next: getNext(c, 'all'), dist: getDist(c, state.userLat, state.userLng) };
-  }).sort(function(a, b) {
-    var aC = a.dist !== null && a.dist <= 10;
-    var bC = b.dist !== null && b.dist <= 10;
-    if (aC !== bC) return aC ? -1 : 1;
-    var aMin = a.next ? a.next.minutesUntil : 99999;
-    var bMin = b.next ? b.next.minutesUntil : 99999;
-    return aMin - bMin;
-  });
-
-  html += '<div class="saved-section-label">YOUR CHURCHES</div>';
-  html += sortedFav.map(function(item) {
-    var c = item.c, next = item.next, dist = item.dist;
-    var ver = isVer(c);
-    var statusBadge = '';
-    if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
-    else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
-    var nh;
-    if (next) {
-      nh = '<div class="card-next-service"><span class="card-next-time">' + next.timeFormatted + '</span><span class="card-next-label">' + esc(SVC_LABELS[next.service.type] || next.service.type) + '</span>' + statusBadge + '</div><div class="card-next-day">' + next.dayLabel + '</div>';
-    } else {
-      nh = '<div class="card-next-service"><span class="card-next-label" style="color:var(--color-text-tertiary)">Check bulletin for times</span></div>';
-    }
-    var ec = evtCounts[c.id];
-    var evtBadge = ec ? '<span class="saved-evt-count">' + ec + ' event' + (ec !== 1 ? 's' : '') + '</span>' : '';
-    return '<article class="parish-card" role="listitem" onclick="openDetail(\'' + c.id + '\')">'
-      + '<div class="card-top"><div class="card-name-row"><h3 class="card-name">' + esc(displayName(c.name)) + '</h3>' + (ver ? checkSvg : '') + '</div>'
-      + '<div class="card-right">' + (dist !== null ? '<span class="card-distance">' + fmtDist(dist) + '</span>' : '')
-      + '<button class="card-fav is-fav" onclick="toggleFav(\'' + c.id + '\',event);renderSaved()" aria-label="Remove from favorites"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
-      + '</div></div><div class="card-town">' + esc(c.city) + ', ' + esc(c.state) + evtBadge + '</div>' + nh
-      + '</article>';
-  }).join('');
-
-  // ── Quick action ──
-  html += '<div class="saved-quick-action">'
-    + '<button class="saved-find-mass-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
-    + ' Find Mass now'
-    + '</button>'
-    + '</div>';
 
   el.innerHTML = html;
 }
