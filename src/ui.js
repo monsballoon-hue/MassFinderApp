@@ -251,9 +251,13 @@ function switchTab(id, btn) {
         map2.applyMapFilter();
       }, 100);
     }
+    // ST-09: Stop saved refresh when switching away
+    var savedMod = require('./saved.js');
     if (id === 'panelSaved') {
-      var saved = require('./saved.js');
-      saved.renderSaved();
+      savedMod.renderSaved();
+      savedMod.startSavedRefresh();
+    } else {
+      savedMod.stopSavedRefresh();
     }
     if (id === 'panelMore') {
       if (!window._moreRendered) {

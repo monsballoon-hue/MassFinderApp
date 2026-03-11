@@ -465,7 +465,26 @@ function renderSaved() {
   }).join('');
   html += '</div>'; // close .saved-churches-card
 
-  // ── 4. ACTIVITY — prayer journal card + confession reminder ──
+  // ── ST-20: Confession nudge — promoted to its own card between churches and prayer ──
+  var confessionNote = '';
+  try {
+    var lastConf = localStorage.getItem('mf-last-confession');
+    if (lastConf) {
+      var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
+      if (daysSince >= 30) {
+        confessionNote = '<div class="saved-confession-card">'
+          + '<div class="saved-confession-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>'
+          + '<div class="saved-confession-body">'
+          + '<div class="saved-confession-text">It\u2019s been a while since your last confession</div>'
+          + '<button class="saved-confession-action" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">Find confession times \u203A</button>'
+          + '</div>'
+          + '</div>';
+      }
+    }
+  } catch (e) {}
+  if (confessionNote) html += confessionNote;
+
+  // ── 4. ACTIVITY — prayer journal card (ST-18, ST-19, ST-21) ──
   var activityHtml = '';
   var totalPrayers = 0;
   try {
@@ -479,7 +498,6 @@ function renderSaved() {
     totalPrayers = rosaryCount + examCount + stationsCount + novenaCount;
 
     if (totalPrayers > 0) {
-      // Primary line — warm, not judgmental
       activityHtml += '<div class="activity-journal">';
       if (totalPrayers === 1) {
         activityHtml += '<span class="activity-journal-count">You prayed with MassFinder this month</span>';
@@ -488,7 +506,7 @@ function renderSaved() {
       }
       activityHtml += '</div>';
 
-      // Breakdown line
+      // Breakdown — only if 2+ types
       var parts = [];
       if (rosaryCount) parts.push(rosaryCount + ' Rosar' + (rosaryCount !== 1 ? 'ies' : 'y'));
       if (examCount) parts.push(examCount + ' Examen' + (examCount !== 1 ? 's' : ''));
@@ -500,36 +518,45 @@ function renderSaved() {
     }
   } catch (e) {}
 
-  // Streak tracking (PAT-04)
+  // Streak tracking (ST-21: milestone celebrations)
   var streakDays = 0;
   try {
     var streakLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
     var streakDates = {};
     streakLog.forEach(function(e) { if (e.date) streakDates[e.date] = true; });
-    var d = new Date(now);
-    var todayKey = d.toISOString().slice(0, 10);
+    var sd = new Date(now);
+    var todayKey = sd.toISOString().slice(0, 10);
     if (!streakDates[todayKey]) {
-      d.setDate(d.getDate() - 1);
+      sd.setDate(sd.getDate() - 1);
     }
-    while (streakDates[d.toISOString().slice(0, 10)]) {
+    while (streakDates[sd.toISOString().slice(0, 10)]) {
       streakDays++;
-      d.setDate(d.getDate() - 1);
+      sd.setDate(sd.getDate() - 1);
     }
   } catch (e) {}
 
   if (streakDays >= 3 && totalPrayers > 0) {
     var streakText = '';
+    var isMilestone = streakDays >= 7;
+
     if (streakDays >= 30) {
-      streakText = 'A month of daily prayer';
+      streakText = 'A month of daily prayer \u2014 what a beautiful gift to God.';
+    } else if (streakDays >= 14) {
+      streakText = 'Two weeks of daily prayer. You are growing.';
     } else if (streakDays >= 7) {
-      var streakStart = new Date(now);
-      streakStart.setDate(streakStart.getDate() - streakDays + 1);
-      var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      streakText = 'You\u2019ve prayed daily since last ' + dayNames[streakStart.getDay()];
+      streakText = 'A full week of daily prayer. Keep going.';
     } else {
       streakText = streakDays + ' consecutive days of prayer';
     }
-    activityHtml += '<div class="activity-streak-text">' + streakText + '</div>';
+
+    if (isMilestone) {
+      activityHtml += '<div class="activity-streak-milestone">'
+        + '<span class="activity-streak-flame">' + streakDays + '</span>'
+        + '<span class="activity-streak-milestone-text">' + streakText + '</span>'
+        + '</div>';
+    } else {
+      activityHtml += '<div class="activity-streak-text">' + streakText + '</div>';
+    }
   }
 
   // 7-day dot row
@@ -552,30 +579,65 @@ function renderSaved() {
     activityHtml += dotsHtml;
   }
 
-  var confessionNote = '';
-  try {
-    var lastConf = localStorage.getItem('mf-last-confession');
-    if (lastConf) {
-      var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
-      if (daysSince >= 30) {
-        confessionNote = '<div class="activity-confession-nudge" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">'
-          + '<span>It\u2019s been ' + daysSince + ' days since your last confession</span>'
-          + '<span class="activity-confession-link">Find times \u203A</span>'
-          + '</div>';
-      }
-    }
-  } catch (e) {}
+  // ST-18: Quick prayer launchers (always present)
+  var prayerBtns = '<div class="activity-pray-row">'
+    + '<button class="activity-pray-btn" onclick="openRosary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg><span>Rosary</span></button>'
+    + '<button class="activity-pray-btn" onclick="openExamination()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Examen</span></button>'
+    + '<button class="activity-pray-btn" onclick="openStations()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/></svg><span>Stations</span></button>'
+    + '<button class="activity-pray-btn" onclick="openNovena()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg><span>Novena</span></button>'
+    + '</div>';
 
-  if (activityHtml || confessionNote) {
-    html += '<div class="saved-divider"><span>Prayer life</span></div>';
-    html += '<div class="saved-activity-card">';
-    if (activityHtml) html += activityHtml;
-    if (activityHtml && confessionNote) html += '<div class="activity-divider"></div>';
-    if (confessionNote) html += confessionNote;
-    html += '</div>';
+  // ST-19: Always show prayer life section when churches are saved
+  html += '<div class="saved-divider"><span>Prayer life</span></div>';
+  html += '<div class="saved-activity-card">';
+
+  if (activityHtml) {
+    html += activityHtml;
+    html += prayerBtns;
+  } else {
+    // No prayer history — show invitation + launchers
+    html += '<div class="activity-invite">Guided prayers to deepen your walk with Christ</div>';
+    html += prayerBtns;
+  }
+
+  html += '</div>';
+
+  // ── ST-22: Context-aware greeting header ──
+  var headerEl = document.getElementById('savedHeaderContent');
+  if (headerEl) {
+    var hour = now.getHours();
+    var greeting = '';
+    if (hour < 12) greeting = 'Good morning';
+    else if (hour < 17) greeting = 'Good afternoon';
+    else greeting = 'Good evening';
+
+    var isLent = utils.isLentSeason ? utils.isLentSeason() : false;
+    var seasonNote = isLent ? '<div class="saved-header-season">Lenten Season</div>' : '';
+
+    headerEl.innerHTML = '<h2>' + greeting + '</h2>' + seasonNote;
   }
 
   el.innerHTML = html;
+}
+
+// ── ST-09: Auto-refresh timer ──
+var _savedRefreshTimer = null;
+
+function startSavedRefresh() {
+  stopSavedRefresh();
+  _savedRefreshTimer = setInterval(function() {
+    var panel = document.getElementById('panelSaved');
+    if (panel && panel.classList.contains('active')) {
+      renderSaved();
+    }
+  }, 60000);
+}
+
+function stopSavedRefresh() {
+  if (_savedRefreshTimer) {
+    clearInterval(_savedRefreshTimer);
+    _savedRefreshTimer = null;
+  }
 }
 
 // ── ST-10: Edit mode toggle for church rows ──
@@ -592,4 +654,6 @@ window.renderSaved = renderSaved;
 module.exports = {
   renderUnifiedEvt: renderUnifiedEvt,
   renderSaved: renderSaved,
+  startSavedRefresh: startSavedRefresh,
+  stopSavedRefresh: stopSavedRefresh,
 };
