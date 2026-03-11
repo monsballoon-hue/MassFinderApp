@@ -26,21 +26,14 @@ var TERM_DEFS = {
   'Via Dolorosa': 'Latin for \u201cWay of Sorrows\u201d \u2014 the route in Jerusalem that Christ walked carrying His cross to Calvary.'
 };
 
-// Popover counter for unique IDs
-var _popId = 0;
-
+// UX-07: Wrap known theological terms with tappable definitions (click-based, no Popover API needed)
 function _wrapTerms(html) {
-  if (typeof HTMLElement !== 'undefined' && !('popover' in document.createElement('span'))) {
-    return html; // No Popover API support — return unchanged
-  }
   var keys = Object.keys(TERM_DEFS);
   // Sort by length descending so longer terms match first
   keys.sort(function(a, b) { return b.length - a.length; });
 
   // Split HTML into tags and text segments to avoid matching inside HTML tags
   var parts = html.split(/(<[^>]+>)/);
-  var inTag = false;
-  var tagDepth = {};  // track tags we've inserted to avoid double-wrapping
 
   for (var p = 0; p < parts.length; p++) {
     // Skip HTML tags
@@ -51,22 +44,65 @@ function _wrapTerms(html) {
     var text = parts[p];
     keys.forEach(function(term) {
       var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Word boundary match (case-insensitive), only first occurrence per segment
+      // Word boundary match (case-insensitive)
       var re = new RegExp('\\b(' + escaped + ')\\b', 'gi');
-      var def = TERM_DEFS[term];
       text = text.replace(re, function(match) {
-        _popId++;
-        var id = 'td' + _popId;
-        return '<span class="term-trigger" popovertarget="' + id + '">' + match + '</span>'
-          + '<span popover id="' + id + '" class="term-popover">'
-          + '<span class="term-popover-word">' + match + '</span>'
-          + '<span class="term-popover-def">' + esc(def) + '</span>'
-          + '</span>';
+        return '<span class="term-trigger" data-term="' + esc(term) + '">' + match + '</span>';
       });
     });
     parts[p] = text;
   }
   return parts.join('');
+}
+
+// Show term definition tooltip on click — delegated handler attached once
+function _initTermClicks(container) {
+  if (!container || container._termInit) return;
+  container._termInit = true;
+  container.addEventListener('click', function(e) {
+    var trigger = e.target.closest('.term-trigger');
+    if (!trigger) return;
+    e.stopPropagation();
+    var term = trigger.getAttribute('data-term');
+    var def = TERM_DEFS[term] || TERM_DEFS[term.toLowerCase()];
+    if (!def) return;
+
+    // Remove any existing tooltip
+    var old = document.getElementById('termTooltip');
+    if (old) old.remove();
+
+    // Create tooltip
+    var tip = document.createElement('div');
+    tip.id = 'termTooltip';
+    tip.className = 'term-popover';
+    tip.innerHTML = '<span class="term-popover-word">' + esc(trigger.textContent) + '</span>'
+      + '<span class="term-popover-def">' + esc(def) + '</span>';
+    document.body.appendChild(tip);
+
+    // Position near the trigger
+    var rect = trigger.getBoundingClientRect();
+    var tipW = Math.min(320, window.innerWidth - 32);
+    tip.style.width = tipW + 'px';
+    var left = Math.max(16, Math.min(rect.left, window.innerWidth - tipW - 16));
+    tip.style.left = left + 'px';
+    // Show above if room, otherwise below
+    if (rect.top > 200) {
+      tip.style.bottom = (window.innerHeight - rect.top + 8) + 'px';
+    } else {
+      tip.style.top = (rect.bottom + 8) + 'px';
+    }
+
+    // Dismiss on next tap anywhere
+    function dismiss(ev) {
+      if (ev.target.closest('.term-popover')) return;
+      var t = document.getElementById('termTooltip');
+      if (t) t.remove();
+      document.removeEventListener('click', dismiss, true);
+    }
+    setTimeout(function() {
+      document.addEventListener('click', dismiss, true);
+    }, 10);
+  });
 }
 
 var DEVOTIONAL_GUIDES = [
@@ -253,4 +289,5 @@ function renderGuide(g, sub) {
 module.exports = {
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,
   renderGuide: renderGuide,
+  initTermClicks: _initTermClicks,
 };

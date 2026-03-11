@@ -172,6 +172,9 @@ function renderMore() {
       return renderGuide(g, false);
     }).join('');
 
+    // Wire term definition taps (UX-07)
+    devotions.initTermClicks(devotEl);
+
     // Wire CCC reference taps
     devotEl.querySelectorAll('strong').forEach(function(el) {
       var m = el.textContent.trim().match(/^CCC ([\d\u2013\-]+):?$/);
