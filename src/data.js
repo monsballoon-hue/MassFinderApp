@@ -189,6 +189,7 @@ function parishesToChurches(parishes) {
         lat: loc.lat || null, lng: loc.lng || null,
         phone: ct.phone || null, website: ct.website || null,
         office_hours: ct.office_hours || null,
+        emails: ct.emails || null, facebook: ct.facebook || null, instagram: ct.instagram || null,
         established: p.established || null, status: p.status || 'active',
         is_accessible: loc.is_accessible != null ? loc.is_accessible : p.is_accessible,
         bulletin_url: p.bulletin_url || ct.bulletin_url || null,

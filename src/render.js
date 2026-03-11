@@ -338,12 +338,22 @@ function openDetail(id, trapFocus, releaseFocus) {
     var nsBadge = '';
     if (nextSvc.isLive) nsBadge = '<span class="detail-next-badge live"><span class="pulse-dot"></span>Happening now</span>';
     else if (nextSvc.isSoon) nsBadge = '<span class="detail-next-badge soon">Starting soon</span>';
+    // DC-19: Relative countdown for today's services
+    var nsDayLabel = nextSvc.dayLabel;
+    if (nextSvc.dayLabel === 'Today' && !nextSvc.isLive && nextSvc.minutesUntil > 0) {
+      if (nextSvc.minutesUntil <= 60) {
+        nsDayLabel = 'in ' + nextSvc.minutesUntil + ' min';
+      } else {
+        var hrs = Math.floor(nextSvc.minutesUntil / 60);
+        nsDayLabel = 'in ' + hrs + (hrs === 1 ? ' hour' : ' hours');
+      }
+    }
     nextHtml = '<div class="detail-next' + nsCls + '">'
       + '<div class="detail-next-time">' + nextSvc.timeFormatted + '</div>'
       + '<div class="detail-next-info">'
       + '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[nextSvc.service.type] || '') + '</span>'
       + nsBadge
-      + '<span class="detail-next-day">' + nextSvc.dayLabel + '</span>'
+      + '<span class="detail-next-day">' + nsDayLabel + '</span>'
       + '</div></div>';
   }
 
@@ -363,6 +373,18 @@ function openDetail(id, trapFocus, releaseFocus) {
   }
   if (bulletinUrl && c.website) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="' + utils.esc(c.website) + '" target="_blank" rel="noopener">' + utils.esc(domain) + '</a></div>';
   if (c.office_hours) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>' + utils.esc(c.office_hours) + '</span></div>';
+  // DC-13: Email link
+  if (c.emails && c.emails.length) {
+    var emailAddr = c.emails[0];
+    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + utils.esc(emailAddr) + '">' + utils.esc(emailAddr) + '</a></div>';
+  }
+  // DC-13: Social links
+  if (c.facebook) {
+    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg><a href="' + utils.esc(c.facebook) + '" target="_blank" rel="noopener">Facebook</a></div>';
+  }
+  if (c.instagram) {
+    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg><a href="' + utils.esc(c.instagram) + '" target="_blank" rel="noopener">Instagram</a></div>';
+  }
   chtml += '</div>';
 
   // D-02: Quick actions — now rendered ABOVE contact (order swapped in body below)
@@ -371,7 +393,6 @@ function openDetail(id, trapFocus, releaseFocus) {
   if (mapUrl) qa += '<a class="quick-action" href="' + mapUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>Directions</span></a>';
   if (thirdActionUrl) qa += '<a class="quick-action" href="' + utils.esc(thirdActionUrl) + '" target="_blank" rel="noopener">' + thirdActionIcon + '<span>' + thirdActionLabel + '</span></a>';
   qa += '<button class="quick-action" onclick="shareParish(\'' + utils.esc(utils.displayName(c.name)) + "','" + c.id + "')\">" + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>';
-  qa += '<button class="quick-action" onclick="showQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg><span>QR</span></button>';
   qa += '</div>';
 
   // D-07: Visitation data — CSS classes, no inline styles, no bell emoji
@@ -390,13 +411,33 @@ function openDetail(id, trapFocus, releaseFocus) {
     { k: 'conf',  t: 'Sacraments',               ic: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', types: ['confession', 'anointing_of_sick'] },
     { k: 'ador',  t: 'Adoration & Holy Hour',     ic: 'M12 3v18m-6-6l6 6 6-6', types: ['adoration', 'perpetual_adoration', 'holy_hour'] },
     { k: 'devot', t: 'Prayer & Devotion',         ic: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z', types: ['rosary', 'stations_of_cross', 'divine_mercy', 'miraculous_medal', 'novena', 'devotion', 'vespers', 'gorzkie_zale', 'benediction'] },
-    { k: 'hw',    t: 'Holy Week',                 ic: 'M12 2v20M2 12h20', types: ['holy_thursday_mass', 'good_friday_service', 'easter_vigil_mass', 'palm_sunday_mass', 'easter_sunday_mass'] },
   ];
+  // DC-17: Only show Holy Week during Lent/Easter season
+  var _isHolyWeekSeason = utils.isLentSeason() || (function() {
+    var easter = utils.getEaster(utils.getNow().getFullYear());
+    if (!easter) return false;
+    var now = utils.getNow();
+    var octaveEnd = new Date(easter.getTime() + 8 * 24 * 60 * 60 * 1000);
+    return now <= octaveEnd;
+  })();
+  if (_isHolyWeekSeason) {
+    secs.push({ k: 'hw', t: 'Holy Week', ic: 'M12 2v20M2 12h20', types: ['holy_thursday_mass', 'good_friday_service', 'easter_vigil_mass', 'palm_sunday_mass', 'easter_sunday_mass'] });
+  }
 
   // D-11: Determine current day for today-dot indicator
   var _now = utils.getNow();
   var _curDI = _now.getDay();
   var _curDay = config.DAY_ORDER[_curDI];
+
+  // DC-09: Auto-open accordion based on active filter
+  var _filterSectionMap = {
+    confession: 'conf',
+    adoration: 'ador',
+    latin: 'mass',
+    spanish: 'mass',
+    lent: 'devot'
+  };
+  var _autoOpenSection = _filterSectionMap[state.currentFilter] || 'mass';
 
   var secHtml = '';
   for (var si = 0; si < secs.length; si++) {
@@ -409,8 +450,21 @@ function openDetail(id, trapFocus, releaseFocus) {
     }
     if (!svcs.length) continue;
     var timedCount = svcs.filter(function(s) { return s.time; }).length;
-    var badgeCount = timedCount > 0 ? timedCount : svcs.length;
-    var isFirst = sec.k === 'mass';
+
+    // DC-15 + DC-21: Descriptive badge text
+    var daySet = {};
+    svcs.forEach(function(s) { if (s.day) daySet[s.day] = true; });
+    var dayCount = Object.keys(daySet).length;
+    var badgeText = '';
+    if (timedCount === 0 && svcs.length > 0) {
+      badgeText = 'By appt.';
+    } else if (['conf', 'ador'].indexOf(sec.k) >= 0) {
+      badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
+    } else {
+      badgeText = dayCount + (dayCount === 1 ? ' day' : ' days');
+    }
+
+    var isFirst = sec.k === _autoOpenSection;
 
     // D-11: Check if any service in this section is available today
     var hasToday = svcs.some(function(s) {
@@ -425,16 +479,31 @@ function openDetail(id, trapFocus, releaseFocus) {
       var firstDevSvcs = svcs.filter(function(s) { return isFirstDevotionMass(s); });
       var regularDevSvcs = svcs.filter(function(s) { return !isFirstDevotionMass(s); });
       if (firstDevSvcs.length) {
-        bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types) + '</div>';
+        bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types, _curDay) + '</div>';
       }
-      bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types);
+      bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types, _curDay);
+    } else if (sec.k === 'ador') {
+      // DC-20: Perpetual Adoration special card
+      var perpSvcs = svcs.filter(function(s) { return s.type === 'perpetual_adoration'; });
+      var regularAdor = svcs.filter(function(s) { return s.type !== 'perpetual_adoration'; });
+      if (perpSvcs.length) {
+        var perpLoc = ml && perpSvcs[0].location_id && locL[perpSvcs[0].location_id] ? locL[perpSvcs[0].location_id] : '';
+        bodyInner += '<div class="schedule-perpetual-card">'
+          + '<div class="schedule-perpetual-title">Perpetual Adoration</div>'
+          + '<div class="schedule-perpetual-subtitle">Available 24 hours' + (perpLoc ? ' \u00b7 ' + utils.esc(perpLoc) : '') + '</div>'
+          + (perpSvcs[0].notes ? '<div class="schedule-note">' + utils.esc(perpSvcs[0].notes) + '</div>' : '')
+          + '</div>';
+      }
+      if (regularAdor.length) {
+        bodyInner += renderSched(regularAdor, locL, ml, sec.types, _curDay);
+      }
     } else {
-      bodyInner = renderSched(svcs, locL, ml, sec.types);
+      bodyInner = renderSched(svcs, locL, ml, sec.types, _curDay);
     }
 
     secHtml += '<div class="detail-section"><button class="accordion-header" aria-expanded="' + isFirst + '" onclick="toggleAcc(this)">'
       + '<div class="accordion-header-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="' + sec.ic + '"/></svg>'
-      + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeCount + '</span>' + todayDot + '</div>'
+      + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeText + '</span>' + todayDot + '</div>'
       + '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
       + '</button><div class="accordion-body' + (isFirst ? ' open' : '') + '"><div class="accordion-body-inner">' + bodyInner + '</div></div></div>';
   }
@@ -475,7 +544,13 @@ function openDetail(id, trapFocus, releaseFocus) {
   if (v.last_checked) footerParts.push('Last checked: ' + utils.esc(v.last_checked));
   if (v.bulletin_date) footerParts.push('Bulletin: ' + utils.esc(v.bulletin_date));
   if (v.source) footerParts.push('Source: ' + utils.esc(v.source));
-  var footer = footerParts.length ? '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>' : '';
+  // DC-12: Footer with QR + Email Signup buttons
+  var footer = '<div class="detail-footer-row">';
+  if (footerParts.length) footer += '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>';
+  footer += '<div class="detail-footer-actions">'
+    + '<button class="detail-footer-btn" onclick="showQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>QR Code</button>'
+    + '<button class="detail-footer-btn" onclick="showSubscribeQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email Signup</button>'
+    + '</div></div>';
 
   // D-01: Address below town; D-13: State name map
   var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
@@ -485,8 +560,8 @@ function openDetail(id, trapFocus, releaseFocus) {
     '<div class="detail-header"><div class="detail-header-top"><h2 class="detail-name">' + utils.esc(utils.displayName(c.name)) + '</h2>'
     + '<div class="detail-actions"><button class="detail-action-btn fav-btn' + (fav ? ' fav-active' : '') + '" data-id="' + c.id + '" onclick="toggleFav(\'' + c.id + '\')" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="' + (fav ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
     + '<button class="detail-action-btn" onclick="closeDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-    + '</div></div><div class="detail-town">' + townHtml + '</div><div class="detail-badges">' + bg + '</div>' + nextHtml + '</div>'
-    + '<div class="detail-body">' + qa + chtml + visitHtml + _getComingUp(c) + secHtml + vp + ceHtml + footer + '</div>';
+    + '</div></div><div class="detail-town">' + townHtml + '</div>' + nextHtml + '<div class="detail-badges">' + bg + '</div></div>'
+    + '<div class="detail-body">' + _getComingUp(c) + visitHtml + qa + chtml + secHtml + ceHtml + vp + footer + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');
@@ -496,6 +571,13 @@ function openDetail(id, trapFocus, releaseFocus) {
   history.replaceState(null, '', '#' + id);
   if (typeof trapFocus === 'function') trapFocus(document.getElementById('detailPanel'));
   setTimeout(function() { var cb = document.querySelector('.detail-action-btn[aria-label="Close"]'); if (cb) cb.focus(); }, 350);
+  // DC-23: Scroll "Coming Up" into view if present
+  setTimeout(function() {
+    var comingUp = document.querySelector('.detail-coming-up');
+    if (comingUp) {
+      comingUp.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }, 450);
 }
 
 // ── Close Detail ──
@@ -641,7 +723,7 @@ function toggleAcc(btn) {
 }
 
 // ── Schedule Rendering ──
-function renderSched(svcs, locL, ml, sectionTypes) {
+function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
   var dayGrp = {}, appt = [];
   var WEEKDAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
   var specLabels = {
@@ -732,7 +814,9 @@ function renderSched(svcs, locL, ml, sectionTypes) {
   // Collapsed weekday rows right after Sunday
   if (collapsed.length) {
     collapsed.sort(function(a, b) { return (utils.toMin(a.svc.time) || 0) - (utils.toMin(b.svc.time) || 0); });
-    html += '<div class="schedule-day"><div class="schedule-day-label">Weekdays</div>';
+    var weekdayIsToday = ['monday','tuesday','wednesday','thursday','friday'].indexOf(todayDay) >= 0;
+    var collapsedTodayCls = weekdayIsToday ? ' schedule-day--today' : '';
+    html += '<div class="schedule-day' + collapsedTodayCls + '"><div class="schedule-day-label">Weekdays' + (weekdayIsToday ? '<span class="schedule-today-tag">Today</span>' : '') + '</div>';
     for (var ci = 0; ci < collapsed.length; ci++) {
       html += renderRow(collapsed[ci].svc, locL, ml, collapsed[ci].label, collapsed[ci].extraNote);
     }
@@ -790,13 +874,68 @@ function renderSched(svcs, locL, ml, sectionTypes) {
     ss.sort(function(a, b) { return (utils.toMin(a.time) || 0) - (utils.toMin(b.time) || 0); });
     var merged = mergeSameTime(ss);
     var dayCls = day === 'first_friday' ? ' first-friday' : day === 'first_saturday' ? ' first-saturday' : '';
+    // DC-01: Today highlighting
+    var isToday = (day === todayDay) ||
+      (day === 'weekday' && ['monday','tuesday','wednesday','thursday','friday'].indexOf(todayDay) >= 0) ||
+      (day === 'daily');
+    var todayCls = isToday ? ' schedule-day--today' : '';
+    var todayTag = isToday ? '<span class="schedule-today-tag">Today</span>' : '';
     var sub = day === 'first_friday' ? '<div class="schedule-day-subtitle">Devotion to the Sacred Heart of Jesus</div>'
       : day === 'first_saturday' ? '<div class="schedule-day-subtitle">Devotion to the Immaculate Heart of Mary</div>' : '';
-    var h = '<div class="schedule-day' + dayCls + '"><div class="schedule-day-label">' + utils.esc(label) + '</div>' + sub;
-    for (var mi = 0; mi < merged.length; mi++) {
-      h += renderRow(merged[mi], locL, ml);
+    var h = '<div class="schedule-day' + dayCls + todayCls + '"><div class="schedule-day-label">' + utils.esc(label) + todayTag + '</div>' + sub;
+
+    // DC-04: Multi-location sub-grouping
+    if (ml && merged.some(function(s) { return s.location_id; })) {
+      var locGroups = {};
+      var locOrder = [];
+      for (var li = 0; li < merged.length; li++) {
+        var loc = merged[li].location_id || '_none';
+        if (!locGroups[loc]) { locGroups[loc] = []; locOrder.push(loc); }
+        locGroups[loc].push(merged[li]);
+      }
+      if (locOrder.length > 1) {
+        for (var gi = 0; gi < locOrder.length; gi++) {
+          var locId = locOrder[gi];
+          var locName = locId !== '_none' && locL[locId] ? locL[locId] : '';
+          if (locName) {
+            h += '<div class="schedule-loc-group"><div class="schedule-loc-header">' + utils.esc(locName) + '</div>';
+          }
+          h += _renderRowsWithDivider(locGroups[locId], locL, false);
+          if (locName) h += '</div>';
+        }
+        return h + '</div>';
+      }
     }
+
+    // Default: single location — render with AM/PM divider
+    h += _renderRowsWithDivider(merged, locL, ml);
     return h + '</div>';
+
+    // DC-03: AM/PM divider helper
+    function _renderRowsWithDivider(rows, locL, showLoc) {
+      var out = '';
+      var hasAM = false, hasPM = false;
+      for (var chk = 0; chk < rows.length; chk++) {
+        var chkMin = utils.toMin(rows[chk].time);
+        if (chkMin !== null) {
+          if (chkMin < 720) hasAM = true;
+          else hasPM = true;
+        }
+      }
+      var needsDivider = hasAM && hasPM;
+      var dividerInserted = false;
+      for (var mi = 0; mi < rows.length; mi++) {
+        if (needsDivider && !dividerInserted) {
+          var thisMin = utils.toMin(rows[mi].time);
+          if (thisMin !== null && thisMin >= 720) {
+            out += '<div class="schedule-ampm-break" aria-hidden="true"></div>';
+            dividerInserted = true;
+          }
+        }
+        out += renderRow(rows[mi], locL, showLoc);
+      }
+      return out;
+    }
   }
 
   // === Nested Helper: merge same-time services within a day ===
@@ -826,9 +965,35 @@ function renderSched(svcs, locL, ml, sectionTypes) {
   // === Nested Helper: render a single schedule row ===
   function renderRow(s, locL, ml, dayLabel, extraNote) {
     var tStr = s.end_time ? utils.fmt12(s.time) + ' \u2013 ' + utils.fmt12(s.end_time) : utils.fmt12(s.time);
+
+    // DC-22: Confession duration
+    if (s.type === 'confession' && s.end_time) {
+      var durMin = (utils.toMin(s.end_time) || 0) - (utils.toMin(s.time) || 0);
+      if (durMin > 0) {
+        var durStr = durMin >= 60 ? Math.floor(durMin / 60) + ' hr' + (durMin >= 120 ? 's' : '') : durMin + ' min';
+        tStr += '<span class="schedule-duration">(' + durStr + ')</span>';
+      }
+    }
+
     var lb = s.language && s.language !== 'en' ? '<span class="schedule-lang-badge">' + (LANG_NAMES[s.language] || s.language) + '</span>' : '';
     var rb = s.rite === 'tridentine' ? '<span class="schedule-lang-badge">TLM</span>' : '';
-    var sb = s.seasonal && s.seasonal.season === 'lent' ? '<span class="schedule-season-badge">\ud83c\udf3f Lent</span>' : '';
+
+    // DC-08: Seasonal badges with SVG and proper colors
+    var sb = '';
+    if (s.seasonal && s.seasonal.season === 'lent') {
+      sb = '<span class="schedule-season-badge schedule-season-badge--lent"><svg viewBox="0 0 16 16" fill="currentColor" width="12" height="12"><path d="M8 1c3.3 0 6 2.7 6 6 0 1.6-.6 3.1-1.8 4.2L8 15l-4.2-3.8C2.6 10.1 2 8.6 2 7c0-3.3 2.7-6 6-6z"/></svg>Lent</span>';
+    } else if (s.seasonal && s.seasonal.season === 'summer') {
+      sb = '<span class="schedule-season-badge schedule-season-badge--summer">Summer</span>';
+    } else if (s.seasonal && s.seasonal.season === 'academic_year') {
+      sb = '<span class="schedule-season-badge schedule-season-badge--academic">Academic Year</span>';
+    }
+
+    // DC-05: Vigil badge
+    var viglBadge = '';
+    if (s.type === 'sunday_mass' && s.day === 'saturday') {
+      viglBadge = '<span class="schedule-vigil-badge">Vigil</span>';
+    }
+
     var loc = ml && s.location_id && locL[s.location_id] ? locL[s.location_id] : '';
     var tl = config.SVC_LABELS[s.type] || s.type;
     var note = extraNote || utils.cleanNote(s) || '';
@@ -838,15 +1003,8 @@ function renderSched(svcs, locL, ml, sectionTypes) {
     var showTypeLabel = !isSingleTypeSection && ['sunday_mass', 'daily_mass'].indexOf(s.type) < 0;
 
     var meta = '';
-    if (dayLabel) meta += '<div class="schedule-location" style="font-weight:var(--weight-medium)">' + utils.esc(dayLabel) + '</div>';
-    if (loc) meta += '<span class="schedule-loc-badge">' + utils.esc(loc) + '</span>';
-    if (showTypeLabel) meta += '<div class="schedule-location">' + utils.esc(tl) + '</div>';
-    if (s.type === 'communion_service') meta += '<div class="schedule-note" style="font-style:italic;color:var(--color-text-tertiary)">(Communion Service \u2014 not a Mass)</div>';
-    if (note) meta += '<div class="schedule-note">' + utils.esc(note) + '</div>';
-    if (merged) meta += '<div class="schedule-note">' + utils.esc(merged) + '</div>';
-    if (s.times_vary) meta += '<div class="schedule-note">Times may vary \u2014 check bulletin</div>';
 
-    // Show recurrence info if present
+    // DC-10: Recurrence badge FIRST — most critical scheduling info
     if (s.recurrence) {
       var r = s.recurrence;
       var ordinal = { 1: '1st', 2: '2nd', 3: '3rd', 4: '4th', 'last': 'Last' };
@@ -858,10 +1016,21 @@ function renderSched(svcs, locL, ml, sectionTypes) {
       } else if (r.type === 'last_sunday_of_month') {
         recLabel = 'Last Sunday of the month';
       }
-      if (recLabel) meta += '<div class="schedule-note" style="font-weight:var(--weight-medium);color:var(--color-accent-text)">' + utils.esc(recLabel) + '</div>';
+      if (recLabel) meta += '<span class="schedule-recurrence-badge">' + utils.esc(recLabel) + '</span>';
     }
 
-    return '<div class="schedule-row"><div class="schedule-time">' + tStr + lb + rb + sb + '</div><div class="schedule-meta">' + meta + '</div></div>';
+    if (dayLabel) meta += '<div class="schedule-location" style="font-weight:var(--weight-medium)">' + utils.esc(dayLabel) + '</div>';
+    if (loc) meta += '<span class="schedule-loc-badge">' + utils.esc(loc) + '</span>';
+    if (showTypeLabel) meta += '<div class="schedule-location">' + utils.esc(tl) + '</div>';
+    if (note) meta += '<div class="schedule-note">' + utils.esc(note) + '</div>';
+    if (merged) meta += '<div class="schedule-note">' + utils.esc(merged) + '</div>';
+    if (s.times_vary) meta += '<div class="schedule-note">Times may vary \u2014 check bulletin</div>';
+
+    // DC-06: Communion service row class
+    var rowCls = 'schedule-row';
+    if (s.type === 'communion_service') rowCls += ' schedule-row--communion';
+
+    return '<div class="' + rowCls + '"><div class="schedule-time">' + tStr + lb + rb + sb + viglBadge + '</div><div class="schedule-meta">' + meta + '</div></div>';
   }
 }
 
