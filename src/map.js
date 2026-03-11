@@ -97,12 +97,18 @@ function _wirePopupEvents(mkr, church) {
 }
 
 // ── Apply filter to map markers ──
+// Uses state.filteredChurches from data.filterChurches() so map matches Find tab exactly.
 function applyMapFilter() {
   if (!_cluster || !_map) return;
-  var filter = state.currentFilter || 'all';
 
   _cluster.clearLayers();
   var bounds = [];
+
+  // Build a set of church IDs that pass the current Find tab filter
+  var visibleIds = {};
+  for (var fi = 0; fi < state.filteredChurches.length; fi++) {
+    visibleIds[state.filteredChurches[fi].church.id] = true;
+  }
 
   var ids = Object.keys(_markers);
   for (var i = 0; i < ids.length; i++) {
@@ -111,43 +117,51 @@ function applyMapFilter() {
     var church = marker._churchRef;
     if (!church) continue;
 
-    // Check if church passes current filter
-    var passes = true;
-    if (['confession', 'adoration', 'latin', 'spanish', 'today', 'weekend', 'lent'].indexOf(filter) !== -1) {
-      passes = getNext(church, filter) !== null;
-    }
-
-    if (passes) {
-      var saved = isFav(church.id);
-      marker.setIcon(_getIcon(saved ? 'saved' : 'default'));
+    if (visibleIds[church.id]) {
+      marker.setIcon(_getIcon(isFav(church.id) ? 'saved' : 'default'));
       _cluster.addLayer(marker);
       bounds.push([church.lat, church.lng]);
     }
   }
 
   // Update filter pill
-  _updateFilterPill(filter);
+  _updateFilterPill();
 
-  // Fit bounds if we filtered down, but not for 'all'
-  if (filter !== 'all' && bounds.length && bounds.length < Object.keys(_markers).length) {
-    _map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
+  // Always fit bounds to show all visible markers
+  if (bounds.length) {
+    _map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
   }
 }
 
 // ── Update floating filter pill ──
-function _updateFilterPill(filter) {
+function _updateFilterPill() {
   var pill = document.getElementById('mapFilterPill');
   if (!pill) return;
 
+  var filter = state.currentFilter || 'all';
+  var hasSearch = !!state.searchQuery;
+  var adv = state.advancedFilters || { types: [], days: [], languages: [] };
+  var hasAdvanced = adv.types.length || adv.days.length || adv.languages.length;
+
+  // Build label
+  var label = '';
   var labels = {
     confession: 'Confession', adoration: 'Adoration', latin: 'Latin Mass',
     spanish: 'Spanish Mass', lent: 'Lent', today: 'Today',
     weekend: 'This Weekend', yc: 'YC Events',
     advent: 'Advent', easter: 'Easter'
   };
-  var label = labels[filter];
 
-  if (!label || filter === 'all') {
+  if (hasSearch) {
+    label = '\u201C' + state.searchQuery + '\u201D';
+  } else if (labels[filter]) {
+    label = labels[filter];
+  } else if (hasAdvanced) {
+    var count = adv.types.length + adv.days.length + adv.languages.length;
+    label = count + ' filter' + (count !== 1 ? 's' : '') + ' active';
+  }
+
+  if (!label) {
     pill.style.display = 'none';
     return;
   }
@@ -162,9 +176,18 @@ function _updateFilterPill(filter) {
 
 // ── Clear map filter (called from pill x button) ──
 function clearMapFilter() {
+  // Clear search
+  state.searchQuery = '';
+  var si = document.getElementById('searchInput');
+  if (si) si.value = '';
+  var sc = document.getElementById('searchClear');
+  if (sc) sc.classList.remove('visible');
+  // Clear advanced filters
+  state.advancedFilters = { types: [], days: [], languages: [] };
   var ui = require('./ui.js');
+  ui.updateMFChip();
+  // Reset to all
   ui.applyQuickFilter('all');
-  applyMapFilter();
 }
 
 // ── Init Map ──
@@ -222,14 +245,9 @@ function initMap() {
     bounds.push([c.lat, c.lng]);
   }
 
-  // Add cluster group to map, then populate with filtered markers
+  // Add cluster group to map, then populate with filtered markers + fit bounds
   _map.addLayer(_cluster);
   applyMapFilter();
-
-  // If no filter active, fit all bounds
-  if (state.currentFilter === 'all' && bounds.length) {
-    _map.fitBounds(bounds, { padding: [30, 30], maxZoom: 12 });
-  }
 
   // User location marker
   if (state.userLat !== null) {

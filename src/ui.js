@@ -226,18 +226,12 @@ function switchTab(id, btn) {
       map.initMap();
       state.mapInitialized = true;
     } else if (id === 'panelMap' && state.mapInitialized) {
-      // Re-apply filter and refresh layout
-      var map2 = require('./map.js');
-      map2.applyMapFilter();
-      if (window._map) setTimeout(function() { window._map.invalidateSize(); }, 100);
-    }
-    if (id === 'panelMap') {
-      var location = require('./location.js');
-      location.refreshLocation(function(ok) {
-        if (ok && window._map && state.userLat !== null) {
-          window._map.setView([state.userLat, state.userLng], 13);
-        }
-      });
+      // Re-apply filter and fit bounds to visible markers
+      if (window._map) setTimeout(function() { window._map.invalidateSize(); }, 50);
+      setTimeout(function() {
+        var map2 = require('./map.js');
+        map2.applyMapFilter();
+      }, 100);
     }
     if (id === 'panelSaved') {
       var saved = require('./saved.js');
