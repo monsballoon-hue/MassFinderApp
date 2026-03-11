@@ -1,6 +1,7 @@
 {
   "name": "massfinder",
   "version": "3.0.0",
+  "license": "AGPL-3.0-only",
   "private": true,
   "description": "Catholic services directory PWA",
   "scripts": {
@@ -9,7 +10,11 @@
     "schema": "node scripts/generate-schema.js",
     "validate": "npx ajv-cli validate --spec=draft7 -s parish_data.schema.json -d parish_data.json --errors=text --all-errors -c ajv-formats",
     "precommit": "npm run build && npm run schema && npm run validate",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:bible": "node scripts/build-bible-drb.js",
+    "build:xrefs": "node scripts/build-xrefs.js",
+    "build:litcal": "node scripts/build-litcal.js",
+    "build:data": "npm run build:bible && npm run build:xrefs && npm run build:litcal"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.49.0",
