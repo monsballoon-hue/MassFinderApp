@@ -177,6 +177,7 @@ window.toggleSort = ui.toggleSort;
 window.closeAllPanels = ui.closeAllPanels;
 window.shareParish = render.shareParish;
 window.showQR = render.showQR;
+window.showSubscribeQR = render.showSubscribeQR;
 window.toggleAcc = render.toggleAcc;
 window.closeEventDetail = events.closeEventDetail;
 window.openEventDetail = events.openEventDetail;

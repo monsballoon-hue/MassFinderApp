@@ -576,6 +576,44 @@ function showQR(churchId) {
   });
 }
 
+function showSubscribeQR(parishId) {
+  var url = location.origin + '/subscribe.html' + (parishId ? '?parish=' + encodeURIComponent(parishId) : '');
+  var existing = document.getElementById('qrModal');
+  if (existing) existing.remove();
+
+  var modal = document.createElement('div');
+  modal.id = 'qrModal';
+  modal.className = 'qr-modal';
+  modal.innerHTML = '<div class="qr-modal-card">'
+    + '<div class="qr-modal-title">Weekly Email Signup</div>'
+    + '<div class="qr-modal-subtitle">Scan to subscribe to parish updates by email \u2014 no app needed.</div>'
+    + '<div class="qr-canvas-wrap" id="qrCanvasWrap"><div class="qr-loading">Generating\u2026</div></div>'
+    + '<div class="qr-modal-url">' + utils.esc(url) + '</div>'
+    + '<button class="qr-modal-close" onclick="document.getElementById(\'qrModal\').remove()">Close</button>'
+    + '</div>';
+  modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+  document.body.appendChild(modal);
+
+  _loadQRCreator().then(function() {
+    var wrap = document.getElementById('qrCanvasWrap');
+    if (!wrap || !window.QrCreator) return;
+    wrap.innerHTML = '';
+    var canvas = document.createElement('canvas');
+    window.QrCreator.render({
+      text: url,
+      radius: 0.3,
+      ecLevel: 'M',
+      fill: document.documentElement.getAttribute('data-theme') === 'dark' ? '#E5E7EB' : '#1F2937',
+      background: 'transparent',
+      size: 200
+    }, canvas);
+    wrap.appendChild(canvas);
+  }).catch(function() {
+    var wrap = document.getElementById('qrCanvasWrap');
+    if (wrap) wrap.innerHTML = '<div class="qr-loading">Could not generate QR code</div>';
+  });
+}
+
 function showToast(msg) {
   var t = document.getElementById('mf-toast');
   if (!t) { t = document.createElement('div'); t.id = 'mf-toast'; document.body.appendChild(t); }
@@ -836,6 +874,7 @@ module.exports = {
   closeDetail: closeDetail,
   shareParish: shareParish,
   showQR: showQR,
+  showSubscribeQR: showSubscribeQR,
   showToast: showToast,
   getMapsUrl: getMapsUrl,
   getMapsUrlCoords: getMapsUrlCoords,

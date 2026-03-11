@@ -1,4 +1,4 @@
-var CACHE_NAME = 'massfinder-v3_' + '20260311_1234';
+var CACHE_NAME = 'massfinder-v3_' + '20260311_1309';
 var SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -107,8 +107,8 @@ self.addEventListener('notificationclick', function(event) {
 self.addEventListener('fetch', function(event) {
   var url = new URL(event.request.url);
 
-  // Network-only for API hosts
-  if (NETWORK_ONLY_HOSTS.some(function(h) { return url.host === h; })) {
+  // Network-only for API hosts and /api/ routes
+  if (NETWORK_ONLY_HOSTS.some(function(h) { return url.host === h; }) || url.pathname.indexOf('/api/') === 0) {
     event.respondWith(fetch(event.request));
     return;
   }
