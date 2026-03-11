@@ -467,7 +467,6 @@ function renderSaved() {
       var daysSince = Math.floor((now.getTime() - Number(lastConf)) / 86400000);
       if (daysSince >= 30) {
         confessionNote = '<div class="saved-confession-card">'
-          + '<div class="saved-confession-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>'
           + '<div class="saved-confession-body">'
           + '<div class="saved-confession-text">It\u2019s been a while since your last confession</div>'
           + '<button class="saved-confession-action" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));setTimeout(function(){document.querySelector(\'[data-filter=confession]\').click()},100)">Find confession times \u203A</button>'
@@ -510,20 +509,30 @@ function renderSaved() {
       }
 
       if (recencyText) {
-        var checkIcon = lastPrayerDate === todayKey
-          ? '<svg class="activity-recency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>'
-          : '';
-        prayerStatusHtml = '<div class="activity-recency">' + checkIcon + '<span>' + recencyText + '</span></div>';
+        var checkMark = lastPrayerDate === todayKey ? '\u2713 ' : '';
+        prayerStatusHtml = '<div class="activity-recency"><span>' + checkMark + recencyText + '</span></div>';
       }
     }
   } catch (e) {}
 
-  // 2x2 prayer launcher grid
-  var prayerBtns = '<div class="activity-pray-grid">'
-    + '<button class="activity-pray-btn" onclick="openRosary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg><span>Rosary</span></button>'
-    + '<button class="activity-pray-btn" onclick="openExamination()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Examen</span></button>'
-    + '<button class="activity-pray-btn" onclick="openStations()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/></svg><span>Stations</span></button>'
-    + '<button class="activity-pray-btn" onclick="openNovena()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg><span>Novena</span></button>'
+  // Prayer launcher — contemplative text-only cards
+  var prayerBtns = '<div class="activity-pray-list">'
+    + '<button class="activity-pray-item" onclick="openRosary()">'
+    + '<span class="activity-pray-name">Rosary</span>'
+    + '<span class="activity-pray-desc">Meditate on the mysteries of Christ</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openExamination()">'
+    + '<span class="activity-pray-name">Examen</span>'
+    + '<span class="activity-pray-desc">Review your day in God\u2019s presence</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openStations()">'
+    + '<span class="activity-pray-name">Stations of the Cross</span>'
+    + '<span class="activity-pray-desc">Walk with Christ to Calvary</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openNovena()">'
+    + '<span class="activity-pray-name">Novena</span>'
+    + '<span class="activity-pray-desc">Nine days of faithful prayer</span>'
+    + '</button>'
     + '</div>';
 
   // Always show prayer life section
@@ -533,7 +542,7 @@ function renderSaved() {
   if (prayerStatusHtml) {
     html += prayerStatusHtml;
   } else {
-    html += '<div class="activity-invite">Guided prayers to deepen your walk with Christ</div>';
+    html += '<div class="activity-invite">\u201CThe Lord is near to all who call on Him.\u201D</div>';
   }
   html += prayerBtns;
 
