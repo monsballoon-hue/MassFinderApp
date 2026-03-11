@@ -217,6 +217,19 @@
   </div>
 </div>
 
+<!-- Explore Overlay (OW-21) -->
+<div id="exploreOverlay" class="explore-overlay" role="dialog" aria-modal="true" aria-label="Explore">
+  <div class="explore-header">
+    <button class="explore-back-btn" onclick="exploreBack()" aria-label="Back">&#8592;</button>
+    <div class="explore-title">Explore</div>
+    <button class="explore-close-btn" onclick="closeExplore()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="explore-trail" id="exploreTrail"></div>
+  <div class="explore-body" id="exploreBody"></div>
+</div>
+
 <!-- Examination of Conscience Overlay -->
 <div id="examOverlay" class="exam-overlay" role="dialog" aria-modal="true" aria-label="Examination of Conscience">
   <div class="exam-header">

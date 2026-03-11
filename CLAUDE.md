@@ -8,7 +8,7 @@ Catholic services directory PWA for the Diocese of Springfield / Western New Eng
 Vanilla JS PWA, CommonJS modules bundled via esbuild into a single IIFE (`dist/app.min.js`).
 No framework, no TypeScript, no JSX. Static site deployed to Vercel.
 
-## Module Structure (24 modules)
+## Module Structure (25 modules)
 
 | File | Purpose |
 |------|---------|
@@ -33,6 +33,7 @@ No framework, no TypeScript, no JSX. Static site deployed to Vercel.
 | `src/devotions.js` | Faith guides — devotional content rendering |
 | `src/forms.js` | Feedback, correction, Web3Forms integration |
 | `src/refs.js` | Universal reference resolver — tappable CCC/Bible ref spans |
+| `src/explore.js` | CCC Explore — deep cross-reference navigation (CCC ↔ Baltimore ↔ Scripture ↔ Lectionary) |
 | `src/install-guide.js` | Visual PWA install guide overlay |
 | `src/location.js` | Geolocation, cookie persistence, data refresh |
 | `src/app.js` | Entry point — wires all modules, window bindings, SW registration, init |

@@ -482,9 +482,9 @@ The Baltimore Catechism uses archaic language ("hitherto," "wherefore," "thou," 
 
 ---
 
-### OW-21: CCC — Deep Exploration Module ("Explore")
+### OW-21: CCC — Deep Exploration Module ("Explore") ✅
 
-**Priority:** P2
+**Priority:** P2 — **DONE**
 **Effort:** 6–8 hours (largest single item)
 **Files:** New `src/explore.js`, updates to `src/ccc.js`, `src/bible.js`, `css/app.css`, `index.html`
 
@@ -1132,7 +1132,7 @@ Design document (`docs/plans/Portal_Auth_Infrastructure_Spec.md`) + Supabase mig
 |----|---------|--------|-------------|
 | ~~OW-19~~ | ~~CCC ↔ Baltimore toggle~~ | ~~2 hrs~~ | ✅ Done |
 | ~~OW-20~~ | ~~Baltimore language modernization~~ | ~~2 hrs~~ | ✅ Done |
-| OW-21 | CCC Explore module | 6–8 hrs | OW-19 (ideally) |
+| ~~OW-21~~ | ~~CCC Explore module~~ | ~~6–8 hrs~~ | ✅ Done |
 | ~~OW-22~~ | ~~Bible refs progressive disclosure~~ | ~~1 hr~~ | ✅ Done |
 | OW-23 | Church detail services restructuring | 4+2 hrs | None (data planning doc) |
 | OW-25 | Settings panel | 3 hrs | None |

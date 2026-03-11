@@ -335,6 +335,9 @@ async function _renderBibleContent(refStr) {
     }
   }
 
+  // Explore button
+  relHtml += '<button class="bible-explore-btn" onclick="openExplore(\'bible\',\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
+
   relEl.innerHTML = relHtml;
   document.getElementById('bibleSheetScroll').scrollTop = 0;
   _currentRef = refStr;

@@ -155,6 +155,9 @@ async function _renderCCCContent(numStr) {
     relHtml += '</div>';
   }
 
+  // Explore button
+  bodyHtml += '<button class="ccc-explore-btn" onclick="openExplore(\'ccc\',\'' + ids[0] + '\')">Explore connections \u203A</button>';
+
   bodyEl.innerHTML = bodyHtml;
   relEl.innerHTML = relHtml;
   document.getElementById('cccSheetScroll').scrollTop = 0;
@@ -167,7 +170,10 @@ async function _renderCCCContent(numStr) {
     if (card) {
       var cardEl = document.createElement('div');
       cardEl.innerHTML = card;
-      bodyEl.appendChild(cardEl.firstChild);
+      // Insert before the explore button
+      var exploreBtn = bodyEl.querySelector('.ccc-explore-btn');
+      if (exploreBtn) bodyEl.insertBefore(cardEl.firstChild, exploreBtn);
+      else bodyEl.appendChild(cardEl.firstChild);
     }
   });
 }
