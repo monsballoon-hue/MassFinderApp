@@ -731,14 +731,14 @@ async function init() {
     readings.fetchLiturgicalDay().then(function() {
       if (window._litcalCache) {
         readings.setLiturgicalSeason(window._litcalCache.events);
+        // FT-07: Return card must run before daily strip to populate window._returnMessage
+        if (state._isReturning && state._lastVisit) {
+          var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
+          if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
+        }
         _renderDailyStrip(window._litcalCache.events);
       }
       _renderConfessionPrompt();
-      // Return-visit context card (Change 18) — needs litcal for missed feasts
-      if (state._isReturning && state._lastVisit) {
-        var daysMissed = Math.floor((Date.now() - new Date(state._lastVisit + 'T00:00:00').getTime()) / 86400000);
-        if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
-      }
     }).catch(function() {});
 
     // Register service worker

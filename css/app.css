@@ -542,6 +542,7 @@ html[data-theme="dark"] .card-svc-tag--latin { color:#C4B5FD;background:#2D1B69;
 /* FT-06: First-use tip card */
 .first-use-tip { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-primary-bg);border:1px solid rgba(44,62,90,0.12);border-radius:var(--radius-md);font-size:var(--text-xs);color:var(--color-text-secondary);line-height:1.4; }
 .first-use-tip button { flex-shrink:0;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--color-text-tertiary);font-size:var(--text-xs); }
+html[data-theme="dark"] .first-use-tip { border-color:var(--color-border-light); }
 
 /* YC BRAND COLOR LOCK — keeps gold regardless of liturgical season */
 .yc-chip,.yc-card,.yc-badge,.yc-cal-btn,.yc-section-count,.events-widget,.event-mini-card,.event-mini-date-badge,.saved-compact-yc,.evt-yc-badge,.community-events-header,.community-events-count,.ce-item,.card-soon-badge { --color-accent:#B8963F;--color-accent-text:#7D6520;--color-accent-light:#D4B05C;--color-accent-pale:#F5EDD8; }
