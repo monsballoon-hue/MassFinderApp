@@ -3,6 +3,38 @@
 
 var _cccData = null, _cccXrefs = null, _cccHistory = [], _cccCurrentNum = '';
 
+// CCC-06: Section context lookup — paragraph number ranges to section labels
+var _CCC_SECTIONS = [
+  [1, 25, 'Prologue'],
+  [26, 49, 'Part One \u00b7 The Desire for God'],
+  [50, 141, 'Part One \u00b7 God Comes to Meet Man'],
+  [142, 184, 'Part One \u00b7 The Response of Faith'],
+  [185, 278, 'Part One \u00b7 The Creeds'],
+  [279, 421, 'Part One \u00b7 Creator of Heaven and Earth'],
+  [422, 682, 'Part One \u00b7 Jesus Christ, Son of God'],
+  [683, 747, 'Part One \u00b7 The Holy Spirit'],
+  [748, 975, 'Part One \u00b7 The Church'],
+  [976, 1065, 'Part One \u00b7 Forgiveness \u00b7 Resurrection \u00b7 Eternal Life'],
+  [1066, 1209, 'Part Two \u00b7 The Sacramental Economy'],
+  [1210, 1419, 'Part Two \u00b7 Baptism \u00b7 Confirmation \u00b7 Eucharist'],
+  [1420, 1532, 'Part Two \u00b7 Penance \u00b7 Anointing of the Sick'],
+  [1533, 1666, 'Part Two \u00b7 Holy Orders \u00b7 Matrimony'],
+  [1667, 1690, 'Part Two \u00b7 Sacramentals \u00b7 Funerals'],
+  [1691, 1876, 'Part Three \u00b7 The Dignity of the Human Person'],
+  [1877, 2051, 'Part Three \u00b7 The Human Community \u00b7 The Law \u00b7 Grace'],
+  [2052, 2557, 'Part Three \u00b7 The Ten Commandments'],
+  [2558, 2758, 'Part Four \u00b7 Christian Prayer'],
+  [2759, 2865, 'Part Four \u00b7 The Lord\u2019s Prayer']
+];
+
+function _getSectionContext(num) {
+  var n = parseInt(num, 10);
+  for (var i = 0; i < _CCC_SECTIONS.length; i++) {
+    if (n >= _CCC_SECTIONS[i][0] && n <= _CCC_SECTIONS[i][1]) return _CCC_SECTIONS[i][2];
+  }
+  return '';
+}
+
 async function _loadCCCData() {
   if (_cccData) return;
   try {
@@ -65,6 +97,13 @@ async function _renderCCCContent(numStr) {
 
   var ids = _parseCCCRange(numStr);
   var bodyHtml = '';
+
+  // CCC-06: Show section context once for the primary paragraph
+  var context = _getSectionContext(ids[0]);
+  if (context) {
+    bodyHtml += '<div class="ccc-section-context">' + _cccEsc(context) + '</div>';
+  }
+
   ids.forEach(function(id, idx) {
     var text = _cccData && _cccData[id];
     var numEl = '<div class="ccc-para-num' + (idx === 0 ? ' ccc-para-num--first' : '') + '">&#167;&nbsp;' + id + '</div>';
@@ -85,18 +124,25 @@ async function _renderCCCContent(numStr) {
     relatedIds.sort(function(a, b) { return a - b; });
   }
 
+  // CCC-07: Related teachings as invitation cards with section context
   var relHtml = '';
   if (relatedIds.length) {
-    relHtml += '<hr class="ccc-divider"><div class="ccc-related-header">Related Teachings</div>';
+    relHtml += '<div class="ccc-related-section">';
+    relHtml += '<div class="ccc-related-header">See Also</div>';
     relatedIds.forEach(function(id) {
       var text = _cccData && _cccData[id];
       if (!text) return;
       var preview = _getPreview(text);
-      relHtml += '<div class="ccc-related-item" onclick="cccNavigate(\'' + id + '\')">' +
-        '<div class="ccc-related-num">&#167;&nbsp;' + id + '</div>' +
-        '<div class="ccc-related-preview">' + _cccEsc(preview) + '</div>' +
-        '</div>';
+      var ctx = _getSectionContext(id);
+      relHtml += '<div class="ccc-related-item" onclick="cccNavigate(\'' + id + '\')">'
+        + '<div class="ccc-related-top">'
+        + '<span class="ccc-related-num">&#167;&nbsp;' + id + '</span>'
+        + (ctx ? '<span class="ccc-related-context">' + _cccEsc(ctx) + '</span>' : '')
+        + '</div>'
+        + '<div class="ccc-related-preview">' + _cccEsc(preview) + '</div>'
+        + '</div>';
     });
+    relHtml += '</div>';
   }
 
   bodyEl.innerHTML = bodyHtml;
