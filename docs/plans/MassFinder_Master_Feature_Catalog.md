@@ -70,7 +70,7 @@ These are defects or gaps in the current repo that could cause confusion, break 
 - **Problem:** Both modules compute `LANG_NAMES` from `config.LANGUAGES`. This should be a derived value in `config.js` (like `SVC_LABELS` and `DAY_NAMES` already are).
 - **Fix:** Add `var LANG_NAMES = {}; Object.keys(LANGUAGES).forEach(function(k) { LANG_NAMES[k] = LANGUAGES[k].label; });` to config.js exports. Remove from events.js and data.js.
 
-### ARC-06: more.js Approaching Monolith (623 lines)
+### ~~ARC-06: more.js Approaching Monolith (623 lines)~~ ✓ DONE
 - **Priority:** P2
 - **Effort:** 1 hour
 - **Size impact:** 0 (reorganization)
@@ -149,7 +149,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Build script:** `scripts/build-prayers.js` — fetches openPrayers JSONs, normalizes structure, adds `ccc` and `ref` fields for cross-referencing, merges with handwritten core prayers (Our Father, Hail Mary, etc.), writes output.
 - **Saves:** Days of manual prayer text authoring.
 
-### DAT-03: Examination of Conscience (ConfessIt)
+### ~~DAT-03: Examination of Conscience (ConfessIt)~~ ✓ DONE
 - **Priority:** P1 — Phase 3
 - **Effort:** 2 hours (transform + add CCC mappings)
 - **Size impact:** ~10KB gzipped
@@ -254,7 +254,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Depended on by:** Every new devotional module, refactored `ccc.js`, refactored `readings.js`
 - **Pattern:** `refs.renderRef('ccc', '2180')` → `<span class="ref-tap" data-type="ccc" data-ref="2180">CCC 2180</span>`
 
-### MOD-02: `src/rosary.js` — Guided Rosary
+### ~~MOD-02: `src/rosary.js` — Guided Rosary~~ ✓ DONE
 - **Priority:** P1 — Phase 2
 - **Effort:** 6 hours
 - **Size impact:** ~4KB in bundle (data in `data/prayers.json`)
@@ -263,7 +263,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **UX pattern:** Full-screen overlay (same as detail panel), CSS scroll-snap for decade navigation.
 - **Enhancement:** Haptic feedback per bead tap (ios-haptics, UX-06). Wake lock during prayer (UX-05).
 
-### MOD-03: `src/examination.js` — Confession Preparation
+### ~~MOD-03: `src/examination.js` — Confession Preparation~~ ✓ DONE
 - **Priority:** P1 — Phase 3
 - **Effort:** 6 hours
 - **Size impact:** ~4KB in bundle (data in `data/examination.json`)
@@ -331,7 +331,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** "Listen" button on reading cards. `var utt = new SpeechSynthesisUtterance(text); utt.rate = 0.9; speechSynthesis.speak(utt);`. Toggle play/pause. Accessibility win for low-vision users and drivers.
 - **Support:** All modern browsers.
 
-### UX-05: Screen Wake Lock — Keep Screen On During Prayer
+### ~~UX-05: Screen Wake Lock — Keep Screen On During Prayer~~ ✓ DONE
 - **Priority:** P1 — Phase 2 (ship with rosary)
 - **Effort:** 10 minutes
 - **Size impact:** 0
@@ -368,10 +368,10 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 
 # CATEGORY 6: UX ENHANCEMENTS — MICRO-LIBRARIES (<5KB each)
 
-### LIB-01: ios-haptics — Haptic Feedback
+### ~~LIB-01: ios-haptics — Haptic Feedback~~ ✓ DONE
 - **Priority:** P1 — Phase 2 (ship with rosary)
 - **Effort:** 30 minutes
-- **Size impact:** <1KB (CDN-loaded)
+- **Size impact:** <1KB (implemented inline, no CDN dependency)
 - **Repo:** `tijnjh/ios-haptics`
 - **License:** MIT
 - **What:** Triggers iOS haptic engine via Safari 18's `<input switch>` trick. Falls back to `navigator.vibrate()` on Android.
@@ -395,10 +395,10 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Generate QR code in parish detail panel. Scan → opens MassFinder at that parish (`massfinder.app/#parish-id`). For bulletin boards, vestibule flyers, parish office.
 - **Integration:** CDN script tag. Generate on demand when user taps "QR Code" in share options.
 
-### LIB-04: scroll-snap-carousel — Progress Dots
+### ~~LIB-04: scroll-snap-carousel — Progress Dots~~ ✓ DONE
 - **Priority:** P2 — Phase 2+
 - **Effort:** 30 minutes
-- **Size impact:** 2KB (CDN-loaded)
+- **Size impact:** 0 (built with custom dots, no library needed)
 - **Repo:** `Grsmto/scroll-snap-carousel`
 - **License:** MIT
 - **What:** Active dot indicator for CSS scroll-snap containers. Shows progress through rosary decades (5 dots), stations (14 dots), commandments (10 dots).
@@ -426,7 +426,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Pattern:** `html[data-theme="dark"] { --color-bg: #1a1e26; --color-surface: #242830; ... }`
 - **Note:** Light mode is default regardless of system preference; dark mode is a manual user preference via More tab toggle.
 
-### PAT-02: Confession Tracker (Time Since Last Confession)
+### ~~PAT-02: Confession Tracker (Time Since Last Confession)~~ ✓ DONE
 - **Priority:** P2 — Phase 3 (ship with examination module)
 - **Effort:** 30 minutes
 - **Size impact:** 0
@@ -485,7 +485,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Effort:** 1 hour
 - **What:** Same pattern as XREF-01 but for Bible references. "Matthew 4:1-11" becomes a tappable span that opens a reading sheet with DRB text (or NABRE if online).
 
-### XREF-03: More Tab Redesign — Card Grid
+### ~~XREF-03: More Tab Redesign — Card Grid~~ ✓ DONE
 - **Priority:** P2 — Phase 2+
 - **Effort:** 2 hours
 - **Size impact:** ~50 lines CSS
@@ -574,27 +574,27 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 | ~~ARC-04~~ | ~~Fix openCCC double-export~~ | 10 min | ✓ Done |
 | ~~ARC-07~~ | ~~Automated SW cache busting~~ | 30 min | ✓ Done |
 | ~~DAT-01~~ | ~~Full CCC JSON + build script~~ | 2 hours | ✓ Done |
-| MOD-01 | `src/refs.js` reference resolver | 4 hours | |
+| ~~MOD-01~~ | ~~`src/refs.js` reference resolver~~ | 4 hours | ✓ Done |
 | ~~XREF-01~~ | ~~Tappable CCC refs in guides~~ | 1 hour | ✓ Done (inline, pending DAT-01 for full 2865 paragraphs) |
 | ~~UX-01~~ | ~~Web Share API (replace clipboard)~~ | 15 min | ✓ Done |
 
 ## Phase 2 — First Interactive Feature
-| ID | Item | Effort |
-|----|------|--------|
-| DAT-02 | openPrayers data (rosary + stations) | 2 hours |
-| MOD-02 | `src/rosary.js` guided rosary | 6 hours |
-| LIB-01 | ios-haptics for rosary | 30 min |
-| UX-05 | Screen Wake Lock | 10 min |
-| LIB-04 | scroll-snap-carousel dots | 30 min |
-| XREF-03 | More tab card grid redesign | 2 hours |
+| ID | Item | Effort | Status |
+|----|------|--------|--------|
+| ~~DAT-02~~ | ~~openPrayers data (rosary + stations)~~ | 2 hours | ✓ Done |
+| ~~MOD-02~~ | ~~`src/rosary.js` guided rosary~~ | 6 hours | ✓ Done |
+| ~~LIB-01~~ | ~~ios-haptics for rosary~~ | 30 min | ✓ Done (inline) |
+| ~~UX-05~~ | ~~Screen Wake Lock~~ | 10 min | ✓ Done |
+| ~~LIB-04~~ | ~~scroll-snap-carousel dots~~ | 30 min | ✓ Done (custom) |
+| ~~XREF-03~~ | ~~More tab card grid redesign~~ | 2 hours | ✓ Done |
 
 ## Phase 3 — Confession Preparation
-| ID | Item | Effort |
-|----|------|--------|
-| DAT-03 | ConfessIt examination data | 2 hours |
-| MOD-03 | `src/examination.js` | 6 hours |
-| PAT-02 | Confession tracker | 30 min |
-| LIB-02 | microfuzz for CCC search | 1 hour |
+| ID | Item | Effort | Status |
+|----|------|--------|--------|
+| ~~DAT-03~~ | ~~ConfessIt examination data~~ | 2 hours | ✓ Done |
+| ~~MOD-03~~ | ~~`src/examination.js`~~ | 6 hours | ✓ Done |
+| ~~PAT-02~~ | ~~Confession tracker~~ | 30 min | ✓ Done |
+| LIB-02 | microfuzz for CCC search | 1 hour | |
 
 ## Phase 4 — Offline Readings & Bible
 | ID | Item | Effort |
@@ -607,13 +607,13 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 | XREF-02 | Tappable Scripture refs in guides | 1 hour |
 
 ## Phase 5 — Seasonal Features
-| ID | Item | Effort |
-|----|------|--------|
-| MOD-04 | `src/stations.js` | 4 hours |
-| MOD-05 | `src/novena.js` tracker | 4 hours |
-| PAT-03 | Fasting/abstinence calculator | 20 min |
-| UX-02 | HDO app badge | 15 min |
-| PAT-05 | Offline fallback page | 30 min |
+| ID | Item | Effort | Status |
+|----|------|--------|--------|
+| MOD-04 | `src/stations.js` | 4 hours | |
+| MOD-05 | `src/novena.js` tracker | 4 hours | |
+| PAT-03 | Fasting/abstinence calculator | 20 min | |
+| ~~UX-02~~ | ~~HDO app badge~~ | 15 min | ✓ Done |
+| ~~PAT-05~~ | ~~Offline fallback page~~ | 30 min | ✓ Done |
 
 ## Phase 6 — Polish & Depth
 | ID | Item | Effort | Status |
@@ -622,16 +622,16 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 | DAT-08 | Summa daily subset | 3 hours | |
 | DAT-09 | Baltimore Catechism Q&A | 1 hour | |
 | LIB-03 | QR Creator for parish sharing | 1 hour | |
-| UX-03 | View Transitions API | 1 hour | |
+| ~~UX-03~~ | ~~View Transitions API~~ | 1 hour | ✓ Done |
 | UX-06 | Liturgical color scroll bar | 20 min | |
 | ~~PAT-01~~ | ~~Dark mode~~ | 2 hours | ✓ Done |
-| PAT-06 | Font self-hosting | 1 hour | |
+| ~~PAT-06~~ | ~~Font self-hosting~~ | 1 hour | ✓ Done |
 
 ## Ongoing / As Needed
 | ID | Item | Effort | Status |
 |----|------|--------|--------|
-| ARC-05 | LANG_NAMES dedup | 10 min | |
-| ARC-06 | Split more.js | 1 hour | |
+| ~~ARC-05~~ | ~~LANG_NAMES dedup~~ | 10 min | ✓ Done |
+| ~~ARC-06~~ | ~~Split more.js~~ | 1 hour | ✓ Done |
 | ARC-08 | CI template validation | 5 min | |
 | ARC-09 | Feature flags | 20 min | |
 | ARC-10 | apply-changes.js composite key | 30 min | |

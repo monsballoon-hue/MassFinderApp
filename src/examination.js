@@ -52,17 +52,11 @@ function _loadCCC(cb) {
     }).catch(function() { cb(); });
 }
 
-// ── Parse CCC range (e.g. "2087-2089" → [2087,2088,2089]) ──
-// isSectionLevel: true for commandment header refs (cap at 1 paragraph)
-function _parseCCCRange(numStr, isSectionLevel) {
+// ── Parse CCC range — always returns topline paragraph only ──
+function _parseCCCRange(numStr) {
   var m = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
   if (m) {
-    var s = parseInt(m[1], 10), end = parseInt(m[2], 10);
-    // Section headers span many paragraphs — show only the first
-    var cap = isSectionLevel ? s : Math.min(end, s + 4);
-    var ids = [];
-    for (var i = s; i <= cap; i++) ids.push(i);
-    return ids;
+    return [parseInt(m[1], 10)];
   }
   return [parseInt(numStr, 10)];
 }
@@ -98,11 +92,8 @@ function _toggleInlineCCC(span, numStr) {
   span.classList.add('ref-tap--active');
   _haptic();
 
-  // Detect if this is a section-level ref (inside .exam-ccc-ref container at top of section)
-  var isSectionLevel = !!span.closest('.exam-ccc-ref');
-
   _loadCCC(function() {
-    var ids = _parseCCCRange(numStr, isSectionLevel);
+    var ids = _parseCCCRange(numStr);
     var card = document.createElement('div');
     card.className = 'exam-ccc-card';
     // Header
@@ -110,36 +101,27 @@ function _toggleInlineCCC(span, numStr) {
     html += '<div class="exam-ccc-card-icon">\u00A7</div>';
     html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
     html += '</div>';
-    // Body
+    // Body — topline paragraph only
     html += '<div class="exam-ccc-card-body">';
-    ids.forEach(function(id, idx) {
+    ids.forEach(function(id) {
       var text = _cccParagraphs && _cccParagraphs[id];
-      if (ids.length > 1) {
-        html += '<div class="exam-ccc-card-num' + (idx > 0 ? '' : '') + '">\u00A7\u00A0' + id + '</div>';
-      }
       if (text) {
         var clean = _stripRefs(text).trim();
-        var lines = clean.split('\n');
-        lines.forEach(function(line) {
-          line = line.trim();
-          if (!line) return;
-          if (line.charAt(0) === '>') {
-            html += '<p class="exam-ccc-card-quote">' + _esc(line.slice(1).trim()) + '</p>';
-          } else {
-            html += '<p class="exam-ccc-card-text">' + _esc(line) + '</p>';
-          }
-        });
+        var firstLine = clean.split('\n').filter(function(l) { return l.trim(); })[0] || '';
+        if (firstLine.charAt(0) === '>') {
+          html += '<p class="exam-ccc-card-quote">' + _esc(firstLine.slice(1).trim()) + '</p>';
+        } else {
+          html += '<p class="exam-ccc-card-text">' + _esc(firstLine) + '</p>';
+        }
       } else {
         html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
       }
     });
     html += '</div>';
-    // For section-level refs spanning many paragraphs, add a "See full range" link
-    if (isSectionLevel) {
-      var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
-      if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 1) {
-        html += '<p class="exam-ccc-card-more" onclick="closeExamination();setTimeout(function(){openCCC(\'' + _esc(numStr) + '\')},350)">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
-      }
+    // "See full range" link for range refs
+    var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
+    if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
+      html += '<p class="exam-ccc-card-more" onclick="closeExamination();setTimeout(function(){openCCC(\'' + _esc(numStr) + '\')},350)">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);
@@ -491,10 +473,13 @@ function _initSwipeDismiss() {
   bodyEl.addEventListener('touchstart', function(e) {
     startY = e.touches[0].clientY;
   }, { passive: true });
+  var _lastContentRender = 0;
   bodyEl.addEventListener('touchend', function(e) {
     var dy = e.changedTouches[0].clientY - startY;
-    if (dy > 80 && bodyEl.scrollTop <= 5) closeExamination();
+    if (dy > 80 && bodyEl.scrollTop <= 5 && Date.now() - _lastContentRender > 600) closeExamination();
   }, { passive: true });
+  // Expose render timestamp setter for content transitions
+  overlay._markContentRender = function() { _lastContentRender = Date.now(); };
 }
 
 // ── Open overlay ──
@@ -524,6 +509,8 @@ function openExamination() {
       delete window._examBeginReview;
       _haptic();
       _renderExamination(d);
+      var overlay = document.getElementById('examOverlay');
+      if (overlay && overlay._markContentRender) overlay._markContentRender();
     };
   });
 }
@@ -532,8 +519,13 @@ function openExamination() {
 function closeExamination() {
   var count = Object.keys(_checked).length;
   if (count > 0) {
-    if (!confirm('Close examination? Your ' + count + ' marked item' + (count !== 1 ? 's' : '') + ' will be cleared.')) return;
+    _showExitConfirm(count);
+    return;
   }
+  _doClose();
+}
+
+function _doClose() {
   var overlay = document.getElementById('examOverlay');
   overlay.classList.remove('open');
   document.body.style.overflow = '';
@@ -541,8 +533,47 @@ function closeExamination() {
   _checked = {};
   var footer = document.getElementById('examFooter');
   if (footer) footer.classList.remove('visible');
+  // Remove any lingering confirm dialog
+  var dialog = overlay.querySelector('.exam-exit-dialog-wrap');
+  if (dialog) dialog.remove();
   ui.releaseFocus();
   if (window._lastFocused) window._lastFocused.focus();
+}
+
+function _showExitConfirm(count) {
+  var overlay = document.getElementById('examOverlay');
+  // Prevent duplicates
+  var existing = overlay.querySelector('.exam-exit-dialog-wrap');
+  if (existing) return;
+  var plural = count !== 1 ? 's' : '';
+  var wrap = document.createElement('div');
+  wrap.className = 'exam-exit-dialog-wrap';
+  wrap.innerHTML = '<div class="exam-exit-dialog">'
+    + '<div class="exam-exit-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="28"><path d="M12 9v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>'
+    + '<h4 class="exam-exit-title">End Examination?</h4>'
+    + '<p class="exam-exit-msg">Your ' + count + ' noted item' + plural + ' will be cleared for your privacy. This cannot be undone.</p>'
+    + '<div class="exam-exit-actions">'
+    + '<button class="exam-exit-btn exam-exit-btn--cancel">Continue Examining</button>'
+    + '<button class="exam-exit-btn exam-exit-btn--confirm">End &amp; Clear</button>'
+    + '</div></div>';
+  overlay.appendChild(wrap);
+  // Animate in
+  requestAnimationFrame(function() { wrap.classList.add('visible'); });
+  // Wire buttons
+  wrap.querySelector('.exam-exit-btn--cancel').addEventListener('click', function() {
+    wrap.classList.remove('visible');
+    setTimeout(function() { wrap.remove(); }, 200);
+  });
+  wrap.querySelector('.exam-exit-btn--confirm').addEventListener('click', function() {
+    _doClose();
+  });
+  // Backdrop tap = cancel
+  wrap.addEventListener('click', function(e) {
+    if (e.target === wrap) {
+      wrap.classList.remove('visible');
+      setTimeout(function() { wrap.remove(); }, 200);
+    }
+  });
 }
 
 // ── Mark confession date ──

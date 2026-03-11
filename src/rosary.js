@@ -51,6 +51,13 @@ var SET_META = {
   Luminous:  { color: '#27AE60', desc: 'Thursday' }
 };
 
+var SET_QUOTES = {
+  Joyful:    { text: 'My soul magnifies the Lord, and my spirit rejoices in God my Savior.', ref: 'Luke 1:46\u201347' },
+  Sorrowful: { text: 'He was pierced for our transgressions, he was crushed for our iniquities; upon him was the chastisement that brought us peace.', ref: 'Isaiah 53:5' },
+  Glorious:  { text: 'I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.', ref: 'John 11:25' },
+  Luminous:  { text: 'I am the light of the world. Whoever follows me will not walk in darkness, but will have the light of life.', ref: 'John 8:12' }
+};
+
 // ── Load prayer data (lazy) ──
 function _load() {
   if (_data) return Promise.resolve(_data);
@@ -185,10 +192,12 @@ function rosaryNext() {
     if (progressEl) progressEl.innerHTML = '';
     if (navEl) navEl.innerHTML = '<button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button>';
     if (bodyEl) {
+      var quote = SET_QUOTES[_set] || SET_QUOTES.Joyful;
       bodyEl.innerHTML = '<div class="rosary-complete-screen">'
         + '<svg class="rosary-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
         + '<h3 class="rosary-complete-title">' + utils.esc(_set) + ' Mysteries</h3>'
-        + '<p class="rosary-complete-sub">5 decades \u00b7 53 Hail Marys \u00b7 6 Our Fathers</p>'
+        + '<p class="rosary-complete-quote">\u201C' + utils.esc(quote.text) + '\u201D</p>'
+        + '<p class="rosary-complete-ref">\u2014 ' + utils.esc(quote.ref) + '</p>'
         + '<p class="rosary-complete-msg">May the Holy Rosary bring you peace<br>and draw you closer to our Lord.</p>'
         + '</div>';
     }
@@ -545,10 +554,7 @@ function _renderClosing(title, body, progress, nav) {
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'
     + _prayerBlock('Hail, Holy Queen', p.hail_holy_queen)
     + _prayerBlock('Sign of the Cross', p.sign_of_cross)
-    + '<div class="rosary-complete">'
-    + '<svg class="rosary-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
-    + '<p>May the Holy Rosary bring you peace<br>and draw you closer to our Lord.</p>'
-    + '</div></div>';
+    + '</div>';
   nav.innerHTML = _navHtml('\u2190 Fifth Decade', 'Amen');
 }
 
