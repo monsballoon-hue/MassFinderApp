@@ -227,13 +227,31 @@ function openDetail(id, trapFocus, releaseFocus) {
   var dist = utils.getDist(c, state.userLat, state.userLng);
   var mapUrl = c.address ? getMapsUrl(c.address) : getMapsUrl(c.name);
   var domain = c.website ? c.website.replace(/^https?:\/\//, '').replace(/\/.*/, '') : '';
+  var stateNames = { MA: 'Massachusetts', CT: 'Connecticut', VT: 'Vermont', NH: 'New Hampshire' };
 
-  // Badges
+  // D-04: Badges — only Verified + Distance (no county, no established, no "Unverified")
   var bg = '';
-  bg += ver ? '<span class="detail-badge verified"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span>' : '<span class="detail-badge unverified">Unverified</span>';
-  bg += '<span class="detail-badge county">' + utils.esc(c.county) + ' County</span>';
-  if (c.established) bg += '<span class="detail-badge county">Est. ' + utils.esc(c.established) + '</span>';
+  if (ver) bg += '<span class="detail-badge verified"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Verified</span>';
   if (dist !== null) bg += '<span class="detail-badge county">' + utils.fmtDist(dist) + ' away</span>';
+  // D-14: Accessibility badge
+  if (c.is_accessible) bg += '<span class="detail-badge accessible"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><circle cx="12" cy="4" r="2"/><path d="M12 6v6m-4 4l4-4 4 4"/></svg>Accessible</span>';
+
+  // D-03: Next-service highlight
+  var nextSvc = utils.getNext(c, 'all');
+  var nextHtml = '';
+  if (nextSvc) {
+    var nsCls = nextSvc.isLive ? ' detail-next--live' : nextSvc.isSoon ? ' detail-next--soon' : '';
+    var nsBadge = '';
+    if (nextSvc.isLive) nsBadge = '<span class="detail-next-badge live"><span class="pulse-dot"></span>Happening now</span>';
+    else if (nextSvc.isSoon) nsBadge = '<span class="detail-next-badge soon">Starting soon</span>';
+    nextHtml = '<div class="detail-next' + nsCls + '">'
+      + '<div class="detail-next-time">' + nextSvc.timeFormatted + '</div>'
+      + '<div class="detail-next-info">'
+      + '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[nextSvc.service.type] || '') + '</span>'
+      + nsBadge
+      + '<span class="detail-next-day">' + nextSvc.dayLabel + '</span>'
+      + '</div></div>';
+  }
 
   // Contact section
   var bulletinUrl = c.bulletin_url || '';
@@ -247,13 +265,13 @@ function openDetail(id, trapFocus, releaseFocus) {
   var _pastor = getPastor(c);
   if (_pastor) {
     var roleLabel = (config.CLERGY_ROLES[_pastor.role] || {}).label || _pastor.role;
-    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div><span>' + utils.esc(_pastor.name) + '</span><div style="font-size:var(--text-xs);color:var(--color-text-tertiary)">' + utils.esc(roleLabel) + '</div></div></div>';
+    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div><span>' + utils.esc(_pastor.name) + '</span><div class="contact-role">' + utils.esc(roleLabel) + '</div></div></div>';
   }
   if (bulletinUrl && c.website) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="' + utils.esc(c.website) + '" target="_blank" rel="noopener">' + utils.esc(domain) + '</a></div>';
   if (c.office_hours) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>' + utils.esc(c.office_hours) + '</span></div>';
   chtml += '</div>';
 
-  // Quick actions: Call, Directions, Bulletin (or Website), Share
+  // D-02: Quick actions — now rendered ABOVE contact (order swapped in body below)
   var qa = '<div class="detail-quick-actions">';
   if (c.phone) qa += '<a class="quick-action" href="tel:' + c.phone + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>';
   if (mapUrl) qa += '<a class="quick-action" href="' + mapUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>Directions</span></a>';
@@ -261,13 +279,12 @@ function openDetail(id, trapFocus, releaseFocus) {
   qa += '<button class="quick-action" onclick="shareParish(\'' + utils.esc(utils.displayName(c.name)) + "','" + c.id + "')\">" + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>';
   qa += '</div>';
 
-  // Visitation data
+  // D-07: Visitation data — CSS classes, no inline styles, no bell emoji
   var visitHtml = '';
   if (c.visitation && c.visitation.hours_note) {
-    visitHtml = '<div style="margin:var(--space-3) 0;padding:var(--space-3) var(--space-4);background:var(--color-verified-bg);border-radius:var(--radius-md);display:flex;align-items:flex-start;gap:var(--space-3)">'
-      + '<span style="font-size:1.1em;line-height:1">\ud83d\udd4a</span>'
-      + '<div><div style="font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-verified)">Open for Prayer</div>'
-      + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-top:2px">' + utils.esc(c.visitation.hours_note) + '</div></div></div>';
+    visitHtml = '<div class="detail-visitation">'
+      + '<div><div class="detail-visitation-label">Open for Prayer</div>'
+      + '<div class="detail-visitation-hours">' + utils.esc(c.visitation.hours_note) + '</div></div></div>';
   }
 
   // Accordion sections
@@ -280,6 +297,11 @@ function openDetail(id, trapFocus, releaseFocus) {
     { k: 'devot', t: 'Prayer & Devotion',         ic: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z', types: ['rosary', 'stations_of_cross', 'divine_mercy', 'miraculous_medal', 'novena', 'devotion', 'vespers', 'gorzkie_zale', 'benediction'] },
     { k: 'hw',    t: 'Holy Week',                 ic: 'M12 2v20M2 12h20', types: ['holy_thursday_mass', 'good_friday_service', 'easter_vigil_mass', 'palm_sunday_mass', 'easter_sunday_mass'] },
   ];
+
+  // D-11: Determine current day for today-dot indicator
+  var _now = utils.getNow();
+  var _curDI = _now.getDay();
+  var _curDay = config.DAY_ORDER[_curDI];
 
   var secHtml = '';
   for (var si = 0; si < secs.length; si++) {
@@ -294,6 +316,13 @@ function openDetail(id, trapFocus, releaseFocus) {
     var timedCount = svcs.filter(function(s) { return s.time; }).length;
     var badgeCount = timedCount > 0 ? timedCount : svcs.length;
     var isFirst = sec.k === 'mass';
+
+    // D-11: Check if any service in this section is available today
+    var hasToday = svcs.some(function(s) {
+      if (!s.time || !s.day) return false;
+      return s.day === _curDay || s.day === 'daily' || (s.day === 'weekday' && _curDI >= 1 && _curDI <= 5);
+    });
+    var todayDot = hasToday ? '<span class="accordion-today-dot"></span>' : '';
 
     // Split First Fri/Sat to top of devotion section
     var bodyInner = '';
@@ -310,7 +339,7 @@ function openDetail(id, trapFocus, releaseFocus) {
 
     secHtml += '<div class="detail-section"><button class="accordion-header" aria-expanded="' + isFirst + '" onclick="toggleAcc(this)">'
       + '<div class="accordion-header-left"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="' + sec.ic + '"/></svg>'
-      + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeCount + '</span></div>'
+      + '<span class="accordion-title">' + sec.t + '</span><span class="accordion-count">' + badgeCount + '</span>' + todayDot + '</div>'
       + '<svg class="accordion-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
       + '</button><div class="accordion-body' + (isFirst ? ' open' : '') + '"><div class="accordion-body-inner">' + bodyInner + '</div></div></div>';
   }
@@ -324,7 +353,7 @@ function openDetail(id, trapFocus, releaseFocus) {
     }
   } catch (e) { /* events.js not yet available */ }
 
-  // Verify prompt + correction form + footer
+  // D-08: Verify prompt + correction form (submit button uses CSS class)
   var vp = '<div class="verify-prompt" id="verifyPrompt"><p>Were these times accurate when you last visited?</p><div class="verify-prompt-btns"><button class="verify-btn yes" onclick="verifyOk(true)">\u2713 Yes, looks right</button><button class="verify-btn no" onclick="showCorrectionForm()">Not quite</button></div></div>'
     + '<div class="correction-form" id="correctionForm" style="display:none">'
     + '<label class="corr-form-label">What\'s wrong?</label>'
@@ -340,18 +369,29 @@ function openDetail(id, trapFocus, releaseFocus) {
     + '<textarea id="corrMessage" class="corr-input" rows="2" placeholder="Select a category above first\u2026"></textarea>'
     + '<label for="corrEmail" class="corr-form-label sr-only">Email (optional)</label>'
     + '<input id="corrEmail" type="email" class="corr-input" placeholder="Your email (optional, for follow-up)" style="resize:none;margin-top:var(--space-2)">'
-    + '<button onclick="submitCorrection()" style="margin-top:var(--space-3);width:100%;padding:var(--space-3);border-radius:var(--radius-md);background:var(--color-primary);color:white;font-size:var(--text-sm);font-weight:var(--weight-semibold);min-height:44px">Submit Correction</button>'
+    + '<button class="corr-submit-btn" onclick="submitCorrection()">Submit Correction</button>'
     + '</div>'
     + '<div class="verify-thanks" id="verifyThanks" style="display:none">Thank you for helping keep MassFinder accurate! God bless.</div>';
-  var footer = '';
-  if (v.last_checked) footer = '<div class="detail-verified-footer">Last checked: ' + utils.esc(v.last_checked) + (v.bulletin_date ? ' \u00b7 Bulletin: ' + utils.esc(v.bulletin_date) : '') + (v.source ? '<br>Source: ' + utils.esc(v.source) : '') + '</div>';
+
+  // D-04: Footer — consolidate county, established, last-checked, bulletin
+  var footerParts = [];
+  if (c.county) footerParts.push(utils.esc(c.county) + ' County');
+  if (c.established) footerParts.push('Est. ' + utils.esc(c.established));
+  if (v.last_checked) footerParts.push('Last checked: ' + utils.esc(v.last_checked));
+  if (v.bulletin_date) footerParts.push('Bulletin: ' + utils.esc(v.bulletin_date));
+  if (v.source) footerParts.push('Source: ' + utils.esc(v.source));
+  var footer = footerParts.length ? '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>' : '';
+
+  // D-01: Address below town; D-13: State name map
+  var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
+    + (c.address ? '<div class="detail-address">' + utils.esc(c.address) + '</div>' : '');
 
   document.getElementById('detailContent').innerHTML =
     '<div class="detail-header"><div class="detail-header-top"><h2 class="detail-name">' + utils.esc(utils.displayName(c.name)) + '</h2>'
     + '<div class="detail-actions"><button class="detail-action-btn fav-btn' + (fav ? ' fav-active' : '') + '" data-id="' + c.id + '" onclick="toggleFav(\'' + c.id + '\')" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="' + (fav ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
     + '<button class="detail-action-btn" onclick="closeDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
-    + '</div></div><div class="detail-town">' + utils.esc(c.city) + ', ' + utils.esc({ MA: 'Massachusetts', CT: 'Connecticut', VT: 'Vermont', NH: 'New Hampshire' }[c.state] || c.state || 'Massachusetts') + '</div><div class="detail-badges">' + bg + '</div></div>'
-    + '<div class="detail-body">' + chtml + qa + visitHtml + secHtml + ceHtml + vp + footer + '</div>';
+    + '</div></div><div class="detail-town">' + townHtml + '</div><div class="detail-badges">' + bg + '</div>' + nextHtml + '</div>'
+    + '<div class="detail-body">' + qa + chtml + visitHtml + secHtml + vp + ceHtml + footer + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');
