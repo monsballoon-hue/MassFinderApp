@@ -1,17 +1,17 @@
 // src/explore.js — CCC Explore module (OW-21)
-// Deep cross-reference exploration: CCC ↔ Baltimore ↔ Scripture ↔ Lectionary
+// Deep cross-reference exploration: CCC <-> Baltimore <-> Scripture <-> Lectionary
 var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
 
 // ── State ──
 var _history = [];       // navigation stack: [{ type, id }]
-var _current = null;     // { type: 'ccc'|'bible', id: string }
+var _current = null;     // { type: 'ccc'|'bible'|'summa', id: string }
 var _cccParas = null;    // cached CCC paragraphs
 var _cccXrefs = null;    // cached CCC xrefs
 var _baltimore = null;   // cached Baltimore { byCCC }
 var _bibleXrefs = null;  // cached bible-xrefs.json
 var _lectionary = null;  // cached lectionary-index.json
-var _cccVerseIndex = null; // reverse index: Bible ref → [ccc §]
+var _cccVerseIndex = null; // reverse index: Bible ref -> [ccc par]
 var _summaCache = null;   // cached summa-daily.json
 
 // CCC Section context (duplicated from ccc.js for independence)
@@ -96,7 +96,6 @@ function _loadAll() {
 }
 
 // Build reverse index: which CCC paragraphs cite which Bible verses
-// Scans all 2,865 CCC paragraphs once with a simple regex
 function _buildCCCVerseIndex() {
   if (_cccVerseIndex || !_cccParas) return;
   _cccVerseIndex = {};
@@ -126,7 +125,6 @@ function _findInLectionary(refStr) {
       Object.keys(readings).forEach(function(readingType) {
         var val = readings[readingType];
         if (typeof val === 'string' && val.toLowerCase().indexOf(refLower.split(':')[0]) >= 0) {
-          // Rough match on book+chapter
           var label = dayKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
           if (cycleName) label += ' (Year ' + cycleName + ')';
           if (results.length < 5) {
@@ -137,13 +135,11 @@ function _findInLectionary(refStr) {
     });
   }
 
-  // Scan sundays (A, B, C cycles)
   if (_lectionary.sundays) {
     Object.keys(_lectionary.sundays).forEach(function(cycle) {
       scanCycle(cycle, _lectionary.sundays[cycle]);
     });
   }
-  // Scan weekdays
   if (_lectionary.weekdays) {
     Object.keys(_lectionary.weekdays).forEach(function(yearKey) {
       scanCycle(null, _lectionary.weekdays[yearKey]);
@@ -173,21 +169,20 @@ function _generateConnections(type, id) {
     var num = parseInt(id, 10);
     var text = _cccParas && _cccParas[num];
 
-    // 2. Scripture citations from paragraph text
+    // Scripture citations from paragraph text
     if (text) {
       var scriptureRefs = _extractScriptureRefs(text);
       if (scriptureRefs.length) {
         connections.push({
-          group: 'Scripture Citations',
+          group: 'Scripture',
           items: scriptureRefs.map(function(r) {
             return { type: 'bible', label: r, ref: r };
-          }),
-          maxVisible: 3
+          })
         });
       }
     }
 
-    // 3. CCC cross-references
+    // CCC cross-references
     if (_cccXrefs && _cccXrefs[num]) {
       var xr = _cccXrefs[num];
       var related = [];
@@ -203,11 +198,11 @@ function _generateConnections(type, id) {
         }
       });
       if (related.length) {
-        connections.push({ group: 'Related Teachings', items: related, maxVisible: 3 });
+        connections.push({ group: 'Related', items: related });
       }
     }
 
-    // 4. Lectionary matches for cited verses
+    // Lectionary matches for cited verses
     if (text) {
       var sRefs = _extractScriptureRefs(text);
       var lectResults = [];
@@ -222,16 +217,15 @@ function _generateConnections(type, id) {
       });
       if (lectResults.length) {
         connections.push({
-          group: 'When You\u2019ll Hear This at Mass',
+          group: 'At Mass',
           items: lectResults.map(function(lr) {
             return { type: 'info', label: lr.label, detail: lr.type };
-          }),
-          maxVisible: 3
+          })
         });
       }
     }
 
-    // 5. Summa companion — topic match
+    // Summa companion — topic match
     if (_summaCache && _summaCache.articles) {
       var sectionCtx = _getSectionContext(num);
       if (sectionCtx) {
@@ -241,9 +235,9 @@ function _generateConnections(type, id) {
         }).slice(0, 2);
         if (summaHits.length) {
           connections.push({
-            group: 'From the Summa',
+            group: 'Summa',
             items: summaHits.map(function(art) {
-              return { type: 'info', label: art.a, detail: art.q + ' \u00b7 ' + art.part };
+              return { type: 'summa', label: art.a, detail: art.q + ' \u00b7 ' + art.part, id: art.id };
             })
           });
         }
@@ -252,9 +246,8 @@ function _generateConnections(type, id) {
   }
 
   if (type === 'bible') {
-    // 1. Bible cross-references
+    // Bible cross-references
     if (_bibleXrefs) {
-      // id is a ref string like "John 3:16" — need to convert to xref key format
       var xrefKey = _refToXrefKey(id);
       var bibleRefs = _bibleXrefs[xrefKey] || [];
       if (bibleRefs.length) {
@@ -262,16 +255,14 @@ function _generateConnections(type, id) {
           group: 'Cross-References',
           items: bibleRefs.slice(0, 20).map(function(r) {
             return { type: 'bible', label: r, ref: r };
-          }),
-          maxVisible: 3
+          })
         });
       }
     }
 
-    // 2. CCC paragraphs that cite this verse
+    // CCC paragraphs that cite this verse
     _buildCCCVerseIndex();
     if (_cccVerseIndex) {
-      // Try various key formats
       var verseKeys = [id];
       var cccNums = [];
       var cccSeen = {};
@@ -290,19 +281,18 @@ function _generateConnections(type, id) {
         });
       });
       if (cccNums.length) {
-        connections.push({ group: 'Catechism References', items: cccNums, maxVisible: 3 });
+        connections.push({ group: 'Catechism', items: cccNums });
       }
     }
 
-    // 3. Lectionary matches
+    // Lectionary matches
     var lectMatches = _findInLectionary(id);
     if (lectMatches.length) {
       connections.push({
-        group: 'When You\u2019ll Hear This at Mass',
+        group: 'At Mass',
         items: lectMatches.map(function(lr) {
           return { type: 'info', label: lr.label, detail: lr.type };
-        }),
-        maxVisible: 3
+        })
       });
     }
   }
@@ -312,7 +302,6 @@ function _generateConnections(type, id) {
 
 // Convert a human-readable ref like "John 3:16" to xref key format like "John:3:16"
 function _refToXrefKey(ref) {
-  // xref keys use format "Abbr:Ch:Vs" — try common transformations
   var m = ref.match(/^(.+?)\s+(\d+):(\d+)/);
   if (!m) return ref;
   var book = m[1].trim();
@@ -327,6 +316,29 @@ function _getPreview(raw) {
   return preview;
 }
 
+// ── BUG-01: Close Explore before opening external sheets ──
+function _openBibleFromExplore(ref) {
+  closeExplore();
+  setTimeout(function() {
+    if (window.openBible) window.openBible(ref);
+  }, 100);
+}
+
+function _openCCCFromExplore(num) {
+  closeExplore();
+  setTimeout(function() {
+    if (window.openCCC) window.openCCC(String(num));
+  }, 100);
+}
+
+// ── REF-02: Connection tab switching ──
+function _switchConnTab(idx) {
+  var tabs = document.querySelectorAll('.explore-conn-tab');
+  var panels = document.querySelectorAll('.explore-conn-panel');
+  tabs.forEach(function(t, i) { t.classList.toggle('explore-conn-tab--active', i === idx); });
+  panels.forEach(function(p, i) { p.style.display = i === idx ? '' : 'none'; });
+}
+
 // ── Rendering ──
 function _render() {
   var body = document.getElementById('exploreBody');
@@ -337,12 +349,14 @@ function _render() {
   var trailHtml = '';
   if (_history.length) {
     _history.forEach(function(h, i) {
-      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.id;
+      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.type === 'summa' ? 'Summa' : h.id;
       trailHtml += '<span class="explore-crumb" onclick="explorePop(' + i + ')">' + utils.esc(label) + '</span>';
       trailHtml += '<span class="explore-crumb-sep">\u203A</span>';
     });
   }
-  var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id : _current.id;
+  var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id
+    : _current.type === 'summa' ? 'Summa'
+    : _current.id;
   trailHtml += '<span class="explore-crumb explore-crumb--active">' + utils.esc(curLabel) + '</span>';
   if (trail) trail.innerHTML = trailHtml;
 
@@ -378,36 +392,56 @@ function _render() {
   } else if (_current.type === 'bible') {
     html += '<div class="explore-primary-num">' + utils.esc(_current.id) + '</div>';
     html += '<div class="explore-primary-text explore-muted">Tap to read full passage in the Bible sheet.</div>';
-    html += '<button class="explore-open-btn" onclick="openBible(\'' + utils.esc(_current.id).replace(/'/g, '\\\'') + '\')">Open in Bible</button>';
+    html += '<button class="explore-open-btn" onclick="_openBibleFromExplore(\'' + utils.esc(_current.id).replace(/'/g, '\\\'') + '\')">Open in Bible</button>';
+  } else if (_current.type === 'summa') {
+    // BUG-03: Summa detail view
+    var summaArt = null;
+    if (_summaCache && _summaCache.articles) {
+      for (var si = 0; si < _summaCache.articles.length; si++) {
+        if (_summaCache.articles[si].id === _current.id) { summaArt = _summaCache.articles[si]; break; }
+      }
+    }
+    if (summaArt) {
+      html += '<div class="explore-heading">';
+      html += '<div class="explore-context">' + utils.esc(summaArt.topic) + '</div>';
+      html += '</div>';
+      html += '<div class="explore-summa-detail">';
+      html += '<div class="summa-question">' + utils.esc(summaArt.q) + '</div>';
+      html += '<div class="summa-article">' + utils.esc(summaArt.a) + '</div>';
+      html += '<div class="summa-body">' + utils.esc(summaArt.body) + '</div>';
+      html += '<div class="summa-cite">St. Thomas Aquinas \u00b7 ' + utils.esc(summaArt.part)
+        + ' \u00b7 Q.' + utils.esc(summaArt.id.split('.')[1].replace('Q', ''))
+        + ', A.' + utils.esc(summaArt.id.split('.')[2].replace('A', ''))
+        + '</div>';
+      html += '</div>';
+    } else {
+      html += '<div class="explore-empty">Article not found.</div>';
+    }
   }
 
-  // Connection cards
+  // REF-02: Connection tabs instead of stacked groups
   var connections = _generateConnections(_current.type, _current.id);
-  connections.forEach(function(group) {
-    html += '<div class="explore-group">';
-    html += '<div class="explore-group-header">' + utils.esc(group.group) + '</div>';
-
-    var maxVis = group.maxVisible || group.items.length;
-    var visible = group.items.slice(0, maxVis);
-    var hidden = group.items.slice(maxVis);
-
-    visible.forEach(function(item) {
-      html += _renderConnectionItem(item);
+  if (connections.length) {
+    html += '<div class="explore-conn-tabs" id="exploreConnTabs">';
+    html += '<div class="explore-conn-tab-bar">';
+    connections.forEach(function(group, gi) {
+      var activeClass = gi === 0 ? ' explore-conn-tab--active' : '';
+      html += '<button class="explore-conn-tab' + activeClass + '" onclick="_switchConnTab(' + gi + ')">' + utils.esc(group.group) + '</button>';
     });
+    html += '</div>';
 
-    if (hidden.length) {
-      html += '<details class="explore-overflow"><summary class="explore-overflow-btn">'
-        + hidden.length + ' more</summary>';
-      hidden.forEach(function(item) {
+    connections.forEach(function(group, gi) {
+      var visClass = gi === 0 ? '' : ' style="display:none"';
+      html += '<div class="explore-conn-panel" data-conn-idx="' + gi + '"' + visClass + '>';
+      group.items.forEach(function(item) {
         html += _renderConnectionItem(item);
       });
-      html += '</details>';
-    }
-
+      html += '</div>';
+    });
     html += '</div>';
-  });
+  }
 
-  if (!connections.length) {
+  if (!connections.length && _current.type !== 'summa') {
     html += '<div class="explore-empty">No connections found for this reference.</div>';
   }
 
@@ -424,6 +458,8 @@ function _renderConnectionItem(item) {
     onclick = ' onclick="explorePivot(\'ccc\',\'' + utils.esc(item.ref) + '\')"';
   } else if (item.type === 'bible') {
     onclick = ' onclick="explorePivot(\'bible\',\'' + utils.esc(item.ref || item.label).replace(/'/g, '\\\'') + '\')"';
+  } else if (item.type === 'summa' && item.id) {
+    onclick = ' onclick="explorePivot(\'summa\',\'' + utils.esc(item.id) + '\')"';
   }
   var cls = 'explore-item' + (onclick ? ' explore-item--tap' : '');
   var html = '<div class="' + cls + '"' + onclick + '>';
@@ -470,7 +506,7 @@ var _loadingPhrases = [
   'Deep calls to deep\u2026'
 ];
 
-// ── Landing page renderer (EX-01 + BT-07 + BT-11 + EX-11) ──
+// ── Landing page renderer ──
 function _renderLanding() {
   var body = document.getElementById('exploreBody');
   var trail = document.getElementById('exploreTrail');
@@ -498,32 +534,24 @@ function _renderLanding() {
     + '<div id="exploreSearchResults" class="explore-search-results"></div>'
     + '</div>';
 
-  // EX-11: Today's Thread
-  if (_baltimore && _baltimore.questions && _baltimore.questions.length) {
-    var todayQA2 = _baltimore.questions[daysSinceEpoch % _baltimore.questions.length];
-    if (todayQA2.ccc) {
-      html += '<div class="explore-section-label">Start Here</div>';
-      html += '<div class="explore-item explore-item--tap" onclick="explorePivot(\'ccc\',\'' + todayQA2.ccc + '\')">'
-        + '<div class="explore-item-label">Today\u2019s Teaching \u00b7 CCC \u00A7' + todayQA2.ccc + '</div>'
-        + '<div class="explore-item-detail">' + utils.esc(todayQA2.question) + '</div>'
-        + '</div>';
-    }
-  }
-
-  // Topic browse — CCC sections as chips
-  html += '<div class="explore-section-label">Browse by Topic</div>';
-  html += '<div class="explore-topic-chips">';
-  _TOPICS.forEach(function(t) {
-    html += '<button class="explore-topic-chip" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
-      + '<span class="explore-topic-chip-label">' + utils.esc(t.label) + '</span>'
-      + '<span class="explore-topic-chip-range">\u00A7' + t.start + '\u2013' + t.end + '</span>'
-      + '</button>';
-  });
-  html += '</div>';
-
-  // Content sources
+  // REF-01: Content sources — CCC collapsed, then 4 source cards
   html += '<div class="explore-section-label">Content</div>';
   html += '<div class="explore-source-grid">';
+
+  // CCC as collapsible first card spanning full width
+  html += '<details class="explore-source-card explore-source-card--ccc">'
+    + '<summary class="explore-source-summary">'
+    + '<div><div class="explore-source-title">Catechism (CCC)</div>'
+    + '<div class="explore-source-sub">2,865 paragraphs \u00b7 20 sections</div></div>'
+    + '</summary>'
+    + '<div class="explore-ccc-sections">';
+  _TOPICS.forEach(function(t) {
+    html += '<button class="explore-ccc-section-btn" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
+      + utils.esc(t.label) + '<span class="explore-ccc-range">\u00A7' + t.start + '\u2013' + t.end + '</span>'
+      + '</button>';
+  });
+  html += '</div></details>';
+
   html += '<button class="explore-source-card" onclick="_exploreBibleLanding()">'
     + '<div class="explore-source-title">Sacred Scripture</div>'
     + '<div class="explore-source-sub">73 books \u00b7 DRB &amp; CPDV</div>'
@@ -560,7 +588,7 @@ function _exploreSearch(query) {
     var results = [];
 
     // 1. CCC paragraph number direct match
-    var numMatch = q.match(/^[§]?\s*(\d+)$/);
+    var numMatch = q.match(/^[\u00A7]?\s*(\d+)$/);
     if (numMatch) {
       var num = parseInt(numMatch[1], 10);
       if (_cccParas && _cccParas[num]) {
@@ -627,8 +655,15 @@ function _exploreSearch(query) {
       html += '<div class="explore-search-group">';
       html += '<div class="explore-search-group-label">' + utils.esc(group.group) + '</div>';
       group.items.forEach(function(item) {
+        // BUG-04: Handle all item types in search results
         var onclick = '';
-        if (item.type === 'ccc' && item.ref) onclick = ' onclick="explorePivot(\'ccc\',\'' + utils.esc(item.ref) + '\')"';
+        if (item.type === 'ccc' && item.ref) {
+          onclick = ' onclick="explorePivot(\'ccc\',\'' + utils.esc(item.ref) + '\')"';
+        } else if (item.type === 'summa' && item.id) {
+          onclick = ' onclick="explorePivot(\'summa\',\'' + utils.esc(item.id) + '\')"';
+        } else if (item.type === 'bible' && (item.ref || item.label)) {
+          onclick = ' onclick="explorePivot(\'bible\',\'' + utils.esc(item.ref || item.label).replace(/'/g, '\\\'') + '\')"';
+        }
         html += '<div class="explore-item explore-item--tap"' + onclick + '>';
         html += '<div class="explore-item-label">' + utils.esc(item.label) + '</div>';
         if (item.context) html += '<div class="explore-item-context">' + utils.esc(item.context) + '</div>';
@@ -644,7 +679,38 @@ function _exploreSearch(query) {
   }, 200);
 }
 
-// ── Bible landing (EX-03) ──
+// ── REF-05: Bible genre grouping ──
+var _OT_GENRES = [
+  { label: 'Pentateuch', ids: ['genesis','exodus','leviticus','numbers','deuteronomy'] },
+  { label: 'Historical', ids: ['joshua','judges','ruth','1samuel','2samuel','1kings','2kings','1chronicles','2chronicles','ezra','nehemiah','tobit','judith','esther','1maccabees','2maccabees'] },
+  { label: 'Wisdom', ids: ['job','psalms','proverbs','ecclesiastes','songofsolomon','wisdom','sirach'] },
+  { label: 'Prophets', ids: ['isaiah','jeremiah','lamentations','baruch','ezekiel','daniel','hosea','joel','amos','obadiah','jonah','micah','nahum','habakkuk','zephaniah','haggai','zechariah','malachi'] }
+];
+var _NT_GENRES = [
+  { label: 'Gospels', ids: ['matthew','mark','luke','john'] },
+  { label: 'Acts & Letters', ids: ['acts','romans','1corinthians','2corinthians','galatians','ephesians','philippians','colossians','1thessalonians','2thessalonians','1timothy','2timothy','titus','philemon','hebrews'] },
+  { label: 'Catholic Epistles', ids: ['james','1peter','2peter','1john','2john','3john','jude'] },
+  { label: 'Revelation', ids: ['revelation'] }
+];
+
+function _renderGenreGroups(groups, bookList) {
+  var html = '';
+  groups.forEach(function(genre) {
+    var books = bookList.filter(function(b) { return genre.ids.indexOf(b.id) >= 0; });
+    if (!books.length) return;
+    html += '<div class="explore-bible-genre-label">' + utils.esc(genre.label) + '</div>';
+    html += '<div class="explore-bible-books">';
+    books.forEach(function(b) {
+      html += '<button class="explore-bible-book" onclick="_openBibleFromExplore(\'' + utils.esc(b.name) + ' 1:1\')">'
+        + '<span class="explore-bible-book-name">' + utils.esc(b.name) + '</span>'
+        + '</button>';
+    });
+    html += '</div>';
+  });
+  return html;
+}
+
+// ── Bible landing (EX-03 + REF-05) ──
 function _exploreBibleLanding() {
   _current = null;
   _history = [];
@@ -656,24 +722,10 @@ function _exploreBibleLanding() {
     var bookList = index.books || [];
 
     var html = '<div class="explore-section-label">Old Testament</div>';
-    html += '<div class="explore-bible-books">';
-    bookList.filter(function(b) { return b.testament === 'OT'; }).forEach(function(b) {
-      html += '<button class="explore-bible-book" onclick="openBible(\'' + utils.esc(b.name) + ' 1:1\')">'
-        + '<span class="explore-bible-book-name">' + utils.esc(b.name) + '</span>'
-        + '<span class="explore-bible-book-ch">' + b.chapters + ' ch</span>'
-        + '</button>';
-    });
-    html += '</div>';
+    html += _renderGenreGroups(_OT_GENRES, bookList);
 
     html += '<div class="explore-section-label">New Testament</div>';
-    html += '<div class="explore-bible-books">';
-    bookList.filter(function(b) { return b.testament === 'NT'; }).forEach(function(b) {
-      html += '<button class="explore-bible-book" onclick="openBible(\'' + utils.esc(b.name) + ' 1:1\')">'
-        + '<span class="explore-bible-book-name">' + utils.esc(b.name) + '</span>'
-        + '<span class="explore-bible-book-ch">' + b.chapters + ' ch</span>'
-        + '</button>';
-    });
-    html += '</div>';
+    html += _renderGenreGroups(_NT_GENRES, bookList);
 
     body.innerHTML = html;
     body.scrollTop = 0;
@@ -682,7 +734,43 @@ function _exploreBibleLanding() {
   });
 }
 
-// ── Baltimore landing (EX-04) ──
+// ── REF-03: Baltimore helpers ──
+function _renderBaltimoreRow(qa) {
+  var onclick = qa.ccc ? ' onclick="explorePivot(\'ccc\',\'' + qa.ccc + '\')"' : '';
+  var cls = qa.ccc ? ' explore-item--tap' : '';
+  return '<div class="explore-item' + cls + '"' + onclick + '>'
+    + '<div class="explore-item-label">Q' + qa.id + '. ' + utils.esc(qa.question) + '</div>'
+    + '<div class="explore-item-detail">' + utils.esc(qa.answer) + '</div>'
+    + '</div>';
+}
+
+function _showAllBaltimore() {
+  if (!_baltimore) return;
+  var el = document.getElementById('baltimoreList');
+  if (!el) return;
+  var html = '';
+  _baltimore.questions.forEach(function(qa) { html += _renderBaltimoreRow(qa); });
+  el.innerHTML = html;
+}
+
+function _filterBaltimore(query) {
+  if (!_baltimore) return;
+  var el = document.getElementById('baltimoreList');
+  if (!el) return;
+  var q = (query || '').trim().toLowerCase();
+  if (q.length < 2) {
+    _showAllBaltimore();
+    return;
+  }
+  var hits = _baltimore.questions.filter(function(qa) {
+    return (qa.question + ' ' + qa.answer).toLowerCase().indexOf(q) >= 0;
+  });
+  el.innerHTML = hits.length
+    ? hits.map(_renderBaltimoreRow).join('')
+    : '<div class="explore-empty">No questions match \u201c' + utils.esc(query) + '\u201d</div>';
+}
+
+// ── Baltimore landing (EX-04 + REF-03) ──
 function _exploreBaltLanding() {
   _current = null;
   _history = [];
@@ -699,23 +787,30 @@ function _exploreBaltLanding() {
     return;
   }
 
-  var html = '<div class="explore-balt-list">';
-  _baltimore.questions.forEach(function(qa) {
-    var onclick = qa.ccc ? ' onclick="explorePivot(\'ccc\',\'' + qa.ccc + '\')"' : '';
-    var cls = qa.ccc ? ' explore-item--tap' : '';
-    html += '<div class="explore-item' + cls + '"' + onclick + '>'
-      + '<div class="explore-item-label">Q' + qa.id + '. ' + utils.esc(qa.question) + '</div>'
-      + '<div class="explore-item-detail">' + utils.esc(qa.answer) + '</div>'
-      + (qa.ccc ? '<div class="explore-item-context">CCC \u00A7' + qa.ccc + '</div>' : '')
-      + '</div>';
+  var html = '';
+
+  // Search within Baltimore
+  html += '<div class="explore-search-wrap">'
+    + '<div class="explore-search-bar">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
+    + '<input type="text" placeholder="Search questions\u2026" oninput="_filterBaltimore(this.value)">'
+    + '</div></div>';
+
+  html += '<div id="baltimoreList">';
+  // Show first 15
+  _baltimore.questions.slice(0, 15).forEach(function(qa) {
+    html += _renderBaltimoreRow(qa);
   });
+  if (_baltimore.questions.length > 15) {
+    html += '<button class="explore-show-all-btn" onclick="_showAllBaltimore()">Show all ' + _baltimore.questions.length + ' questions</button>';
+  }
   html += '</div>';
 
   body.innerHTML = html;
   body.scrollTop = 0;
 }
 
-// ── Summa landing (EX-12) ──
+// ── Summa landing (EX-12 + REF-04) ──
 function _exploreSummaLanding() {
   _current = null;
   _history = [];
@@ -743,10 +838,14 @@ function _exploreSummaLanding() {
   var html = '';
   topicOrder.forEach(function(topic) {
     html += '<details class="explore-summa-topic">'
-      + '<summary class="explore-summa-topic-header">' + utils.esc(topic) + '<span class="explore-summa-topic-count">' + topics[topic].length + '</span></summary>'
+      + '<summary class="explore-summa-topic-header">' + utils.esc(topic)
+      + '<span class="explore-summa-topic-count">' + topics[topic].length + '</span>'
+      + '<svg class="explore-summa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>'
+      + '</summary>'
       + '<div class="explore-summa-topic-body">';
+    // BUG-02: Make Summa items clickable
     topics[topic].forEach(function(art) {
-      html += '<div class="explore-item">'
+      html += '<div class="explore-item explore-item--tap" onclick="explorePivot(\'summa\',\'' + utils.esc(art.id) + '\')">'
         + '<div class="explore-item-label">' + utils.esc(art.a) + '</div>'
         + '<div class="explore-item-context">' + utils.esc(art.q) + ' \u00b7 ' + utils.esc(art.part) + '</div>'
         + '</div>';
@@ -758,7 +857,7 @@ function _exploreSummaLanding() {
   body.scrollTop = 0;
 }
 
-// ── Lectionary landing (EX-13) ──
+// ── Lectionary landing (EX-13 + BUG-05) ──
 function _exploreLectionaryLanding() {
   _current = null;
   _history = [];
@@ -774,22 +873,82 @@ function _exploreLectionaryLanding() {
   var yearChar = String.fromCharCode(65 + (utils.getNow().getFullYear() % 3));
   var html = '<div class="explore-section-label">Sunday Readings \u00b7 Year ' + yearChar + '</div>';
 
+  var seasonLabels = {
+    'advent': 'Advent', 'christmas': 'Christmas', 'lent': 'Lent',
+    'easter': 'Easter', 'ordinary': 'Ordinary Time',
+    'holy': 'Holy Week', 'pentecost': 'Pentecost'
+  };
+  var readingOrder = ['first_reading', 'psalm', 'second_reading', 'gospel'];
+  var readingLabels = { first_reading: 'First Reading', psalm: 'Responsorial Psalm', second_reading: 'Second Reading', gospel: 'Gospel' };
+
   if (_lectionary.sundays && _lectionary.sundays[yearChar]) {
     var days = Object.keys(_lectionary.sundays[yearChar]);
+
+    // Group by season prefix
+    var seasons = {};
+    var seasonOrder = [];
     days.forEach(function(dayKey) {
-      var readings = _lectionary.sundays[yearChar][dayKey];
-      var dayLabel = dayKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+      var prefix = dayKey.split('_')[0];
+      if (!seasons[prefix]) { seasons[prefix] = []; seasonOrder.push(prefix); }
+      seasons[prefix].push(dayKey);
+    });
+
+    seasonOrder.forEach(function(prefix) {
+      var label = seasonLabels[prefix] || prefix.charAt(0).toUpperCase() + prefix.slice(1);
+      html += '<div class="explore-lect-season">';
+      html += '<div class="explore-lect-season-label">' + utils.esc(label) + '</div>';
+
+      seasons[prefix].forEach(function(dayKey) {
+        var readings = _lectionary.sundays[yearChar][dayKey];
+        var dayLabel = dayKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+        // Strip season prefix for cleaner label
+        var shortLabel = dayLabel;
+        Object.keys(seasonLabels).forEach(function(p) {
+          shortLabel = shortLabel.replace(new RegExp('^' + seasonLabels[p] + '\\s*', 'i'), '');
+        });
+        if (!shortLabel || shortLabel === dayLabel) shortLabel = dayLabel;
+
+        html += '<details class="explore-lect-day">'
+          + '<summary class="explore-lect-day-header">' + utils.esc(shortLabel || dayLabel) + '</summary>'
+          + '<div class="explore-lect-day-body">';
+
+        readingOrder.forEach(function(type) {
+          var ref = readings[type];
+          if (!ref) return;
+          var typeLabel = readingLabels[type] || type.replace(/_/g, ' ');
+          html += '<div class="explore-lect-reading" onclick="_openBibleFromExplore(\'' + utils.esc(ref).replace(/'/g, '\\\'') + '\')">'
+            + '<span class="explore-lect-type">' + utils.esc(typeLabel) + '</span>'
+            + '<span class="explore-lect-ref">' + utils.esc(ref) + '</span>'
+            + '</div>';
+        });
+
+        html += '</div></details>';
+      });
+      html += '</div>';
+    });
+  }
+
+  // Feasts section
+  if (_lectionary.feasts) {
+    html += '<div class="explore-section-label">Feasts &amp; Solemnities</div>';
+    Object.keys(_lectionary.feasts).forEach(function(feastKey) {
+      var readings = _lectionary.feasts[feastKey];
+      var feastLabel = feastKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+
       html += '<details class="explore-lect-day">'
-        + '<summary class="explore-lect-day-header">' + utils.esc(dayLabel) + '</summary>'
+        + '<summary class="explore-lect-day-header">' + utils.esc(feastLabel) + '</summary>'
         + '<div class="explore-lect-day-body">';
-      Object.keys(readings).forEach(function(type) {
+
+      readingOrder.forEach(function(type) {
         var ref = readings[type];
-        var typeLabel = type.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        html += '<div class="explore-item explore-item--tap" onclick="explorePivot(\'bible\',\'' + utils.esc(ref).replace(/'/g, '\\\'') + '\')">'
-          + '<div class="explore-item-context">' + utils.esc(typeLabel) + '</div>'
-          + '<div class="explore-item-label">' + utils.esc(ref) + '</div>'
+        if (!ref) return;
+        var typeLabel = readingLabels[type] || type;
+        html += '<div class="explore-lect-reading" onclick="_openBibleFromExplore(\'' + utils.esc(ref).replace(/'/g, '\\\'') + '\')">'
+          + '<span class="explore-lect-type">' + utils.esc(typeLabel) + '</span>'
+          + '<span class="explore-lect-ref">' + utils.esc(ref) + '</span>'
           + '</div>';
       });
+
       html += '</div></details>';
     });
   }
@@ -922,6 +1081,11 @@ window._exploreSummaLanding = _exploreSummaLanding;
 window._exploreLectionaryLanding = _exploreLectionaryLanding;
 window._renderLanding = _renderLanding;
 window.exploreHome = exploreHome;
+window._openBibleFromExplore = _openBibleFromExplore;
+window._openCCCFromExplore = _openCCCFromExplore;
+window._switchConnTab = _switchConnTab;
+window._filterBaltimore = _filterBaltimore;
+window._showAllBaltimore = _showAllBaltimore;
 
 module.exports = {
   openExplore: openExplore,
