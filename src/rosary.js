@@ -337,10 +337,12 @@ function _esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
 function _stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
 
 function _toggleInlineCCC(span, numStr) {
-  var container = span.closest('.rosary-mystery-refs') || span.parentNode;
+  // Insert CCC card after the mystery card, not inside the refs inline-flex container
+  var mysteryCard = span.closest('.rosary-mystery');
+  var container = mysteryCard || span.parentNode;
 
   // If already expanded, collapse
-  var existing = container.querySelector('.exam-ccc-card');
+  var existing = container.parentNode.querySelector('.exam-ccc-card');
   if (existing) {
     existing.remove();
     span.classList.remove('ref-tap--active');
@@ -380,7 +382,14 @@ function _toggleInlineCCC(span, numStr) {
     }
     html += '</div>';
     card.innerHTML = html;
-    container.appendChild(card);
+    // Insert after the mystery card, not inside the refs flex container
+    if (mysteryCard && mysteryCard.nextSibling) {
+      mysteryCard.parentNode.insertBefore(card, mysteryCard.nextSibling);
+    } else if (mysteryCard) {
+      mysteryCard.parentNode.appendChild(card);
+    } else {
+      container.appendChild(card);
+    }
   });
 }
 
