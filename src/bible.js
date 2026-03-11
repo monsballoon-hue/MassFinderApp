@@ -301,7 +301,10 @@ async function _renderBibleContent(refStr) {
       var passages = _groupConsecutiveRefs(relatedRefs);
       relHtml += '<div class="bible-related-section">';
       relHtml += '<div class="bible-related-header">Related Passages</div>';
-      passages.slice(0, 12).forEach(function(p) {
+      var maxVisible = 3;
+      var visible = passages.slice(0, maxVisible);
+      var hidden = passages.slice(maxVisible);
+      visible.forEach(function(p) {
         var pBook = _resolveAbbrToBook(p.abbr);
         var label = pBook ? pBook.name : p.abbr;
         var refLabel = label + ' ' + p.chapter + ':' + p.startVerse;
@@ -312,6 +315,22 @@ async function _renderBibleContent(refStr) {
           + (genre ? '<span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
           + '</div>';
       });
+      if (hidden.length) {
+        relHtml += '<details class="bible-refs-overflow"><summary class="bible-refs-more">'
+          + hidden.length + ' more reference' + (hidden.length !== 1 ? 's' : '') + '</summary>';
+        hidden.forEach(function(p) {
+          var pBook = _resolveAbbrToBook(p.abbr);
+          var label = pBook ? pBook.name : p.abbr;
+          var refLabel = label + ' ' + p.chapter + ':' + p.startVerse;
+          if (p.endVerse !== p.startVerse) refLabel += '\u2013' + p.endVerse;
+          var genre = pBook ? pBook.genre : '';
+          relHtml += '<div class="bible-related-item" onclick="bibleNavigate(\'' + _esc(refLabel) + '\')">'
+            + '<span class="bible-related-ref">' + _esc(refLabel) + '</span>'
+            + (genre ? '<span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
+            + '</div>';
+        });
+        relHtml += '</details>';
+      }
       relHtml += '</div>';
     }
   }

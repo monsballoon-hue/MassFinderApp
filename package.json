@@ -14,7 +14,8 @@
     "build:bible": "node scripts/build-bible-drb.js",
     "build:xrefs": "node scripts/build-xrefs.js",
     "build:litcal": "node scripts/build-litcal.js",
-    "build:data": "npm run build:bible && npm run build:xrefs && npm run build:litcal"
+    "build:data": "npm run build:bible && npm run build:xrefs && npm run build:litcal",
+    "modernize:baltimore": "node scripts/modernize-baltimore.js"
   },
   "devDependencies": {
     "@supabase/supabase-js": "^2.49.0",

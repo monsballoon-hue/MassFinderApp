@@ -434,9 +434,9 @@ Baltimore Catechism data (`data/baltimore-catechism.json`, 220 questions) is alr
 
 ---
 
-### OW-20: Baltimore Catechism — Language Modernization
+### OW-20: Baltimore Catechism — Language Modernization ✅
 
-**Priority:** P2
+**Priority:** P2 — **DONE**
 **Effort:** 2 hours (mostly editorial review)
 **Files:** `data/baltimore-catechism.json`, `scripts/build-baltimore.js`
 
@@ -606,9 +606,9 @@ The `_CCC_SECTIONS` array in `ccc.js` maps paragraph ranges to topics. Surface t
 
 ---
 
-### OW-22: Bible Sheet — Progressive Disclosure for References
+### OW-22: Bible Sheet — Progressive Disclosure for References ✅
 
-**Priority:** P2
+**Priority:** P2 — **DONE**
 **Effort:** 1 hour
 **Files:** `src/bible.js` (lines 285–316), `css/app.css`
 
@@ -1131,9 +1131,9 @@ Design document (`docs/plans/Portal_Auth_Infrastructure_Spec.md`) + Supabase mig
 | ID | Summary | Effort | Dependencies |
 |----|---------|--------|-------------|
 | OW-19 | CCC ↔ Baltimore toggle | 2 hrs | None |
-| OW-20 | Baltimore language modernization | 2 hrs | None |
+| ~~OW-20~~ | ~~Baltimore language modernization~~ | ~~2 hrs~~ | ✅ Done |
 | OW-21 | CCC Explore module | 6–8 hrs | OW-19 (ideally) |
-| OW-22 | Bible refs progressive disclosure | 1 hr | None |
+| ~~OW-22~~ | ~~Bible refs progressive disclosure~~ | ~~1 hr~~ | ✅ Done |
 | OW-23 | Church detail services restructuring | 4+2 hrs | None (data planning doc) |
 | OW-25 | Settings panel | 3 hrs | None |
 
