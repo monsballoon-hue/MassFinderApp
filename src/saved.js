@@ -58,6 +58,30 @@ function getTodayServices(favChurches) {
   return results;
 }
 
+// ── _renderSchedRow — single schedule timeline row ──
+function _renderSchedRow(item) {
+  var svcLabel = SVC_LABELS[item.service.type] || item.service.type;
+  var timeStr = fmt12(item.service.time);
+  var cName = displayName(item.church.name);
+  var statusCls = '';
+  var statusBadge = '';
+  if (item.isPast) statusCls = ' sched-past';
+  else if (item.isLive) {
+    statusCls = ' sched-live';
+    statusBadge = '<span class="sched-live-badge"><span class="pulse-dot"></span>Now</span>';
+  } else if (item.isSoon) {
+    statusCls = ' sched-soon';
+    statusBadge = '<span class="sched-soon-badge">Soon</span>';
+  }
+  return '<div class="sched-row' + statusCls + '" onclick="openDetail(\'' + item.church.id + '\')">'
+    + '<div class="sched-time">' + timeStr + '</div>'
+    + '<div class="sched-info">'
+    + '<span class="sched-type">' + esc(svcLabel) + '</span>' + statusBadge
+    + '<span class="sched-church">' + esc(cName) + '</span>'
+    + '</div>'
+    + '</div>';
+}
+
 // ── renderUnifiedEvt — single event row for the unified list ──
 function renderUnifiedEvt(e, isYC) {
   var c = state.allChurches.find(function(x) { return x.id === e.church_id; }) || {};
@@ -167,28 +191,22 @@ function renderSaved() {
   if (todaySvcs.length) {
     html += '<div class="saved-section-label">TODAY\'S SCHEDULE</div>';
     html += '<div class="saved-schedule">';
-    for (var si = 0; si < todaySvcs.length; si++) {
-      var item = todaySvcs[si];
-      var svcLabel = SVC_LABELS[item.service.type] || item.service.type;
-      var timeStr = fmt12(item.service.time);
-      var cName = displayName(item.church.name);
-      var statusCls = '';
-      var statusBadge = '';
-      if (item.isPast) statusCls = ' sched-past';
-      else if (item.isLive) {
-        statusCls = ' sched-live';
-        statusBadge = '<span class="sched-live-badge"><span class="pulse-dot"></span>Now</span>';
-      } else if (item.isSoon) {
-        statusCls = ' sched-soon';
-        statusBadge = '<span class="sched-soon-badge">Soon</span>';
+
+    // Split into past vs upcoming
+    var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
+    var upSvcs = todaySvcs.filter(function(s) { return !s.isPast; });
+
+    // If all past, show compact summary
+    if (!upSvcs.length) {
+      html += '<div class="sched-done">Today\'s schedule complete</div>';
+    } else {
+      // Show last 1 past service for context, then all upcoming
+      var showPast = pastSvcs.length ? [pastSvcs[pastSvcs.length - 1]] : [];
+      var visibleSvcs = showPast.concat(upSvcs);
+      for (var si = 0; si < visibleSvcs.length; si++) {
+        var item = visibleSvcs[si];
+        html += _renderSchedRow(item);
       }
-      html += '<div class="sched-row' + statusCls + '" onclick="openDetail(\'' + item.church.id + '\')">'
-        + '<div class="sched-time">' + timeStr + '</div>'
-        + '<div class="sched-info">'
-        + '<span class="sched-type">' + esc(svcLabel) + '</span>' + statusBadge
-        + '<span class="sched-church">' + esc(cName) + '</span>'
-        + '</div>'
-        + '</div>';
     }
     html += '</div>';
   }
@@ -259,8 +277,9 @@ function renderSaved() {
     var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
     var rosaryCount = recentEntries.filter(function(e) { return e.type === 'rosary'; }).length;
     var examCount = recentEntries.filter(function(e) { return e.type === 'examination'; }).length;
-    if (rosaryCount) activityParts.push('<div class="activity-stat"><span class="activity-stat-val">' + rosaryCount + '</span><span class="activity-stat-label">Rosary</span></div>');
-    if (examCount) activityParts.push('<div class="activity-stat"><span class="activity-stat-val">' + examCount + '</span><span class="activity-stat-label">Examen</span></div>');
+    var maxCount = Math.max(rosaryCount, examCount, 1);
+    if (rosaryCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Rosary</span><div class="activity-bar-track"><div class="activity-bar-fill" style="width:' + Math.round(rosaryCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + rosaryCount + '</span></div>');
+    if (examCount) activityParts.push('<div class="activity-bar-row"><span class="activity-bar-label">Examen</span><div class="activity-bar-track"><div class="activity-bar-fill activity-bar-fill--alt" style="width:' + Math.round(examCount / maxCount * 100) + '%"></div></div><span class="activity-bar-val">' + examCount + '</span></div>');
   } catch (e) {}
 
   // Confession reminder
@@ -285,7 +304,7 @@ function renderSaved() {
     if (activityParts.length) {
       html += '<div class="activity-stats">'
         + '<div class="activity-stats-header">Last 30 days</div>'
-        + '<div class="activity-stats-row">' + activityParts.join('') + '</div>'
+        + activityParts.join('')
         + '</div>';
     }
     if (confessionNote) html += confessionNote;

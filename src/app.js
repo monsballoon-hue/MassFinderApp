@@ -427,8 +427,16 @@ function _renderConfessionPrompt() {
 
   var el = document.getElementById('confessionPrompt');
   if (!el) return;
+  var confMsg = '';
+  try {
+    var lastConf = localStorage.getItem('mf-last-confession');
+    if (lastConf) {
+      var daysSince = Math.floor((Date.now() - Number(lastConf)) / 86400000);
+      if (daysSince >= 14) confMsg = daysSince + ' days since your last confession \u2014 ';
+    }
+  } catch (e) {}
   el.innerHTML = '<div class="conf-nudge" onclick="applyQuickFilter(\'confession\');this.parentElement.style.display=\'none\';localStorage.setItem(\'mf-conf-prompt-\'+new Date().toISOString().slice(0,10),\'1\')">'
-    + 'Find confession times nearby \u2192'
+    + confMsg + 'Find a confessional nearby \u2192'
     + '</div>';
   el.style.display = '';
 }
@@ -474,7 +482,7 @@ function _renderWelcomeBanner() {
   el.innerHTML = '<div class="welcome-banner">'
     + '<div class="welcome-text">'
     + '<div class="welcome-title">Welcome to MassFinder</div>'
-    + '<div class="welcome-desc">Find Mass, Confession, Adoration and more across Western New England. Save your churches for quick access.</div>'
+    + '<div class="welcome-desc">Mass times, Confession, Adoration, daily readings, prayer tools, and community events across Western New England. Save your parishes to build a personalized dashboard.</div>'
     + '</div>'
     + '<button class="welcome-dismiss" onclick="this.closest(\'.welcome-wrap\').style.display=\'none\';localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
     + '</div>';

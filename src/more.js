@@ -7,7 +7,6 @@ var forms = require('./forms.js');
 
 var DAY_NAMES = config.DAY_NAMES;
 var displayName = utils.displayName;
-var getNow = utils.getNow;
 var esc = utils.esc;
 var fmt12 = utils.fmt12;
 var fmtDist = utils.fmtDist;
@@ -149,27 +148,7 @@ function renderMore() {
         + '</div>';
     }).join('');
 
-    // Seasonal nudge removed — header already removed, nudge adds clutter
-
-    // Prayer activity summary (Change 19)
-    try {
-      var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      var thisMonth = getNow().toISOString().slice(0, 7);
-      var monthEntries = prayerLog.filter(function(e) { return e.date.startsWith(thisMonth); });
-      if (monthEntries.length > 0) {
-        var rosaryCount = monthEntries.filter(function(e) { return e.type === 'rosary'; }).length;
-        var examCount = monthEntries.filter(function(e) { return e.type === 'examination'; }).length;
-        var pills = [];
-        if (rosaryCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-count">' + rosaryCount + '</span><span class="prayer-stat-label">Rosary</span></span>');
-        if (examCount) pills.push('<span class="prayer-stat"><span class="prayer-stat-count">' + examCount + '</span><span class="prayer-stat-label">Examen</span></span>');
-        if (pills.length) {
-          var summaryEl = document.createElement('div');
-          summaryEl.className = 'prayer-activity';
-          summaryEl.innerHTML = '<span class="prayer-activity-label">This month</span>' + pills.join('');
-          ptGrid.parentNode.insertBefore(summaryEl, ptGrid.nextSibling);
-        }
-      }
-    } catch (e) {}
+    // Prayer activity tracker lives on the Saved tab now
   }
 
   // Devotional guides
@@ -179,7 +158,8 @@ function renderMore() {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
         var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-        return '<details class="devot-card"><summary><span class="devot-icon">' + g.icon + '</span><span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
+        var groupIcon = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
+        return '<details class="devot-card"><summary>' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
           + '<div class="devot-group-body">' + childrenHtml + '</div>'
           + '</details>';
       }
