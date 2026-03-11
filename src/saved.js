@@ -478,121 +478,64 @@ function renderSaved() {
   } catch (e) {}
   if (confessionNote) html += confessionNote;
 
-  // ── 4. ACTIVITY — prayer journal card (ST-18, ST-19, ST-21) ──
-  var activityHtml = '';
+  // ── 4. PRAYER LIFE — warm recency text + 2x2 launcher grid ──
+  var prayerStatusHtml = '';
   var totalPrayers = 0;
   try {
     var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
     var thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
     var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
-    var rosaryCount = recentEntries.filter(function(e) { return e.type === 'rosary'; }).length;
-    var examCount = recentEntries.filter(function(e) { return e.type === 'examination'; }).length;
-    var stationsCount = recentEntries.filter(function(e) { return e.type === 'stations'; }).length;
-    var novenaCount = recentEntries.filter(function(e) { return e.type === 'novena'; }).length;
-    totalPrayers = rosaryCount + examCount + stationsCount + novenaCount;
+    totalPrayers = recentEntries.length;
 
     if (totalPrayers > 0) {
-      activityHtml += '<div class="activity-journal">';
-      if (totalPrayers === 1) {
-        activityHtml += '<span class="activity-journal-count">You prayed with MassFinder this month</span>';
-      } else {
-        activityHtml += '<span class="activity-journal-count">' + totalPrayers + ' guided prayers this month</span>';
+      // Find last prayer date for warm recency text
+      var lastPrayerDate = '';
+      for (var lpi = recentEntries.length - 1; lpi >= 0; lpi--) {
+        if (recentEntries[lpi].date) { lastPrayerDate = recentEntries[lpi].date; break; }
       }
-      activityHtml += '</div>';
+      var todayKey = now.toISOString().slice(0, 10);
+      var yesterdayDate = new Date(now);
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      var yesterdayKey = yesterdayDate.toISOString().slice(0, 10);
 
-      // Breakdown — only if 2+ types
-      var parts = [];
-      if (rosaryCount) parts.push(rosaryCount + ' Rosar' + (rosaryCount !== 1 ? 'ies' : 'y'));
-      if (examCount) parts.push(examCount + ' Examen' + (examCount !== 1 ? 's' : ''));
-      if (stationsCount) parts.push(stationsCount + ' Station' + (stationsCount !== 1 ? 's' : ''));
-      if (novenaCount) parts.push(novenaCount + ' Novena' + (novenaCount !== 1 ? 's' : ''));
-      if (parts.length > 1) {
-        activityHtml += '<div class="activity-journal-breakdown">' + parts.join(' \u00b7 ') + '</div>';
+      var recencyText = '';
+      if (lastPrayerDate === todayKey) {
+        recencyText = 'You prayed today';
+      } else if (lastPrayerDate === yesterdayKey) {
+        recencyText = 'You prayed yesterday';
+      } else if (lastPrayerDate) {
+        var lpd = new Date(lastPrayerDate + 'T12:00:00');
+        var dayName = lpd.toLocaleDateString('en-US', { weekday: 'long' });
+        recencyText = 'Last prayed ' + dayName;
+      }
+
+      if (recencyText) {
+        var checkIcon = lastPrayerDate === todayKey
+          ? '<svg class="activity-recency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="16" height="16"><polyline points="20 6 9 17 4 12"/></svg>'
+          : '';
+        prayerStatusHtml = '<div class="activity-recency">' + checkIcon + '<span>' + recencyText + '</span></div>';
       }
     }
   } catch (e) {}
 
-  // Streak tracking (ST-21: milestone celebrations)
-  var streakDays = 0;
-  try {
-    var streakLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-    var streakDates = {};
-    streakLog.forEach(function(e) { if (e.date) streakDates[e.date] = true; });
-    var sd = new Date(now);
-    var todayKey = sd.toISOString().slice(0, 10);
-    if (!streakDates[todayKey]) {
-      sd.setDate(sd.getDate() - 1);
-    }
-    while (streakDates[sd.toISOString().slice(0, 10)]) {
-      streakDays++;
-      sd.setDate(sd.getDate() - 1);
-    }
-  } catch (e) {}
-
-  if (streakDays >= 3 && totalPrayers > 0) {
-    var streakText = '';
-    var isMilestone = streakDays >= 7;
-
-    if (streakDays >= 30) {
-      streakText = 'A month of daily prayer \u2014 what a beautiful gift to God.';
-    } else if (streakDays >= 14) {
-      streakText = 'Two weeks of daily prayer. You are growing.';
-    } else if (streakDays >= 7) {
-      streakText = 'A full week of daily prayer. Keep going.';
-    } else {
-      streakText = streakDays + ' consecutive days of prayer';
-    }
-
-    if (isMilestone) {
-      activityHtml += '<div class="activity-streak-milestone">'
-        + '<span class="activity-streak-flame">' + streakDays + '</span>'
-        + '<span class="activity-streak-milestone-text">' + streakText + '</span>'
-        + '</div>';
-    } else {
-      activityHtml += '<div class="activity-streak-text">' + streakText + '</div>';
-    }
-  }
-
-  // 7-day dot row
-  if (totalPrayers > 0) {
-    var dotsHtml = '<div class="activity-week-dots">';
-    var streakDatesMap = {};
-    try {
-      var dotLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      dotLog.forEach(function(e) { if (e.date) streakDatesMap[e.date] = true; });
-    } catch (e) {}
-    for (var di = 6; di >= 0; di--) {
-      var dotDate = new Date(now);
-      dotDate.setDate(dotDate.getDate() - di);
-      var dotKey = dotDate.toISOString().slice(0, 10);
-      var filled = streakDatesMap[dotKey] ? ' filled' : '';
-      var dayAbbr = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'][dotDate.getDay()];
-      dotsHtml += '<div class="activity-week-col"><div class="activity-week-dot' + filled + '"></div><div class="activity-week-label">' + dayAbbr + '</div></div>';
-    }
-    dotsHtml += '</div>';
-    activityHtml += dotsHtml;
-  }
-
-  // ST-18: Quick prayer launchers (always present)
-  var prayerBtns = '<div class="activity-pray-row">'
-    + '<button class="activity-pray-btn" onclick="openRosary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg><span>Rosary</span></button>'
-    + '<button class="activity-pray-btn" onclick="openExamination()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Examen</span></button>'
-    + '<button class="activity-pray-btn" onclick="openStations()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/></svg><span>Stations</span></button>'
-    + '<button class="activity-pray-btn" onclick="openNovena()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg><span>Novena</span></button>'
+  // 2x2 prayer launcher grid
+  var prayerBtns = '<div class="activity-pray-grid">'
+    + '<button class="activity-pray-btn" onclick="openRosary()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg><span>Rosary</span></button>'
+    + '<button class="activity-pray-btn" onclick="openExamination()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg><span>Examen</span></button>'
+    + '<button class="activity-pray-btn" onclick="openStations()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="8" x2="22" y2="8"/></svg><span>Stations</span></button>'
+    + '<button class="activity-pray-btn" onclick="openNovena()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" width="24" height="24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg><span>Novena</span></button>'
     + '</div>';
 
-  // ST-19: Always show prayer life section when churches are saved
+  // Always show prayer life section
   html += '<div class="saved-divider"><span>Prayer life</span></div>';
   html += '<div class="saved-activity-card">';
 
-  if (activityHtml) {
-    html += activityHtml;
-    html += prayerBtns;
+  if (prayerStatusHtml) {
+    html += prayerStatusHtml;
   } else {
-    // No prayer history — show invitation + launchers
     html += '<div class="activity-invite">Guided prayers to deepen your walk with Christ</div>';
-    html += prayerBtns;
   }
+  html += prayerBtns;
 
   html += '</div>';
 
