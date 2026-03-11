@@ -181,9 +181,10 @@ function renderSaved() {
   if (!favChurches.length) {
     el.innerHTML = '<div class="saved-empty">'
       + '<div class="saved-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>'
-      + '<h3>Save your parish for quick access</h3>'
-      + '<p>Your saved churches appear here with their upcoming schedules and events at a glance.</p>'
-      + '<button class="saved-empty-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Find churches near me</button>'
+      + '<h3>Your parish dashboard</h3>'
+      + '<p>Save your churches to see today\u2019s Mass times, upcoming events, and community happenings \u2014 all in one place.</p>'
+      + '<p class="saved-empty-hint">Tap the \u2661 on any church to save it here.</p>'
+      + '<button class="saved-empty-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Browse churches</button>'
       + '</div>';
     return;
   }
@@ -228,7 +229,8 @@ function renderSaved() {
   var hasTodayContent = todaySvcs.length || todayEvents.length;
   if (hasTodayContent) {
     html += '<div class="saved-today-card">';
-    html += '<div class="saved-today-label">Today</div>';
+    var todayLongLabel = now.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' });
+    html += '<div class="saved-today-label">Today<span class="saved-today-date"> \u00b7 ' + todayLongLabel + '</span></div>';
 
     // Hero card for most urgent service
     var curMinNow = now.getHours() * 60 + now.getMinutes();
@@ -327,7 +329,7 @@ function renderSaved() {
     return aMin - bMin;
   });
 
-  html += '<div class="saved-divider"><span>Your churches</span></div>';
+  html += '<div class="saved-divider"><span>Your churches \u00b7 ' + favChurches.length + '</span></div>';
   html += '<div class="saved-churches-card">';
   html += sortedFav.map(function(item) {
     var c = item.c, next = item.next, dist = item.dist;
@@ -364,9 +366,13 @@ function renderSaved() {
     totalPrayers = rosaryCount + examCount + stationsCount + novenaCount;
 
     if (totalPrayers > 0) {
-      // Primary line
+      // Primary line — warm, not judgmental
       activityHtml += '<div class="activity-journal">';
-      activityHtml += '<span class="activity-journal-count">You\u2019ve prayed ' + totalPrayers + ' time' + (totalPrayers !== 1 ? 's' : '') + ' in the past 30 days</span>';
+      if (totalPrayers === 1) {
+        activityHtml += '<span class="activity-journal-count">You prayed with MassFinder this month</span>';
+      } else {
+        activityHtml += '<span class="activity-journal-count">' + totalPrayers + ' guided prayers this month</span>';
+      }
       activityHtml += '</div>';
 
       // Breakdown line
@@ -426,7 +432,7 @@ function renderSaved() {
       dotDate.setDate(dotDate.getDate() - di);
       var dotKey = dotDate.toISOString().slice(0, 10);
       var filled = streakDatesMap[dotKey] ? ' filled' : '';
-      var dayAbbr = ['S', 'M', 'T', 'W', 'T', 'F', 'S'][dotDate.getDay()];
+      var dayAbbr = ['Su', 'M', 'Tu', 'W', 'Th', 'F', 'Sa'][dotDate.getDay()];
       dotsHtml += '<div class="activity-week-col"><div class="activity-week-dot' + filled + '"></div><div class="activity-week-label">' + dayAbbr + '</div></div>';
     }
     dotsHtml += '</div>';
