@@ -190,6 +190,8 @@ function renderMore() {
   if (footer) {
     var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     var curSize = localStorage.getItem('mf-text-size') || 'default';
+    var notifEnabled = localStorage.getItem('mf-notifications') === 'enabled';
+    var notifSupported = 'Notification' in window;
     footer.innerHTML = '<div class="footer-controls">'
       + '<button id="theme-toggle-btn" class="theme-toggle" onclick="window.toggleTheme()">'
       + (isDark ? 'Light Mode' : 'Dark Mode')
@@ -201,6 +203,10 @@ function renderMore() {
       + '<button class="text-size-btn text-size-btn--md' + (curSize === 'default' ? ' active' : '') + '" onclick="window.setTextSize(\'default\')" aria-label="Default text">A</button>'
       + '<button class="text-size-btn text-size-btn--lg' + (curSize === 'large' ? ' active' : '') + '" onclick="window.setTextSize(\'large\')" aria-label="Large text">A</button>'
       + '</div></div></div>'
+      + (notifSupported ? '<div class="footer-controls" style="margin-top:var(--space-2)">'
+        + '<button id="notif-toggle-btn" class="theme-toggle" onclick="window.toggleNotifications()">'
+        + 'Daily Reminder: ' + (notifEnabled ? 'On' : 'Off')
+        + '</button></div>' : '')
       + '<div onclick="window._devTap && window._devTap()" style="cursor:default">MassFinder v2</div>';
   }
 

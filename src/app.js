@@ -250,6 +250,39 @@ window.setTextSize = function(size) {
   if (active) active.classList.add('active');
 };
 
+// ── UX-08: Daily Reading Reminder ──
+window.toggleNotifications = function() {
+  var current = localStorage.getItem('mf-notifications');
+  if (current === 'enabled') {
+    // Disable
+    localStorage.setItem('mf-notifications', 'disabled');
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'CANCEL_REMINDER' });
+    }
+    var btn = document.getElementById('notif-toggle-btn');
+    if (btn) btn.textContent = 'Daily Reminder: Off';
+    return;
+  }
+  // Request permission first
+  if (!('Notification' in window)) return;
+  Notification.requestPermission().then(function(perm) {
+    if (perm === 'granted') {
+      localStorage.setItem('mf-notifications', 'enabled');
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        navigator.serviceWorker.controller.postMessage({ type: 'SCHEDULE_REMINDER', hour: 8 });
+      }
+      var btn = document.getElementById('notif-toggle-btn');
+      if (btn) btn.textContent = 'Daily Reminder: On';
+    }
+  });
+};
+
+function _initNotifications() {
+  if (localStorage.getItem('mf-notifications') === 'enabled' && navigator.serviceWorker && navigator.serviceWorker.controller) {
+    navigator.serviceWorker.controller.postMessage({ type: 'SCHEDULE_REMINDER', hour: 8 });
+  }
+}
+
 // ── Chip clicks ──
 document.querySelectorAll('.chip[data-filter]').forEach(function(chip) {
   chip.addEventListener('click', function() {
@@ -292,7 +325,7 @@ document.addEventListener('keydown', function(e) {
     else if (document.getElementById('novenaOverlay').classList.contains('open')) novena.closeNovena();
     else if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
     else if (document.getElementById('examOverlay').classList.contains('open')) examination.closeExamination();
-    else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
+    // CCC sheet: <dialog> handles Escape natively via 'cancel' event — no manual handler needed
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();
     else if (document.getElementById('detailPanel').classList.contains('open')) render.closeDetail();
@@ -652,6 +685,8 @@ async function init() {
       navigator.serviceWorker.addEventListener('message', function(e) {
         if (e.data && e.data.type === 'CACHE_UPDATED') location_.refreshApp();
       });
+      // UX-08: Init daily reminder if previously enabled
+      navigator.serviceWorker.ready.then(function() { _initNotifications(); });
     }
   } catch (err) {
     var isTimeout = err.name === 'AbortError';

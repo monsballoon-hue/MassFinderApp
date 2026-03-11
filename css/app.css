@@ -843,7 +843,7 @@ select:focus-visible,
   /* Hide app chrome */
   .top-header, .tab-bar, .search-section, .chip-bar, .results-info,
   .detail-backdrop, .active-filters, .events-widget, #sparseMsg,
-  #pullIndicator, .toast, .ccc-overlay, .ccc-sheet, .rosary-overlay, .exam-overlay, .stations-overlay, .novena-overlay,
+  #pullIndicator, .toast, .ccc-sheet, .rosary-overlay, .exam-overlay, .stations-overlay, .novena-overlay,
   .detail-handle, .card-fav, .detail-fav-btn,
   .evt-handle, .evt-close, .evt-back, .evt-action-btn, .evt-footer-link,
   .saved-evt-actions, .detail-btn-row, .detail-verify,
@@ -1251,6 +1251,15 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .devot-sub[open] summary { border-bottom: 1px solid var(--color-border-light); }
 .devot-sub .devot-body { padding: var(--space-3) var(--space-4) var(--space-4); }
 
+/* UX-07: Term Definition Popovers */
+.term-trigger { color:var(--color-primary);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.term-trigger:hover { text-decoration-style:solid; }
+.term-popover { margin:auto;padding:var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-elevated,0 8px 32px rgba(0,0,0,0.18));max-width:320px;width:calc(100vw - 32px);font-size:var(--text-sm);line-height:1.6; }
+.term-popover::backdrop { background:rgba(0,0,0,0.15); }
+.term-popover-word { display:block;font-weight:var(--weight-semibold);color:var(--color-text-primary);margin-bottom:var(--space-1);font-size:var(--text-base); }
+.term-popover-def { color:var(--color-text-secondary); }
+html[data-theme="dark"] .term-popover { background:var(--color-surface);border-color:var(--color-border);box-shadow:0 8px 32px rgba(0,0,0,0.5); }
+
 /* WHAT'S HAPPENING — two-column equal layout */
 .wh-grid { display: grid; grid-template-columns: 1fr 1px 1fr; gap: 0 var(--space-4); margin-top: var(--space-2); }
 .wh-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); margin-top: var(--space-2); }
@@ -1356,13 +1365,10 @@ html[data-theme="dark"] .fasting-banner--full { background:rgba(239,68,68,0.12);
 .ics-card-btn { display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);background:var(--color-primary);color:#fff;font-size:var(--text-xs);font-weight:var(--weight-semibold);border:none;border-radius:var(--radius-full);cursor:pointer;font-family:var(--font-body);min-height:32px;transition:background 0.15s,color 0.15s; }
 .ics-card-btn--outline { background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary); }
 
-/* CCC REFERENCE BOTTOM SHEET */
-.ccc-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:900;opacity:0;pointer-events:none;transition:opacity 0.35s ease; }
-.ccc-overlay.open { opacity:1;pointer-events:auto; }
-/* CCC-01: 88vh sheet height */
-.ccc-sheet { position:fixed;bottom:0;left:0;right:0;background:var(--color-surface);border-radius:16px 16px 0 0;z-index:901;max-height:88vh;max-height:88dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06); }
-.ccc-sheet.open { transform:translateY(0); }
-@media (min-width:768px) { .ccc-sheet { left:50%;right:auto;width:100%;max-width:var(--max-width);transform:translate(-50%,100%); } .ccc-sheet.open { transform:translate(-50%,0); } }
+/* CCC REFERENCE BOTTOM SHEET (LIB-05: native <dialog>) */
+.ccc-sheet { border:none;padding:0;margin:0;margin-top:auto;max-height:88vh;max-height:88dvh;width:100%;background:var(--color-surface);border-radius:16px 16px 0 0;display:flex;flex-direction:column;box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06);position:fixed;bottom:0;left:0;right:0; }
+.ccc-sheet::backdrop { background:rgba(0,0,0,0.45);-webkit-tap-highlight-color:transparent; }
+@media (min-width:768px) { .ccc-sheet { left:50%;right:auto;max-width:var(--max-width);transform:translateX(-50%); } }
 /* CCC-10: Enlarged handle area */
 .ccc-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:var(--space-4) auto var(--space-2);flex-shrink:0; }
 /* CCC-12: Generous bottom scroll padding */
@@ -2016,8 +2022,8 @@ html[data-theme="dark"] .exam-exit-dialog { background:var(--color-surface);box-
 html[data-theme="dark"] .exam-exit-btn--confirm:active { background:rgba(255,255,255,0.06); }
 /* CCC-08: Dark mode treatment */
 html[data-theme="dark"] .ccc-sheet { box-shadow:0 -4px 24px rgba(0,0,0,0.4),0 -1px 4px rgba(0,0,0,0.2); }
+html[data-theme="dark"] .ccc-sheet::backdrop { background:rgba(0,0,0,0.65); }
 html[data-theme="dark"] .ccc-handle { background:var(--color-border); }
-html[data-theme="dark"] .ccc-overlay.open { background:rgba(0,0,0,0.65); }
 html[data-theme="dark"] .ccc-sheet-title { border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .ccc-related-item:hover { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .ccc-related-item:active { background:rgba(255,255,255,0.08); }

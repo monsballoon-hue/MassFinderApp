@@ -2,6 +2,58 @@
 var utils = require('./utils.js');
 var esc = utils.esc;
 
+// ── UX-07: Theological Term Definitions (Popover API) ──
+var TERM_DEFS = {
+  'mortal sin': 'A grave violation of God\u2019s law that destroys charity in the heart. Requires grave matter, full knowledge, and deliberate consent (CCC 1857).',
+  'grave sin': 'Another name for mortal sin \u2014 a serious offense against God that severs the soul\u2019s relationship with Him.',
+  'venial sin': 'A lesser offense that weakens but does not destroy one\u2019s relationship with God (CCC 1862).',
+  'absolution': 'The prayer by which a priest, in the Sacrament of Penance, forgives sins in the name of Christ and the Church (CCC 1449).',
+  'contrition': 'Sincere sorrow of the soul for having offended God, with a firm resolve not to sin again (CCC 1451).',
+  'Blessed Sacrament': 'The Eucharist, especially the consecrated host reserved in the tabernacle for adoration and worship.',
+  'Eucharist': 'The sacrament in which bread and wine become the Body and Blood of Christ, the source and summit of Christian life (CCC 1324).',
+  'consecrated': 'Made sacred; in Eucharistic context, the bread and wine transformed into the Body and Blood of Christ through the words of the priest.',
+  'Host': 'The consecrated bread of the Eucharist, which Catholics believe is truly the Body of Christ.',
+  'monstrance': 'An ornamental vessel in which the consecrated Host is displayed for Eucharistic Adoration.',
+  'Perpetual Adoration': 'The practice of continuous, around-the-clock prayer before the exposed Blessed Sacrament, maintained by volunteers in shifts.',
+  'intercession': 'Prayer offered to God on behalf of another person. Saints and the Blessed Virgin Mary intercede for the faithful.',
+  'sacramental': 'A sacred sign (object, prayer, or blessing) instituted by the Church to prepare the faithful to receive grace (CCC 1667).',
+  'Extraordinary Form': 'The Traditional Latin Mass, celebrated according to the 1962 Roman Missal, also called the \u201cUsus Antiquior.\u201d',
+  'ad orientem': 'Latin for \u201ctoward the east\u201d \u2014 the priest faces the altar (same direction as the people), the traditional posture for offering the Mass.',
+  'Passion': 'The suffering and death of Jesus Christ, from the agony in the garden through His crucifixion on Calvary.',
+  'veneration': 'An act of reverent honor given to saints, relics, or sacred images \u2014 distinct from the worship (latria) due to God alone.',
+  'Resurrection': 'Christ\u2019s rising from the dead on the third day, the central truth of the Christian faith (CCC 638).',
+  'Sacrament of Reconciliation': 'The sacrament by which sins committed after Baptism are forgiven through confession to a priest and absolution. Also called Confession or Penance.',
+  'Via Dolorosa': 'Latin for \u201cWay of Sorrows\u201d \u2014 the route in Jerusalem that Christ walked carrying His cross to Calvary.'
+};
+
+// Popover counter for unique IDs
+var _popId = 0;
+
+function _wrapTerms(html) {
+  if (typeof HTMLElement !== 'undefined' && !('popover' in document.createElement('span'))) {
+    return html; // No Popover API support — return unchanged
+  }
+  var keys = Object.keys(TERM_DEFS);
+  // Sort by length descending so longer terms match first
+  keys.sort(function(a, b) { return b.length - a.length; });
+  keys.forEach(function(term) {
+    // Match term as whole word (case-insensitive), but NOT inside HTML tags or existing popovers
+    var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    var re = new RegExp('(?<![<\\w])(' + escaped + ')(?![\\w>])', 'gi');
+    var def = TERM_DEFS[term];
+    html = html.replace(re, function(match) {
+      _popId++;
+      var id = 'td' + _popId;
+      return '<span class="term-trigger" popovertarget="' + id + '">' + match + '</span>'
+        + '<span popover id="' + id + '" class="term-popover">'
+        + '<span class="term-popover-word">' + match + '</span>'
+        + '<span class="term-popover-def">' + esc(def) + '</span>'
+        + '</span>';
+    });
+  });
+  return html;
+}
+
 var DEVOTIONAL_GUIDES = [
   {icon:'',title:'The Sunday Obligation',findLabel:'Mass',filter:'weekend',body:
 '<p>The Catholic Church teaches that attending Mass on Sundays and Holy Days of Obligation is a serious duty for every baptized Catholic. This obligation flows from the Third Commandment \u2014 \u201cRemember to keep holy the Lord\u2019s Day\u201d \u2014 and from the Church\u2019s own precepts.</p>'
@@ -177,8 +229,9 @@ function renderGuide(g, sub) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
   }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
+  var body = _wrapTerms(g.body);
   return '<details class="' + cls + '"><summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
-    + '<div class="devot-body">' + g.body + findLink + '</div>'
+    + '<div class="devot-body">' + body + findLink + '</div>'
     + '</details>';
 }
 

@@ -1,4 +1,4 @@
-var CACHE_NAME = 'massfinder-v3_' + '20260311_0748';
+var CACHE_NAME = 'massfinder-v3_' + '20260311_0823';
 var SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -55,6 +55,52 @@ self.addEventListener('activate', function(event) {
     })
   );
   self.clients.claim();
+});
+
+// UX-08: Daily reading reminder notification
+self.addEventListener('message', function(event) {
+  if (event.data && event.data.type === 'SCHEDULE_REMINDER') {
+    // Store the reminder preference
+    self._reminderEnabled = true;
+    self._reminderHour = event.data.hour || 8;
+  }
+  if (event.data && event.data.type === 'CANCEL_REMINDER') {
+    self._reminderEnabled = false;
+  }
+});
+
+// Periodic check — fires on SW activation or fetch events
+function _checkDailyReminder() {
+  if (!self._reminderEnabled) return;
+  var now = new Date();
+  var todayKey = now.toISOString().slice(0, 10);
+  // Only notify once per day and only if the app hasn't been opened
+  if (self._lastReminderDate === todayKey) return;
+  if (now.getHours() < (self._reminderHour || 8)) return;
+  self._lastReminderDate = todayKey;
+  self.registration.showNotification('MassFinder \u2014 Daily Reading', {
+    body: 'Today\u2019s readings and reflections are ready.',
+    icon: '/assets/icon-192.png',
+    badge: '/assets/icon-192.png',
+    tag: 'daily-reading',
+    renotify: false,
+    data: { url: '/' }
+  }).catch(function() {});
+}
+
+self.addEventListener('notificationclick', function(event) {
+  event.notification.close();
+  var url = (event.notification.data && event.notification.data.url) || '/';
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window' }).then(function(clients) {
+      for (var i = 0; i < clients.length; i++) {
+        if (clients[i].url.indexOf(url) !== -1) {
+          return clients[i].focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
 });
 
 // Fetch: network-only for APIs, stale-while-revalidate for everything else

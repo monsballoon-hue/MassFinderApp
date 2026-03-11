@@ -160,7 +160,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Build script:** `scripts/build-examination.js` — transforms ConfessIt's i18next JSON into MassFinder format, maps CCC numbers to tappable refs, adds Scripture refs.
 - **Same maintainer** as LitCal and BibleGet (Fr. D'Orazio) — good community alignment.
 
-### DAT-04: Douay-Rheims Bible (73 Books)
+### ~~DAT-04: Douay-Rheims Bible (73 Books)~~ ✓ DONE
 - **Priority:** P1 — Phase 4
 - **Effort:** 3 hours (fetch + split by book + lectionary subset)
 - **Size impact:** ~200KB gzipped (lectionary passages only, lazy-loaded per book)
@@ -172,7 +172,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **Build script:** `scripts/build-bible-drb.js` — processes verses into per-book JSON keyed by `chapter:verse`.
 - **Loading:** Lazy-load on demand via `refs.js`. When a reading reference is needed (e.g., "Matthew 24:37-44"), fetch `data/bible-drb/matthew.json`. Service worker caches each book after first fetch.
 
-### DAT-05: Catholic Public Domain Version (CPDV) Bible
+### ~~DAT-05: Catholic Public Domain Version (CPDV) Bible~~ ✓ DONE
 - **Priority:** P2 — Phase 4+
 - **Effort:** 2 hours
 - **Size impact:** ~200KB gzipped (same split strategy as DRB)
@@ -350,21 +350,23 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Upgraded existing 1.5px bar to 3px with full liturgical color support (Advent/Lent purple, Christmas/Easter white/gold, Ordinary Time green). Dark mode variants. Driven by `data-season` attribute set from LitCal data.
 - **Support:** All browsers (static bar, no scroll-timeline dependency).
 
-### UX-07: Popover API — Inline Term Definitions
+### ~~UX-07: Popover API — Inline Term Definitions~~ ✓ DONE
 - **Priority:** P3
 - **Effort:** 1 hour
 - **Size impact:** 0
 - **Files:** Devotional guide content in `src/devotions.js`
 - **What:** Theological terms (transubstantiation, absolution, contrition) get lightweight popovers with definitions. Native accessibility, native dismiss behavior.
 - **Support:** Chrome 114+, Safari 17+, Firefox 125+.
+- **Done:** 20 theological terms in TERM_DEFS, Popover API with progressive enhancement, dotted-underline triggers in devotional guides.
 
-### UX-08: Notification API — Daily Reading Reminder
+### ~~UX-08: Notification API — Daily Reading Reminder~~ ✓ DONE
 - **Priority:** P3
 - **Effort:** 2 hours
 - **Size impact:** 0
 - **Files:** `sw.js`, `src/app.js`
 - **What:** Client-side daily reminder (no server). Check time since last app open. If >24 hours and notifications permitted, show one. Notification body includes today's liturgical day.
 - **Scope:** Permission-gated. Never auto-prompt — only show after user opts in from settings.
+- **Done:** Opt-in toggle in More tab footer, SW message-based scheduling, once-per-day notification with notificationclick handler.
 
 ---
 
@@ -406,7 +408,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **What:** Active dot indicator for CSS scroll-snap containers. Shows progress through rosary decades (5 dots), stations (14 dots), commandments (10 dots).
 - **Alternative:** Pure CSS scroll-snap handles the scrolling; this library only adds the dots. Can be built manually with IntersectionObserver if preferred.
 
-### LIB-05: pure-web-bottom-sheet — Native-Feel Sheets
+### ~~LIB-05: pure-web-bottom-sheet — Native-Feel Sheets~~ ✓ DONE
 - **Priority:** P2 — Phase 2+
 - **Effort:** 1 hour
 - **Size impact:** 3KB
@@ -414,6 +416,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 - **License:** MIT
 - **What:** CSS scroll-snap-driven bottom sheet with multiple snap points (25%, 50%, 75%), swipe-to-dismiss, nested scrolling, `<dialog>` for accessibility. Could replace custom CCC sheet and serve all new interactive modules.
 - **Tradeoff:** Current CCC sheet works. This standardizes the pattern for all new modules.
+- **Done:** Native `<dialog>` element replaces div+overlay, `showModal()`/`close()` with `::backdrop`, native Escape/focus-trap, backdrop click dismiss.
 
 ---
 
@@ -601,7 +604,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 ## Phase 4 — Offline Readings & Bible
 | ID | Item | Effort | Status |
 |----|------|--------|--------|
-| DAT-04 | DRB Bible per-book JSON | 3 hours | |
+| ~~DAT-04~~ | ~~DRB Bible per-book JSON~~ | 3 hours | ✓ Done |
 | ~~DAT-06~~ | ~~Lectionary reference index~~ | 4 hours | ✓ Done |
 | LIT-01 | romcal build-time calendar | 3 hours | |
 | ~~MOD-06~~ | ~~Refactored readings.js~~ | 4 hours | ✓ Done |
@@ -620,7 +623,7 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 ## Phase 6 — Polish & Depth
 | ID | Item | Effort | Status |
 |----|------|--------|--------|
-| DAT-05 | CPDV Bible (translation toggle) | 2 hours | |
+| ~~DAT-05~~ | ~~CPDV Bible (translation toggle)~~ | 2 hours | ✓ Done |
 | DAT-08 | Summa daily subset | 3 hours | |
 | ~~DAT-09~~ | ~~Baltimore Catechism Q&A~~ | 1 hour | ✓ Done |
 | ~~LIB-03~~ | ~~QR Creator for parish sharing~~ | 1 hour | ✓ Done |
@@ -642,5 +645,5 @@ Repos providing structured Catholic data that ships as static JSON in the repo. 
 | ~~DOC-02~~ | ~~Husky pre-commit~~ | 15 min | ✓ Done |
 | ~~PAT-04~~ | ~~Streak tracking~~ | 30 min | ✓ Done |
 | PAT-07 | Pray for me counter | 2 hours | |
-| UX-07 | Popover API definitions | 1 hour | |
-| UX-08 | Daily reading notification | 2 hours | |
+| ~~UX-07~~ | ~~Popover API definitions~~ | 1 hour | ✓ Done |
+| ~~UX-08~~ | ~~Daily reading notification~~ | 2 hours | ✓ Done |
