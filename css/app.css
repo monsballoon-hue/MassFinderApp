@@ -568,9 +568,9 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .evt-header-text { flex: 1; min-width: 0; }
 .evt-title { font-family: var(--font-display); font-size: var(--text-2xl); font-weight: 700; color: var(--color-text-primary); line-height: 1.25; }
 .evt-subtitle { font-size: var(--text-xs); color: var(--color-text-tertiary); margin-top: 2px; font-weight: var(--weight-medium); text-transform: uppercase; letter-spacing: 0.03em; }
-.evt-close { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); transition: all var(--transition-fast); flex-shrink: 0; margin: -4px -8px 0 0; }
-.evt-close:hover { background: var(--color-surface-hover); }
-.evt-close svg { width: 22px; height: 22px; }
+.evt-close, .evt-back { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-secondary); transition: all var(--transition-fast); flex-shrink: 0; margin: -4px -8px 0 0; }
+.evt-close:hover, .evt-back:hover { background: var(--color-surface-hover); }
+.evt-close svg, .evt-back svg { width: 22px; height: 22px; }
 
 /* Seasonal header tints */
 .evt-header.evt-season-lent { background: linear-gradient(180deg, rgba(124,58,237,0.06) 0%, transparent 100%); }
@@ -839,7 +839,7 @@ select:focus-visible,
   .detail-backdrop, .active-filters, .events-widget, #sparseMsg,
   #pullIndicator, .toast, .ccc-overlay, .ccc-sheet, .rosary-overlay, .exam-overlay,
   .detail-handle, .card-fav, .detail-fav-btn,
-  .evt-handle, .evt-close, .evt-action-btn, .evt-footer-link,
+  .evt-handle, .evt-close, .evt-back, .evt-action-btn, .evt-footer-link,
   .saved-evt-actions, .detail-btn-row, .detail-verify,
   .detail-actions, .loc-site-dir, #panelMap,
   button[onclick*="expressInterest"], button[onclick*="downloadEventIcal"] { display: none !important; }
@@ -1685,11 +1685,11 @@ html[data-theme="dark"] .rosary-overlay[data-rosary-set="luminous"] { background
 .exam-contrition-text:last-child { margin-bottom:0; }
 
 /* ── Opening prayer centering screen ── */
-.exam-opening { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-6) var(--space-5);max-width:420px;margin:0 auto;min-height:100%; }
-.exam-opening-icon { color:var(--color-primary);margin-bottom:var(--space-4);opacity:0.6; }
-.exam-opening-title { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-4); }
-.exam-opening-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-lg);color:var(--color-text-secondary);line-height:1.8;margin-bottom:auto; }
-.exam-opening-btn { padding:var(--space-3) var(--space-6);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent;margin-top:auto; }
+.exam-opening { display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:var(--space-5);max-width:420px;margin:0 auto;height:100%;overflow:hidden; }
+.exam-opening-icon { color:var(--color-primary);margin-bottom:var(--space-3);opacity:0.6;flex-shrink:0; }
+.exam-opening-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-3);flex-shrink:0; }
+.exam-opening-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);color:var(--color-text-secondary);line-height:1.7;flex-shrink:1;overflow:hidden; }
+.exam-opening-btn { padding:var(--space-3) var(--space-6);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent;margin-top:var(--space-4);flex-shrink:0; }
 .exam-opening-btn:active { transform:scale(0.97); }
 
 /* ── Summary preamble — confessional format ── */
@@ -1728,6 +1728,13 @@ html[data-theme="dark"] .rosary-overlay[data-rosary-set="luminous"] { background
 /* ── Find Confession — prominent iOS-style filled button ── */
 .exam-find-btn { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:52px;transition:all 0.2s cubic-bezier(0.28,0.11,0.32,1);margin-bottom:var(--space-4);-webkit-tap-highlight-color:transparent; }
 .exam-find-btn:active { transform:scale(0.97);opacity:0.85; }
+
+/* ── Exam graceful ending ── */
+.exam-ending { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-8) var(--space-5) var(--space-6);margin-top:var(--space-4);border-top:1px solid var(--color-border-light); }
+.exam-ending-icon { color:var(--color-primary);opacity:0.5;margin-bottom:var(--space-3); }
+.exam-ending-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);font-style:italic;color:var(--color-text-secondary);line-height:1.7;margin-bottom:var(--space-5); }
+.exam-ending-btn { padding:var(--space-3) var(--space-6);background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary);border-radius:var(--radius-full);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
+.exam-ending-btn:active { transform:scale(0.97);background:rgba(44,62,90,0.06); }
 
 /* ── Confession tracker on More tab ── */
 .confession-tracker { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3); }

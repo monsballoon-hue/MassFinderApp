@@ -206,17 +206,39 @@ function openCCC(numStr) {
 }
 
 function closeCCC() {
-  document.getElementById('cccOverlay').classList.remove('open');
-  document.getElementById('cccSheet').classList.remove('open');
-  document.body.style.overflow = '';
+  var overlay = document.getElementById('cccOverlay');
+  var sheet = document.getElementById('cccSheet');
+  overlay.classList.remove('open');
+  sheet.classList.remove('open');
+  // Restore z-index if boosted for above-exam display
+  if (overlay._origZ) {
+    overlay.style.zIndex = '';
+    sheet.style.zIndex = '';
+    overlay._origZ = false;
+    // Restore body lock since exam is still open underneath
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
   var ui = require('./ui.js');
   ui.releaseFocus();
   if (window._lastFocused) window._lastFocused.focus();
 }
 
+// Open CCC above the exam overlay (z-index 2000) without closing exam
+function openCCCAboveExam(numStr) {
+  var overlay = document.getElementById('cccOverlay');
+  var sheet = document.getElementById('cccSheet');
+  overlay.style.zIndex = '2010';
+  sheet.style.zIndex = '2011';
+  overlay._origZ = true;
+  openCCC(numStr);
+}
+
 module.exports = {
   openCCC: openCCC,
   closeCCC: closeCCC,
+  openCCCAboveExam: openCCCAboveExam,
   cccNavigate: cccNavigate,
   cccGoBack: cccGoBack,
 };

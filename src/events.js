@@ -450,7 +450,9 @@ function openEventDetail(eventId) {
     + '<h2 class="evt-title">' + utils.esc(evt.title) + '</h2>'
     + '<div class="evt-subtitle">' + utils.esc(subtitleParts.join(' \u00b7 ')) + '</div>'
     + '</div>'
-    + '<button class="evt-close" onclick="closeEventDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
+    + (document.getElementById('detailPanel').classList.contains('open')
+      ? '<button class="evt-back" onclick="closeEventDetail()" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>'
+      : '<button class="evt-close" onclick="closeEventDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>')
     + '</div>'
     + countdownHtml
     + '</div>';
@@ -471,8 +473,6 @@ function openEventDetail(eventId) {
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('eventDetailPanel').classList.add('open');
-  var churchHandle = document.querySelector('#detailPanel .detail-handle');
-  if (churchHandle) churchHandle.style.visibility = 'hidden';
   document.body.style.overflow = 'hidden';
   document.getElementById('eventDetailPanel').scrollTop = 0;
   window._lastFocused = window._lastFocused || document.activeElement;
@@ -483,8 +483,6 @@ function closeEventDetail() {
   var ui = require('./ui.js');
 
   document.getElementById('eventDetailPanel').classList.remove('open');
-  var churchHandle = document.querySelector('#detailPanel .detail-handle');
-  if (churchHandle) churchHandle.style.visibility = '';
   // If parish panel is open underneath, keep backdrop and body lock
   if (!document.getElementById('detailPanel').classList.contains('open')) {
     document.getElementById('detailBackdrop').classList.remove('open');

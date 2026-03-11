@@ -118,10 +118,10 @@ function _toggleInlineCCC(span, numStr) {
       }
     });
     html += '</div>';
-    // "See full range" link for range refs
+    // "See full range" link for range refs — opens CCC above exam overlay
     var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
     if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" onclick="closeExamination();setTimeout(function(){openCCC(\'' + _esc(numStr) + '\')},350)">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
+      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);
@@ -388,6 +388,13 @@ function _renderExamination(d) {
   html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
   html += 'Find Confession Near Me</button>';
 
+  // Graceful ending — peaceful close section
+  html += '<div class="exam-ending">';
+  html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
+  html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
+  html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
+  html += '</div>';
+
   body.innerHTML = html;
 
   // Wire inline CCC (override default openCCC behavior within overlay)
@@ -540,6 +547,12 @@ function _doClose() {
   if (window._lastFocused) window._lastFocused.focus();
 }
 
+// Graceful close — user tapped "Return to MassFinder" at the end, skip confirmation
+function examGracefulClose() {
+  _haptic();
+  _doClose();
+}
+
 function _showExitConfirm(count) {
   var overlay = document.getElementById('examOverlay');
   // Prevent duplicates
@@ -646,6 +659,7 @@ function getConfessionStatus() {
 module.exports = {
   openExamination: openExamination,
   closeExamination: closeExamination,
+  examGracefulClose: examGracefulClose,
   examToggleSection: examToggleSection,
   examMarkConfession: examMarkConfession,
   examFindConfession: examFindConfession,
