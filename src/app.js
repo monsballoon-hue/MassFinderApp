@@ -776,11 +776,24 @@ async function init() {
     // Initialize reader swipe-to-dismiss
     reader._initSwipeDismiss();
 
+    // Show update banner when SW installs a new cache
+    function _showUpdateBanner() {
+      var b = document.getElementById('mfUpdateBanner');
+      if (!b) {
+        b = document.createElement('div');
+        b.id = 'mfUpdateBanner';
+        b.className = 'mf-update-banner';
+        b.innerHTML = 'Update available \u2014 <button class="mf-update-banner-btn" onclick="window.location.reload()">Reload</button>';
+        document.body.appendChild(b);
+      }
+      requestAnimationFrame(function() { b.classList.add('show'); });
+    }
+
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(function() {});
       navigator.serviceWorker.addEventListener('message', function(e) {
-        if (e.data && e.data.type === 'CACHE_UPDATED') location_.refreshApp();
+        if (e.data && e.data.type === 'CACHE_UPDATED') _showUpdateBanner();
       });
       // UX-08: Init daily reminder if previously enabled
       navigator.serviceWorker.ready.then(function() { _initNotifications(); });
