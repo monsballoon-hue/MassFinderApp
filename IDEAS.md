@@ -511,13 +511,15 @@ Navigation buttons in the Stations of the Cross are left-aligned. Should be corr
 ## IDEA-039 — Stations of the Cross: replace V/R label divs with colored plain text to reclaim vertical space
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-011-A
 
 The versicle/response (V/R) label elements in Stations are rendered on separate divs, consuming enough vertical space to prevent a no-scroll experience. Proposal: remove the V/R label divs and use colored or styled inline text to distinguish versicle from response, reclaiming space to achieve a single-viewport render for most stations. Files: `src/stations.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-011-A — V/R labels converted from block divs to inline spans with accent/secondary color distinction. Removed background cards, tight margins for single-viewport fit.
 
 -----
 
@@ -733,13 +735,15 @@ The reflection card at the top of the More tab prompts the user to reflect on a 
 ## IDEA-056 — Event detail card: contact phone number should be a tappable call button
 
 **Category:** enhancement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-011-B
 
 The contact phone number displayed in the event detail card is static text. It should be a tappable `tel:` link so the user can call directly from the card, provided the number is a valid phone number format. Files: `src/render.js` or wherever event detail cards are built, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-011-B — Already implemented: render.js line 460 uses tel: link for parish detail Call button, events.js lines 407-414 uses tel: link for event contact phones with 10+ digit validation.
 
 -----
 
