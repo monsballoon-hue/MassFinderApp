@@ -140,8 +140,8 @@ function renderMore() {
     }
   })();
 
-  // Daily Formation (MT-02: combined Baltimore Q&A + Summa) — disabled for v1, re-enable when ready
-  // if (typeof window.renderDailyFormation === 'function') window.renderDailyFormation();
+  // Daily Formation (MT-02: combined Baltimore Q&A + Summa)
+  if (typeof window.renderDailyFormation === 'function') window.renderDailyFormation();
 
   // Prayer Tools grid
   var exam = require('./examination.js');
@@ -155,7 +155,7 @@ function renderMore() {
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
       { id: 'novena', title: 'Novena Tracker', subtitle: _getNovenaSubtitle(), action: 'openNovena()', active: true },
-      { id: 'explore', title: 'Discover the Faith', subtitle: 'Bible, CCC & more coming soon', action: '', active: false }
+      { id: 'explore', title: 'Explore', subtitle: 'CCC \u00b7 Scripture \u00b7 Baltimore', action: 'openExplore(\'landing\',\'\')', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'

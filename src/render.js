@@ -628,8 +628,10 @@ function openDetail(id, trapFocus, releaseFocus) {
   // DC-12: Footer with QR + Email Signup buttons
   var footer = '<div class="detail-footer-row">';
   if (footerParts.length) footer += '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>';
-  // QR Code button disabled for v1
-  footer += '</div>';
+  footer += '<div class="detail-footer-actions">'
+    + '<button class="detail-footer-btn" onclick="showQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>QR Code</button>'
+    + '<button class="detail-footer-btn" onclick="showSubscribeQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Email Signup</button>'
+    + '</div></div>';
 
   // D-01: Address below town; D-13: State name map
   var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')

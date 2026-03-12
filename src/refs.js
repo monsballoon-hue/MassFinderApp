@@ -43,8 +43,12 @@ function renderRef(type, val, label) {
 }
 
 function handleRefTap(type, val) {
-  // v1 prod gate: Bible and CCC full readers disabled — inline/popup refs still work
-  if (type === 'ccc' || type === 'bible') {
+  if (type === 'ccc') {
+    reader.readerOpen('ccc', { num: String(val) });
+    return;
+  }
+  if (type === 'bible') {
+    reader.readerOpen('bible', { ref: String(val) });
     return;
   }
 }

@@ -140,10 +140,10 @@ function _toggleInlineCCC(span, numStr) {
       }
     });
     html += '</div>';
-    // v1 prod gate: full CCC reader disabled — show "coming soon" instead
+    // "See full range" link — opens CCC in reader (pushes exam to stack)
     var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
     if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" style="opacity:0.5;cursor:default;pointer-events:none">Full CCC text coming soon</p>';
+      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);

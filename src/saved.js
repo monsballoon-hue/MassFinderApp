@@ -485,8 +485,76 @@ function renderSaved() {
   } catch (e) {}
   if (confessionNote) html += confessionNote;
 
-  // ── 4. PRAYER LIFE — disabled for v1, re-enable when ready ──
-  // Prayer Life section hidden for prod ship — prayer tools accessible from More tab
+  // ── 4. PRAYER LIFE — warm recency text + 2x2 launcher grid ──
+  var prayerStatusHtml = '';
+  var totalPrayers = 0;
+  try {
+    var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var thirtyDaysAgo = toLocalDateStr(new Date(now.getTime() - 30 * 86400000));
+    var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
+    totalPrayers = recentEntries.length;
+
+    if (totalPrayers > 0) {
+      // Find last prayer date for warm recency text
+      var lastPrayerDate = '';
+      for (var lpi = recentEntries.length - 1; lpi >= 0; lpi--) {
+        if (recentEntries[lpi].date) { lastPrayerDate = recentEntries[lpi].date; break; }
+      }
+      var todayKey = toLocalDateStr(now);
+      var yesterdayDate = new Date(now);
+      yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+      var yesterdayKey = toLocalDateStr(yesterdayDate);
+
+      var recencyText = '';
+      if (lastPrayerDate === todayKey) {
+        recencyText = 'You prayed today';
+      } else if (lastPrayerDate === yesterdayKey) {
+        recencyText = 'You prayed yesterday';
+      } else if (lastPrayerDate) {
+        var lpd = new Date(lastPrayerDate + 'T12:00:00');
+        var dayName = lpd.toLocaleDateString('en-US', { weekday: 'long' });
+        recencyText = 'Last prayed ' + dayName;
+      }
+
+      if (recencyText) {
+        var checkMark = lastPrayerDate === todayKey ? '\u2713 ' : '';
+        prayerStatusHtml = '<div class="activity-recency"><span>' + checkMark + recencyText + '</span></div>';
+      }
+    }
+  } catch (e) {}
+
+  // Prayer launcher — contemplative text-only cards
+  var prayerBtns = '<div class="activity-pray-list">'
+    + '<button class="activity-pray-item" onclick="openRosary()">'
+    + '<span class="activity-pray-name">Rosary</span>'
+    + '<span class="activity-pray-desc">Meditate on the mysteries of Christ</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openExamination()">'
+    + '<span class="activity-pray-name">Examen</span>'
+    + '<span class="activity-pray-desc">Review your day in God\u2019s presence</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openStations()">'
+    + '<span class="activity-pray-name">Stations of the Cross</span>'
+    + '<span class="activity-pray-desc">Walk with Christ to Calvary</span>'
+    + '</button>'
+    + '<button class="activity-pray-item" onclick="openNovena()">'
+    + '<span class="activity-pray-name">Novena</span>'
+    + '<span class="activity-pray-desc">Nine days of faithful prayer</span>'
+    + '</button>'
+    + '</div>';
+
+  // Always show prayer life section
+  html += '<div class="saved-divider"><span>Prayer life</span></div>';
+  html += '<div class="saved-activity-card">';
+
+  if (prayerStatusHtml) {
+    html += prayerStatusHtml;
+  } else {
+    html += '<div class="activity-invite">\u201CThe Lord is near to all who call on Him.\u201D</div>';
+  }
+  html += prayerBtns;
+
+  html += '</div>';
 
   // ── ST-22: Context-aware greeting header ──
   var headerEl = document.getElementById('savedHeaderContent');

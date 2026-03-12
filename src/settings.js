@@ -38,7 +38,13 @@ function _render() {
 
   var html = '';
 
-  // ── Notifications — disabled for v1, re-enable when ready ──
+  // ── Notifications ──
+  if (notifSupported) {
+    html += '<div class="settings-group">'
+      + '<div class="settings-group-title">Notifications</div>'
+      + _toggleRow('Daily Reading Reminder', 'settingsNotifToggle', notifEnabled, 'toggleSettingNotif()')
+      + '</div>';
+  }
 
   // ── Display ──
   html += '<div class="settings-group">'
