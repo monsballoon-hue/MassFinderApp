@@ -336,13 +336,15 @@ The universal card component appears to be missing context-specific parameters, 
 ## IDEA-026 — More tab: redundant season sub-label below liturgical day header
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-047
-**Spec ref:** (none)
+**Spec ref:** SPEC-006-A
 
 The liturgical day card shows e.g. “Thursday of the 3rd Week of Lent” as the header, and then “Lent” again in smaller text below. During Ordinary Time this sub-label would read “Ordinary Time” for most of the year, conveying no additional information. Evaluate whether the sub-label serves any purpose not already captured by the header text, and remove it if redundant. Files: `src/more.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-006-A — Removed subtitle element and its CSS selector. The season is already in the header text.
 
 -----
 
@@ -511,13 +513,15 @@ Navigation buttons in the Stations of the Cross are left-aligned. Should be corr
 ## IDEA-039 — Stations of the Cross: replace V/R label divs with colored plain text to reclaim vertical space
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-011-A
 
 The versicle/response (V/R) label elements in Stations are rendered on separate divs, consuming enough vertical space to prevent a no-scroll experience. Proposal: remove the V/R label divs and use colored or styled inline text to distinguish versicle from response, reclaiming space to achieve a single-viewport render for most stations. Files: `src/stations.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-011-A — V/R labels converted from block divs to inline spans with accent/secondary color distinction. Removed background cards, tight margins for single-viewport fit.
 
 -----
 
@@ -577,65 +581,77 @@ When the Bible reader is opened from Rosary, Stations, or Examination and scroll
 ## IDEA-044 — Question: what does the dot indicator on the Saved tab greeting serve?
 
 **Category:** question
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-E
 
 A dot appears next to the contextual greeting on the Saved tab. The purpose and function of this dot are unclear. When specced, this should produce a factual answer explaining what the dot represents, when it appears vs. not, and whether it is working as intended. Files: `src/saved.js`.
+
+**Answer:** The dot (`savedCountBadge`) is an 8px accent-colored indicator that appears when a saved church has a currently-live service or a community event happening today. It clears automatically on the next 60s auto-refresh when conditions are no longer met. Functioning correctly as designed.
+**Implemented:** 2026-03-12 via SPEC-005-E — documented badge trigger/clear logic with JSDoc comment
 
 -----
 
 ## IDEA-045 — Saved tab: today’s events should be visually distinguished from future events
 
 **Category:** enhancement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-G
 
 Events happening today in the Saved tab should be visually differentiated from upcoming events — e.g., via a highlight, badge, or elevated position. When multiple services fall today, a prioritization strategy is needed (e.g., next chronologically, or Mass over other service types). Design decision required before implementation. Files: `src/saved.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-005-G — added service type prioritization (Mass first), season-aware accent border, subtle background tint, and "Today's Events" badge label
 
 -----
 
 ## IDEA-046 — Question: will “Lenten Season” in the Saved tab greeting show “Ordinary Time” most of the year?
 
 **Category:** question
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-047
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-D
 
 The Saved tab greeting currently shows “Lenten Season” below the greeting text. The question is whether this label will display “Ordinary Time” for the ~33 weeks of the year that fall in that season. If so, the label may be worth suppressing during Ordinary Time and showing only for named seasons (Advent, Christmas, Lent, Easter). When specced, this should confirm the current rendering logic and whether the conditional suppression approach is already implemented or needs to be added. Files: `src/saved.js`, `src/readings.js` or wherever the season label is sourced.
+
+**Answer:** The original code only showed “Lenten Season” (hardcoded via `isLentSeason()`), so “Ordinary Time” would never have appeared. SPEC-005-D replaced this with a general approach that shows labels for all four named seasons and suppresses during Ordinary Time.
+**Implemented:** 2026-03-12 via SPEC-005-D
 
 -----
 
 ## IDEA-047 — Suppress season label during Ordinary Time in greeting and liturgical day card
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-046, IDEA-026
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-D, SPEC-006-A
 
 Both the Saved tab greeting and the More tab liturgical day card display the current liturgical season. During Ordinary Time — which covers most of the year — displaying “Ordinary Time” adds no meaningful context. The season label should only render for named seasons: Advent, Christmas, Lent, and Easter. Files: `src/saved.js`, `src/more.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-005-D — saved.js reads data-season attribute, shows label for lent/advent/christmas/easter, suppresses for ordinary. More tab sub-label already removed via SPEC-006-A.
 
 -----
 
 ## IDEA-048 — Saved tab: “Your Churches” edit and X buttons too small for older users
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-022, IDEA-041
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-B
 
 The “Edit” button next to “Your Churches” and the associated X buttons for removing parishes are too small to be comfortably tapped by older users. Touch targets should be enlarged to meet the 44×44pt minimum. Files: `src/saved.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-005-B — verified both buttons already meet 44×44pt targets from ST-10 edit mode implementation. No changes needed.
 
 -----
 
@@ -655,13 +671,16 @@ The “Prayer Life” section in the Saved tab occupies significant real estate 
 ## IDEA-050 — Question: what does the dot on the heart icon in the bottom tab bar indicate?
 
 **Category:** question
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-044
-**Spec ref:** (none)
+**Spec ref:** SPEC-005-F
 
 A dot appears on the heart/Saved icon in the bottom navigation bar. The meaning of this dot is unclear — it may indicate unread activity, a new saved parish, or a notification state. When specced, this should produce a factual answer explaining the dot’s trigger conditions, what state it represents, and whether it clears correctly. Files: `src/saved.js`, `src/ui.js`.
+
+**Answer:** The dot (`savedTabBadge`) uses the same `hasLive` trigger as the greeting dot (IDEA-044): visible when a saved church has a live service or a today event. Clears automatically on 60s auto-refresh. Functions correctly — shares logic with `savedCountBadge` in the same code block.
+**Implemented:** 2026-03-12 via SPEC-005-F — documented badge trigger/clear logic with JSDoc comment
 
 -----
 
@@ -733,13 +752,15 @@ The reflection card at the top of the More tab prompts the user to reflect on a 
 ## IDEA-056 — Event detail card: contact phone number should be a tappable call button
 
 **Category:** enhancement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** SPEC-011-B
 
 The contact phone number displayed in the event detail card is static text. It should be a tappable `tel:` link so the user can call directly from the card, provided the number is a valid phone number format. Files: `src/render.js` or wherever event detail cards are built, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-011-B — Already implemented: render.js line 460 uses tel: link for parish detail Call button, events.js lines 407-414 uses tel: link for event contact phones with 10+ digit validation.
 
 -----
 

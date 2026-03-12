@@ -9,6 +9,35 @@
 
 ---
 
+## Status Summary
+
+| ID | Title | Status |
+|----|-------|--------|
+| ST-01 | Add Dexie.js Dependency | done |
+| ST-02 | Create Study Database Module | done |
+| ST-03 | Wire Study DB Into App Entry Point | done |
+| ST-04 | Auto-Save Reading Progress in Bible Reader | done |
+| ST-05 | Auto-Save Reading Progress in CCC Reader | done |
+| ST-06 | "Continue Reading" Section on Saved Tab | done |
+| ST-07 | Add Annotatable Data Attributes to Content | done |
+| ST-08 | Create Study UI Module — Annotation Action Bar | done |
+| ST-09 | Study UI CSS | done |
+| ST-10 | Init Study Layer in Bible Reader | done |
+| ST-11 | Init Study Layer in CCC Reader | done |
+| ST-12 | Bookmarks Section on Saved Tab | done |
+| ST-13 | Notes Section on Saved Tab | done |
+| ST-14 | Clear Study Data Option in Settings | done |
+| ST-15 | Data Privacy Note | done |
+| ST-16 | Create TTS Module | done |
+| ST-17 | Add Listen Button to Bible Reader | done |
+| ST-18 | Add Listen Button to CCC Reader | done |
+| ST-19 | Listen Button CSS | done |
+| ST-20 | Stop TTS on Tab Switch and Overlay Close | done |
+| ST-21 | ElevenLabs Cloud Voice (Feature Flag — Tier 2) | skipped |
+| ST-22 | Voice Selection in Settings | done |
+
+---
+
 ## Summary
 
 Add study tools to MassFinder: highlights, notes, bookmarks, and reading progress that persist across sessions using IndexedDB (via Dexie.js). One new runtime dependency (50KB). Four new source files. Surgical modifications to existing content modules. All data stays local on the user's device.
@@ -35,6 +64,14 @@ npm install dexie --save
 This adds `"dexie": "^4.x"` to `dependencies` in `package.json`. Dexie is ~50KB minified and bundles via esbuild with no configuration changes needed — it's a standard CommonJS/ESM module.
 
 **Verify:** After install, run `npm run build` and confirm `dist/app.min.js` builds without errors and the bundle size increase is ~50KB.
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `package.json` — added dexie dependency
+- **Approach:** Ran `npm install dexie --save` to add Dexie.js as a runtime dependency. Dexie bundles cleanly via esbuild as a standard CommonJS module with no configuration changes.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -261,6 +298,14 @@ module.exports = {
 };
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/study-db.js` — NEW (~190 lines)
+- **Approach:** Created the persistence layer file with Dexie schema definition and all CRUD operations as specified. Includes notes, highlights, bookmarks, reading progress, annotation counts, delete, and clearAllData functions. All operations return Promises for async usage.
+- **Deviations from spec:** File ended up ~190 lines (spec estimated ~160) due to slightly more verbose function implementations. All API surface matches spec verbatim.
+- **Known issues:** None observed
+
 ---
 
 ### ST-03: Wire Study DB Into App Entry Point
@@ -285,6 +330,14 @@ window._studyAddBookmark = studyDb.addBookmark;
 window._studyRemoveBookmark = studyDb.removeBookmark;
 window._studyDeleteAnnotation = studyDb.deleteAnnotation;
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/app.js` — added studyDb require (line 42) and window bindings for _studyAddNote, _studyAddHighlight, _studyAddBookmark, _studyRemoveBookmark, _studyDeleteAnnotation. Also added settingsClearStudy binding.
+- **Approach:** Added the require statement near the other module requires at the top of app.js. Window bindings placed in the existing window bindings section for consistency with the legacy binding pattern used throughout the app.
+- **Deviations from spec:** Also added settingsClearStudy window binding here (related to ST-14) for convenience since the window bindings section was already being modified.
+- **Known issues:** None observed
 
 ---
 
@@ -337,6 +390,14 @@ function bibleNavigate(refStr) {
 }
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/bible.js` — added studyDb require, debounced scroll listener on #readerBody, save-on-navigate logic
+- **Approach:** Added a debounced scroll listener (3s inactivity threshold) on #readerBody to auto-save reading progress. Also saves progress on navigation before crossfading to a new passage. Uses a `_progressInit` guard to prevent duplicate listener attachment.
+- **Deviations from spec:** Scroll container is `#readerBody` instead of `#bibleSheetScroll` — adapted for the Universal Reader architecture where content lives in #readerBody. `bibleNavigate` delegates to `reader.readerOpen` so no manual `_history.push` or `_crossfadeTo` calls were needed; only the progress save before navigation was added.
+- **Known issues:** None observed
+
 ---
 
 ### ST-05: Auto-Save Reading Progress in CCC Reader
@@ -382,6 +443,14 @@ function cccNavigate(numStr) {
   _crossfadeTo(numStr);
 }
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/ccc.js` — added studyDb require, debounced scroll listener on #readerBody with _cccProgressInit guard
+- **Approach:** Same debounced scroll pattern as ST-04 (3s inactivity). Scroll listener attached to #readerBody with a `_cccProgressInit` guard flag to prevent duplicate attachment. Saves CCC paragraph number and scroll position.
+- **Deviations from spec:** Scroll container is `#readerBody` instead of `#cccSheetScroll` — same Universal Reader adaptation as ST-04. `cccNavigate` delegates to `reader.readerOpen` so no manual history push was needed.
+- **Known issues:** None observed
 
 ---
 
@@ -472,43 +541,51 @@ function _timeAgo(isoStr) {
 /* ── STUDY DASHBOARD ── */
 .study-dashboard { padding: 0 var(--space-4); }
 .study-section { margin-top: var(--space-4); }
-.study-section-label { 
-  font-family: var(--font-display); 
-  font-size: var(--text-base); 
-  font-weight: 700; 
-  color: var(--color-text-primary); 
-  margin-bottom: var(--space-3); 
+.study-section-label {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
 }
-.study-continue-item { 
-  display: block; 
-  width: 100%; 
-  text-align: left; 
-  padding: var(--space-3) var(--space-4); 
-  margin-bottom: var(--space-2); 
-  background: var(--color-surface); 
-  border: 1px solid var(--color-border-light); 
-  border-left: 3px solid var(--color-primary); 
-  border-radius: var(--radius-md); 
-  cursor: pointer; 
-  transition: all var(--transition-fast); 
-  min-height: 48px; 
-  -webkit-tap-highlight-color: transparent; 
+.study-continue-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
 }
-.study-continue-item:active { 
-  transform: scale(0.98); 
-  background: var(--color-surface-hover); 
+.study-continue-item:active {
+  transform: scale(0.98);
+  background: var(--color-surface-hover);
 }
-.study-continue-title { 
-  font-size: var(--text-sm); 
-  font-weight: var(--weight-semibold); 
-  color: var(--color-text-primary); 
+.study-continue-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
 }
-.study-continue-detail { 
-  font-size: var(--text-xs); 
-  color: var(--color-text-tertiary); 
-  margin-top: 2px; 
+.study-continue-detail {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
 }
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `index.html` — added `#studyDashboard` div after `#savedList`; `src/saved.js` — added studyDb require, `renderStudyDashboard()` function with `_timeAgo` helper, called at end of `renderSaved()`
+- **Approach:** Added the `#studyDashboard` container div to index.html in the Saved tab section. Created `renderStudyDashboard()` in saved.js that queries `getAllProgress` and renders "Continue Reading" cards with source labels and time-ago timestamps. The function is called at the end of `renderSaved()` to populate the dashboard whenever the Saved tab renders. All three dashboard queries (progress, bookmarks, notes from ST-12/ST-13) run in parallel via `Promise.all` for efficiency.
+- **Deviations from spec:** Used `Promise.all` to batch all three study dashboard queries (progress + bookmarks + notes) together rather than sequential separate `.then()` chains, improving load performance.
+- **Known issues:** None observed
 
 ---
 
@@ -545,6 +622,14 @@ var numEl = '<div class="ccc-para-num' + (idx === 0 ? ' ccc-para-num--first' : '
 ```js
 var numEl = '<div class="ccc-para-num annotatable' + (idx === 0 ? ' ccc-para-num--first' : '') + '" data-source="ccc" data-address="' + id + '">&#167;&nbsp;' + id + '</div>';
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/bible.js` (line ~343) — added `annotatable` class + `data-source`/`data-address` attributes to bible verse spans; `src/ccc.js` (line ~163) — added `annotatable` class + `data-source`/`data-address` attributes to CCC paragraph number divs
+- **Approach:** Added the `annotatable` CSS class and `data-source`/`data-address` data attributes to the verse span elements in bible.js and the paragraph number div elements in ccc.js, enabling the study UI layer to identify tappable content units for annotation actions.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -763,6 +848,14 @@ module.exports = {
 };
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/study-ui.js` — NEW (~180 lines)
+- **Approach:** Created the study UI module with the annotation action bar (Highlight/Note/Bookmark buttons), note text input with save/cancel, `applyAnnotations()` for restoring persisted annotations on content render, and `initStudyLayer()` tap handler using event delegation on annotatable elements. Uses `haptics.confirm()` for feedback on all annotation actions per CLAUDE.md convention. Falls back to `render.showToast()` for toast notifications.
+- **Deviations from spec:** Added `haptics.confirm()` calls for all annotation actions (highlight, note save, bookmark toggle) per CLAUDE.md convention requiring haptic feedback on interactive touch actions. Used `render.showToast()` as the primary toast mechanism instead of the inline fallback toast.
+- **Known issues:** None observed
+
 ---
 
 ### ST-09: Study UI CSS
@@ -898,6 +991,14 @@ html[data-theme="dark"] .study-hl--green { background: rgba(74, 124, 89, 0.15); 
 html[data-theme="dark"] .study-hl--purple { background: rgba(124, 58, 237, 0.15); }
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `css/app.css` — added ~230 lines of study tools + TTS CSS before desktop media queries
+- **Approach:** Added all study UI styles in a single block before the desktop media queries in app.css. Covers action bar, note input, highlight colors (gold/blue/green/purple), note indicator dot, bookmark accent, study dashboard, bookmark chips, note cards, listen button (ST-19), and privacy note. Full dark mode overrides included for all new rules.
+- **Deviations from spec:** Combined all study CSS (from ST-09, ST-12, ST-13, ST-15, and ST-19) into a single ~230-line block rather than adding them piecemeal per spec item. This keeps the CSS organized in one cohesive section. Total lines are larger than the spec's ~120 estimate because it includes TTS/listen button styles (ST-19) and additional dark mode overrides.
+- **Known issues:** None observed
+
 ---
 
 ## Phase 4: Integrate Study Layer Into Readers (ST-10 through ST-13)
@@ -932,6 +1033,14 @@ studyUi.applyAnnotations('bible', scrollEl, verseAddresses);
 
 Note: `chapterVerses` is the array from BR-01 full chapter rendering. If that hasn't landed yet, use the existing verse loop range instead.
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/bible.js` — added studyUi require, `initStudyLayer` and `applyAnnotations` calls after `bodyEl.innerHTML` in `_renderBibleContent`
+- **Approach:** After the Bible content is rendered into `bodyEl.innerHTML`, calls `studyUi.initStudyLayer(bodyEl)` to attach the tap handler, then collects all rendered verse addresses and calls `studyUi.applyAnnotations('bible', bodyEl, verseAddresses)` to restore persisted highlights, note indicators, and bookmark accents.
+- **Deviations from spec:** Uses `bodyEl` (the #readerBody element) as the container instead of `#bibleSheetScroll`, consistent with the Universal Reader architecture.
+- **Known issues:** None observed
+
 ---
 
 ### ST-11: Init Study Layer in CCC Reader
@@ -954,6 +1063,14 @@ studyUi.initStudyLayer(cccScrollEl);
 var cccAddresses = ids.map(function(id) { return String(id); });
 studyUi.applyAnnotations('ccc', cccScrollEl, cccAddresses);
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/ccc.js` — added studyUi require, `initStudyLayer` and `applyAnnotations` calls after `bodyEl.innerHTML` in CCC content render
+- **Approach:** Same pattern as ST-10. After CCC content renders into bodyEl, calls `initStudyLayer` and `applyAnnotations` with CCC paragraph addresses to restore persisted annotations.
+- **Deviations from spec:** Uses `bodyEl` (the #readerBody element) instead of `#cccSheetScroll`, consistent with Universal Reader.
+- **Known issues:** None observed
 
 ---
 
@@ -1020,11 +1137,19 @@ studyDb.getAllBookmarks().then(function(bookmarks) {
   color: var(--color-text-tertiary); 
   font-weight: var(--weight-medium); 
 }
-.study-bookmark-addr { 
-  color: var(--color-primary); 
-  font-weight: var(--weight-semibold); 
+.study-bookmark-addr {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
 }
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` — extended `renderStudyDashboard()` to query `getAllBookmarks()` and render bookmark chips
+- **Approach:** Added bookmark querying to the `renderStudyDashboard` function. Queries `getAllBookmarks()` in the same `Promise.all` batch as progress and notes queries. Renders bookmark chips with source label and address, each tappable to open the corresponding passage in the Bible or CCC reader. Limited to 8 bookmarks in the display.
+- **Deviations from spec:** Bookmark query runs in parallel with progress and notes queries via `Promise.all` rather than as a separate `.then()` chain, improving performance.
+- **Known issues:** None observed
 
 ---
 
@@ -1098,9 +1223,17 @@ studyDb.getAllNotes().then(function(notes) {
   font-size: var(--text-sm); 
   color: var(--color-text-secondary); 
   line-height: 1.5; 
-  font-style: italic; 
+  font-style: italic;
 }
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` — extended `renderStudyDashboard()` to query `getAllNotes()` and render note cards with preview text
+- **Approach:** Added notes querying to the `renderStudyDashboard` function alongside progress and bookmarks in the `Promise.all` batch. Renders up to 5 recent notes as cards showing source, address, time-ago timestamp, and an 80-character text preview. Each card is tappable to navigate to the annotated passage.
+- **Deviations from spec:** Notes query runs in parallel with progress and bookmarks via `Promise.all` rather than as a separate chain.
+- **Known issues:** None observed
 
 ---
 
@@ -1135,6 +1268,14 @@ window._studyClearAll = function() {
 };
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/settings.js` — added studyDb require, "Clear Notes & Highlights" button before "Clear All Data" button, created `settingsClearStudy()` function; also wired `studyDb.clearAllData()` into `settingsClearAll()`
+- **Approach:** Added a dedicated "Clear Notes & Highlights" button in the Privacy section of settings, placed before the existing "Clear All Data" button. Created `settingsClearStudy()` function with a confirm dialog. Also integrated `studyDb.clearAllData()` into the existing `settingsClearAll()` function so that a full data clear also wipes study data.
+- **Deviations from spec:** The clear function was implemented in settings.js directly (as `settingsClearStudy()`) rather than as an inline `window._studyClearAll` in app.js, keeping the logic co-located with other settings functions. The window binding was added in app.js (see ST-03 notes).
+- **Known issues:** None observed
+
 ---
 
 ### ST-15: Data Privacy Note
@@ -1149,14 +1290,22 @@ html += '<div class="settings-privacy-note">Your notes and highlights are stored
 
 **CSS:**
 ```css
-.settings-privacy-note { 
-  font-size: var(--text-xs); 
-  color: var(--color-text-tertiary); 
-  font-style: italic; 
-  padding: var(--space-2) var(--space-4); 
-  line-height: 1.5; 
+.settings-privacy-note {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  padding: var(--space-2) var(--space-4);
+  line-height: 1.5;
 }
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/settings.js` — added privacy note div below clear buttons in the Privacy section
+- **Approach:** Added a privacy note div with the specified text ("Your notes and highlights are stored only on this device...") below the clear buttons in the settings Privacy section. CSS for `.settings-privacy-note` is included in the ST-09 CSS block.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -1456,6 +1605,14 @@ module.exports = {
 };
 ```
 
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/tts.js` — NEW (~160 lines)
+- **Approach:** Created the TTS module with smart voice selection using a ranked preference list (Microsoft Natural, Google voices, macOS voices, Android voices). Implements speak/pause/resume/stop/togglePlayPause API with state tracking and a callback-based state change notification system. Voice loading handles both Chrome's async `voiceschanged` event and Safari's synchronous behavior with a retry loop.
+- **Deviations from spec:** None
+- **Known issues:** None observed
+
 ---
 
 ### ST-17: Add Listen Button to Bible Reader
@@ -1525,6 +1682,14 @@ function getCurrentPlainText() { return _currentPlainText || ''; }
 var tts = require('./tts.js');
 tts.stop();
 ```
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/bible.js` — added tts require, replaced inline `bibleReadAloud()` with tts.js-backed version, changed button class from `bible-listen-btn` to `reader-listen-btn`, added `_updateListenBtn` for icon state, exported `getCurrentPlainText`
+- **Approach:** Replaced the existing inline `bibleReadAloud()` implementation with the shared tts.js module. Plain text is collected during chapter rendering. The listen button uses the shared `.reader-listen-btn` class. Added `_updateListenBtn()` helper to swap the SVG icon between play and pause states based on TTS state. TTS stops on Bible close via `tts.stop()` in the reader's `onClose` callback.
+- **Deviations from spec:** Bible already had an inline TTS implementation (`bibleReadAloud()`); this was replaced/refactored to use the shared tts.js module rather than adding a second TTS mechanism. Button class changed from `bible-listen-btn` to `reader-listen-btn` for shared styling.
+- **Known issues:** None observed
 
 ---
 
