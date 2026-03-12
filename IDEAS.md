@@ -336,13 +336,15 @@ The universal card component appears to be missing context-specific parameters, 
 ## IDEA-026 — More tab: redundant season sub-label below liturgical day header
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-047
-**Spec ref:** (none)
+**Spec ref:** SPEC-006-A
 
 The liturgical day card shows e.g. “Thursday of the 3rd Week of Lent” as the header, and then “Lent” again in smaller text below. During Ordinary Time this sub-label would read “Ordinary Time” for most of the year, conveying no additional information. Evaluate whether the sub-label serves any purpose not already captured by the header text, and remove it if redundant. Files: `src/more.js`, `css/app.css`.
+
+**Implemented:** 2026-03-12 via SPEC-006-A — Removed subtitle element and its CSS selector. The season is already in the header text.
 
 -----
 

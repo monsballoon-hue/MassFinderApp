@@ -6,7 +6,7 @@
 ## Status Summary
 | ID | Idea | Title | Status |
 |----|------|-------|--------|
-| SPEC-006-A | IDEA-026 | More tab: remove redundant season sub-label | open |
+| SPEC-006-A | IDEA-026 | More tab: remove redundant season sub-label | done |
 | SPEC-006-B | IDEA-043 | Bible reader: destination highlight not prominent enough | open |
 | SPEC-006-C | IDEA-052 | CCC "See Also" references clipped at bottom of screen | open |
 
@@ -67,6 +67,14 @@ Thursday of the 3rd Week of Lent   ← header only
 
 ### Claude Code notes
 This is a removal, not an addition. Read the render function in `more.js` to locate the exact element. After removing it, check if its CSS class is used anywhere else in the app before deleting the CSS rule.
+
+### Implementation Notes
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/readings.js` — removed subtitle variable and its DOM element from `renderSaintCard()`; `css/app.css` line 1658 — removed `.saint-subtitle` selector
+- **Approach:** The subtitle was rendered in `src/readings.js` (not `more.js` as spec guessed), inside `renderSaintCard()`. Removed the subtitle variable assignment (lines 478-481) and the conditional div element (line 496). Confirmed `.saint-subtitle` was only used in this one location before deleting the CSS.
+- **Deviations from spec:** File was `src/readings.js`, not `src/more.js`. The spec's assumption about the file location was incorrect.
+- **Known issues:** None observed.
 
 ---
 

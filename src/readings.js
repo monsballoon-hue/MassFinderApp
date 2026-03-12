@@ -474,12 +474,6 @@ function renderSaintCard(events) {
   // Liturgical color for card accent
   var color = (pick.color && pick.color[0]) || 'green';
 
-  // Season subtitle for ordinary weekdays
-  var subtitle = '';
-  if (pick.grade === 0 && pick.liturgical_season_lcl) {
-    subtitle = pick.liturgical_season_lcl;
-  }
-
   // Secondary celebrations (optional memorials alongside the weekday)
   var alsoToday = '';
   if (pick.grade === 0 && saints.length) {
@@ -493,7 +487,6 @@ function renderSaintCard(events) {
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
     + '<div class="saint-feast">' + esc(feastLabel) + '</div>'
     + '<div class="saint-name">' + esc(pick.name) + '</div>'
-    + (subtitle ? '<div class="saint-subtitle">' + esc(subtitle) + '</div>' : '')
     + alsoToday
     + '<div id="saintVerse"></div>'
     + (typeof window._getDailyPrompt === 'function' ? '<div class="saint-prompt">' + esc(window._getDailyPrompt()) + '</div>' : '')
