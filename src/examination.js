@@ -42,6 +42,12 @@ reader.registerModule('examination', {
       window._examBeginReview = function() {
         delete window._examBeginReview;
         _haptic();
+        // Show progress bar locked to header (outside scroll area)
+        var headerExtra = document.getElementById('readerHeaderExtra');
+        if (headerExtra) {
+          headerExtra.innerHTML = '<div class="exam-progress-track"><div class="exam-progress-bar" id="examProgress"></div></div>';
+          headerExtra.style.display = '';
+        }
         // Now show the footer bar
         var ft = document.getElementById('readerFooter');
         if (ft) {
@@ -345,7 +351,7 @@ function examScrollToSummary() {
 // ── Full render ──
 function _renderExamination(d) {
   var body = document.getElementById('readerBody');
-  var html = '<div class="exam-progress-track"><div class="exam-progress-bar" id="examProgress"></div></div>';
+  var html = '';
 
   // How to Confess guide
   html += _renderHowTo(d.how_to_confess);
@@ -364,10 +370,13 @@ function _renderExamination(d) {
   html += _renderSection(d.precepts, 'precepts', true, true);
   html += '</div>';
 
-  // Summary section
+  // Summary section — visually distinct from the checklist above
   html += '<div class="exam-summary" id="examSummary">';
-  html += '<div class="exam-summary-title">Summary for Confession<span id="examSummaryCount"></span></div>';
-  html += '<div class="exam-summary-privacy">This list exists only during this session. Nothing is saved.</div>';
+  html += '<div class="exam-summary-header">';
+  html += '<svg class="exam-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>';
+  html += '<div><div class="exam-summary-title">Summary for Confession<span id="examSummaryCount"></span></div>';
+  html += '<div class="exam-summary-privacy">This list exists only during this session. Nothing is saved.</div></div>';
+  html += '</div>';
   html += '<div class="exam-summary-list" id="examSummaryList">';
   html += _renderSummaryHTML();
   html += '</div></div>';
