@@ -1,5 +1,5 @@
-// src/ccc.js — CCC (Catechism of the Catholic Church) bottom sheet
-// Loads data/catechism.json (2,865 paragraphs) and renders paragraph references in a bottom sheet
+// src/ccc.js — CCC (Catechism of the Catholic Church) Reading Room
+// Loads data/catechism.json (2,865 paragraphs) and renders paragraphs in a full-screen reading overlay
 
 var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
@@ -37,6 +37,21 @@ function _getSectionContext(num) {
     if (n >= _CCC_SECTIONS[i][0] && n <= _CCC_SECTIONS[i][1]) return _CCC_SECTIONS[i][2];
   }
   return '';
+}
+
+function _getSectionIndex(num) {
+  var n = parseInt(num, 10);
+  for (var i = 0; i < _CCC_SECTIONS.length; i++) {
+    if (n >= _CCC_SECTIONS[i][0] && n <= _CCC_SECTIONS[i][1]) return i;
+  }
+  return -1;
+}
+
+// CR-02: Section picker toggle
+function _toggleCCCSectionPicker() {
+  var picker = document.getElementById('cccSectionPicker');
+  if (!picker) return;
+  picker.style.display = picker.style.display === 'none' ? '' : 'none';
 }
 
 async function _loadCCCData() {
@@ -107,13 +122,32 @@ async function _renderCCCContent(numStr) {
 
   var ids = _parseCCCRange(numStr);
   var bodyHtml = '';
+  var primaryId = ids[0];
+  var primaryNum = parseInt(primaryId, 10);
 
-  // CCC-06: Show section context once for the primary paragraph
-  var context = _getSectionContext(ids[0]);
+  // CR-02: Section picker button (replaces static section context)
+  var context = _getSectionContext(primaryId);
+  var secIdx = _getSectionIndex(primaryId);
   if (context) {
-    bodyHtml += '<div class="ccc-section-context">' + utils.esc(context) + '</div>';
+    bodyHtml += '<button class="ccc-section-picker-btn" onclick="_toggleCCCSectionPicker()">'
+      + utils.esc(context)
+      + ' <svg viewBox="0 0 10 6" width="10" height="6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="1,1 5,5 9,1"/></svg>'
+      + '</button>';
   }
 
+  // CR-02: Hidden section picker panel
+  bodyHtml += '<div class="ccc-section-picker" id="cccSectionPicker" style="display:none">';
+  for (var si = 0; si < _CCC_SECTIONS.length; si++) {
+    var sec = _CCC_SECTIONS[si];
+    var isActive = si === secIdx;
+    bodyHtml += '<button class="ccc-section-btn' + (isActive ? ' ccc-section-active' : '') + '" onclick="_toggleCCCSectionPicker();cccNavigate(\'' + sec[0] + '\')">'
+      + '<span class="ccc-section-label">' + utils.esc(sec[2]) + '</span>'
+      + '<span class="ccc-section-range">\u00A7' + sec[0] + '\u2013' + sec[1] + '</span>'
+      + '</button>';
+  }
+  bodyHtml += '</div>';
+
+  // Paragraph heading + content
   ids.forEach(function(id, idx) {
     var text = _cccData && _cccData[id];
     var numEl = '<div class="ccc-para-num' + (idx === 0 ? ' ccc-para-num--first' : '') + '">&#167;&nbsp;' + id + '</div>';
@@ -123,7 +157,6 @@ async function _renderCCCContent(numStr) {
   });
 
   // Related paragraphs (forward + reverse refs from primary id)
-  var primaryId = ids[0];
   var relatedIds = [], seen = {};
   ids.forEach(function(id) { seen[id] = true; });
   if (_cccXrefs && _cccXrefs[primaryId]) {
@@ -156,7 +189,37 @@ async function _renderCCCContent(numStr) {
   }
 
   // Explore button
-  bodyHtml += '<button class="ccc-explore-btn" onclick="openExplore(\'ccc\',\'' + ids[0] + '\')">Explore connections \u203A</button>';
+  bodyHtml += '<button class="ccc-explore-btn" onclick="openExplore(\'ccc\',\'' + primaryId + '\')">Explore connections \u203A</button>';
+
+  // CR-01: Prev/next sequential navigation
+  var prevNum = null, nextNum = null;
+  for (var p = primaryNum - 1; p >= 1; p--) {
+    if (_cccData[p]) { prevNum = p; break; }
+  }
+  for (var n = primaryNum + 1; n <= 2865; n++) {
+    if (_cccData[n]) { nextNum = n; break; }
+  }
+  if (prevNum || nextNum) {
+    bodyHtml += '<div class="ccc-page-nav">';
+    if (prevNum) {
+      bodyHtml += '<button class="ccc-nav-btn" onclick="cccNavigate(\'' + prevNum + '\')">'
+        + '<span class="ccc-nav-arrow">\u2190</span>'
+        + '<span class="ccc-nav-label">\u00A7' + prevNum + '</span>'
+        + '</button>';
+    } else {
+      bodyHtml += '<div class="ccc-nav-spacer"></div>';
+    }
+    bodyHtml += '<span class="ccc-nav-pos">\u00A7' + primaryNum + ' of 2,865</span>';
+    if (nextNum) {
+      bodyHtml += '<button class="ccc-nav-btn" onclick="cccNavigate(\'' + nextNum + '\')">'
+        + '<span class="ccc-nav-label">\u00A7' + nextNum + '</span>'
+        + '<span class="ccc-nav-arrow">\u2192</span>'
+        + '</button>';
+    } else {
+      bodyHtml += '<div class="ccc-nav-spacer"></div>';
+    }
+    bodyHtml += '</div>';
+  }
 
   bodyEl.innerHTML = bodyHtml;
   relEl.innerHTML = relHtml;
@@ -240,7 +303,14 @@ function openCCC(numStr) {
   var input = document.getElementById('cccSearchInput');
   if (input) input.value = '';
   _hideSearchResults();
+  // RD-06: Two-beat entry — container slides up, then content fades in
+  var scroll = document.getElementById('cccSheetScroll');
+  scroll.style.opacity = '0';
   _renderCCCContent(numStr);
+  setTimeout(function() {
+    scroll.style.opacity = '1';
+    scroll.style.transition = 'opacity 0.3s ease';
+  }, 200);
   // Focus trap
   var ui = require('./ui.js');
   ui.trapFocus(document.getElementById('cccSheet'));
@@ -249,6 +319,9 @@ function openCCC(numStr) {
 function closeCCC() {
   var overlay = document.getElementById('cccOverlay');
   var sheet = document.getElementById('cccSheet');
+  // RD-06: Reset entry transition
+  var scroll = document.getElementById('cccSheetScroll');
+  if (scroll) { scroll.style.opacity = ''; scroll.style.transition = ''; }
   overlay.classList.remove('open');
   sheet.classList.remove('open');
   // Restore z-index if boosted for above-exam display
@@ -376,4 +449,5 @@ module.exports = {
   cccNavigate: cccNavigate,
   cccGoBack: cccGoBack,
   cccSearchSelect: cccSearchSelect,
+  _toggleCCCSectionPicker: _toggleCCCSectionPicker,
 };

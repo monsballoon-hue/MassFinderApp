@@ -452,12 +452,13 @@ function _render() {
   var trailHtml = '';
   if (_history.length) {
     _history.forEach(function(h, i) {
-      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.type === 'summa' ? (h.label || h.id) : h.id;
+      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.type === 'baltimore' ? 'Q' + h.id : h.type === 'summa' ? (h.label || h.id) : h.id;
       trailHtml += '<span class="explore-crumb" onclick="explorePop(' + i + ')">' + utils.esc(label) + '</span>';
       trailHtml += '<span class="explore-crumb-sep">\u203A</span>';
     });
   }
   var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id
+    : _current.type === 'baltimore' ? 'Q' + _current.id
     : _current.type === 'summa' ? (_current.label || _current.id)
     : _current.id;
   trailHtml += '<span class="explore-crumb explore-crumb--active">' + utils.esc(curLabel) + '</span>';
@@ -471,27 +472,22 @@ function _render() {
     var ctx = _getHierarchyPath(num) || _getSectionContext(num);
     var text = _cccParas && _cccParas[num];
 
-    // BT-03: Drop-cap heading
+    // EX-R02: Preview card heading
     html += '<div class="explore-heading">';
     html += '<div class="explore-primary-num">\u00A7' + num + '</div>';
     if (ctx) html += '<div class="explore-context">' + utils.esc(ctx) + '</div>';
     html += '</div>';
 
+    // EX-R02: Show preview snippet instead of full text
     if (text) {
-      html += '<div class="explore-primary-text">' + _renderParaText(text) + '</div>';
+      var preview = _getPreview(text);
+      html += '<div class="explore-primary-text explore-muted">' + utils.esc(preview) + '</div>';
     } else {
       html += '<div class="explore-primary-text explore-muted">Full text not in local dataset.</div>';
     }
 
-    // EX-06: Baltimore companion inline
-    if (_baltimore && _baltimore.byCCC && _baltimore.byCCC[String(num)]) {
-      var qa = _baltimore.byCCC[String(num)];
-      html += '<div class="explore-baltimore-inline">'
-        + '<div class="explore-baltimore-label">Baltimore Catechism Q' + qa.id + '</div>'
-        + '<div class="explore-baltimore-q">' + utils.esc(qa.question) + '</div>'
-        + '<div class="explore-baltimore-a">' + utils.esc(qa.answer) + '</div>'
-        + '</div>';
-    }
+    // EX-R02: "Read in Catechism" button — delegate full reading to CCC reader
+    html += '<button class="explore-open-btn" onclick="_openCCCFromExplore(' + num + ')">Read in Catechism</button>';
   } else if (_current.type === 'bible') {
     html += '<div class="explore-primary-num">' + utils.esc(_current.id) + '</div>';
     html += '<div class="explore-primary-text explore-muted">Tap to read full passage in the Bible sheet.</div>';
@@ -519,6 +515,52 @@ function _render() {
       html += '</div>';
     } else {
       html += '<div class="explore-empty">Article not found.</div>';
+    }
+  } else if (_current.type === 'baltimore') {
+    // BQ-01: Baltimore detail view with prev/next navigation
+    var bqa = null;
+    var bqIdx = -1;
+    if (_baltimore && _baltimore.questions) {
+      for (var bi = 0; bi < _baltimore.questions.length; bi++) {
+        if (String(_baltimore.questions[bi].id) === String(_current.id)) {
+          bqa = _baltimore.questions[bi];
+          bqIdx = bi;
+          break;
+        }
+      }
+    }
+    if (bqa) {
+      html += '<div class="explore-heading">';
+      html += '<div class="explore-primary-num">Q' + bqa.id + '</div>';
+      html += '</div>';
+      html += '<div class="explore-baltimore-detail">';
+      html += '<div class="explore-baltimore-q">Q. ' + utils.esc(bqa.question) + '</div>';
+      html += '<div class="explore-baltimore-a">A. ' + utils.esc(bqa.answer) + '</div>';
+      html += '</div>';
+      // CCC link if mapping exists
+      if (bqa.ccc) {
+        html += '<button class="explore-open-btn" onclick="_openCCCFromExplore(' + bqa.ccc + ')">Read \u00A7' + bqa.ccc + ' in Catechism</button>';
+      }
+      // Prev/next navigation
+      var bqPrev = bqIdx > 0 ? _baltimore.questions[bqIdx - 1] : null;
+      var bqNext = bqIdx < _baltimore.questions.length - 1 ? _baltimore.questions[bqIdx + 1] : null;
+      if (bqPrev || bqNext) {
+        html += '<div class="explore-page-nav">';
+        if (bqPrev) {
+          html += '<button class="explore-nav-btn" onclick="explorePivot(\'baltimore\',\'' + bqPrev.id + '\')">\u2190 Q' + bqPrev.id + '</button>';
+        } else {
+          html += '<div class="explore-nav-spacer"></div>';
+        }
+        html += '<span class="explore-nav-pos">Q' + bqa.id + ' of ' + _baltimore.questions.length + '</span>';
+        if (bqNext) {
+          html += '<button class="explore-nav-btn" onclick="explorePivot(\'baltimore\',\'' + bqNext.id + '\')">Q' + bqNext.id + ' \u2192</button>';
+        } else {
+          html += '<div class="explore-nav-spacer"></div>';
+        }
+        html += '</div>';
+      }
+    } else {
+      html += '<div class="explore-empty">Question not found.</div>';
     }
   }
 
@@ -556,7 +598,7 @@ function _render() {
     html += '</div>';
   }
 
-  if (!connections.length && _current.type !== 'summa') {
+  if (!connections.length && _current.type !== 'summa' && _current.type !== 'baltimore') {
     html += '<div class="explore-empty">No connections found for this reference.</div>';
   }
 
@@ -883,7 +925,7 @@ function _renderGenreGroups(groups, bookList) {
     html += '<div class="explore-bible-genre-label">' + utils.esc(genre.label) + '</div>';
     html += '<div class="explore-bible-books">';
     books.forEach(function(b) {
-      html += '<button class="explore-bible-book" onclick="_openBibleFromExplore(\'' + utils.esc(b.name) + ' 1:1\')">'
+      html += '<button class="explore-bible-book" onclick="_openBibleFromExplore(\'' + utils.esc(b.name) + ' 1\')">'
         + '<span class="explore-bible-book-name">' + utils.esc(b.name) + '</span>'
         + '</button>';
     });
@@ -918,9 +960,9 @@ function _exploreBibleLanding() {
 
 // ── REF-03: Baltimore helpers ──
 function _renderBaltimoreRow(qa) {
-  var onclick = qa.ccc ? ' onclick="explorePivot(\'ccc\',\'' + qa.ccc + '\')"' : '';
-  var cls = qa.ccc ? ' explore-item--tap' : '';
-  return '<div class="explore-item' + cls + '"' + onclick + '>'
+  // BQ-01: Pivot to baltimore detail view instead of directly to CCC
+  var onclick = ' onclick="explorePivot(\'baltimore\',\'' + qa.id + '\')"';
+  return '<div class="explore-item explore-item--tap"' + onclick + '>'
     + '<div class="explore-item-label">Q' + qa.id + '. ' + utils.esc(qa.question) + '</div>'
     + '<div class="explore-item-detail">' + utils.esc(qa.answer) + '</div>'
     + '</div>';

@@ -176,13 +176,17 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span><span id="moreTabBadge" class="tab-more-badge" aria-hidden="true"></span></button>
 </div></nav>
 
-<!-- CCC Bottom Sheet -->
+<!-- CCC Reader (Reading Room) -->
 <div id="cccOverlay" class="ccc-overlay" onclick="closeCCC()"></div>
-<div id="cccSheet" class="ccc-sheet" role="dialog" aria-modal="true" aria-label="Catechism Reference">
-  <div class="ccc-handle"></div>
-  <div class="ccc-sheet-scroll" id="cccSheetScroll">
-    <button class="ccc-back-btn" id="cccBackBtn" onclick="cccGoBack()">&#8592; Back</button>
+<div id="cccSheet" class="ccc-sheet" role="dialog" aria-modal="true" aria-label="Catechism of the Catholic Church">
+  <div class="ccc-header">
+    <button class="ccc-back-btn" id="cccBackBtn" onclick="cccGoBack()" style="display:none">&#8592; Back</button>
     <div class="ccc-sheet-title">Catechism of the Catholic Church</div>
+    <button class="ccc-close-btn" onclick="closeCCC()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="ccc-sheet-scroll" id="cccSheetScroll">
     <div class="ccc-search-wrap" id="cccSearchWrap">
       <input type="search" class="ccc-search-input" id="cccSearchInput" placeholder="Search the Catechism&#x2026;" autocomplete="off">
     </div>
@@ -192,13 +196,17 @@
   </div>
 </div>
 
-<!-- Bible Bottom Sheet -->
+<!-- Bible Reader (Reading Room) -->
 <div id="bibleOverlay" class="bible-overlay" onclick="closeBible()"></div>
-<div id="bibleSheet" class="bible-sheet" role="dialog" aria-modal="true" aria-label="Scripture Reference">
-  <div class="bible-handle"></div>
-  <div class="bible-sheet-scroll" id="bibleSheetScroll">
-    <button class="bible-back-btn" id="bibleBackBtn" onclick="bibleGoBack()">&#8592; Back</button>
+<div id="bibleSheet" class="bible-sheet" role="dialog" aria-modal="true" aria-label="Sacred Scripture">
+  <div class="bible-header">
+    <button class="bible-back-btn" id="bibleBackBtn" onclick="bibleGoBack()" style="display:none">&#8592; Back</button>
     <div class="bible-sheet-title">Sacred Scripture</div>
+    <button class="bible-close-btn" onclick="closeBible()" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="bible-sheet-scroll" id="bibleSheetScroll">
     <div id="bibleSheetBody"></div>
     <div id="bibleSheetRelated"></div>
   </div>

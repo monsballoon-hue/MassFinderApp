@@ -1546,22 +1546,26 @@ html[data-theme="dark"] .fasting-banner--full { background:rgba(239,68,68,0.12);
 .ics-card-btn { display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);background:var(--color-primary);color:#fff;font-size:var(--text-xs);font-weight:var(--weight-semibold);border:none;border-radius:var(--radius-full);cursor:pointer;font-family:var(--font-body);min-height:32px;transition:background 0.15s,color 0.15s; }
 .ics-card-btn--outline { background:transparent;color:var(--color-primary);border:1.5px solid var(--color-primary); }
 
-/* CCC REFERENCE BOTTOM SHEET */
-.ccc-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:900;opacity:0;pointer-events:none;transition:opacity 0.35s ease; }
-.ccc-overlay.open { opacity:1;pointer-events:auto; }
-/* CCC-01: 88vh sheet height */
-.ccc-sheet { position:fixed;bottom:0;left:0;right:0;background:var(--color-surface);border-radius:16px 16px 0 0;z-index:901;max-height:88vh;max-height:88dvh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);box-shadow:0 -4px 24px rgba(0,0,0,0.1),0 -1px 4px rgba(0,0,0,0.06); }
+/* ── CCC Reader (Reading Room) ── */
+.ccc-overlay { position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0);transition:background 0.3s;pointer-events:none; }
+.ccc-overlay.open { background:rgba(0,0,0,0.35);pointer-events:auto; }
+.ccc-sheet { position:fixed;inset:0;z-index:2001;background:linear-gradient(180deg,#F8F6F1 0%,#F0EDE5 100%);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
 .ccc-sheet.open { transform:translateY(0); }
-@media (min-width:768px) { .ccc-sheet { left:50%;right:auto;width:100%;max-width:var(--max-width);transform:translate(-50%,100%); } .ccc-sheet.open { transform:translate(-50%,0); } }
-/* CCC-10: Enlarged handle area */
-.ccc-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:var(--space-4) auto var(--space-2);flex-shrink:0; }
-/* CCC-12: Generous bottom scroll padding */
-.ccc-sheet-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 var(--space-5) calc(var(--space-12) + env(safe-area-inset-bottom));transition:opacity 0.15s ease; }
-/* CCC-09: Back button — primary color with active feedback */
-.ccc-back-btn { display:none;align-items:center;gap:var(--space-1);font-size:var(--text-sm);color:var(--color-primary);font-weight:var(--weight-medium);cursor:pointer;margin-bottom:var(--space-3);background:none;border:none;padding:var(--space-1) 0;font-family:var(--font-body);-webkit-tap-highlight-color:transparent; }
+/* Translucent blur header */
+.ccc-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);padding-top:max(var(--space-3),env(safe-area-inset-top));border-bottom:0.5px solid var(--color-border-light);background:rgba(248,246,241,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);gap:var(--space-2);flex-shrink:0;z-index:1;position:relative; }
+/* RD-10: Accent bar */
+.ccc-header::after { content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--color-accent);opacity:0.3; }
+/* Close button */
+.ccc-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
+.ccc-close-btn:active { background:rgba(142,142,147,0.24); }
+/* Back button */
+.ccc-back-btn { display:none;background:none;border:none;color:var(--color-primary);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;padding:var(--space-1) 0;-webkit-tap-highlight-color:transparent; }
 .ccc-back-btn:active { opacity:0.6; }
-/* CCC-04: Warm centered title */
-.ccc-sheet-title { font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-tertiary);text-align:center;padding-bottom:var(--space-3);border-bottom:1px solid var(--color-border-light);margin-bottom:var(--space-4);letter-spacing:0.02em; }
+/* Title — centered */
+.ccc-sheet-title { flex:1;text-align:center;font-family:var(--font-display);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-secondary);letter-spacing:0.02em; }
+/* Scrollable body — centered column */
+.ccc-sheet-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-5) var(--space-5) var(--space-8);overscroll-behavior:contain;transition:opacity 0.15s ease; }
+.ccc-sheet-scroll > * { max-width:540px;margin-left:auto;margin-right:auto; }
 /* CCC Search (LIB-02) */
 .ccc-search-wrap { margin-bottom:var(--space-4); }
 .ccc-search-input { width:100%;padding:var(--space-3) var(--space-4);border:1px solid var(--color-border);border-radius:var(--radius-md);font-size:var(--text-sm);font-family:var(--font-body);background:var(--color-bg);color:var(--color-text-primary);outline:none;-webkit-appearance:none; }
@@ -1579,13 +1583,13 @@ html[data-theme="dark"] .fasting-banner--full { background:rgba(239,68,68,0.12);
 /* CCC-05: Paragraph number — quiet accent anchor */
 .ccc-para-num { font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-accent-text);margin-bottom:var(--space-3);margin-top:var(--space-5);letter-spacing:0.02em; }
 .ccc-para-num--first { margin-top:0; }
-/* CCC-02: Body text in Georgia serif */
-.ccc-para-text { font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-primary);line-height:1.9;margin-bottom:var(--space-4); }
+/* RD-04: Body text — sacred reading typography */
+.ccc-para-text { font-family:var(--font-prayer);font-size:1.125rem;color:var(--color-text-primary);line-height:2.0;margin-bottom:var(--space-4); }
 .ccc-para-text:last-child { margin-bottom:0; }
 /* CCC-11: Italic emphasis */
 .ccc-para-text em, .ccc-blockquote em { font-style:italic;color:var(--color-text-primary); }
-/* CCC-03: Elevated blockquotes — accent-colored border + pale background */
-.ccc-blockquote { margin:var(--space-4) 0;padding:var(--space-4) var(--space-5);border-left:3px solid var(--color-accent);background:var(--color-accent-pale);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--font-prayer);font-style:italic;color:var(--color-text-secondary);font-size:var(--text-sm);line-height:1.8; }
+/* RD-04: Blockquotes — voice of the Fathers */
+.ccc-blockquote { margin:var(--space-5) 0;padding:var(--space-4) var(--space-5);border-left:3px solid var(--color-accent);background:rgba(184,150,63,0.04);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--font-prayer);font-style:italic;color:var(--color-text-secondary);font-size:var(--text-base);line-height:1.8; }
 .ccc-blockquote p { margin:0 0 var(--space-2); }
 .ccc-blockquote p:last-child { margin-bottom:0; }
 /* CCC-07: Related teachings — invitation cards */
@@ -2212,22 +2216,49 @@ html[data-theme="dark"] .ref-tap--active { background:var(--color-primary);color
 html[data-theme="dark"] .exam-exit-dialog { background:var(--color-surface);box-shadow:0 8px 32px rgba(0,0,0,0.4); }
 html[data-theme="dark"] .exam-exit-btn--confirm:active { background:rgba(255,255,255,0.06); }
 /* CCC-08: Dark mode treatment */
-html[data-theme="dark"] .ccc-sheet { box-shadow:0 -4px 24px rgba(0,0,0,0.4),0 -1px 4px rgba(0,0,0,0.2); }
-html[data-theme="dark"] .ccc-overlay.open { background:rgba(0,0,0,0.65); }
-html[data-theme="dark"] .ccc-handle { background:var(--color-border); }
-html[data-theme="dark"] .ccc-sheet-title { border-bottom-color:var(--color-border); }
+/* CCC liturgical season tints */
+:root[data-season="lent"] .ccc-sheet { background:linear-gradient(180deg,#F6F4F8 0%,#EDE8F2 100%); }
+:root[data-season="advent"] .ccc-sheet { background:linear-gradient(180deg,#F6F4F8 0%,#EDE8F2 100%); }
+:root[data-season="easter"] .ccc-sheet { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
+:root[data-season="christmas"] .ccc-sheet { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
+:root[data-season="ordinary"] .ccc-sheet { background:linear-gradient(180deg,#F6F8F5 0%,#ECF0EA 100%); }
+/* CR-01: Page nav */
+.ccc-page-nav { display:flex;align-items:center;justify-content:space-between;padding:var(--space-5) 0 var(--space-4);margin-top:var(--space-4);border-top:1px solid rgba(0,0,0,0.06); }
+.ccc-nav-btn { padding:var(--space-2) var(--space-3);background:rgba(255,255,255,0.6);border:1px solid var(--color-border-light);border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-primary);cursor:pointer;min-height:44px;transition:all var(--transition-fast);-webkit-tap-highlight-color:transparent;display:flex;align-items:center; }
+.ccc-nav-btn:active { transform:scale(0.96);background:rgba(255,255,255,0.9); }
+.ccc-nav-pos { font-size:var(--text-xs);color:var(--color-text-tertiary); }
+.ccc-nav-spacer { width:44px; }
+/* CR-02: Section picker */
+.ccc-section-picker-btn { display:flex;align-items:center;gap:var(--space-1);background:none;border:none;cursor:pointer;font-size:var(--text-xs);color:var(--color-text-tertiary);font-style:italic;font-family:var(--font-body);padding:var(--space-1) 0;margin-bottom:var(--space-2);-webkit-tap-highlight-color:transparent; }
+.ccc-section-picker-btn:active { opacity:0.6; }
+.ccc-section-picker { padding:var(--space-2) 0;margin-bottom:var(--space-4);border-bottom:1px solid var(--color-border-light); }
+.ccc-section-btn { display:flex;justify-content:space-between;align-items:center;width:100%;padding:var(--space-3);border:none;background:none;cursor:pointer;border-radius:var(--radius-sm);font-size:var(--text-sm);text-align:left;min-height:44px;-webkit-tap-highlight-color:transparent;transition:background var(--transition-fast); }
+.ccc-section-btn:active { background:var(--color-surface-hover); }
+.ccc-section-btn span:first-child { font-weight:var(--weight-medium);color:var(--color-text-secondary); }
+.ccc-section-range { font-size:var(--text-xs);color:var(--color-text-tertiary);white-space:nowrap; }
+.ccc-section-active { background:rgba(255,255,255,0.6); }
+.ccc-section-active span:first-child { color:var(--color-primary);font-weight:var(--weight-semibold); }
+/* CCC dark mode */
+html[data-theme="dark"] .ccc-sheet { background:linear-gradient(180deg,#1A1C22 0%,#16181E 100%); }
+html[data-theme="dark"] .ccc-header { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
+html[data-theme="dark"] .ccc-close-btn { background:rgba(142,142,147,0.2); }
 html[data-theme="dark"] .ccc-related-item:hover { background:rgba(255,255,255,0.04); }
 html[data-theme="dark"] .ccc-related-item:active { background:rgba(255,255,255,0.08); }
 html[data-theme="dark"] .ccc-baltimore-card { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .ccc-page-nav { border-top-color:rgba(255,255,255,0.06); }
+html[data-theme="dark"] .ccc-nav-btn { background:rgba(255,255,255,0.06);border-color:var(--color-border); }
+html[data-theme="dark"] .ccc-section-picker { border-bottom-color:var(--color-border); }
+html[data-theme="dark"] .ccc-section-active { background:rgba(255,255,255,0.04); }
 /* CCC/Bible Explore button */
 .ccc-explore-btn, .bible-explore-btn { display:block;width:100%;margin-top:var(--space-4);padding:var(--space-3);background:none;border:1px solid var(--color-border-light);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-accent-text, var(--color-accent));cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;transition:background var(--transition-fast); }
 .ccc-explore-btn:hover, .bible-explore-btn:hover { background:var(--color-surface-hover); }
 html[data-theme="dark"] .ccc-explore-btn, html[data-theme="dark"] .bible-explore-btn { border-color:var(--color-border); }
 
 /* ── EXPLORE MODULE ── */
-.explore-overlay { position:fixed;inset:0;z-index:1500;background:var(--color-bg);transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.28,0.11,0.32,1);display:flex;flex-direction:column;overflow:hidden; }
+/* RD-05: Explore — atmospheric upgrade (study desk treatment) */
+.explore-overlay { position:fixed;inset:0;z-index:1500;background:linear-gradient(180deg,#F8F6F1 0%,#F0EDE5 100%);transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.28,0.11,0.32,1);display:flex;flex-direction:column;overflow:hidden; }
 .explore-overlay.open { transform:translateX(0); }
-.explore-header { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);border-bottom:1px solid var(--color-border-light);min-height:48px;flex-shrink:0; }
+.explore-header { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);border-bottom:0.5px solid var(--color-border-light);min-height:48px;flex-shrink:0;background:rgba(248,246,241,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px); }
 .explore-back-btn { background:none;border:none;font-size:var(--text-lg);color:var(--color-text-secondary);cursor:pointer;padding:var(--space-1) var(--space-2);-webkit-tap-highlight-color:transparent; }
 .explore-home-btn { background:none;border:none;color:var(--color-text-secondary);cursor:pointer;padding:var(--space-1);-webkit-tap-highlight-color:transparent; }
 .explore-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-text-primary);margin-left:auto;margin-right:auto; }
@@ -2238,11 +2269,7 @@ html[data-theme="dark"] .ccc-explore-btn, html[data-theme="dark"] .bible-explore
 .explore-crumb--active { color:var(--color-text-primary);font-weight:var(--weight-semibold);opacity:1;cursor:default; }
 .explore-crumb-sep { font-size:10px;color:var(--color-border);flex-shrink:0; }
 .explore-body { flex:1;overflow-y:auto;padding:var(--space-4);-webkit-overflow-scrolling:touch;transition:opacity 0.15s; }
-:root[data-season="lent"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #EDEAF4 100%); }
-:root[data-season="advent"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #EDEAF4 100%); }
-:root[data-season="easter"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #F6F3E6 100%); }
-:root[data-season="christmas"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #F6F3E6 100%); }
-:root[data-season="ordinary"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #EEF4EE 100%); }
+.explore-body > * { max-width:540px;margin-left:auto;margin-right:auto; }
 @keyframes exploreEnter { from { opacity:0;transform:translateY(8px); } to { opacity:1;transform:translateY(0); } }
 @keyframes exploreReturn { from { opacity:0;transform:translateY(-6px); } to { opacity:1;transform:translateY(0); } }
 .explore-body--entering { animation:exploreEnter 0.25s ease-out both; }
@@ -2373,9 +2400,9 @@ html[data-theme="dark"] .ccc-explore-btn, html[data-theme="dark"] .bible-explore
 .explore-hier-chapter-header { display:flex;align-items:center;justify-content:space-between;padding:var(--space-2) 0;font-size:var(--text-sm);color:var(--color-text-secondary);cursor:pointer;list-style:none;min-height:40px; }
 .explore-hier-chapter-header::-webkit-details-marker { display:none; }
 /* Dark mode overrides */
-html[data-theme="dark"] .explore-header { border-bottom-color:var(--color-border); }
+html[data-theme="dark"] .explore-overlay { background:linear-gradient(180deg,#1A1C22 0%,#16181E 100%); }
+html[data-theme="dark"] .explore-header { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .explore-trail { border-bottom-color:var(--color-border); }
-html[data-theme="dark"] .explore-body { background:linear-gradient(180deg, var(--color-bg) 0%, #141620 100%); }
 html[data-theme="dark"] .explore-item--tap:active { background:rgba(255,255,255,0.08); }
 html[data-theme="dark"] .explore-conn-tabs { border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .explore-open-btn { border-color:var(--color-border); }
@@ -2390,51 +2417,102 @@ html[data-theme="dark"] .explore-conn { border-top-color:var(--color-border); }
 html[data-theme="dark"] .explore-hier-part { border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .explore-conn-item { border-bottom-color:var(--color-border); }
 
-/* ── Bible Bottom Sheet ── */
-.bible-overlay { position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0);transition:background 0.3s;pointer-events:none; }
+/* ── Bible Reader (Reading Room) ── */
+.bible-overlay { position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0);transition:background 0.3s;pointer-events:none; }
 .bible-overlay.open { background:rgba(0,0,0,0.35);pointer-events:auto; }
-.bible-sheet { position:fixed;left:0;right:0;bottom:0;z-index:901;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;box-shadow:var(--shadow-elevated);max-height:88vh;display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.28,0.11,0.32,1); }
+.bible-sheet { position:fixed;inset:0;z-index:2001;background:linear-gradient(180deg,#F8F6F1 0%,#F0EDE5 100%);display:flex;flex-direction:column;transform:translateY(100%);transition:transform 0.5s cubic-bezier(0.28,0.11,0.32,1);overscroll-behavior:contain; }
 .bible-sheet.open { transform:translateY(0); }
-.bible-handle { width:36px;height:4px;background:var(--color-border);border-radius:2px;margin:var(--space-2) auto var(--space-1);flex-shrink:0; }
-.bible-sheet-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 var(--space-5) var(--space-6);overscroll-behavior:contain; }
-.bible-sheet-title { font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-4);text-align:center; }
-.bible-back-btn { display:none;background:none;border:none;color:var(--color-primary);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;padding:var(--space-1) 0;margin-bottom:var(--space-2); }
+/* Translucent blur header */
+.bible-header { display:flex;align-items:center;padding:var(--space-3) var(--space-4);padding-top:max(var(--space-3),env(safe-area-inset-top));border-bottom:0.5px solid var(--color-border-light);background:rgba(248,246,241,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);gap:var(--space-2);flex-shrink:0;z-index:1;position:relative; }
+/* RD-10: Accent bar */
+.bible-header::after { content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--color-accent);opacity:0.3; }
+/* Close button — pill style */
+.bible-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
+.bible-close-btn:active { background:rgba(142,142,147,0.24); }
+/* Title — centered */
+.bible-sheet-title { flex:1;text-align:center;font-family:var(--font-display);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-secondary);letter-spacing:0.02em; }
+/* Back button */
+.bible-back-btn { display:none;background:none;border:none;color:var(--color-primary);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;padding:var(--space-1) 0;-webkit-tap-highlight-color:transparent; }
+/* Scrollable body — centered column */
+.bible-sheet-scroll { flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:var(--space-5) var(--space-5) var(--space-8);overscroll-behavior:contain; }
+.bible-sheet-scroll > * { max-width:540px;margin-left:auto;margin-right:auto; }
 .bible-loading { text-align:center;padding:var(--space-6);color:var(--color-text-tertiary);font-size:var(--text-sm); }
 .bible-error { text-align:center;padding:var(--space-6);color:var(--color-text-tertiary);font-size:var(--text-sm);font-style:italic; }
 
-/* Section context & header */
-.bible-section-context { font-size:var(--text-xs);color:var(--color-text-tertiary);font-weight:var(--weight-medium);letter-spacing:0.03em;margin-bottom:var(--space-1); }
-.bible-ref-header { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-1); }
-.bible-translation-label { font-size:var(--text-xs);color:var(--color-accent-text);font-weight:var(--weight-medium);margin-bottom:var(--space-4); }
+/* RD-03: Section context & header — centered chapter heading */
+.bible-section-context { font-size:var(--text-xs);color:var(--color-text-tertiary);font-weight:var(--weight-medium);text-align:center;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:var(--space-1); }
+.bible-ref-header { font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--color-text-primary);text-align:center;margin-bottom:var(--space-1);line-height:1.2; }
+.bible-translation-label { font-size:var(--text-xs);color:var(--color-text-tertiary);text-align:center;margin-bottom:var(--space-6);letter-spacing:0.02em; }
 
-/* Verse text */
-.bible-verse-text { font-family:Georgia,'Playfair Display',serif;font-size:var(--text-base);line-height:1.9;color:var(--color-text-secondary);margin-bottom:var(--space-4); }
-.bible-verse-num { font-size:0.7em;color:var(--color-accent-text);vertical-align:super;font-weight:var(--weight-semibold);font-family:var(--font-body);margin-right:1px; }
+/* RD-02: Verse text — sacred reading typography */
+.bible-verse-text { font-family:var(--font-prayer);font-size:1.125rem;line-height:2.0;color:var(--color-text-primary);letter-spacing:0.005em; }
+.bible-verse-num { font-size:0.6em;color:var(--color-text-tertiary);vertical-align:super;font-weight:var(--weight-medium);font-family:var(--font-body);margin-right:2px;opacity:0.6; }
+
+/* RD-09: Target verse highlight — gradient feathered */
+.bible-verse--target { background:linear-gradient(to bottom,transparent 0%,var(--color-accent-pale) 8%,var(--color-accent-pale) 92%,transparent 100%);border-radius:2px;padding:2px 4px;margin:-2px -4px; }
+
+/* BR-03: Chapter picker */
+.bible-chapter-picker-btn { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-primary);background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;-webkit-tap-highlight-color:transparent; }
+.bible-chapter-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:var(--space-1);padding:var(--space-3) 0;margin-bottom:var(--space-3);border-bottom:1px solid var(--color-border-light); }
+.bible-ch-btn { display:flex;align-items:center;justify-content:center;height:36px;font-size:var(--text-sm);color:var(--color-text-primary);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-sm);cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.bible-ch-btn:active { background:var(--color-surface-hover); }
+.bible-ch-active { background:var(--color-primary);color:white;border-color:var(--color-primary);font-weight:var(--weight-semibold); }
+
+/* BR-05: Book picker */
+.bible-book-picker-btn { font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-text-primary);background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;-webkit-tap-highlight-color:transparent; }
+.bible-book-picker { max-height:50vh;overflow-y:auto;padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light); }
+.bible-genre-label { font-size:10px;font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;padding:var(--space-2) 0 var(--space-1); }
+.bible-book-list { display:flex;flex-wrap:wrap;gap:var(--space-1);margin-bottom:var(--space-2); }
+.bible-book-btn { padding:var(--space-1) var(--space-2);font-size:var(--text-xs);color:var(--color-text-primary);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-sm);cursor:pointer;min-height:32px;-webkit-tap-highlight-color:transparent; }
+.bible-book-btn:active { background:var(--color-surface-hover); }
+.bible-book-active { background:var(--color-primary);color:white;border-color:var(--color-primary); }
 
 /* Listen button */
-.bible-listen-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text-secondary);cursor:pointer;margin-bottom:var(--space-4);min-height:36px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
-.bible-listen-btn:active { transform:scale(0.97);background:var(--color-surface-hover); }
+.bible-listen-btn { display:inline-flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:rgba(255,255,255,0.6);border:1px solid var(--color-border-light);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text-secondary);cursor:pointer;margin-bottom:var(--space-4);min-height:36px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
+.bible-listen-btn:active { transform:scale(0.97);background:rgba(255,255,255,0.9); }
 .bible-listen-btn.speaking { background:var(--color-primary);color:white;border-color:var(--color-primary); }
 .bible-listen-btn.speaking svg { stroke:white; }
 
-/* Related passages */
-.bible-related-section { border-top:1px solid var(--color-border-light);padding-top:var(--space-4);margin-top:var(--space-2); }
-.bible-related-header { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:var(--space-3); }
-.bible-related-item { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3);border-radius:var(--radius-sm);cursor:pointer;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
-.bible-related-item:hover { background:rgba(0,0,0,0.03); }
-.bible-related-item:active { background:rgba(0,0,0,0.06); }
-.bible-related-ref { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary); }
-.bible-related-genre { font-size:var(--text-xs);color:var(--color-text-tertiary); }
-.bible-refs-more { font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-accent-text, var(--color-accent));cursor:pointer;padding:var(--space-2) var(--space-3);-webkit-tap-highlight-color:transparent;list-style:none; }
-.bible-refs-more::-webkit-details-marker { display:none; }
-.bible-refs-overflow[open] .bible-refs-more { margin-bottom:var(--space-1); }
+/* RD-07: Chapter navigation — pill buttons */
+.bible-chapter-nav { display:flex;align-items:center;justify-content:space-between;padding:var(--space-6) 0 var(--space-4);margin-top:var(--space-5);border-top:1px solid rgba(0,0,0,0.06);gap:var(--space-3); }
+.bible-nav-btn { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:rgba(255,255,255,0.6);border:1px solid var(--color-border-light);border-radius:var(--radius-full);cursor:pointer;min-height:44px;transition:all var(--transition-fast);-webkit-tap-highlight-color:transparent; }
+.bible-nav-btn:active { transform:scale(0.96);background:rgba(255,255,255,0.9); }
+.bible-nav-arrow { font-size:var(--text-base);color:var(--color-primary); }
+.bible-nav-label { font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-text-primary); }
+.bible-nav-pos { font-size:var(--text-xs);color:var(--color-text-tertiary);text-align:center;flex-shrink:1;min-width:0; }
+.bible-nav-spacer { width:44px; }
 
-/* Dark mode */
-html[data-theme="dark"] .bible-sheet { box-shadow:0 -4px 24px rgba(0,0,0,0.4),0 -1px 4px rgba(0,0,0,0.2); }
-html[data-theme="dark"] .bible-handle { background:var(--color-border); }
+/* RD-08: Cross-references — quiet margin notes */
+.bible-refs-section { margin-top:var(--space-4);padding-top:var(--space-4);border-top:1px solid rgba(0,0,0,0.04); }
+.bible-refs-summary { font-family:var(--font-body);font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-text-tertiary);cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) 0; }
+.bible-refs-summary::-webkit-details-marker { display:none; }
+.bible-refs-count { background:rgba(0,0,0,0.04);padding:1px 6px;border-radius:var(--radius-full);font-size:10px;font-variant-numeric:tabular-nums; }
+.bible-related-item { padding:var(--space-2) var(--space-3);margin:0 calc(-1 * var(--space-3));border-radius:var(--radius-sm);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background 0.15s; }
+.bible-related-item:active { background:rgba(0,0,0,0.06); }
+.bible-related-ref { font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-primary); }
+.bible-related-genre { font-size:10px;color:var(--color-text-tertiary);font-style:italic; }
+
+/* Liturgical season tints */
+:root[data-season="lent"] .bible-sheet { background:linear-gradient(180deg,#F6F4F8 0%,#EDE8F2 100%); }
+:root[data-season="advent"] .bible-sheet { background:linear-gradient(180deg,#F6F4F8 0%,#EDE8F2 100%); }
+:root[data-season="easter"] .bible-sheet { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
+:root[data-season="christmas"] .bible-sheet { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
+:root[data-season="ordinary"] .bible-sheet { background:linear-gradient(180deg,#F6F8F5 0%,#ECF0EA 100%); }
+
+/* Bible dark mode */
+html[data-theme="dark"] .bible-sheet { background:linear-gradient(180deg,#1A1C22 0%,#16181E 100%); }
+html[data-theme="dark"] .bible-header { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
+html[data-theme="dark"] .bible-close-btn { background:rgba(142,142,147,0.2); }
 html[data-theme="dark"] .bible-listen-btn { background:var(--color-surface);border-color:var(--color-border); }
-html[data-theme="dark"] .bible-related-item:hover { background:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .bible-nav-btn { background:rgba(255,255,255,0.06);border-color:var(--color-border); }
+html[data-theme="dark"] .bible-chapter-nav { border-top-color:rgba(255,255,255,0.06); }
+html[data-theme="dark"] .bible-refs-section { border-top-color:rgba(255,255,255,0.04); }
+html[data-theme="dark"] .bible-refs-count { background:rgba(255,255,255,0.06); }
 html[data-theme="dark"] .bible-related-item:active { background:rgba(255,255,255,0.08); }
+html[data-theme="dark"] .bible-ch-btn { border-color:var(--color-border); }
+html[data-theme="dark"] .bible-book-btn { border-color:var(--color-border); }
+html[data-theme="dark"] .bible-chapter-grid { border-bottom-color:var(--color-border); }
+html[data-theme="dark"] .bible-book-picker { border-bottom-color:var(--color-border); }
 
 /* ── Settings Overlay (OW-25) ── */
 .settings-overlay { position:fixed;inset:0;z-index:9500;background:var(--color-bg);flex-direction:column;opacity:0;transition:opacity 0.25s ease; }

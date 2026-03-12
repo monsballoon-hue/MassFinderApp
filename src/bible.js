@@ -1,17 +1,17 @@
-// src/bible.js — Scripture bottom sheet module
-// Opens a bottom sheet for any Bible reference tapped in MassFinder.
+// src/bible.js — Scripture reader module (Reading Room)
+// Full-screen immersive Bible reader with full chapter rendering,
+// chapter/book pickers, sequential navigation, and collapsible cross-references.
 // Loads data/bible-drb/[book].json (lazy, per-book) + data/bible-xrefs.json (lazy, once).
-// Mirrors ccc.js architecture exactly.
 
 var _bookCache = {};    // { 'matthew': { book, abbr, testament, chapters, verses } }
 var _xrefs = null;      // bible-xrefs.json data (null until first load)
 var _history = [];      // navigation stack of refStr values
 var _currentRef = '';
+var _currentBook = null; // current book object from _BOOKS
+var _bookChapters = null; // { filename: chapterCount } from _index.json
 var _speaking = false;  // UX-04 Web Speech state
 
 // ── 73-book metadata ──
-// Each entry: file (no extension), canonical name, abbr used in xrefs,
-// alt name/abbr variants (lowercased for lookup), testament, genre label
 var _BOOKS = [
   // OT — Pentateuch
   { file: 'genesis',       name: 'Genesis',         abbr: 'Gen',    alt: ['gn'],                              testament: 'OT', genre: 'Pentateuch' },
@@ -103,15 +103,11 @@ _BOOKS.forEach(function(b) {
   keys.forEach(function(k) {
     var norm = k.toLowerCase().replace(/\s+/g, '');
     _BOOK_LOOKUP[norm] = b;
-    // Also register with spaces as-is (lowercased)
     _BOOK_LOOKUP[k.toLowerCase()] = b;
   });
 });
 
 // ── Reference parser ──
-// "Matt 26:26-28" → { book, chapter, startVerse, endVerse }
-// "1 Cor 11:24"   → { book, chapter:11, startVerse:24, endVerse:24 }
-// "Ps 23"         → { book, chapter:23, startVerse:1, endVerse:999 }
 function _parseRef(refStr) {
   if (!refStr) return null;
   var s = refStr.trim();
@@ -157,7 +153,18 @@ function _loadXrefs() {
   return fetch('/data/bible-xrefs.json')
     .then(function(r) { return r.json(); })
     .then(function(d) { _xrefs = d; })
-    .catch(function() { _xrefs = {}; }); // xrefs are enhancement — never block render
+    .catch(function() { _xrefs = {}; });
+}
+
+function _loadIndex() {
+  if (_bookChapters) return Promise.resolve();
+  return fetch('/data/bible-drb/_index.json')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      _bookChapters = {};
+      (d.books || []).forEach(function(b) { _bookChapters[b.id] = b.chapters; });
+    })
+    .catch(function() { _bookChapters = {}; });
 }
 
 // ── Helpers ──
@@ -167,9 +174,13 @@ function _esc(s) {
     .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Group consecutive verse refs from xrefs into display ranges
-// Input:  ["Mark:14:22","Mark:14:23","Luke:22:19"]
-// Output: [{ abbr:'Mark', chapter:14, startVerse:22, endVerse:23 }, ...]
+function _getBookIndex(book) {
+  for (var i = 0; i < _BOOKS.length; i++) {
+    if (_BOOKS[i].file === book.file) return i;
+  }
+  return -1;
+}
+
 function _groupConsecutiveRefs(refs) {
   var parsed = refs.map(function(r) {
     var parts = r.split(':');
@@ -196,6 +207,24 @@ function _resolveAbbrToBook(abbr) {
   return _BOOK_LOOKUP[abbr.toLowerCase().replace(/\s+/g, '')] || null;
 }
 
+// ── Picker toggles (BR-03, BR-05) ──
+function _toggleChapterPicker() {
+  var grid = document.getElementById('bibleChapterGrid');
+  var bookGrid = document.getElementById('bibleBookPicker');
+  if (bookGrid) bookGrid.style.display = 'none';
+  if (grid) grid.style.display = grid.style.display === 'none' ? '' : 'none';
+}
+
+function _toggleBookPicker() {
+  var panel = document.getElementById('bibleBookPicker');
+  var chGrid = document.getElementById('bibleChapterGrid');
+  if (chGrid) chGrid.style.display = 'none';
+  if (panel) panel.style.display = panel.style.display === 'none' ? '' : 'none';
+}
+
+window._toggleChapterPicker = _toggleChapterPicker;
+window._toggleBookPicker = _toggleBookPicker;
+
 // ── Content rendering ──
 async function _renderBibleContent(refStr) {
   var bodyEl = document.getElementById('bibleSheetBody');
@@ -209,12 +238,13 @@ async function _renderBibleContent(refStr) {
     return;
   }
 
-  // Load book and xrefs in parallel — xrefs failure is non-fatal
+  // Load book, xrefs, and index in parallel — xrefs/index failures are non-fatal
   var bookData;
   try {
     var results = await Promise.all([
       _loadBook(parsed.book.file),
-      _loadXrefs()
+      _loadXrefs(),
+      _loadIndex()
     ]);
     bookData = results[0];
   } catch (e) {
@@ -227,49 +257,84 @@ async function _renderBibleContent(refStr) {
     return;
   }
 
+  _currentBook = parsed.book;
+  var isWholeChapter = (parsed.endVerse === 999);
+
   // Section context (e.g. "New Testament · Gospel")
   var testamentLabel = parsed.book.testament === 'NT' ? 'New Testament' : 'Old Testament';
   var context = testamentLabel + ' \u00b7 ' + parsed.book.genre;
   var html = '<div class="bible-section-context">' + _esc(context) + '</div>';
 
-  // Reference header
-  html += '<div class="bible-ref-header">' + _esc(parsed.book.name) + ' ' + parsed.chapter + ':' + parsed.startVerse;
-  if (parsed.endVerse !== parsed.startVerse && parsed.endVerse !== 999) {
-    html += '\u2013' + parsed.endVerse;
+  // ── BR-03/BR-05: Reference header with book + chapter picker buttons ──
+  var chevronSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14" style="margin-left:4px"><polyline points="6 9 12 15 18 9"/></svg>';
+
+  html += '<div class="bible-ref-header">'
+    + '<button class="bible-book-picker-btn" onclick="_toggleBookPicker()">'
+    + _esc(parsed.book.name) + ' ' + chevronSvg + '</button> '
+    + '<button class="bible-chapter-picker-btn" onclick="_toggleChapterPicker()">';
+  if (isWholeChapter) {
+    html += parsed.chapter;
+  } else {
+    html += parsed.chapter + ':' + parsed.startVerse;
+    if (parsed.endVerse !== parsed.startVerse) html += '\u2013' + parsed.endVerse;
   }
-  html += '</div>';
+  html += ' ' + chevronSvg + '</button></div>';
   html += '<div class="bible-translation-label">Douay-Rheims Bible</div>';
 
-  // Verse text — collect verses in range
+  // ── BR-05: Book picker panel (hidden) ──
+  html += '<div class="bible-book-picker" id="bibleBookPicker" style="display:none">';
+  var currentGenre = '';
+  _BOOKS.forEach(function(b) {
+    var genre = b.testament + ' \u00b7 ' + b.genre;
+    if (genre !== currentGenre) {
+      if (currentGenre) html += '</div>';
+      currentGenre = genre;
+      html += '<div class="bible-genre-label">' + _esc(genre) + '</div><div class="bible-book-list">';
+    }
+    var active = b.file === parsed.book.file ? ' bible-book-active' : '';
+    html += '<button class="bible-book-btn' + active + '" onclick="bibleNavigate(\'' + _esc(b.name + ' 1') + '\')">' + _esc(b.name) + '</button>';
+  });
+  html += '</div></div>';
+
+  // ── BR-03: Chapter picker grid (hidden) ──
+  html += '<div class="bible-chapter-grid" id="bibleChapterGrid" style="display:none">';
+  for (var ch = 1; ch <= bookData.chapters; ch++) {
+    var activeClass = ch === parsed.chapter ? ' bible-ch-active' : '';
+    html += '<button class="bible-ch-btn' + activeClass + '" onclick="bibleNavigate(\'' + _esc(parsed.book.name + ' ' + ch) + '\')">' + ch + '</button>';
+  }
+  html += '</div>';
+
+  // ── BR-01: Full chapter rendering with target verse highlight ──
   html += '<div class="bible-verse-text">';
   var verseTexts = [];
-  var endVerse = parsed.endVerse === 999
-    ? (bookData.chapters || 200) * 200  // effectively unlimited for whole-chapter
-    : Math.min(parsed.endVerse, parsed.startVerse + 199); // safety cap: max 200 verses
-
-  for (var v = parsed.startVerse; v <= endVerse; v++) {
+  for (var v = 1; v <= 999; v++) {
     var key = parsed.chapter + ':' + v;
     var text = bookData.verses[key];
     if (!text) {
-      if (v === parsed.startVerse) break; // first verse not found — chapter/verse doesn't exist
-      break; // consecutive gap means end of chapter
+      if (v === 1) break;
+      break;
     }
     verseTexts.push(text);
-    html += '<span class="bible-verse-num">' + v + '</span> ' + _esc(text) + ' ';
+    var isTarget = !isWholeChapter && v >= parsed.startVerse && v <= parsed.endVerse;
+    var cls = isTarget ? ' bible-verse--target' : '';
+    html += '<span class="bible-verse' + cls + '" id="bv' + v + '">'
+      + '<span class="bible-verse-num">' + v + '</span> '
+      + _esc(text) + ' '
+      + '</span>';
   }
   html += '</div>';
 
   if (!verseTexts.length) {
     html = '<div class="bible-section-context">' + _esc(context) + '</div>'
-      + '<div class="bible-ref-header">' + _esc(parsed.book.name) + ' ' + parsed.chapter + ':' + parsed.startVerse + '</div>'
-      + '<p class="bible-error">Verse not found in local dataset.</p>';
+      + '<div class="bible-ref-header">' + _esc(parsed.book.name) + ' ' + parsed.chapter + '</div>'
+      + '<p class="bible-error">Chapter not found in local dataset.</p>';
     bodyEl.innerHTML = html;
     relEl.innerHTML = '';
     _currentRef = refStr;
     return;
   }
 
-  // Listen button (UX-04 — only if speechSynthesis available)
+  // Listen button (UX-04)
   if ('speechSynthesis' in window) {
     html += '<button class="bible-listen-btn" id="bibleListenBtn" onclick="bibleReadAloud()">'
       + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">'
@@ -279,34 +344,76 @@ async function _renderBibleContent(refStr) {
       + ' <span>Listen</span></button>';
   }
 
-  bodyEl.innerHTML = html;
-  bodyEl._verseText = verseTexts.join(' '); // stored for read-aloud
+  // ── BR-02: Chapter navigation (prev/next) ──
+  var bookIdx = _getBookIndex(parsed.book);
+  var prevRef = null, nextRef = null;
+  var prevLabel = '', nextLabel = '';
 
-  // Related passages from xrefs
+  if (parsed.chapter > 1) {
+    prevRef = parsed.book.name + ' ' + (parsed.chapter - 1);
+    prevLabel = 'Chapter ' + (parsed.chapter - 1);
+  } else if (bookIdx > 0) {
+    var prevBook = _BOOKS[bookIdx - 1];
+    var prevChapters = _bookChapters ? _bookChapters[prevBook.file] : null;
+    if (prevChapters) {
+      prevRef = prevBook.name + ' ' + prevChapters;
+      prevLabel = prevBook.name;
+    }
+  }
+
+  if (parsed.chapter < bookData.chapters) {
+    nextRef = parsed.book.name + ' ' + (parsed.chapter + 1);
+    nextLabel = 'Chapter ' + (parsed.chapter + 1);
+  } else if (bookIdx < _BOOKS.length - 1) {
+    var nextBook = _BOOKS[bookIdx + 1];
+    nextRef = nextBook.name + ' 1';
+    nextLabel = nextBook.name;
+  }
+
+  html += '<div class="bible-chapter-nav">';
+  if (prevRef) {
+    html += '<button class="bible-nav-btn" onclick="bibleNavigate(\'' + _esc(prevRef) + '\')">'
+      + '<span class="bible-nav-arrow">\u2190</span>'
+      + '<span class="bible-nav-label">' + _esc(prevLabel) + '</span>'
+      + '</button>';
+  } else {
+    html += '<div class="bible-nav-spacer"></div>';
+  }
+  html += '<span class="bible-nav-pos">' + _esc(parsed.book.name) + ' ' + parsed.chapter + ' of ' + bookData.chapters + '</span>';
+  if (nextRef) {
+    html += '<button class="bible-nav-btn" onclick="bibleNavigate(\'' + _esc(nextRef) + '\')">'
+      + '<span class="bible-nav-label">' + _esc(nextLabel) + '</span>'
+      + '<span class="bible-nav-arrow">\u2192</span>'
+      + '</button>';
+  } else {
+    html += '<div class="bible-nav-spacer"></div>';
+  }
+  html += '</div>';
+
+  bodyEl.innerHTML = html;
+  bodyEl._verseText = verseTexts.join(' ');
+
+  // ── BR-04: Cross-references as collapsible margin notes ──
   var relHtml = '';
   if (_xrefs) {
     var relatedRefs = [];
-    var checkEnd = Math.min(parsed.endVerse === 999 ? parsed.startVerse : parsed.endVerse, parsed.startVerse + 5);
+    var checkEnd = Math.min(isWholeChapter ? 5 : parsed.endVerse, parsed.startVerse + 5);
     for (var rv = parsed.startVerse; rv <= checkEnd; rv++) {
-      // xrefs keys use abbr without spaces, e.g. "Matt:26:26" or "1Cor:11:24"
       var xkey = parsed.book.abbr + ':' + parsed.chapter + ':' + rv;
       var xkeyNoSpace = parsed.book.abbr.replace(/\s+/g, '') + ':' + parsed.chapter + ':' + rv;
       var refs = _xrefs[xkey] || _xrefs[xkeyNoSpace] || [];
       refs.forEach(function(r) {
-        // Support both ranked tuple [ref, votes] and legacy string format
-        var refStr = Array.isArray(r) ? r[0] : r;
-        if (relatedRefs.indexOf(refStr) < 0) relatedRefs.push(refStr);
+        var ref = Array.isArray(r) ? r[0] : r;
+        if (relatedRefs.indexOf(ref) < 0) relatedRefs.push(ref);
       });
     }
 
     if (relatedRefs.length) {
       var passages = _groupConsecutiveRefs(relatedRefs);
-      relHtml += '<div class="bible-related-section">';
-      relHtml += '<div class="bible-related-header">Related Passages</div>';
-      var maxVisible = 3;
-      var visible = passages.slice(0, maxVisible);
-      var hidden = passages.slice(maxVisible);
-      visible.forEach(function(p) {
+      relHtml += '<details class="bible-refs-section">'
+        + '<summary class="bible-refs-summary">Cross-References <span class="bible-refs-count">' + passages.length + '</span></summary>'
+        + '<div class="bible-refs-body">';
+      passages.forEach(function(p) {
         var pBook = _resolveAbbrToBook(p.abbr);
         var label = pBook ? pBook.name : p.abbr;
         var refLabel = label + ' ' + p.chapter + ':' + p.startVerse;
@@ -314,26 +421,10 @@ async function _renderBibleContent(refStr) {
         var genre = pBook ? pBook.genre : '';
         relHtml += '<div class="bible-related-item" onclick="bibleNavigate(\'' + _esc(refLabel) + '\')">'
           + '<span class="bible-related-ref">' + _esc(refLabel) + '</span>'
-          + (genre ? '<span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
+          + (genre ? ' <span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
           + '</div>';
       });
-      if (hidden.length) {
-        relHtml += '<details class="bible-refs-overflow"><summary class="bible-refs-more">'
-          + hidden.length + ' more reference' + (hidden.length !== 1 ? 's' : '') + '</summary>';
-        hidden.forEach(function(p) {
-          var pBook = _resolveAbbrToBook(p.abbr);
-          var label = pBook ? pBook.name : p.abbr;
-          var refLabel = label + ' ' + p.chapter + ':' + p.startVerse;
-          if (p.endVerse !== p.startVerse) refLabel += '\u2013' + p.endVerse;
-          var genre = pBook ? pBook.genre : '';
-          relHtml += '<div class="bible-related-item" onclick="bibleNavigate(\'' + _esc(refLabel) + '\')">'
-            + '<span class="bible-related-ref">' + _esc(refLabel) + '</span>'
-            + (genre ? '<span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
-            + '</div>';
-        });
-        relHtml += '</details>';
-      }
-      relHtml += '</div>';
+      relHtml += '</div></details>';
     }
   }
 
@@ -341,11 +432,21 @@ async function _renderBibleContent(refStr) {
   relHtml += '<button class="bible-explore-btn" onclick="openExplore(\'bible\',\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
 
   relEl.innerHTML = relHtml;
-  document.getElementById('bibleSheetScroll').scrollTop = 0;
+
+  // Scroll: target verse or top
+  if (!isWholeChapter) {
+    setTimeout(function() {
+      var targetEl = document.getElementById('bv' + parsed.startVerse);
+      if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
+  } else {
+    document.getElementById('bibleSheetScroll').scrollTop = 0;
+  }
+
   _currentRef = refStr;
 }
 
-// ── Crossfade navigation (mirrors ccc.js) ──
+// ── Crossfade navigation ──
 function _crossfadeTo(refStr) {
   var scroll = document.getElementById('bibleSheetScroll');
   scroll.style.opacity = '0';
@@ -369,7 +470,7 @@ function bibleGoBack() {
   _crossfadeTo(prev);
 }
 
-// ── Swipe-to-dismiss (mirrors ccc.js) ──
+// ── Swipe-to-dismiss ──
 function _initSwipeDismiss() {
   var sheet = document.getElementById('bibleSheet');
   if (!sheet || sheet._swipeInit) return;
@@ -388,7 +489,6 @@ function _initSwipeDismiss() {
 
 // ── Open / Close ──
 function openBible(refStr) {
-  // Cancel any active speech when opening new reference
   if (_speaking) { speechSynthesis.cancel(); _speaking = false; }
   _history = [];
   document.getElementById('bibleBackBtn').style.display = 'none';
@@ -397,7 +497,17 @@ function openBible(refStr) {
   document.body.style.overflow = 'hidden';
   window._lastFocused = document.activeElement;
   _initSwipeDismiss();
+
+  // RD-06: Two-beat entry — container opens, then content fades in
+  var scroll = document.getElementById('bibleSheetScroll');
+  scroll.style.opacity = '0';
+  scroll.style.transition = '';
   _renderBibleContent(refStr);
+  setTimeout(function() {
+    scroll.style.transition = 'opacity 0.3s ease';
+    scroll.style.opacity = '1';
+  }, 200);
+
   var ui = require('./ui.js');
   ui.trapFocus(document.getElementById('bibleSheet'));
 }
@@ -407,6 +517,10 @@ function closeBible() {
   document.getElementById('bibleOverlay').classList.remove('open');
   document.getElementById('bibleSheet').classList.remove('open');
   document.body.style.overflow = '';
+  // RD-06: Reset transition
+  var scroll = document.getElementById('bibleSheetScroll');
+  scroll.style.opacity = '';
+  scroll.style.transition = '';
   var ui = require('./ui.js');
   ui.releaseFocus();
   if (window._lastFocused) window._lastFocused.focus();

@@ -215,6 +215,7 @@ window.openCCCAboveExam = ccc.openCCCAboveExam;
 window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
 window.cccSearchSelect = ccc.cccSearchSelect;
+window._toggleCCCSectionPicker = ccc._toggleCCCSectionPicker;
 window.openBible = bible.openBible;
 window.closeBible = bible.closeBible;
 window.bibleNavigate = bible.bibleNavigate;
