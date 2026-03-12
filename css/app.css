@@ -1584,8 +1584,8 @@ html[data-theme="dark"] .fasting-banner--full { background:rgba(239,68,68,0.12);
 :root[data-season="easter"] .reader-overlay { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
 :root[data-season="christmas"] .reader-overlay { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
 :root[data-season="ordinary"] .reader-overlay { background:linear-gradient(180deg,#F6F8F5 0%,#ECF0EA 100%); }
-/* Dark mode */
-html[data-theme="dark"] .reader-overlay { background:linear-gradient(180deg,#1A1C22 0%,#16181E 100%); }
+/* Dark mode — :root needed to beat seasonal specificity */
+:root[data-theme="dark"] .reader-overlay { background:linear-gradient(180deg,#1A1C22 0%,#16181E 100%); }
 html[data-theme="dark"] .reader-header { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .reader-close-btn { background:rgba(142,142,147,0.2); }
 html[data-theme="dark"] .reader-header-extra { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
