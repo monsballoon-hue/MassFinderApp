@@ -1,20 +1,58 @@
 // src/examination.js — Examination of Conscience (MOD-03)
-// Full-screen overlay with expandable commandment sections, tappable CCC refs,
+// Universal reader module with expandable commandment sections, tappable CCC refs,
 // interactive checklist, compiled summary, confession tracker, and "Find Confession Near Me".
 // Privacy: checked items exist only in memory — cleared when overlay closes.
-// UX: Apple HIG — inset grouped list, animated expand/collapse, haptics, swipe-dismiss,
-//     inline CCC expansion (avoids z-index collision with overlay).
 
 var refs = require('./refs.js');
 var ui = require('./ui.js');
 var _haptic = require('./haptics.js');
 var cccData = require('./ccc-data.js');
+var reader = require('./reader.js');
 
 // ── State ──
 var _examData = null;
 var _expanded = {};         // section key → bool
 var _checked = {};          // question id → { text, commandment }
 var _cccParagraphs = null;  // lazy-loaded catechism paragraph map
+
+// ── Reader module registration ──
+reader.registerModule('examination', {
+  getTitle: function() { return 'Examination of Conscience'; },
+  render: function(params, bodyEl, footerEl) {
+    _expanded = {};
+    _checked = {};
+
+    footerEl.style.display = '';
+    footerEl.innerHTML = '<div class="exam-footer-bar" id="examFooter">'
+      + '<span id="examCheckedCount">No items noted yet</span>'
+      + '<button class="exam-footer-btn" onclick="examScrollToSummary()">View Summary</button>'
+      + '</div>';
+
+    _loadData(function(d) {
+      _expanded['cmd-1'] = true;
+      _haptic();
+
+      // Show opening prayer as a centering moment
+      bodyEl.innerHTML = '<div class="exam-progress-bar" id="examProgress"></div>'
+        + '<div class="exam-opening">'
+        + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
+        + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
+        + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
+        + '<button class="exam-opening-btn" onclick="window._examBeginReview()">Begin Examination</button>'
+        + '</div>';
+
+      window._examBeginReview = function() {
+        delete window._examBeginReview;
+        _haptic();
+        _renderExamination(d);
+      };
+    });
+  },
+  onClose: function() {
+    // Privacy first — clear session state
+    _checked = {};
+  }
+});
 
 // ── Load examination data ──
 function _loadData(cb) {
@@ -43,15 +81,12 @@ function _parseCCCRange(numStr) {
 }
 
 // ── Escape HTML ──
-// TD-02: Use shared utils.esc and utils.stripCCCRefs
 var utils = require('./utils.js');
 function _esc(s) { return utils.esc(s); }
 function _stripRefs(t) { return utils.stripCCCRefs(t); }
 
 // ── Toggle inline CCC expansion ──
 function _toggleInlineCCC(span, numStr) {
-  // For question-level refs, insert inside .exam-q-content (column flex) so it flows below text.
-  // For section-level refs, insert inside .exam-ccc-ref container.
   var container = span.closest('.exam-q-content') || span.closest('.exam-ccc-ref') || span.parentNode;
 
   // If already expanded, collapse
@@ -63,7 +98,7 @@ function _toggleInlineCCC(span, numStr) {
   }
 
   // Close any other open inline CCC
-  var body = document.getElementById('examBody');
+  var body = document.getElementById('readerBody');
   body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
   body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
 
@@ -74,12 +109,10 @@ function _toggleInlineCCC(span, numStr) {
     var ids = _parseCCCRange(numStr);
     var card = document.createElement('div');
     card.className = 'exam-ccc-card';
-    // Header
     var html = '<div class="exam-ccc-card-header">';
     html += '<div class="exam-ccc-card-icon">\u00A7</div>';
     html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
     html += '</div>';
-    // Body — topline paragraph only
     html += '<div class="exam-ccc-card-body">';
     ids.forEach(function(id) {
       var text = _cccParagraphs && _cccParagraphs[id];
@@ -96,10 +129,10 @@ function _toggleInlineCCC(span, numStr) {
       }
     });
     html += '</div>';
-    // "See full range" link for range refs — opens CCC above exam overlay
+    // "See full range" link — opens CCC in reader (pushes exam to stack)
     var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
     if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
+      html += '<p class="exam-ccc-card-more" onclick="reader.readerOpen(\'ccc\',{num:\'' + _esc(numStr) + '\'})">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);
@@ -108,7 +141,7 @@ function _toggleInlineCCC(span, numStr) {
 
 // ── Wire inline CCC on all ref-tap spans inside exam body ──
 function _wireInlineCCC() {
-  var body = document.getElementById('examBody');
+  var body = document.getElementById('readerBody');
   body.querySelectorAll('.ref-tap--ccc').forEach(function(span) {
     var match = (span.getAttribute('onclick') || '').match(/_refTap\('ccc','([^']+)'\)/);
     if (!match) return;
@@ -257,14 +290,9 @@ function _renderSummaryHTML() {
 function _updateCheckedUI() {
   var count = Object.keys(_checked).length;
 
-  // Footer bar — always visible, but content changes
-  var footer = document.getElementById('examFooter');
-  if (footer) {
-    footer.classList.add('visible');
-    var countEl = document.getElementById('examCheckedCount');
-    if (countEl) {
-      countEl.textContent = count > 0 ? count + ' item' + (count !== 1 ? 's' : '') + ' noted' : 'No items noted yet';
-    }
+  var countEl = document.getElementById('examCheckedCount');
+  if (countEl) {
+    countEl.textContent = count > 0 ? count + ' item' + (count !== 1 ? 's' : '') + ' noted' : 'No items noted yet';
   }
 
   // Summary section
@@ -289,10 +317,9 @@ function examScrollToSummary() {
     setTimeout(function() { summary.classList.remove('exam-summary--revealed'); }, 1500);
   }
   _haptic();
-  // Log examination review (Change 19)
+  // Log examination review
   try {
     var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-    // Only log once per day
     var today = new Date().toISOString().slice(0, 10);
     var alreadyLogged = log.some(function(e) { return e.type === 'examination' && e.date === today; });
     if (!alreadyLogged) {
@@ -306,8 +333,8 @@ function examScrollToSummary() {
 
 // ── Full render ──
 function _renderExamination(d) {
-  var body = document.getElementById('examBody');
-  var html = '';
+  var body = document.getElementById('readerBody');
+  var html = '<div class="exam-progress-bar" id="examProgress"></div>';
 
   // How to Confess guide
   html += _renderHowTo(d.how_to_confess);
@@ -413,7 +440,7 @@ function _renderExamination(d) {
 
 // ── Scroll progress bar ──
 function _initScrollProgress() {
-  var body = document.getElementById('examBody');
+  var body = document.getElementById('readerBody');
   var bar = document.getElementById('examProgress');
   if (!body || !bar) return;
   if (body._examScrollWired) return;
@@ -440,64 +467,9 @@ function examToggleSection(key) {
   }
 }
 
-// ── Swipe-to-dismiss ──
-function _initSwipeDismiss() {
-  var overlay = document.getElementById('examOverlay');
-  if (!overlay || overlay._swipeInit) return;
-  overlay._swipeInit = true;
-  var startY = 0;
-  var headerEl = overlay.querySelector('.exam-header');
-  var bodyEl = overlay.querySelector('.exam-body');
-  headerEl.addEventListener('touchstart', function(e) {
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  headerEl.addEventListener('touchend', function(e) {
-    var dy = e.changedTouches[0].clientY - startY;
-    if (dy > 60) closeExamination();
-  }, { passive: true });
-  bodyEl.addEventListener('touchstart', function(e) {
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  var _lastContentRender = 0;
-  bodyEl.addEventListener('touchend', function(e) {
-    var dy = e.changedTouches[0].clientY - startY;
-    if (dy > 80 && bodyEl.scrollTop <= 5 && Date.now() - _lastContentRender > 600) closeExamination();
-  }, { passive: true });
-  // Expose render timestamp setter for content transitions
-  overlay._markContentRender = function() { _lastContentRender = Date.now(); };
-}
-
 // ── Open overlay ──
 function openExamination() {
-  _expanded = {};
-  _checked = {};
-  window._lastFocused = document.activeElement;
-  _loadData(function(d) {
-    _expanded['cmd-1'] = true;
-    var overlay = document.getElementById('examOverlay');
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    _initSwipeDismiss();
-    ui.trapFocus(overlay);
-    _haptic();
-
-    // Show opening prayer as a centering moment
-    var body = document.getElementById('examBody');
-    body.innerHTML = '<div class="exam-opening">'
-      + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
-      + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
-      + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
-      + '<button class="exam-opening-btn" onclick="window._examBeginReview()">Begin Examination</button>'
-      + '</div>';
-
-    window._examBeginReview = function() {
-      delete window._examBeginReview;
-      _haptic();
-      _renderExamination(d);
-      var overlay = document.getElementById('examOverlay');
-      if (overlay && overlay._markContentRender) overlay._markContentRender();
-    };
-  });
+  reader.readerOpen('examination', {});
 }
 
 // ── Close overlay ──
@@ -511,18 +483,9 @@ function closeExamination() {
 }
 
 function _doClose() {
-  var overlay = document.getElementById('examOverlay');
-  overlay.classList.remove('open');
-  document.body.style.overflow = '';
   // Clear session state — privacy first
   _checked = {};
-  var footer = document.getElementById('examFooter');
-  if (footer) footer.classList.remove('visible');
-  // Remove any lingering confirm dialog
-  var dialog = overlay.querySelector('.exam-exit-dialog-wrap');
-  if (dialog) dialog.remove();
-  ui.releaseFocus();
-  if (window._lastFocused) window._lastFocused.focus();
+  reader.readerClose();
 }
 
 // Graceful close — user tapped "Return to MassFinder" at the end, skip confirmation
@@ -532,7 +495,7 @@ function examGracefulClose() {
 }
 
 function _showExitConfirm(count) {
-  var overlay = document.getElementById('examOverlay');
+  var overlay = document.getElementById('readerOverlay');
   // Prevent duplicates
   var existing = overlay.querySelector('.exam-exit-dialog-wrap');
   if (existing) return;
@@ -608,7 +571,7 @@ function _updateMoreTabTracker() {
 // ── Find Confession Near Me ──
 function examFindConfession() {
   _haptic();
-  closeExamination();
+  _doClose();
   var ui2 = require('./ui.js');
   ui2.switchTab('panelFind');
   setTimeout(function() {

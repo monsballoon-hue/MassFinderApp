@@ -1,32 +1,30 @@
 // src/settings.js — Settings overlay (OW-25)
 var utils = require('./utils.js');
+var reader = require('./reader.js');
 var esc = utils.esc;
+
+// ── Reader module registration ──
+reader.registerModule('settings', {
+  getTitle: function() { return 'Settings'; },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    _render();
+  },
+  onClose: function() {}
+});
 
 // ── Open / Close ──
 function openSettings() {
-  var overlay = document.getElementById('settingsOverlay');
-  if (!overlay) return;
-  _render();
-  overlay.style.display = 'flex';
-  requestAnimationFrame(function() { overlay.classList.add('active'); });
-  document.body.style.overflow = 'hidden';
-  // Close on backdrop click (desktop)
-  overlay.onclick = function(e) {
-    if (e.target === overlay) closeSettings();
-  };
+  reader.readerOpen('settings', {});
 }
 
 function closeSettings() {
-  var overlay = document.getElementById('settingsOverlay');
-  if (!overlay) return;
-  overlay.classList.remove('active');
-  setTimeout(function() { overlay.style.display = 'none'; }, 250);
-  document.body.style.overflow = '';
+  reader.readerClose();
 }
 
 // ── Render ──
 function _render() {
-  var body = document.getElementById('settingsBody');
+  var body = document.getElementById('readerBody');
   if (!body) return;
 
   var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -122,7 +120,6 @@ function setSettingTheme(theme) {
     var mapMod = require('./map.js');
     mapMod.updateTileTheme();
   }
-  // Also update the old footer button if it exists
   var btn = document.getElementById('theme-toggle-btn');
   if (btn) btn.textContent = theme === 'dark' ? 'Light Mode' : 'Dark Mode';
   _render();
@@ -132,7 +129,6 @@ function setSettingSize(size) {
   if (size === 'default') document.documentElement.removeAttribute('data-text-size');
   else document.documentElement.setAttribute('data-text-size', size);
   localStorage.setItem('mf-text-size', size);
-  // Update old footer buttons if present
   document.querySelectorAll('.text-size-btn').forEach(function(b) { b.classList.remove('active'); });
   var active = document.querySelector('.text-size-btn[onclick*="' + size + '"]');
   if (active) active.classList.add('active');

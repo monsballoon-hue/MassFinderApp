@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var cccData = require('./ccc-data.js');
+var reader = require('./reader.js');
 
 // ── State ──
 var _data = null;
@@ -30,6 +31,34 @@ var SET_QUOTES = {
   Glorious:  { text: 'I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.', ref: 'John 11:25' },
   Luminous:  { text: 'I am the light of the world. Whoever follows me will not walk in darkness, but will have the light of life.', ref: 'John 8:12' }
 };
+
+// ── Reader module registration ──
+reader.registerModule('rosary', {
+  getTitle: function() { return 'The Holy Rosary'; },
+  render: function(params, bodyEl, footerEl) {
+    bodyEl.innerHTML = '<div class="rosary-loading"><div class="rosary-loading-spinner"></div><p>Loading prayers\u2026</p></div>';
+    footerEl.style.display = 'none';
+    footerEl.innerHTML = '';
+
+    _load().then(function() {
+      _screen = params.set ? 'opening' : 'select';
+      _set = params.set || _todaySet();
+      _mysteries = _data.mysteries[_set];
+      document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
+      _decade = 0;
+      _bead = 0;
+      _render();
+      _acquireWakeLock();
+      document.addEventListener('visibilitychange', _handleVisibility);
+      _initSwipe();
+    });
+  },
+  onClose: function() {
+    _releaseWakeLock();
+    document.removeEventListener('visibilitychange', _handleVisibility);
+    _teardownSwipe();
+  }
+});
 
 // ── Load prayer data (lazy) ──
 function _load() {
@@ -66,7 +95,8 @@ function _releaseWakeLock() {
 
 // Re-acquire wake lock when page becomes visible again
 function _handleVisibility() {
-  if (document.visibilityState === 'visible' && document.getElementById('rosaryOverlay').classList.contains('open')) {
+  var cur = reader.getCurrent();
+  if (document.visibilityState === 'visible' && cur && cur.mode === 'rosary') {
     _acquireWakeLock();
   }
 }
@@ -84,35 +114,12 @@ function _ordinal(n) {
 
 // ── Open Rosary ──
 function openRosary(mysterySet) {
-  var overlay = document.getElementById('rosaryOverlay');
-  // Show loading state
-  document.getElementById('rosaryBody').innerHTML = '<div class="rosary-loading"><div class="rosary-loading-spinner"></div><p>Loading prayers\u2026</p></div>';
-  document.getElementById('rosaryProgress').innerHTML = '';
-  document.getElementById('rosaryNav').innerHTML = '';
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  _load().then(function() {
-    _screen = mysterySet ? 'opening' : 'select';
-    _set = mysterySet || _todaySet();
-    _mysteries = _data.mysteries[_set];
-    document.getElementById('rosaryOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
-    _decade = 0;
-    _bead = 0;
-    _render();
-    _acquireWakeLock();
-    document.addEventListener('visibilitychange', _handleVisibility);
-    _initSwipe();
-  });
+  reader.readerOpen('rosary', { set: mysterySet || null });
 }
 
 // ── Close Rosary ──
 function closeRosary() {
-  document.getElementById('rosaryOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-  _releaseWakeLock();
-  document.removeEventListener('visibilitychange', _handleVisibility);
-  _teardownSwipe();
+  reader.readerClose();
 }
 
 // ── Select mystery set ──
@@ -122,7 +129,7 @@ function rosarySelectSet(setName) {
   _decade = 0;
   _bead = 0;
   _screen = 'opening';
-  document.getElementById('rosaryOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
+  document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
   _render();
   _scrollTop();
 }
@@ -157,13 +164,14 @@ function rosaryNext() {
       localStorage.setItem('mf-prayer-log', JSON.stringify(log));
     } catch (e) {}
     // Show completion screen — let the user decide when to leave
-    var bodyEl = document.getElementById('rosaryBody');
-    var navEl = document.getElementById('rosaryNav');
-    var titleEl = document.getElementById('rosaryTitle');
-    var progressEl = document.getElementById('rosaryProgress');
+    var bodyEl = document.getElementById('readerBody');
+    var footerEl = document.getElementById('readerFooter');
+    var titleEl = document.getElementById('readerTitle');
     if (titleEl) titleEl.textContent = '';
-    if (progressEl) progressEl.innerHTML = '';
-    if (navEl) navEl.innerHTML = '<button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button>';
+    if (footerEl) {
+      footerEl.style.display = '';
+      footerEl.innerHTML = '<button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button>';
+    }
     if (bodyEl) {
       var quote = SET_QUOTES[_set] || SET_QUOTES.Joyful;
       bodyEl.innerHTML = '<div class="rosary-complete-screen">'
@@ -245,13 +253,13 @@ function _updateBeadUI() {
 }
 
 function _scrollTop() {
-  var b = document.getElementById('rosaryBody');
+  var b = document.getElementById('readerBody');
   if (b) b.scrollTop = 0;
 }
 
 // ── Crossfade transition for decade navigation (RC-03) ──
 function _transitionTo(renderFn) {
-  var body = document.getElementById('rosaryBody');
+  var body = document.getElementById('readerBody');
   if (!body) { renderFn(); return; }
   body.style.transition = 'opacity 150ms ease';
   body.style.opacity = '0';
@@ -265,14 +273,14 @@ function _transitionTo(renderFn) {
 
 // ── Swipe gesture for decade navigation ──
 function _initSwipe() {
-  var body = document.getElementById('rosaryBody');
+  var body = document.getElementById('readerBody');
   if (!body) return;
   body.addEventListener('touchstart', _onTouchStart, { passive: true });
   body.addEventListener('touchend', _onTouchEnd, { passive: true });
 }
 
 function _teardownSwipe() {
-  var body = document.getElementById('rosaryBody');
+  var body = document.getElementById('readerBody');
   if (!body) return;
   body.removeEventListener('touchstart', _onTouchStart);
   body.removeEventListener('touchend', _onTouchEnd);
@@ -321,7 +329,7 @@ function _toggleInlineCCC(span, numStr) {
   }
 
   // Close any other open inline CCC
-  var body = document.getElementById('rosaryBody');
+  var body = document.getElementById('readerBody');
   body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
   body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
 
@@ -366,21 +374,21 @@ function _toggleInlineCCC(span, numStr) {
 
 // ── Render main dispatcher ──
 function _render() {
-  var title = document.getElementById('rosaryTitle');
-  var body = document.getElementById('rosaryBody');
-  var progress = document.getElementById('rosaryProgress');
-  var nav = document.getElementById('rosaryNav');
-  if (_screen === 'select') _renderSelect(title, body, progress, nav);
-  else if (_screen === 'opening') _renderOpening(title, body, progress, nav);
-  else if (_screen === 'decade') _renderDecade(title, body, progress, nav);
-  else if (_screen === 'closing') _renderClosing(title, body, progress, nav);
+  var title = document.getElementById('readerTitle');
+  var body = document.getElementById('readerBody');
+  var footer = document.getElementById('readerFooter');
+  footer.style.display = '';
+  if (_screen === 'select') _renderSelect(title, body, footer);
+  else if (_screen === 'opening') _renderOpening(title, body, footer);
+  else if (_screen === 'decade') _renderDecade(title, body, footer);
+  else if (_screen === 'closing') _renderClosing(title, body, footer);
 }
 
 // ── Render: Select screen ──
-function _renderSelect(title, body, progress, nav) {
+function _renderSelect(title, body, footer) {
   title.textContent = 'The Holy Rosary';
-  progress.innerHTML = '';
-  nav.innerHTML = '';
+  footer.innerHTML = '';
+  footer.style.display = 'none';
   var todaySet = _todaySet();
   var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var dayName = days[new Date().getDay()];
@@ -409,11 +417,11 @@ function _renderSelect(title, body, progress, nav) {
 }
 
 // ── Render: Opening prayers ──
-function _renderOpening(title, body, progress, nav) {
+function _renderOpening(title, body, footer) {
   title.textContent = _set + ' Mysteries';
-  progress.innerHTML = _dotsHtml(-1);
   var p = _data.prayers;
-  body.innerHTML = '<div class="rosary-prayers">'
+  body.innerHTML = _dotsHtml(-1)
+    + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
     + _prayerBlock('Sign of the Cross', p.sign_of_cross)
     + _prayerBlock('Apostles\' Creed', p.apostles_creed)
@@ -421,15 +429,15 @@ function _renderOpening(title, body, progress, nav) {
     + _prayerBlock('Three Hail Marys', p.hail_mary, 'For an increase of Faith, Hope, and Charity')
     + _prayerBlock('Glory Be', p.glory_be)
     + '</div>';
-  nav.innerHTML = _navHtml('Back', 'Begin First Decade \u2192');
+  footer.style.display = '';
+  footer.innerHTML = _navHtml('Back', 'Begin First Decade \u2192');
 }
 
 // ── Render: Decade ──
-function _renderDecade(title, body, progress, nav) {
+function _renderDecade(title, body, footer) {
   var m = _mysteries[_decade];
   var meta = SET_META[_set] || {};
   title.textContent = _set + ' Mysteries \u2014 Decade ' + (_decade + 1) + ' of 5';
-  progress.innerHTML = _dotsHtml(_decade);
   var p = _data.prayers;
 
   // CCC refs for inline meta display (RC-06)
@@ -440,7 +448,8 @@ function _renderDecade(title, body, progress, nav) {
     }).join(' ');
   }
 
-  body.innerHTML = '<div class="rosary-decade">'
+  body.innerHTML = _dotsHtml(_decade)
+    + '<div class="rosary-decade">'
     // Mystery card (RC-06: compact layout)
     + '<div class="rosary-mystery" style="--set-color:' + (meta.color || '#666') + '">'
     + '<div class="rosary-mystery-num">' + _ordinal(_decade + 1) + ' ' + _set + ' Mystery'
@@ -474,7 +483,8 @@ function _renderDecade(title, body, progress, nav) {
 
   var prevLabel = _decade === 0 ? '\u2190 Opening' : '\u2190 ' + _ordinal(_decade) + ' Decade';
   var nextLabel = _decade < 4 ? _ordinal(_decade + 2) + ' Decade \u2192' : 'Closing \u2192';
-  nav.innerHTML = _navHtml(prevLabel, nextLabel);
+  footer.style.display = '';
+  footer.innerHTML = _navHtml(prevLabel, nextLabel);
 
   // Swipe hint (show once)
   if (!_swipeHintShown) {
@@ -526,16 +536,17 @@ function _renderDecade(title, body, progress, nav) {
 }
 
 // ── Render: Closing ──
-function _renderClosing(title, body, progress, nav) {
+function _renderClosing(title, body, footer) {
   title.textContent = _set + ' Mysteries';
-  progress.innerHTML = _dotsHtml(5);
   var p = _data.prayers;
-  body.innerHTML = '<div class="rosary-prayers">'
+  body.innerHTML = _dotsHtml(5)
+    + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'
     + _prayerBlock('Hail, Holy Queen', p.hail_holy_queen)
     + _prayerBlock('Sign of the Cross', p.sign_of_cross)
     + '</div>';
-  nav.innerHTML = _navHtml('\u2190 Fifth Decade', 'Amen');
+  footer.style.display = '';
+  footer.innerHTML = _navHtml('\u2190 Fifth Decade', 'Amen');
 }
 
 // ── HTML helpers ──

@@ -7,8 +7,10 @@
 //   refs.renderRef('bible', 'John 3:16')    → '<span class="ref-tap ...">John 3:16</span>'
 //   refs.renderRef('ccc', '613', 'see CCC') → custom label
 //
-// In HTML oncick handlers, calls window._refTap(type, val).
+// In HTML onclick handlers, calls window._refTap(type, val).
 // After rendering dynamic HTML, call refs.initRefTaps(container) to wire keyboard.
+
+var reader = require('./reader.js');
 
 function _esc(s) {
   return String(s)
@@ -42,11 +44,11 @@ function renderRef(type, val, label) {
 
 function handleRefTap(type, val) {
   if (type === 'ccc') {
-    if (window.openCCC) window.openCCC(String(val));
+    reader.readerOpen('ccc', { num: String(val) });
     return;
   }
   if (type === 'bible') {
-    if (window.openBible) window.openBible(String(val));
+    reader.readerOpen('bible', { ref: String(val) });
     return;
   }
 }

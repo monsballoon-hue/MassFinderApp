@@ -2,6 +2,7 @@
 // Deep cross-reference exploration: CCC <-> Baltimore <-> Scripture <-> Lectionary
 var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
+var reader = require('./reader.js');
 
 // ── State ──
 var _history = [];       // navigation stack: [{ type, id }]
@@ -50,6 +51,39 @@ function _getSectionContext(num) {
 // ── Topic chips for browse mode ──
 var _TOPICS = _CCC_SECTIONS.map(function(s) {
   return { label: s[2], start: s[0], end: s[1] };
+});
+
+// ── Reader module registration ──
+reader.registerModule('explore', {
+  getTitle: function() { return 'Explore'; },
+  getHeaderExtra: function() {
+    return '<div class="explore-trail" id="exploreTrail"></div>';
+  },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    var loadPhrase = _loadingPhrases[Math.floor(utils.getNow().getTime() / 86400000) % _loadingPhrases.length];
+    bodyEl.innerHTML = '<div class="explore-loading">' + utils.esc(loadPhrase) + '</div>';
+
+    _loadAll().then(function() {
+      _buildCCCVerseIndex();
+      var type = params.type;
+      var id = params.id;
+      if (type === 'landing' || (type === 'ccc' && id === '1' && !_history.length)) {
+        _current = null;
+        _history = [];
+        _renderLanding();
+      } else {
+        _history = [];
+        _current = { type: type, id: id };
+        _render();
+      }
+    });
+  },
+  onClose: function() {
+    // Reset state on close
+    _history = [];
+    _current = null;
+  }
 });
 
 // ── Data loading (all lazy, parallel where possible) ──
@@ -264,7 +298,6 @@ function _generateConnections(type, id) {
         connections.push({
           group: 'Cross-References',
           items: bibleRefs.slice(0, 20).map(function(r) {
-            // Support ranked tuple [ref, votes] and legacy string format
             var refStr = Array.isArray(r) ? r[0] : r;
             return { type: 'bible', label: refStr, ref: refStr };
           })
@@ -413,19 +446,13 @@ function _getPreview(raw) {
   return preview;
 }
 
-// ── BUG-01: Close Explore before opening external sheets ──
+// ── Open Bible/CCC from Explore — uses reader stack ──
 function _openBibleFromExplore(ref) {
-  closeExplore();
-  setTimeout(function() {
-    if (window.openBible) window.openBible(ref);
-  }, 100);
+  reader.readerOpen('bible', { ref: ref });
 }
 
 function _openCCCFromExplore(num) {
-  closeExplore();
-  setTimeout(function() {
-    if (window.openCCC) window.openCCC(String(num));
-  }, 100);
+  reader.readerOpen('ccc', { num: String(num) });
 }
 
 // ── Connection tab switching ──
@@ -437,18 +464,15 @@ function _switchConnTab(idx) {
   for (var i = 0; i < tabs.length; i++) {
     tabs[i].classList.toggle('explore-conn-tab--active', i === idx);
   }
-  for (var i = 0; i < panels.length; i++) {
-    panels[i].style.display = i === idx ? '' : 'none';
+  for (var j = 0; j < panels.length; j++) {
+    panels[j].style.display = j === idx ? '' : 'none';
   }
 }
 
-// ── Rendering ──
-function _render() {
-  var body = document.getElementById('exploreBody');
+// ── Update breadcrumb trail ──
+function _updateTrail() {
   var trail = document.getElementById('exploreTrail');
-  if (!body || !_current) return;
-
-  // Breadcrumb trail
+  if (!trail) return;
   var trailHtml = '';
   if (_history.length) {
     _history.forEach(function(h, i) {
@@ -457,12 +481,24 @@ function _render() {
       trailHtml += '<span class="explore-crumb-sep">\u203A</span>';
     });
   }
-  var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id
-    : _current.type === 'baltimore' ? 'Q' + _current.id
-    : _current.type === 'summa' ? (_current.label || _current.id)
-    : _current.id;
-  trailHtml += '<span class="explore-crumb explore-crumb--active">' + utils.esc(curLabel) + '</span>';
-  if (trail) trail.innerHTML = trailHtml;
+  if (_current) {
+    var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id
+      : _current.type === 'baltimore' ? 'Q' + _current.id
+      : _current.type === 'summa' ? (_current.label || _current.id)
+      : _current.id;
+    trailHtml += '<span class="explore-crumb explore-crumb--active">' + utils.esc(curLabel) + '</span>';
+  }
+  trail.innerHTML = trailHtml;
+  setTimeout(function() { trail.scrollLeft = trail.scrollWidth; }, 50);
+}
+
+// ── Rendering ──
+function _render() {
+  var body = document.getElementById('readerBody');
+  if (!body || !_current) return;
+
+  // Update breadcrumb trail
+  _updateTrail();
 
   // Primary content
   var html = '';
@@ -472,13 +508,11 @@ function _render() {
     var ctx = _getHierarchyPath(num) || _getSectionContext(num);
     var text = _cccParas && _cccParas[num];
 
-    // EX-R02: Preview card heading
     html += '<div class="explore-heading">';
     html += '<div class="explore-primary-num">\u00A7' + num + '</div>';
     if (ctx) html += '<div class="explore-context">' + utils.esc(ctx) + '</div>';
     html += '</div>';
 
-    // EX-R02: Show preview snippet instead of full text
     if (text) {
       var preview = _getPreview(text);
       html += '<div class="explore-primary-text explore-muted">' + utils.esc(preview) + '</div>';
@@ -486,14 +520,12 @@ function _render() {
       html += '<div class="explore-primary-text explore-muted">Full text not in local dataset.</div>';
     }
 
-    // EX-R02: "Read in Catechism" button — delegate full reading to CCC reader
     html += '<button class="explore-open-btn" onclick="_openCCCFromExplore(' + num + ')">Read in Catechism</button>';
   } else if (_current.type === 'bible') {
     html += '<div class="explore-primary-num">' + utils.esc(_current.id) + '</div>';
-    html += '<div class="explore-primary-text explore-muted">Tap to read full passage in the Bible sheet.</div>';
+    html += '<div class="explore-primary-text explore-muted">Tap to read full passage in the Bible reader.</div>';
     html += '<button class="explore-open-btn" onclick="_openBibleFromExplore(\'' + utils.esc(_current.id).replace(/'/g, '\\\'') + '\')">Open in Bible</button>';
   } else if (_current.type === 'summa') {
-    // BUG-03: Summa detail view
     var summaArt = null;
     if (_summaCache && _summaCache.articles) {
       for (var si = 0; si < _summaCache.articles.length; si++) {
@@ -517,7 +549,6 @@ function _render() {
       html += '<div class="explore-empty">Article not found.</div>';
     }
   } else if (_current.type === 'baltimore') {
-    // BQ-01: Baltimore detail view with prev/next navigation
     var bqa = null;
     var bqIdx = -1;
     if (_baltimore && _baltimore.questions) {
@@ -537,11 +568,9 @@ function _render() {
       html += '<div class="explore-baltimore-q">Q. ' + utils.esc(bqa.question) + '</div>';
       html += '<div class="explore-baltimore-a">A. ' + utils.esc(bqa.answer) + '</div>';
       html += '</div>';
-      // CCC link if mapping exists
       if (bqa.ccc) {
         html += '<button class="explore-open-btn" onclick="_openCCCFromExplore(' + bqa.ccc + ')">Read \u00A7' + bqa.ccc + ' in Catechism</button>';
       }
-      // Prev/next navigation
       var bqPrev = bqIdx > 0 ? _baltimore.questions[bqIdx - 1] : null;
       var bqNext = bqIdx < _baltimore.questions.length - 1 ? _baltimore.questions[bqIdx + 1] : null;
       if (bqPrev || bqNext) {
@@ -564,7 +593,7 @@ function _render() {
     }
   }
 
-  // P2-04: Connection tabs with counts and overflow
+  // Connection tabs with counts and overflow
   var connections = _generateConnections(_current.type, _current.id);
   if (connections.length) {
     html += '<div class="explore-conn" id="exploreConnTabs">';
@@ -602,16 +631,13 @@ function _render() {
     html += '<div class="explore-empty">No connections found for this reference.</div>';
   }
 
-  // P2-03: Prev/Next navigation footer
+  // Prev/Next navigation footer
   if (_current.type === 'ccc' || _current.type === 'summa') {
     html += _renderPageNav(_current.type, _current.id);
   }
 
   body.innerHTML = html;
   body.scrollTop = 0;
-  if (trail) {
-    setTimeout(function() { trail.scrollLeft = trail.scrollWidth; }, 50);
-  }
 }
 
 function _renderConnectionItem(item) {
@@ -670,7 +696,7 @@ var _loadingPhrases = [
 
 // ── Landing page renderer ──
 function _renderLanding() {
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '';
 
@@ -696,7 +722,7 @@ function _renderLanding() {
     + '<div id="exploreSearchResults" class="explore-search-results"></div>'
     + '</div>';
 
-  // P2-06: Five source cards in clean grid
+  // Five source cards in clean grid
   html += '<div class="explore-section-label">Content</div>';
   html += '<div class="explore-source-grid">';
 
@@ -807,7 +833,6 @@ function _exploreSearch(query) {
       html += '<div class="explore-search-group">';
       html += '<div class="explore-search-group-label">' + utils.esc(group.group) + '</div>';
       group.items.forEach(function(item) {
-        // BUG-04: Handle all item types in search results
         var onclick = '';
         if (item.type === 'ccc' && item.ref) {
           onclick = ' onclick="explorePivot(\'ccc\',\'' + utils.esc(item.ref) + '\')"';
@@ -831,11 +856,11 @@ function _exploreSearch(query) {
   }, 200);
 }
 
-// ── P2-05: CCC Hierarchy TOC ──
+// ── CCC Hierarchy TOC ──
 function _exploreCCCLanding() {
   _current = null;
   _history = [];
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Catechism (CCC)</span>';
 
@@ -850,7 +875,6 @@ function _exploreCCCLanding() {
 
       part.sections.forEach(function(section) {
         if (section.chapters.length === 0) {
-          // Flat section — just a tappable row
           html += '<div class="explore-item explore-item--tap" onclick="exploreTopic(' + section.range[0] + ',' + section.range[1] + ')">'
             + '<div class="explore-item-label">' + utils.esc(section.title) + '</div>'
             + '<div class="explore-item-context">\u00A7' + section.range[0] + '\u2013' + section.range[1] + '</div>'
@@ -890,20 +914,19 @@ function _exploreCCCLanding() {
     body.innerHTML = html;
     body.scrollTop = 0;
   } else {
-    // Fallback to section chips if hierarchy not loaded
-    var html = '';
+    var html2 = '';
     _TOPICS.forEach(function(t) {
-      html += '<div class="explore-item explore-item--tap" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
+      html2 += '<div class="explore-item explore-item--tap" onclick="exploreTopic(' + t.start + ',' + t.end + ')">'
         + '<div class="explore-item-label">' + utils.esc(t.label) + '</div>'
         + '<div class="explore-item-context">\u00A7' + t.start + '\u2013' + t.end + '</div>'
         + '</div>';
     });
-    body.innerHTML = html;
+    body.innerHTML = html2;
     body.scrollTop = 0;
   }
 }
 
-// ── REF-05: Bible genre grouping ──
+// ── Bible genre grouping ──
 var _OT_GENRES = [
   { label: 'Pentateuch', ids: ['genesis','exodus','leviticus','numbers','deuteronomy'] },
   { label: 'Historical', ids: ['joshua','judges','ruth','1samuel','2samuel','1kings','2kings','1chronicles','2chronicles','ezra','nehemiah','tobit','judith','esther','1maccabees','2maccabees'] },
@@ -934,11 +957,11 @@ function _renderGenreGroups(groups, bookList) {
   return html;
 }
 
-// ── Bible landing (EX-03 + REF-05) ──
+// ── Bible landing ──
 function _exploreBibleLanding() {
   _current = null;
   _history = [];
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Sacred Scripture</span>';
 
@@ -958,9 +981,8 @@ function _exploreBibleLanding() {
   });
 }
 
-// ── REF-03: Baltimore helpers ──
+// ── Baltimore helpers ──
 function _renderBaltimoreRow(qa) {
-  // BQ-01: Pivot to baltimore detail view instead of directly to CCC
   var onclick = ' onclick="explorePivot(\'baltimore\',\'' + qa.id + '\')"';
   return '<div class="explore-item explore-item--tap"' + onclick + '>'
     + '<div class="explore-item-label">Q' + qa.id + '. ' + utils.esc(qa.question) + '</div>'
@@ -994,11 +1016,11 @@ function _filterBaltimore(query) {
     : '<div class="explore-empty">No questions match \u201c' + utils.esc(query) + '\u201d</div>';
 }
 
-// ── Baltimore landing (EX-04 + REF-03) ──
+// ── Baltimore landing ──
 function _exploreBaltLanding() {
   _current = null;
   _history = [];
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Baltimore Catechism</span>';
 
@@ -1013,7 +1035,6 @@ function _exploreBaltLanding() {
 
   var html = '';
 
-  // Search within Baltimore
   html += '<div class="explore-search-wrap">'
     + '<div class="explore-search-bar">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'
@@ -1021,7 +1042,6 @@ function _exploreBaltLanding() {
     + '</div></div>';
 
   html += '<div id="baltimoreList">';
-  // Show first 15
   _baltimore.questions.slice(0, 15).forEach(function(qa) {
     html += _renderBaltimoreRow(qa);
   });
@@ -1034,11 +1054,11 @@ function _exploreBaltLanding() {
   body.scrollTop = 0;
 }
 
-// ── Summa landing (EX-12 + REF-04) ──
+// ── Summa landing ──
 function _exploreSummaLanding() {
   _current = null;
   _history = [];
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Summa Theologica</span>';
 
@@ -1067,7 +1087,6 @@ function _exploreSummaLanding() {
       + '<svg class="explore-summa-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:14px;height:14px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg>'
       + '</summary>'
       + '<div class="explore-summa-topic-body">';
-    // BUG-02: Make Summa items clickable
     topics[topic].forEach(function(art) {
       html += '<div class="explore-item explore-item--tap" onclick="explorePivot(\'summa\',\'' + utils.esc(art.id) + '\')">'
         + '<div class="explore-item-label">' + utils.esc(art.a) + '</div>'
@@ -1081,11 +1100,11 @@ function _exploreSummaLanding() {
   body.scrollTop = 0;
 }
 
-// ── Lectionary landing (EX-13 + BUG-05) ──
+// ── Lectionary landing ──
 function _exploreLectionaryLanding() {
   _current = null;
   _history = [];
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   var trail = document.getElementById('exploreTrail');
   if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">Lectionary</span>';
 
@@ -1108,7 +1127,6 @@ function _exploreLectionaryLanding() {
   if (_lectionary.sundays && _lectionary.sundays[yearChar]) {
     var days = Object.keys(_lectionary.sundays[yearChar]);
 
-    // Group by season prefix
     var seasons = {};
     var seasonOrder = [];
     days.forEach(function(dayKey) {
@@ -1125,7 +1143,6 @@ function _exploreLectionaryLanding() {
       seasons[prefix].forEach(function(dayKey) {
         var readings = _lectionary.sundays[yearChar][dayKey];
         var dayLabel = dayKey.replace(/_/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
-        // Strip season prefix for cleaner label
         var shortLabel = dayLabel;
         Object.keys(seasonLabels).forEach(function(p) {
           shortLabel = shortLabel.replace(new RegExp('^' + seasonLabels[p] + '\\s*', 'i'), '');
@@ -1183,32 +1200,14 @@ function _exploreLectionaryLanding() {
 
 // ── Navigation ──
 function openExplore(type, id) {
-  var overlay = document.getElementById('exploreOverlay');
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-  var loadPhrase = _loadingPhrases[Math.floor(utils.getNow().getTime() / 86400000) % _loadingPhrases.length];
-  document.getElementById('exploreBody').innerHTML = '<div class="explore-loading">' + utils.esc(loadPhrase) + '</div>';
-
-  _loadAll().then(function() {
-    _buildCCCVerseIndex();
-    if (type === 'landing' || (type === 'ccc' && id === '1' && !_history.length)) {
-      _current = null;
-      _history = [];
-      _renderLanding();
-    } else {
-      _history = [];
-      _current = { type: type, id: id };
-      _render();
-    }
-  });
+  reader.readerOpen('explore', { type: type || 'landing', id: id || null });
 }
 
 function closeExplore() {
-  document.getElementById('exploreOverlay').classList.remove('open');
-  document.body.style.overflow = '';
+  reader.readerClose();
 }
 
-// ── Home (EX-05) ──
+// ── Home ──
 function exploreHome() {
   _history = [];
   _current = null;
@@ -1227,13 +1226,13 @@ function explorePivot(type, id) {
       }
     }
   }
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   body.style.opacity = '0';
   setTimeout(function() {
     _render();
     body.style.opacity = '';
-    body.className = 'explore-body explore-body--entering';
-    setTimeout(function() { body.className = 'explore-body'; }, 300);
+    body.className = 'reader-body explore-body--entering';
+    setTimeout(function() { body.className = 'reader-body'; }, 300);
   }, 120);
 }
 
@@ -1241,13 +1240,13 @@ function explorePop(targetIdx) {
   if (targetIdx < 0 || targetIdx >= _history.length) return;
   _current = _history[targetIdx];
   _history = _history.slice(0, targetIdx);
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   body.style.opacity = '0';
   setTimeout(function() {
     _render();
     body.style.opacity = '';
-    body.className = 'explore-body explore-body--returning';
-    setTimeout(function() { body.className = 'explore-body'; }, 250);
+    body.className = 'reader-body explore-body--returning';
+    setTimeout(function() { body.className = 'reader-body'; }, 250);
   }, 120);
 }
 
@@ -1262,29 +1261,30 @@ function exploreBack() {
     return;
   }
   _current = _history.pop();
-  var body = document.getElementById('exploreBody');
+  var body = document.getElementById('readerBody');
   body.style.opacity = '0';
   setTimeout(function() {
     _render();
     body.style.opacity = '';
-    body.className = 'explore-body explore-body--returning';
-    setTimeout(function() { body.className = 'explore-body'; }, 250);
+    body.className = 'reader-body explore-body--returning';
+    setTimeout(function() { body.className = 'reader-body'; }, 250);
   }, 120);
 }
 
 // ── Topic browse ──
 function exploreTopic(startNum, endNum) {
-  var overlay = document.getElementById('exploreOverlay');
-  if (!overlay.classList.contains('open')) {
-    overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+  // Ensure Explore is open in the reader
+  var cur = reader.getCurrent();
+  if (!cur || cur.mode !== 'explore') {
+    reader.readerOpen('explore', { type: 'landing', id: null });
   }
+
   _history = [];
   _current = null;
-  document.getElementById('exploreBody').innerHTML = '<div class="explore-loading">Loading\u2026</div>';
 
+  // Need data loaded first
   _loadAll().then(function() {
-    var body = document.getElementById('exploreBody');
+    var body = document.getElementById('readerBody');
     var trail = document.getElementById('exploreTrail');
     var ctx = _getSectionContext(startNum);
     if (trail) trail.innerHTML = '<span class="explore-crumb" onclick="_renderLanding()">Home</span><span class="explore-crumb-sep">\u203A</span><span class="explore-crumb explore-crumb--active">' + utils.esc(ctx || 'Browse') + '</span>';

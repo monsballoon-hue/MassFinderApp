@@ -38,6 +38,7 @@ var installGuide = require('./install-guide.js');
 var bible = require('./bible.js');
 var explore = require('./explore.js');
 var settings = require('./settings.js');
+var reader = require('./reader.js');
 
 var state = data.state;
 
@@ -209,6 +210,8 @@ window.verifyOk = more.verifyOk;
 window.renderSaved = saved.renderSaved;
 window.clearMapFilter = function() { require('./map.js').clearMapFilter(); };
 window.closeMapPopup = map.closeMapPopup;
+window.readerBack = reader.readerBack;
+window.readerClose = reader.readerClose;
 window.openCCC = ccc.openCCC;
 window.closeCCC = ccc.closeCCC;
 window.openCCCAboveExam = ccc.openCCCAboveExam;
@@ -228,6 +231,7 @@ window.rosarySelectSet = rosary.rosarySelectSet;
 window.rosaryNext = rosary.rosaryNext;
 window.rosaryPrev = rosary.rosaryPrev;
 window.rosaryBeadTap = rosary.rosaryBeadTap;
+window.rosaryBeadReset = rosary.rosaryBeadReset;
 window.rosaryGoTo = rosary.rosaryGoTo;
 window.openExamination = examination.openExamination;
 window.closeExamination = examination.closeExamination;
@@ -255,6 +259,7 @@ window.explorePivot = explore.explorePivot;
 window.explorePop = explore.explorePop;
 window.exploreBack = explore.exploreBack;
 window.exploreTopic = explore.exploreTopic;
+window.exploreHome = explore.exploreHome;
 window.openSettings = settings.openSettings;
 window.closeSettings = settings.closeSettings;
 window.setSettingTheme = settings.setSettingTheme;
@@ -366,14 +371,8 @@ if (sC) {
 // ── Keyboard ──
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
-    if (document.getElementById('settingsOverlay').classList.contains('active')) settings.closeSettings();
-    else if (document.getElementById('exploreOverlay').classList.contains('open')) explore.closeExplore();
-    else if (document.getElementById('stationsOverlay').classList.contains('open')) stations.closeStations();
-    else if (document.getElementById('novenaOverlay').classList.contains('open')) novena.closeNovena();
-    else if (document.getElementById('rosaryOverlay').classList.contains('open')) rosary.closeRosary();
-    else if (document.getElementById('examOverlay').classList.contains('open')) examination.closeExamination();
-    else if (document.getElementById('bibleSheet').classList.contains('open')) bible.closeBible();
-    else if (document.getElementById('cccSheet').classList.contains('open')) ccc.closeCCC();
+    var readerEl = document.getElementById('readerOverlay');
+    if (readerEl && readerEl.classList.contains('open')) reader.readerClose();
     else if (document.getElementById('eventDetailPanel').classList.contains('open')) events.closeEventDetail();
     else if (document.getElementById('filtersOverlay').classList.contains('open')) ui.closeMoreFilters();
     else if (document.getElementById('detailPanel').classList.contains('open')) render.closeDetail();
@@ -773,6 +772,9 @@ async function init() {
         if (daysMissed >= 2 && daysMissed <= 14) _renderReturnCard(daysMissed);
       }
     }).catch(function() {});
+
+    // Initialize reader swipe-to-dismiss
+    reader._initSwipeDismiss();
 
     // Register service worker
     if ('serviceWorker' in navigator) {

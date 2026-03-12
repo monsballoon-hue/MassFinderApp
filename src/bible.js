@@ -1,11 +1,12 @@
 // src/bible.js — Scripture reader module (Reading Room)
-// Full-screen immersive Bible reader with full chapter rendering,
+// Universal reader module with full chapter rendering,
 // chapter/book pickers, sequential navigation, and collapsible cross-references.
 // Loads data/bible-drb/[book].json (lazy, per-book) + data/bible-xrefs.json (lazy, once).
 
+var reader = require('./reader.js');
+
 var _bookCache = {};    // { 'matthew': { book, abbr, testament, chapters, verses } }
 var _xrefs = null;      // bible-xrefs.json data (null until first load)
-var _history = [];      // navigation stack of refStr values
 var _currentRef = '';
 var _currentBook = null; // current book object from _BOOKS
 var _bookChapters = null; // { filename: chapterCount } from _index.json
@@ -225,6 +226,28 @@ function _toggleBookPicker() {
 window._toggleChapterPicker = _toggleChapterPicker;
 window._toggleBookPicker = _toggleBookPicker;
 
+// ── Reader module registration ──
+reader.registerModule('bible', {
+  getTitle: function(params) {
+    var parsed = _parseRef(params.ref);
+    if (!parsed) return 'Scripture';
+    return parsed.book.name;
+  },
+  render: function(params, bodyEl, footerEl) {
+    // Create wrapper divs inside bodyEl for _renderBibleContent to target
+    bodyEl.innerHTML = '<div id="bibleSheetBody"></div><div id="bibleSheetRelated"></div>';
+    footerEl.style.display = 'none';
+    _renderBibleContent(params.ref);
+  },
+  onClose: function() {
+    // Cancel speech on close
+    if (_speaking) {
+      speechSynthesis.cancel();
+      _speaking = false;
+    }
+  }
+});
+
 // ── Content rendering ──
 async function _renderBibleContent(refStr) {
   var bodyEl = document.getElementById('bibleSheetBody');
@@ -428,102 +451,42 @@ async function _renderBibleContent(refStr) {
     }
   }
 
-  // Explore button — close Bible first, then open Explore (z-index fix)
+  // Explore button — reader handles switching, no need to close first
   relHtml += '<button class="bible-explore-btn" onclick="_openExploreFromBible(\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
 
   relEl.innerHTML = relHtml;
 
-  // Scroll: target verse or top
+  // Scroll: target verse or top — use readerBody as scroll container
+  var scrollContainer = document.getElementById('readerBody');
   if (!isWholeChapter) {
     setTimeout(function() {
       var targetEl = document.getElementById('bv' + parsed.startVerse);
       if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 100);
-  } else {
-    document.getElementById('bibleSheetScroll').scrollTop = 0;
+  } else if (scrollContainer) {
+    scrollContainer.scrollTop = 0;
   }
 
   _currentRef = refStr;
 }
 
-// ── Crossfade navigation ──
-function _crossfadeTo(refStr) {
-  var scroll = document.getElementById('bibleSheetScroll');
-  scroll.style.opacity = '0';
-  setTimeout(function() {
-    _renderBibleContent(refStr).then(function() {
-      scroll.style.opacity = '1';
-    });
-  }, 150);
-}
-
-function bibleNavigate(refStr) {
-  _history.push(_currentRef);
-  document.getElementById('bibleBackBtn').style.display = 'inline-flex';
-  _crossfadeTo(refStr);
-}
-
-function bibleGoBack() {
-  if (!_history.length) return;
-  var prev = _history.pop();
-  if (!_history.length) document.getElementById('bibleBackBtn').style.display = 'none';
-  _crossfadeTo(prev);
-}
-
-// ── Swipe-to-dismiss ──
-function _initSwipeDismiss() {
-  var sheet = document.getElementById('bibleSheet');
-  if (!sheet || sheet._swipeInit) return;
-  sheet._swipeInit = true;
-  var startY = 0;
-  var scrollEl = sheet.querySelector('.bible-sheet-scroll');
-  sheet.addEventListener('touchstart', function(e) {
-    startY = e.touches[0].clientY;
-  }, { passive: true });
-  sheet.addEventListener('touchend', function(e) {
-    var dy = e.changedTouches[0].clientY - startY;
-    var atTop = !scrollEl || scrollEl.scrollTop <= 5;
-    if (dy > 72 && atTop) closeBible();
-  }, { passive: true });
-}
-
-// ── Open / Close ──
+// ── Open / Close — delegate to reader ──
 function openBible(refStr) {
   if (_speaking) { speechSynthesis.cancel(); _speaking = false; }
-  _history = [];
-  document.getElementById('bibleBackBtn').style.display = 'none';
-  document.getElementById('bibleOverlay').classList.add('open');
-  document.getElementById('bibleSheet').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  window._lastFocused = document.activeElement;
-  _initSwipeDismiss();
-
-  // RD-06: Two-beat entry — container opens, then content fades in
-  var scroll = document.getElementById('bibleSheetScroll');
-  scroll.style.opacity = '0';
-  scroll.style.transition = '';
-  _renderBibleContent(refStr);
-  setTimeout(function() {
-    scroll.style.transition = 'opacity 0.3s ease';
-    scroll.style.opacity = '1';
-  }, 200);
-
-  var ui = require('./ui.js');
-  ui.trapFocus(document.getElementById('bibleSheet'));
+  reader.readerOpen('bible', { ref: refStr });
 }
 
 function closeBible() {
-  if (_speaking) { speechSynthesis.cancel(); _speaking = false; }
-  document.getElementById('bibleOverlay').classList.remove('open');
-  document.getElementById('bibleSheet').classList.remove('open');
-  document.body.style.overflow = '';
-  // RD-06: Reset transition
-  var scroll = document.getElementById('bibleSheetScroll');
-  scroll.style.opacity = '';
-  scroll.style.transition = '';
-  var ui = require('./ui.js');
-  ui.releaseFocus();
-  if (window._lastFocused) window._lastFocused.focus();
+  reader.readerClose();
+}
+
+// ── Navigation — delegate to reader stack ──
+function bibleNavigate(refStr) {
+  reader.readerOpen('bible', { ref: refStr });
+}
+
+function bibleGoBack() {
+  reader.readerBack();
 }
 
 // ── UX-04: Read Aloud ──
@@ -551,12 +514,9 @@ function bibleReadAloud() {
   if (btn) btn.classList.add('speaking');
 }
 
-// Z-index fix: close Bible before opening Explore so it doesn't open behind the sheet
+// Open Explore from Bible — reader stack handles cross-module navigation
 function _openExploreFromBible(refStr) {
-  closeBible();
-  setTimeout(function() {
-    if (window.openExplore) window.openExplore('bible', refStr);
-  }, 150);
+  reader.readerOpen('explore', { type: 'bible', id: refStr });
 }
 window._openExploreFromBible = _openExploreFromBible;
 

@@ -1,6 +1,7 @@
 // src/stations.js — Stations of the Cross (MOD-04)
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
+var reader = require('./reader.js');
 
 // ── State ──
 var _data = null;
@@ -10,6 +11,30 @@ var _wakeLock = null;
 var _touchStartX = 0;
 var _touchStartY = 0;
 var _swipeHintShown = false;
+
+// ── Reader module registration ──
+reader.registerModule('stations', {
+  getTitle: function() { return 'Stations of the Cross'; },
+  render: function(params, bodyEl, footerEl) {
+    bodyEl.innerHTML = '<div class="stations-loading"><div class="stations-loading-spinner"></div><p>Loading prayers\u2026</p></div>';
+    footerEl.style.display = 'none';
+    footerEl.innerHTML = '';
+
+    _load().then(function() {
+      _screen = 'intro';
+      _station = 0;
+      _render();
+      _acquireWakeLock();
+      document.addEventListener('visibilitychange', _handleVisibility);
+      _initSwipe();
+    });
+  },
+  onClose: function() {
+    _releaseWakeLock();
+    document.removeEventListener('visibilitychange', _handleVisibility);
+    _teardownSwipe();
+  }
+});
 
 // ── Load prayer data (lazy) ──
 function _load() {
@@ -32,7 +57,8 @@ function _releaseWakeLock() {
 }
 
 function _handleVisibility() {
-  if (document.visibilityState === 'visible' && document.getElementById('stationsOverlay').classList.contains('open')) {
+  var cur = reader.getCurrent();
+  if (document.visibilityState === 'visible' && cur && cur.mode === 'stations') {
     _acquireWakeLock();
   }
 }
@@ -45,30 +71,12 @@ function _fmtPrayer(text) {
 
 // ── Open Stations ──
 function openStations() {
-  var overlay = document.getElementById('stationsOverlay');
-  document.getElementById('stationsBody').innerHTML = '<div class="stations-loading"><div class="stations-loading-spinner"></div><p>Loading prayers\u2026</p></div>';
-  document.getElementById('stationsProgress').innerHTML = '';
-  document.getElementById('stationsNav').innerHTML = '';
-  overlay.classList.add('open');
-  document.body.style.overflow = 'hidden';
-
-  _load().then(function() {
-    _screen = 'intro';
-    _station = 0;
-    _render();
-    _acquireWakeLock();
-    document.addEventListener('visibilitychange', _handleVisibility);
-    _initSwipe();
-  });
+  reader.readerOpen('stations', {});
 }
 
 // ── Close Stations ──
 function closeStations() {
-  document.getElementById('stationsOverlay').classList.remove('open');
-  document.body.style.overflow = '';
-  _releaseWakeLock();
-  document.removeEventListener('visibilitychange', _handleVisibility);
-  _teardownSwipe();
+  reader.readerClose();
 }
 
 // ── Navigate: Next ──
@@ -120,13 +128,13 @@ function stationsGoTo(idx) {
 
 // ── Scroll to top of body ──
 function _scrollTop() {
-  var b = document.getElementById('stationsBody');
+  var b = document.getElementById('readerBody');
   if (b) b.scrollTop = 0;
 }
 
 // ── Crossfade transition ──
 function _transitionTo(renderFn) {
-  var body = document.getElementById('stationsBody');
+  var body = document.getElementById('readerBody');
   if (!body) { renderFn(); return; }
   body.style.transition = 'opacity 150ms ease';
   body.style.opacity = '0';
@@ -140,14 +148,14 @@ function _transitionTo(renderFn) {
 
 // ── Swipe gesture for station navigation ──
 function _initSwipe() {
-  var body = document.getElementById('stationsBody');
+  var body = document.getElementById('readerBody');
   if (!body) return;
   body.addEventListener('touchstart', _onTouchStart, { passive: true });
   body.addEventListener('touchend', _onTouchEnd, { passive: true });
 }
 
 function _teardownSwipe() {
-  var body = document.getElementById('stationsBody');
+  var body = document.getElementById('readerBody');
   if (!body) return;
   body.removeEventListener('touchstart', _onTouchStart);
   body.removeEventListener('touchend', _onTouchEnd);
@@ -169,41 +177,40 @@ function _onTouchEnd(e) {
 
 // ── Render dispatcher ──
 function _render() {
-  var title = document.getElementById('stationsTitle');
-  var body = document.getElementById('stationsBody');
-  var progress = document.getElementById('stationsProgress');
-  var nav = document.getElementById('stationsNav');
-  if (_screen === 'intro') _renderIntro(title, body, progress, nav);
-  else if (_screen === 'station') _renderStation(title, body, progress, nav);
-  else if (_screen === 'closing') _renderClosing(title, body, progress, nav);
+  var title = document.getElementById('readerTitle');
+  var body = document.getElementById('readerBody');
+  var footer = document.getElementById('readerFooter');
+  footer.style.display = '';
+  if (_screen === 'intro') _renderIntro(title, body, footer);
+  else if (_screen === 'station') _renderStation(title, body, footer);
+  else if (_screen === 'closing') _renderClosing(title, body, footer);
 }
 
 // ── Render: Intro screen ──
-function _renderIntro(title, body, progress, nav) {
+function _renderIntro(title, body, footer) {
   title.textContent = 'Stations of the Cross';
-  progress.innerHTML = '';
   body.innerHTML = '<div class="stations-intro">'
     + '<div class="stations-intro-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
     + '<h3 class="stations-intro-title">The Way of the Cross</h3>'
     + '<p class="stations-intro-text">Walk with Jesus on His journey to Calvary through 14 stations of prayer and meditation.</p>'
     + '<p class="stations-intro-instruction">At each station, we pause to reflect on Christ\u2019s suffering and offer our prayers.</p>'
     + '</div>';
-  nav.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button>';
+  footer.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button>';
 }
 
 // ── Render: Station prayer screen ──
-function _renderStation(title, body, progress, nav) {
+function _renderStation(title, body, footer) {
   var refs = require('./refs.js');
   var s = _data.stations[_station];
   title.textContent = 'Station ' + s.id + ' of 14';
-  progress.innerHTML = _dotsHtml(_station);
 
   var scriptureHtml = '';
   if (s.scripture) {
     scriptureHtml = '<div class="stations-scripture">' + refs.renderRef('bible', s.scripture) + '</div>';
   }
 
-  body.innerHTML = '<div class="stations-prayer">'
+  body.innerHTML = _dotsHtml(_station)
+    + '<div class="stations-prayer">'
     + '<div class="stations-num">Station ' + s.id + '</div>'
     + '<h3 class="stations-station-title">' + utils.esc(s.title) + '</h3>'
     + scriptureHtml
@@ -229,7 +236,7 @@ function _renderStation(title, body, progress, nav) {
 
   var prevLabel = _station === 0 ? '\u2190 Introduction' : '\u2190 Station ' + _station;
   var nextLabel = _station < 13 ? 'Station ' + (s.id + 1) + ' \u2192' : 'Closing \u2192';
-  nav.innerHTML = _navHtml(prevLabel, nextLabel);
+  footer.innerHTML = _navHtml(prevLabel, nextLabel);
 
   // Swipe hint (show once)
   if (!_swipeHintShown) {
@@ -243,27 +250,28 @@ function _renderStation(title, body, progress, nav) {
 }
 
 // ── Render: Closing prayers ──
-function _renderClosing(title, body, progress, nav) {
+function _renderClosing(title, body, footer) {
   title.textContent = 'Stations of the Cross';
-  progress.innerHTML = _dotsHtml(14); // all complete
   var p = _data.prayers;
-  body.innerHTML = '<div class="stations-closing-prayers">'
+  body.innerHTML = _dotsHtml(14) // all complete
+    + '<div class="stations-closing-prayers">'
     + '<h3 class="stations-section-title">Closing Prayer</h3>'
     + _prayerBlock('Act of Contrition', p.act_of_contrition)
     + _prayerBlock('Sign of the Cross', p.sign_of_cross)
     + '</div>';
-  nav.innerHTML = _navHtml('\u2190 Station 14', 'Amen');
+  footer.innerHTML = _navHtml('\u2190 Station 14', 'Amen');
 }
 
 // ── Render: Completion screen ──
 function _renderComplete() {
-  var bodyEl = document.getElementById('stationsBody');
-  var navEl = document.getElementById('stationsNav');
-  var titleEl = document.getElementById('stationsTitle');
-  var progressEl = document.getElementById('stationsProgress');
+  var bodyEl = document.getElementById('readerBody');
+  var footerEl = document.getElementById('readerFooter');
+  var titleEl = document.getElementById('readerTitle');
   if (titleEl) titleEl.textContent = '';
-  if (progressEl) progressEl.innerHTML = '';
-  if (navEl) navEl.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="closeStations()">Amen</button>';
+  if (footerEl) {
+    footerEl.style.display = '';
+    footerEl.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="closeStations()">Amen</button>';
+  }
   if (bodyEl) {
     bodyEl.innerHTML = '<div class="stations-complete-screen">'
       + '<svg class="stations-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'

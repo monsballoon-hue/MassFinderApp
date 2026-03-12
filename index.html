@@ -176,124 +176,20 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span><span id="moreTabBadge" class="tab-more-badge" aria-hidden="true"></span></button>
 </div></nav>
 
-<!-- CCC Reader (Reading Room) -->
-<div id="cccOverlay" class="ccc-overlay" onclick="closeCCC()"></div>
-<div id="cccSheet" class="ccc-sheet" role="dialog" aria-modal="true" aria-label="Catechism of the Catholic Church">
-  <div class="ccc-header">
-    <button class="ccc-back-btn" id="cccBackBtn" onclick="cccGoBack()" style="display:none">&#8592; Back</button>
-    <div class="ccc-sheet-title">Catechism of the Catholic Church</div>
-    <button class="ccc-close-btn" onclick="closeCCC()" aria-label="Close">
+<!-- Universal Reader — one container for all content overlays -->
+<div id="readerOverlay" class="reader-overlay" role="dialog" aria-modal="true">
+  <div class="reader-header" id="readerHeader">
+    <button class="reader-back-btn" id="readerBackBtn" onclick="readerBack()" aria-label="Back" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="reader-title" id="readerTitle"></div>
+    <button class="reader-close-btn" onclick="readerClose()" aria-label="Close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
-  <div class="ccc-sheet-scroll" id="cccSheetScroll">
-    <div class="ccc-search-wrap" id="cccSearchWrap">
-      <input type="search" class="ccc-search-input" id="cccSearchInput" placeholder="Search the Catechism&#x2026;" autocomplete="off">
-    </div>
-    <div id="cccSearchResults" class="ccc-search-results" style="display:none"></div>
-    <div id="cccSheetBody"></div>
-    <div id="cccSheetRelated"></div>
-  </div>
-</div>
-
-<!-- Bible Reader (Reading Room) -->
-<div id="bibleOverlay" class="bible-overlay" onclick="closeBible()"></div>
-<div id="bibleSheet" class="bible-sheet" role="dialog" aria-modal="true" aria-label="Sacred Scripture">
-  <div class="bible-header">
-    <button class="bible-back-btn" id="bibleBackBtn" onclick="bibleGoBack()" style="display:none">&#8592; Back</button>
-    <div class="bible-sheet-title">Sacred Scripture</div>
-    <button class="bible-close-btn" onclick="closeBible()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="bible-sheet-scroll" id="bibleSheetScroll">
-    <div id="bibleSheetBody"></div>
-    <div id="bibleSheetRelated"></div>
-  </div>
-</div>
-
-<!-- Explore Overlay (OW-21) -->
-<div id="exploreOverlay" class="explore-overlay" role="dialog" aria-modal="true" aria-label="Explore">
-  <div class="explore-header">
-    <button class="explore-back-btn" onclick="exploreBack()" aria-label="Back">&#8592;</button>
-    <button class="explore-home-btn" onclick="exploreHome()" aria-label="Home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></button>
-    <div class="explore-title">Explore</div>
-    <button class="explore-close-btn" onclick="closeExplore()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="explore-trail" id="exploreTrail"></div>
-  <div class="explore-body" id="exploreBody"></div>
-</div>
-
-<!-- Examination of Conscience Overlay -->
-<div id="examOverlay" class="exam-overlay" role="dialog" aria-modal="true" aria-label="Examination of Conscience">
-  <div class="exam-header">
-    <button class="exam-close-btn" onclick="closeExamination()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="exam-title">Examination of Conscience</div>
-    <div class="exam-close-btn" style="visibility:hidden" aria-hidden="true"></div>
-  </div>
-  <div class="exam-progress-track"><div class="exam-progress-bar" id="examProgress"></div></div>
-  <div class="exam-body" id="examBody"></div>
-  <div class="exam-footer" id="examFooter">
-    <span class="exam-footer-count" id="examCheckedCount">0 items noted</span>
-    <button class="exam-footer-btn" onclick="examScrollToSummary()">Review</button>
-  </div>
-</div>
-
-<!-- Rosary Overlay -->
-<div id="rosaryOverlay" class="rosary-overlay" role="dialog" aria-modal="true" aria-label="Guided Rosary">
-  <div class="rosary-header">
-    <button class="rosary-close-btn" onclick="closeRosary()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="rosary-title" id="rosaryTitle">The Holy Rosary</div>
-    <div class="rosary-close-btn" style="visibility:hidden" aria-hidden="true"></div>
-  </div>
-  <div class="rosary-progress" id="rosaryProgress"></div>
-  <div class="rosary-body" id="rosaryBody"></div>
-  <div class="rosary-nav" id="rosaryNav"></div>
-</div>
-
-<!-- Stations of the Cross Overlay -->
-<div id="stationsOverlay" class="stations-overlay" role="dialog" aria-modal="true" aria-label="Stations of the Cross">
-  <div class="stations-header">
-    <button class="stations-close-btn" onclick="closeStations()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="stations-title" id="stationsTitle">Stations of the Cross</div>
-    <div class="stations-close-btn" style="visibility:hidden" aria-hidden="true"></div>
-  </div>
-  <div class="stations-progress" id="stationsProgress"></div>
-  <div class="stations-body" id="stationsBody"></div>
-  <div class="stations-nav" id="stationsNav"></div>
-</div>
-
-<!-- Novena Tracker Overlay -->
-<div id="novenaOverlay" class="novena-overlay" role="dialog" aria-modal="true" aria-label="Novena">
-  <div class="novena-header">
-    <button class="novena-close-btn" onclick="closeNovena()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="novena-title" id="novenaTitle">Novenas</div>
-    <div class="novena-close-btn" style="visibility:hidden" aria-hidden="true"></div>
-  </div>
-  <div class="novena-body" id="novenaBody"></div>
-  <div class="novena-nav" id="novenaNav"></div>
-</div>
-
-<!-- Settings Overlay -->
-<div id="settingsOverlay" class="settings-overlay" role="dialog" aria-modal="true" aria-label="Settings" style="display:none">
-  <div class="settings-header">
-    <button class="settings-close-btn" onclick="closeSettings()" aria-label="Close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-    <div class="settings-title">Settings</div>
-    <div class="settings-close-btn" style="visibility:hidden" aria-hidden="true"></div>
-  </div>
-  <div class="settings-body" id="settingsBody"></div>
+  <div class="reader-header-extra" id="readerHeaderExtra" style="display:none"></div>
+  <div class="reader-body" id="readerBody"></div>
+  <div class="reader-footer" id="readerFooter" style="display:none"></div>
 </div>
 
 <!-- Toast -->
