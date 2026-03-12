@@ -208,14 +208,20 @@ function _renderPrayer(title, body, footer) {
   var isCompleted = tracking && (tracking.completedDays || []).indexOf(dayNum) >= 0;
   title.textContent = utils.esc(_active.title);
 
-  // Day dots (9 total)
+  // Day dots — completed days and current day are tappable; future days are locked
+  var nextUnlocked = _computeCurrentDay(tracking); // 0-indexed index of next day to pray
   var dotsHtml = '<div class="novena-dots">';
   for (var i = 0; i < 9; i++) {
     var cls = 'novena-dot';
     var done = tracking && (tracking.completedDays || []).indexOf(i + 1) >= 0;
     if (done) cls += ' done';
     if (i === _currentDay) cls += ' active';
-    dotsHtml += '<button class="' + cls + '" onclick="novenaGoToDay(' + i + ')" aria-label="Day ' + (i + 1) + '"></button>';
+    if (i > nextUnlocked) {
+      cls += ' locked';
+      dotsHtml += '<span class="' + cls + '" aria-label="Day ' + (i + 1) + ' locked"></span>';
+    } else {
+      dotsHtml += '<button class="' + cls + '" onclick="novenaGoToDay(' + i + ')" aria-label="Day ' + (i + 1) + '"></button>';
+    }
   }
   dotsHtml += '</div>';
 
@@ -270,6 +276,8 @@ function novenaMarkDay() {
   // One day per calendar day
   if (_alreadyPrayedToday(tracking)) { _render(); return; }
   var dayNum = _currentDay + 1;
+  // Sequential only — can only mark the next day in order
+  if (dayNum !== (tracking.completedDays || []).length + 1) { _render(); return; }
   if (!tracking.completedDays) tracking.completedDays = [];
   if (tracking.completedDays.indexOf(dayNum) < 0) {
     tracking.completedDays.push(dayNum);
