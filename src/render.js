@@ -230,7 +230,7 @@ function renderCards() {
   // FT-05: First-use tip card — after first card for new visitors
   if (!localStorage.getItem('mf-welcome-dismissed') && cards.length >= 2) {
     var tipCard = '<div class="first-use-tip" id="firstUseTip">'
-      + '<span>Tap \u2661 on any church to save it \u2014 your saved churches appear on the Saved tab with today\u2019s schedule.</span>'
+      + '<span>Tap \u2661 to favorite a church \u2014 build your own custom schedule and track Mass times, events, and happenings at your parishes.</span>'
       + '<button onclick="this.parentElement.remove();localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
       + '</div>';
     cards.splice(1, 0, tipCard);
@@ -628,9 +628,8 @@ function openDetail(id, trapFocus, releaseFocus) {
   // DC-12: Footer with QR + Email Signup buttons
   var footer = '<div class="detail-footer-row">';
   if (footerParts.length) footer += '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>';
-  footer += '<div class="detail-footer-actions">'
-    + '<button class="detail-footer-btn" onclick="showQR(\'' + c.id + '\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>QR Code</button>'
-    + '</div></div>';
+  // QR Code button disabled for v1
+  footer += '</div>';
 
   // D-01: Address below town; D-13: State name map
   var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')

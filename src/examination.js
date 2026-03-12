@@ -22,11 +22,9 @@ reader.registerModule('examination', {
     _expanded = {};
     _checked = {};
 
-    footerEl.style.display = '';
-    footerEl.innerHTML = '<div class="exam-footer-bar" id="examFooter">'
-      + '<span id="examCheckedCount">No items noted yet</span>'
-      + '<button class="exam-footer-btn" onclick="examScrollToSummary()">View Summary</button>'
-      + '</div>';
+    // Footer hidden until examination begins
+    footerEl.style.display = 'none';
+    footerEl.innerHTML = '';
 
     bodyEl.innerHTML = '<div class="exam-loading" style="text-align:center;padding:var(--space-8);color:var(--color-text-tertiary)">Preparing examination\u2026</div>';
 
@@ -34,9 +32,8 @@ reader.registerModule('examination', {
       _expanded['cmd-1'] = true;
       _haptic();
 
-      // Show opening prayer as a centering moment
-      bodyEl.innerHTML = '<div class="exam-progress-bar" id="examProgress"></div>'
-        + '<div class="exam-opening">'
+      // Show opening prayer as a centering moment — no progress bar, no scroll
+      bodyEl.innerHTML = '<div class="exam-opening">'
         + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
         + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
         + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
@@ -46,6 +43,19 @@ reader.registerModule('examination', {
       window._examBeginReview = function() {
         delete window._examBeginReview;
         _haptic();
+        // Now show the footer bar
+        var ft = document.getElementById('readerFooter');
+        if (ft) {
+          ft.style.display = '';
+          ft.innerHTML = '<div class="exam-footer" id="examFooter">'
+            + '<span id="examCheckedCount">No items noted yet</span>'
+            + '<button class="exam-footer-btn" onclick="examScrollToSummary()">View Summary</button>'
+            + '</div>';
+          setTimeout(function() {
+            var bar = document.getElementById('examFooter');
+            if (bar) bar.classList.add('visible');
+          }, 50);
+        }
         _renderExamination(d);
       };
     });
@@ -131,10 +141,10 @@ function _toggleInlineCCC(span, numStr) {
       }
     });
     html += '</div>';
-    // "See full range" link — opens CCC in reader (pushes exam to stack)
+    // v1 prod gate: full CCC reader disabled — show "coming soon" instead
     var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
     if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
+      html += '<p class="exam-ccc-card-more" style="opacity:0.5;cursor:default;pointer-events:none">Full CCC text coming soon</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);
@@ -336,7 +346,7 @@ function examScrollToSummary() {
 // ── Full render ──
 function _renderExamination(d) {
   var body = document.getElementById('readerBody');
-  var html = '<div class="exam-progress-bar" id="examProgress"></div>';
+  var html = '<div class="exam-progress-track"><div class="exam-progress-bar" id="examProgress"></div></div>';
 
   // How to Confess guide
   html += _renderHowTo(d.how_to_confess);
@@ -536,8 +546,6 @@ function _showExitConfirm(count) {
 function examMarkConfession() {
   localStorage.setItem('mf-last-confession', String(Date.now()));
   _haptic();
-  var render = require('./render.js');
-  render.showToast('Recorded. God\u2019s mercy is with you.');
   var status = document.querySelector('.exam-tracker-status');
   if (status) {
     status.textContent = 'Last Confession: Today';
