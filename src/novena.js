@@ -109,12 +109,17 @@ function _getActiveList() {
 }
 
 function _computeCurrentDay(tracking) {
+  // Current day = next unfinished day (based on completed count, not calendar diff)
   if (!tracking) return 0;
-  var start = new Date(tracking.startDate + 'T00:00:00');
-  var now = new Date();
-  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  var diff = Math.floor((today - start) / 86400000);
-  return Math.min(diff, 8);
+  return Math.min((tracking.completedDays || []).length, 8);
+}
+
+function _todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function _alreadyPrayedToday(tracking) {
+  return tracking && tracking.lastCompletedDate === _todayStr();
 }
 
 // ── Open Novena ──
@@ -187,6 +192,7 @@ function _renderSelect(title, body, footer) {
     html += '<span class="novena-list-chevron">\u203A</span>';
     html += '</button>';
   });
+  html += '<div class="novena-more-note">More novenas are coming soon. <a href="mailto:massfinderapp@gmail.com?subject=Novena%20Request" class="novena-more-link">Request one</a></div>';
   html += '</div>';
   body.innerHTML = html;
 }
@@ -224,10 +230,16 @@ function _renderPrayer(title, body, footer) {
     + (dayData.closing_prayer ? '<div class="novena-day-closing"><p>' + _fmtPrayer(dayData.closing_prayer) + '</p></div>' : '')
     + '</div>';
 
-  var markBtn = isCompleted
-    ? '<span class="novena-completed-badge">\u2713 Day ' + dayNum + ' Complete</span>'
-      + '<button class="novena-done-btn" onclick="closeNovena()">Done</button>'
-    : '<button class="novena-mark-btn" onclick="novenaMarkDay()">Complete Day ' + dayNum + '</button>';
+  var alreadyToday = _alreadyPrayedToday(tracking) && !isCompleted;
+  var markBtn;
+  if (isCompleted) {
+    markBtn = '<span class="novena-completed-badge">\u2713 Day ' + dayNum + ' Complete</span>'
+      + '<button class="novena-done-btn" onclick="closeNovena()">Done</button>';
+  } else if (alreadyToday) {
+    markBtn = '<span class="novena-completed-badge" style="background:var(--color-accent-pale);color:var(--color-accent-text)">\u231B Come back tomorrow for Day ' + dayNum + '</span>';
+  } else {
+    markBtn = '<button class="novena-mark-btn" onclick="novenaMarkDay()">Complete Day ' + dayNum + '</button>';
+  }
 
   footer.style.display = '';
   footer.innerHTML = '<div class="novena-nav-inner">' + markBtn + '</div>';
@@ -252,10 +264,13 @@ function _renderComplete(title, body, footer) {
 function novenaMarkDay() {
   var tracking = _getTracking(_activeId);
   if (!tracking) return;
+  // One day per calendar day
+  if (_alreadyPrayedToday(tracking)) { _render(); return; }
   var dayNum = _currentDay + 1;
   if (!tracking.completedDays) tracking.completedDays = [];
   if (tracking.completedDays.indexOf(dayNum) < 0) {
     tracking.completedDays.push(dayNum);
+    tracking.lastCompletedDate = _todayStr();
     _setTracking(_activeId, tracking);
   }
   _haptic.confirm();
