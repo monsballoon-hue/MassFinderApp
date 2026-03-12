@@ -2635,6 +2635,282 @@ html[data-theme="dark"] .settings-row { border-color:var(--color-border); }
   }
 }
 
+/* ── STUDY TOOLS ── */
+
+/* Action bar — appears below tapped content */
+.study-action-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 5;
+  display: flex;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  margin-top: var(--space-1);
+  animation: studyBarIn 0.15s ease;
+}
+@keyframes studyBarIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.study-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: none;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 36px;
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--transition-fast);
+}
+.study-action-btn:active {
+  background: var(--color-surface-hover);
+  transform: scale(0.96);
+}
+.study-action-btn svg { flex-shrink: 0; }
+
+/* Note input (replaces action buttons when "Note" is tapped) */
+.study-note-input-wrap { width: 100%; }
+.study-note-input {
+  width: 100%;
+  padding: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  resize: vertical;
+  min-height: 60px;
+  outline: none;
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+}
+.study-note-input:focus { border-color: var(--color-primary); }
+.study-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+.study-note-cancel {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.study-note-save {
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: white;
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 32px;
+}
+.study-note-save:active { opacity: 0.8; }
+
+/* Highlight colors */
+.study-hl { transition: background 0.2s ease; }
+.study-hl--gold { background: rgba(184, 150, 63, 0.12); }
+.study-hl--blue { background: rgba(52, 120, 198, 0.10); }
+.study-hl--green { background: rgba(74, 124, 89, 0.10); }
+.study-hl--purple { background: rgba(124, 58, 237, 0.10); }
+
+/* Note indicator — small dot */
+.study-has-note { position: relative; }
+.study-has-note::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent);
+}
+
+/* Bookmark indicator — subtle left accent */
+.study-bookmarked {
+  border-left: 2px solid var(--color-accent) !important;
+  padding-left: var(--space-2);
+}
+
+/* ── STUDY DASHBOARD ── */
+.study-dashboard { padding: 0 var(--space-4); }
+.study-section { margin-top: var(--space-4); }
+.study-section-label {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-3);
+}
+.study-continue-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+}
+.study-continue-item:active {
+  transform: scale(0.98);
+  background: var(--color-surface-hover);
+}
+.study-continue-title {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
+}
+.study-continue-detail {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+}
+
+/* Bookmark chips */
+.study-bookmarks-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.study-bookmark-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  min-height: 32px;
+  -webkit-tap-highlight-color: transparent;
+}
+.study-bookmark-chip:active { background: var(--color-surface-hover); }
+.study-bookmark-source {
+  color: var(--color-text-tertiary);
+  font-weight: var(--weight-medium);
+}
+.study-bookmark-addr {
+  color: var(--color-primary);
+  font-weight: var(--weight-semibold);
+}
+
+/* Note cards */
+.study-note-card {
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+.study-note-card--tap { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.study-note-card--tap:active { background: var(--color-surface-hover); }
+.study-note-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: var(--space-1);
+}
+.study-note-card-source {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-primary);
+}
+.study-note-card-time {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+}
+.study-note-card-text {
+  font-family: var(--font-prayer);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* ── READ ALOUD ── */
+.reader-listen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  background: none;
+  border: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--transition-fast);
+  min-height: 36px;
+  margin-top: var(--space-4);
+}
+.reader-listen-btn:active {
+  background: var(--color-surface-hover);
+  transform: scale(0.96);
+}
+.reader-listen-btn.is-playing {
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  background: rgba(52,120,198, 0.08);
+}
+
+/* Settings privacy note */
+.settings-privacy-note {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  font-style: italic;
+  padding: var(--space-2) var(--space-4);
+  line-height: 1.5;
+}
+
+/* ── STUDY TOOLS DARK MODE ── */
+html[data-theme="dark"] .study-action-bar {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+html[data-theme="dark"] .study-action-btn {
+  border-color: var(--color-border);
+}
+html[data-theme="dark"] .study-note-input {
+  background: var(--color-bg);
+  border-color: var(--color-border);
+  color: var(--color-text-primary);
+}
+html[data-theme="dark"] .study-hl--gold { background: rgba(212, 168, 75, 0.15); }
+html[data-theme="dark"] .study-hl--blue { background: rgba(52, 120, 198, 0.15); }
+html[data-theme="dark"] .study-hl--green { background: rgba(74, 124, 89, 0.15); }
+html[data-theme="dark"] .study-hl--purple { background: rgba(124, 58, 237, 0.15); }
+html[data-theme="dark"] .reader-listen-btn {
+  border-color: var(--color-border);
+}
+
 /* ── Prayer overlay backgrounds on desktop (override gradients to card-like) ── */
 @media (min-width:768px) {
   .rosary-overlay { background:rgba(26,30,38,0.35); }

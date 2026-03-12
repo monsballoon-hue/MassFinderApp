@@ -6,7 +6,11 @@ var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
 var reader = require('./reader.js');
 var createFuzzySearch = require('@nozbe/microfuzz').default;
+var studyDb = require('./study-db.js');
+var studyUi = require('./study-ui.js');
+var tts = require('./tts.js');
 var _cccData = null, _cccXrefs = null, _cccCurrentNum = '';
+var _cccPlainText = '';
 var _cccSearchIndex = null, _cccSearchTimer = null;
 var _cccFootnotes = null;
 
@@ -154,13 +158,29 @@ async function _renderCCCContent(numStr) {
   bodyHtml += '</div>';
 
   // Paragraph heading + content
+  var plainParts = [];
   ids.forEach(function(id, idx) {
     var text = _cccData && _cccData[id];
-    var numEl = '<div class="ccc-para-num' + (idx === 0 ? ' ccc-para-num--first' : '') + '">&#167;&nbsp;' + id + '</div>';
+    var numEl = '<div class="ccc-para-num annotatable' + (idx === 0 ? ' ccc-para-num--first' : '') + '" data-source="ccc" data-address="' + id + '">&#167;&nbsp;' + id + '</div>';
     bodyHtml += numEl;
-    if (text) { bodyHtml += _renderParaText(text); }
+    if (text) {
+      bodyHtml += _renderParaText(text);
+      // Collect plain text for TTS — strip markdown/formatting
+      plainParts.push(text.replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '').replace(/\n/g, ' '));
+    }
     else { bodyHtml += '<p class="ccc-para-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>'; }
   });
+  _cccPlainText = plainParts.join(' ').trim();
+
+  // ST-18: Listen button
+  if (tts.isSupported()) {
+    bodyHtml += '<button class="reader-listen-btn" id="cccListenBtn" onclick="cccReadAloud()">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">'
+      + '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>'
+      + '<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+      + '</svg>'
+      + ' <span id="cccListenLabel">Listen</span></button>';
+  }
 
   // Related paragraphs (forward + reverse refs from primary id)
   var relatedIds = [], seen = {};
@@ -261,6 +281,25 @@ async function _renderCCCContent(numStr) {
   if (readerBody) readerBody.scrollTop = 0;
   _cccCurrentNum = numStr;
 
+  // ST-11: Init study layer and apply existing annotations
+  studyUi.initStudyLayer(readerBody);
+  var cccAddresses = ids.map(function(id) { return String(id); });
+  studyUi.applyAnnotations('ccc', readerBody, cccAddresses);
+
+  // ST-05: Auto-save reading progress on scroll
+  var _cccProgressTimer = null;
+  if (readerBody && !readerBody._cccProgressInit) {
+    readerBody._cccProgressInit = true;
+    readerBody.addEventListener('scroll', function() {
+      clearTimeout(_cccProgressTimer);
+      _cccProgressTimer = setTimeout(function() {
+        if (_cccCurrentNum) {
+          studyDb.saveProgress('ccc', null, _cccCurrentNum, readerBody.scrollTop);
+        }
+      }, 3000);
+    }, { passive: true });
+  }
+
   // Baltimore companion card — async append if mapping exists
   cccData.loadBaltimore().then(function(b) {
     if (!b) return;
@@ -306,7 +345,7 @@ reader.registerModule('ccc', {
   },
   onClose: function() {
     _cccCurrentNum = '';
-    // Clear search state
+    tts.stop();
     clearTimeout(_cccSearchTimer);
   },
   getHeaderExtra: function() {
@@ -433,6 +472,29 @@ function cccSearchSelect(numStr) {
   cccNavigate(numStr);
 }
 
+// ST-18: CCC Read Aloud
+function cccReadAloud() {
+  if (!_cccPlainText) return;
+  tts.togglePlayPause(_cccPlainText);
+  _updateCCCListenBtn();
+}
+
+function _updateCCCListenBtn() {
+  var btn = document.getElementById('cccListenBtn');
+  var label = document.getElementById('cccListenLabel');
+  if (!btn) return;
+  var state = tts.getState();
+  if (state === 'playing') {
+    btn.classList.add('is-playing');
+    if (label) label.textContent = 'Pause';
+  } else {
+    btn.classList.remove('is-playing');
+    if (label) label.textContent = 'Listen';
+  }
+}
+
+function getCurrentPlainText() { return _cccPlainText || ''; }
+
 // Open Explore from CCC — reader stack handles layering automatically
 function _openExploreFromCCC(numStr) {
   reader.readerOpen('explore', { type: 'ccc', id: String(numStr) });
@@ -445,6 +507,8 @@ module.exports = {
   openCCCAboveExam: openCCCAboveExam,
   cccNavigate: cccNavigate,
   cccGoBack: cccGoBack,
+  cccReadAloud: cccReadAloud,
+  getCurrentPlainText: getCurrentPlainText,
   cccSearchSelect: cccSearchSelect,
   _toggleCCCSectionPicker: _toggleCCCSectionPicker,
 };

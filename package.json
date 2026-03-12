@@ -30,6 +30,7 @@
     "node": ">=18"
   },
   "dependencies": {
-    "@nozbe/microfuzz": "^1.0.0"
+    "@nozbe/microfuzz": "^1.0.0",
+    "dexie": "^4.3.0"
   }
 }

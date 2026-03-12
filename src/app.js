@@ -39,6 +39,7 @@ var bible = require('./bible.js');
 var explore = require('./explore.js');
 var settings = require('./settings.js');
 var reader = require('./reader.js');
+var studyDb = require('./study-db.js');
 
 var state = data.state;
 
@@ -219,6 +220,7 @@ window.cccNavigate = ccc.cccNavigate;
 window.cccGoBack = ccc.cccGoBack;
 window.cccSearchSelect = ccc.cccSearchSelect;
 window._toggleCCCSectionPicker = ccc._toggleCCCSectionPicker;
+window.cccReadAloud = ccc.cccReadAloud;
 window.openBible = bible.openBible;
 window.closeBible = bible.closeBible;
 window.bibleNavigate = bible.bibleNavigate;
@@ -270,6 +272,13 @@ window.toggleSettingConf = settings.toggleSettingConf;
 window.settingsClearPrayer = settings.settingsClearPrayer;
 window.settingsClearSaved = settings.settingsClearSaved;
 window.settingsClearAll = settings.settingsClearAll;
+window.settingsClearStudy = settings.settingsClearStudy;
+// Study tools
+window._studyAddNote = studyDb.addNote;
+window._studyAddHighlight = studyDb.addHighlight;
+window._studyAddBookmark = studyDb.addBookmark;
+window._studyRemoveBookmark = studyDb.removeBookmark;
+window._studyDeleteAnnotation = studyDb.deleteAnnotation;
 window.toggleTheme = function() {
   var html = document.documentElement;
   var next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';

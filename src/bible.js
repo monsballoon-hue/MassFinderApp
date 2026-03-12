@@ -4,13 +4,16 @@
 // Loads data/bible-drb/[book].json (lazy, per-book) + data/bible-xrefs.json (lazy, once).
 
 var reader = require('./reader.js');
+var studyDb = require('./study-db.js');
+var studyUi = require('./study-ui.js');
+var tts = require('./tts.js');
 
 var _bookCache = {};    // { 'matthew': { book, abbr, testament, chapters, verses } }
 var _xrefs = null;      // bible-xrefs.json data (null until first load)
 var _currentRef = '';
 var _currentBook = null; // current book object from _BOOKS
 var _bookChapters = null; // { filename: chapterCount } from _index.json
-var _speaking = false;  // UX-04 Web Speech state
+var _currentPlainText = ''; // ST-17: plain text for TTS
 
 // ── 73-book metadata ──
 var _BOOKS = [
@@ -240,11 +243,7 @@ reader.registerModule('bible', {
     _renderBibleContent(params.ref);
   },
   onClose: function() {
-    // Cancel speech on close
-    if (_speaking) {
-      speechSynthesis.cancel();
-      _speaking = false;
-    }
+    tts.stop();
   }
 });
 
@@ -340,7 +339,7 @@ async function _renderBibleContent(refStr) {
     verseTexts.push(text);
     var isTarget = !isWholeChapter && v >= parsed.startVerse && v <= parsed.endVerse;
     var cls = isTarget ? ' bible-verse--target' : '';
-    html += '<span class="bible-verse' + cls + '" id="bv' + v + '">'
+    html += '<span class="bible-verse' + cls + ' annotatable" id="bv' + v + '" data-source="bible" data-address="' + _esc(parsed.book.abbr) + ':' + parsed.chapter + ':' + v + '">'
       + '<span class="bible-verse-num">' + v + '</span> '
       + _esc(text) + ' '
       + '</span>';
@@ -357,14 +356,14 @@ async function _renderBibleContent(refStr) {
     return;
   }
 
-  // Listen button (UX-04)
-  if ('speechSynthesis' in window) {
-    html += '<button class="bible-listen-btn" id="bibleListenBtn" onclick="bibleReadAloud()">'
-      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">'
+  // Listen button (ST-17: shared tts.js module)
+  if (tts.isSupported()) {
+    html += '<button class="reader-listen-btn" id="bibleListenBtn" onclick="bibleReadAloud()">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16">'
       + '<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>'
-      + '<path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>'
+      + '<path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>'
       + '</svg>'
-      + ' <span>Listen</span></button>';
+      + ' <span id="bibleListenLabel">Listen</span></button>';
   }
 
   // ── BR-02: Chapter navigation (prev/next) ──
@@ -414,7 +413,17 @@ async function _renderBibleContent(refStr) {
   html += '</div>';
 
   bodyEl.innerHTML = html;
-  bodyEl._verseText = verseTexts.join(' ');
+  _currentPlainText = verseTexts.join(' ');
+  bodyEl._verseText = _currentPlainText;
+
+  // ST-10: Init study layer and apply existing annotations
+  var scrollEl = document.getElementById('readerBody');
+  studyUi.initStudyLayer(scrollEl);
+  var verseAddresses = [];
+  for (var va = 1; va <= verseTexts.length; va++) {
+    verseAddresses.push(parsed.book.abbr + ':' + parsed.chapter + ':' + va);
+  }
+  studyUi.applyAnnotations('bible', scrollEl, verseAddresses);
 
   // ── BR-04: Cross-references as collapsible margin notes ──
   var relHtml = '';
@@ -468,11 +477,25 @@ async function _renderBibleContent(refStr) {
   }
 
   _currentRef = refStr;
+
+  // ST-04: Auto-save reading progress on scroll
+  var _progressTimer = null;
+  if (scrollContainer && !scrollContainer._bibleProgressInit) {
+    scrollContainer._bibleProgressInit = true;
+    scrollContainer.addEventListener('scroll', function() {
+      clearTimeout(_progressTimer);
+      _progressTimer = setTimeout(function() {
+        if (_currentRef && _currentBook) {
+          studyDb.saveProgress('bible', _currentBook.file, _currentRef, scrollContainer.scrollTop);
+        }
+      }, 3000);
+    }, { passive: true });
+  }
 }
 
 // ── Open / Close — delegate to reader ──
 function openBible(refStr) {
-  if (_speaking) { speechSynthesis.cancel(); _speaking = false; }
+  tts.stop();
   reader.readerOpen('bible', { ref: refStr });
 }
 
@@ -489,30 +512,29 @@ function bibleGoBack() {
   reader.readerBack();
 }
 
-// ── UX-04: Read Aloud ──
+// ── ST-17: Read Aloud (shared tts.js module) ──
 function bibleReadAloud() {
-  var bodyEl = document.getElementById('bibleSheetBody');
-  var btn = document.getElementById('bibleListenBtn');
-  if (_speaking) {
-    speechSynthesis.cancel();
-    _speaking = false;
-    if (btn) btn.classList.remove('speaking');
-    return;
-  }
-  var text = bodyEl ? bodyEl._verseText : '';
+  var text = _currentPlainText;
   if (!text) return;
-  var utt = new SpeechSynthesisUtterance(text);
-  utt.rate = 0.9;
-  utt.lang = 'en-US';
-  utt.onend = function() {
-    _speaking = false;
-    var b = document.getElementById('bibleListenBtn');
-    if (b) b.classList.remove('speaking');
-  };
-  speechSynthesis.speak(utt);
-  _speaking = true;
-  if (btn) btn.classList.add('speaking');
+  tts.togglePlayPause(text);
+  _updateListenBtn();
 }
+
+function _updateListenBtn() {
+  var btn = document.getElementById('bibleListenBtn');
+  var label = document.getElementById('bibleListenLabel');
+  if (!btn) return;
+  var state = tts.getState();
+  if (state === 'playing') {
+    btn.classList.add('is-playing');
+    if (label) label.textContent = 'Pause';
+  } else {
+    btn.classList.remove('is-playing');
+    if (label) label.textContent = 'Listen';
+  }
+}
+
+function getCurrentPlainText() { return _currentPlainText || ''; }
 
 // Open Explore from Bible — reader stack handles cross-module navigation
 function _openExploreFromBible(refStr) {
@@ -525,5 +547,6 @@ module.exports = {
   closeBible: closeBible,
   bibleNavigate: bibleNavigate,
   bibleGoBack: bibleGoBack,
-  bibleReadAloud: bibleReadAloud
+  bibleReadAloud: bibleReadAloud,
+  getCurrentPlainText: getCurrentPlainText
 };

@@ -21,6 +21,7 @@ var getDist = utils.getDist;
 var getNext = utils.getNext;
 var state = data.state;
 var isFav = data.isFav;
+var studyDb = require('./study-db.js');
 
 // ── getTodayServices — all services at saved churches happening today ──
 function getTodayServices(favChurches) {
@@ -568,6 +569,132 @@ function renderSaved() {
   }
 
   el.innerHTML = html;
+  renderStudyDashboard();
+}
+
+// ── Study Dashboard (ST-06, ST-12, ST-13) ──
+
+var SOURCE_LABELS = {
+  bible: 'Sacred Scripture',
+  ccc: 'Catechism',
+  classic: 'Spiritual Classic',
+  baltimore: 'Baltimore Catechism',
+  summa: 'Summa Theologica'
+};
+
+function _timeAgo(isoStr) {
+  if (!isoStr) return '';
+  var diff = Date.now() - new Date(isoStr).getTime();
+  var mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  var hours = Math.floor(mins / 60);
+  if (hours < 24) return hours + 'h ago';
+  var days = Math.floor(hours / 24);
+  if (days === 1) return 'yesterday';
+  return days + 'd ago';
+}
+
+function renderStudyDashboard() {
+  var el = document.getElementById('studyDashboard');
+  if (!el) return;
+
+  // Run all three queries in parallel, then build HTML
+  Promise.all([
+    studyDb.getAllProgress(),
+    studyDb.getAllBookmarks(),
+    studyDb.getAllNotes()
+  ]).then(function(results) {
+    var progressItems = results[0];
+    var bookmarks = results[1];
+    var notes = results[2];
+
+    if (!progressItems.length && !bookmarks.length && !notes.length) {
+      el.innerHTML = '';
+      return;
+    }
+
+    var html = '';
+
+    // ── Continue Reading (ST-06) ──
+    if (progressItems.length) {
+      html += '<div class="study-section">';
+      html += '<div class="study-section-label">Continue Reading</div>';
+
+      progressItems.slice(0, 3).forEach(function(p) {
+        var label = SOURCE_LABELS[p.source] || p.source;
+        var detail = p.address || '';
+        var timeAgo = _timeAgo(p.updated);
+
+        var action = '';
+        if (p.source === 'bible') {
+          action = 'openBible(\'' + esc(detail) + '\')';
+        } else if (p.source === 'ccc') {
+          action = 'openCCC(\'' + esc(detail) + '\')';
+        }
+
+        if (action) {
+          html += '<button class="study-continue-item" onclick="' + action + '">'
+            + '<div class="study-continue-title">' + esc(label) + '</div>'
+            + '<div class="study-continue-detail">' + esc(detail) + ' \u00b7 ' + esc(timeAgo) + '</div>'
+            + '</button>';
+        }
+      });
+
+      html += '</div>';
+    }
+
+    // ── Bookmarks (ST-12) ──
+    if (bookmarks.length) {
+      html += '<div class="study-section">';
+      html += '<div class="study-section-label">Bookmarks</div>';
+      html += '<div class="study-bookmarks-list">';
+
+      bookmarks.slice(0, 8).forEach(function(b) {
+        var sourceLabel = SOURCE_LABELS[b.source] || b.source;
+        var action = '';
+        if (b.source === 'bible') action = 'openBible(\'' + esc(b.address) + '\')';
+        else if (b.source === 'ccc') action = 'openCCC(\'' + esc(b.address) + '\')';
+
+        if (action) {
+          html += '<button class="study-bookmark-chip" onclick="' + action + '">'
+            + '<span class="study-bookmark-source">' + esc(sourceLabel) + '</span> '
+            + '<span class="study-bookmark-addr">' + esc(b.address) + '</span>'
+            + '</button>';
+        }
+      });
+
+      html += '</div></div>';
+    }
+
+    // ── Recent Notes (ST-13) ──
+    if (notes.length) {
+      html += '<div class="study-section">';
+      html += '<div class="study-section-label">Recent Notes</div>';
+
+      notes.slice(0, 5).forEach(function(n) {
+        var sourceLabel = SOURCE_LABELS[n.source] || n.source;
+        var action = '';
+        if (n.source === 'bible') action = 'openBible(\'' + esc(n.address) + '\')';
+        else if (n.source === 'ccc') action = 'openCCC(\'' + esc(n.address) + '\')';
+
+        var preview = n.text.length > 80 ? n.text.slice(0, 80) + '\u2026' : n.text;
+
+        html += '<div class="study-note-card' + (action ? ' study-note-card--tap' : '') + '"'
+          + (action ? ' onclick="' + action + '"' : '') + '>'
+          + '<div class="study-note-card-header">'
+          + '<span class="study-note-card-source">' + esc(sourceLabel) + ' ' + esc(n.address) + '</span>'
+          + '<span class="study-note-card-time">' + esc(_timeAgo(n.created)) + '</span>'
+          + '</div>'
+          + '<div class="study-note-card-text">' + esc(preview) + '</div>'
+          + '</div>';
+      });
+
+      html += '</div>';
+    }
+
+    el.innerHTML = html;
+  });
 }
 
 // ── ST-09: Auto-refresh timer ──
@@ -604,6 +731,7 @@ window.renderSaved = renderSaved;
 module.exports = {
   renderUnifiedEvt: renderUnifiedEvt,
   renderSaved: renderSaved,
+  renderStudyDashboard: renderStudyDashboard,
   startSavedRefresh: startSavedRefresh,
   stopSavedRefresh: stopSavedRefresh,
 };

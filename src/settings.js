@@ -1,6 +1,8 @@
 // src/settings.js — Settings overlay (OW-25)
 var utils = require('./utils.js');
 var reader = require('./reader.js');
+var studyDb = require('./study-db.js');
+var tts = require('./tts.js');
 var esc = utils.esc;
 
 // ── Reader module registration ──
@@ -74,12 +76,26 @@ function _render() {
     + _toggleRow('Confession Date Tracking', 'settingsConfToggle', confTracking, 'toggleSettingConf()')
     + '</div>';
 
+  // ── Read Aloud (ST-22) ──
+  if (tts.isSupported()) {
+    html += '<div class="settings-group">'
+      + '<div class="settings-group-title">Read Aloud</div>'
+      + '<div class="settings-row">'
+      + '<span class="settings-label">Voice</span>'
+      + '<span class="settings-item-value" style="font-size:var(--text-xs);color:var(--color-text-tertiary)">' + esc(tts.getVoiceName()) + '</span>'
+      + '</div>'
+      + '<div class="settings-privacy-note">Uses your device\u2019s built-in text-to-speech. Quality varies by device.</div>'
+      + '</div>';
+  }
+
   // ── Privacy ──
   html += '<div class="settings-group">'
     + '<div class="settings-group-title">Privacy</div>'
     + '<button class="settings-action-btn" onclick="settingsClearPrayer()">Clear Prayer Activity</button>'
     + '<button class="settings-action-btn" onclick="settingsClearSaved()">Clear Saved Churches</button>'
+    + '<button class="settings-action-btn" onclick="settingsClearStudy()">Clear Notes & Highlights</button>'
     + '<button class="settings-action-btn settings-action-danger" onclick="settingsClearAll()">Clear All Data</button>'
+    + '<div class="settings-privacy-note">Your notes and highlights are stored only on this device. MassFinder never sends your study data to any server.</div>'
     + '</div>';
 
   // ── About ──
@@ -187,6 +203,15 @@ function settingsClearSaved() {
   _render();
 }
 
+function settingsClearStudy() {
+  if (!confirm('This will delete all your notes, highlights, bookmarks, and reading progress. This cannot be undone.')) return;
+  studyDb.clearAllData().then(function() {
+    var render = require('./render.js');
+    if (render.showToast) render.showToast('Study data cleared');
+    _render();
+  });
+}
+
 function settingsClearAll() {
   if (!confirm('Clear ALL MassFinder data? This will reset the app to its initial state.')) return;
   var keys = [];
@@ -195,6 +220,7 @@ function settingsClearAll() {
     if (k && k.indexOf('mf-') === 0) keys.push(k);
   }
   keys.forEach(function(k) { localStorage.removeItem(k); });
+  studyDb.clearAllData();
   var render = require('./render.js');
   if (render.showToast) render.showToast('All data cleared');
   setTimeout(function() { location.reload(); }, 800);
@@ -210,5 +236,6 @@ module.exports = {
   toggleSettingConf: toggleSettingConf,
   settingsClearPrayer: settingsClearPrayer,
   settingsClearSaved: settingsClearSaved,
+  settingsClearStudy: settingsClearStudy,
   settingsClearAll: settingsClearAll
 };

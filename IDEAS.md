@@ -694,13 +694,15 @@ The “See Also” section at the bottom of a CCC entry is sometimes cut off and
 ## IDEA-053 — Pie in the sky: rename and reimagine “Prayer Life” as a devotional/study tracker
 
 **Category:** pie-in-the-sky
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-024, IDEA-049
 **Spec ref:** (none)
 
 Rather than a simple list of prayer tool links, the “Prayer Life” section could be renamed (e.g., “Devotional Life”) and expanded into a personal progress tracker. If the app’s content library grows to include classic Catholic books, this section could track reading progress through those works. A more ambitious version would turn the explorer modules into a study aid with bookmarking and note-jotting, with those notes and bookmarks surfacing here for review. Requires significant design and architecture decisions before any implementation.
+
+**Implemented:** 2026-03-12 via Study Tools spec (ST-06, ST-12, ST-13) — study dashboard with Continue Reading, Bookmarks, and Notes sections added to Saved tab
 
 -----
 
@@ -772,13 +774,15 @@ When the Rosary content extends beyond the viewport and the user scrolls up aggr
 ## IDEA-059 — Research: native voice assistant (Siri/Google) vs programmatic TTS vs hosted voice files for audio reading
 
 **Category:** research
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** IDEA-003
 **Spec ref:** (none)
 
 The Web Speech API (IDEA-003) produces robotic programmatic voice that is unlikely to be acceptable for sacred text. Research three alternatives: (1) routing to the device’s native voice assistant (Siri on iOS, Google Assistant on Android) — investigate whether a deep link or handoff is possible; (2) a hosted TTS service (ElevenLabs, Google Cloud TTS, Amazon Polly) that can produce a natural-sounding voice — evaluate cost and privacy implications; (3) pre-recorded audio files for fixed texts like prayers, mysteries, and stations — feasible for bounded content, not for arbitrary scripture. Produce a recommendation with effort/cost/quality tradeoff for each option before IDEA-003 is specced.
+
+**Implemented:** 2026-03-12 via Study Tools spec (ST-16 through ST-20, ST-22) — shared tts.js module with smart voice selection, Bible and CCC read-aloud buttons
 
 -----
 

@@ -20,6 +20,7 @@
 var config = require('./config.js');
 var data = require('./data.js');
 var utils = require('./utils.js');
+var tts = require('./tts.js');
 
 var SVC_LABELS = config.SVC_LABELS;
 var DAY_ORDER = config.DAY_ORDER;
@@ -215,6 +216,7 @@ function updateSortLabel() {
 
 // ── Close All Panels ──
 function closeAllPanels() {
+  tts.stop();
   document.getElementById('eventDetailPanel').classList.remove('open');
   document.getElementById('detailPanel').classList.remove('open');
   document.getElementById('detailBackdrop').classList.remove('open');
@@ -227,6 +229,7 @@ function closeAllPanels() {
 // ── Switch Tab ──
 function switchTab(id, btn) {
   function doSwitch() {
+    tts.stop();
     document.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
     document.querySelectorAll('.tab-item').forEach(function(t) {
       t.classList.remove('active');
