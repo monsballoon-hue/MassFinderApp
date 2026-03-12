@@ -365,10 +365,8 @@ function cccGoBack() {
 }
 
 function openCCC(numStr) {
-  var input = document.getElementById('cccSearchInput');
-  if (input) input.value = '';
-  _hideSearchResults();
-  reader.readerOpen('ccc', { num: String(numStr) });
+  // v1 prod gate: full CCC reader disabled — inline/popup refs still work
+  return;
 }
 
 function closeCCC() {

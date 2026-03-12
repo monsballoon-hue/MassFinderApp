@@ -576,13 +576,11 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
   var cacheKey = 'mf-bg-' + query;
   try {
     var cached = localStorage.getItem(cacheKey);
-    if (cached) { console.log('[BibleGet] Cache HIT:', ref, '->', query); textEl.innerHTML = cached; return Promise.resolve(); }
+    if (cached) { textEl.innerHTML = cached; return Promise.resolve(); }
   } catch (e) { /* noop */ }
   var url = 'https://query.bibleget.io/v3/?query=' + encodeURIComponent(query) + '&version=NABRE';
-  console.log('[BibleGet] Fetching:', ref, '->', url);
   return fetch(url, { signal: AbortSignal.timeout(8000) })
   .then(function(resp) {
-    console.log('[BibleGet] Response:', ref, 'status=' + resp.status);
     if (!resp.ok) return;
     return resp.json();
   })
@@ -590,7 +588,6 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
     if (!data) return;
     if (data.errors && data.errors.length) { console.warn('[BibleGet] API errors for:', ref, data.errors.map(function(e) { return e.errMessage || e; })); }
     if (!data.results || !data.results.length) { console.warn('[BibleGet] No results for:', ref, '(likely rate-limited)'); return; }
-    console.log('[BibleGet] Got', data.results.length, 'verses for:', ref);
 
     var html = '';
     if (isPsalm) {

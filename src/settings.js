@@ -38,13 +38,7 @@ function _render() {
 
   var html = '';
 
-  // ── Notifications ──
-  if (notifSupported) {
-    html += '<div class="settings-group">'
-      + '<div class="settings-group-title">Notifications</div>'
-      + _toggleRow('Daily Reading Reminder', 'settingsNotifToggle', notifEnabled, 'toggleSettingNotif()')
-      + '</div>';
-  }
+  // ── Notifications — disabled for v1, re-enable when ready ──
 
   // ── Display ──
   html += '<div class="settings-group">'
@@ -107,10 +101,24 @@ function _render() {
 
   html += '<div class="settings-group settings-about">'
     + '<div class="settings-group-title">About</div>'
-    + '<div class="settings-about-row">MassFinder v2</div>'
-    + (lastUpdated ? '<div class="settings-about-row">Data updated ' + esc(lastUpdated) + '</div>' : '')
-    + '<div class="settings-about-row"><a href="https://github.com/massfinder" target="_blank" rel="noopener">Open Source (AGPL-3.0)</a></div>'
-    + '<div class="settings-about-row" style="margin-top:var(--space-2)"><button class="settings-link-btn" onclick="closeSettings();window.submitFeedback&&window.submitFeedback()">Send Feedback</button></div>'
+    + '<div class="settings-about-block">'
+    + '<p class="settings-about-text">MassFinder helps Catholics in Western New England find Mass times, confession hours, and parish events across the Diocese of Springfield.</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-2)"><strong>Available now:</strong> Browse parish schedules, build a personalized church dashboard, and prepare for the Sacrament of Reconciliation with a guided Examination of Conscience \u2014 plus a Rosary guide, Stations of the Cross, Novena tracker, daily readings, and saints of the day.</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-2)"><strong>Coming soon:</strong> The full Catechism, Bible, Summa Theologica, and other classic Catholic works \u2014 all indexed and cross-referenced for easy navigation, with study tools to bookmark, take notes, and read in full.</p>'
+    + '</div>'
+    + '<div class="settings-about-block" style="margin-top:var(--space-4);padding-top:var(--space-3);border-top:1px solid var(--color-border-light)">'
+    + '<p class="settings-about-text" style="font-weight:var(--weight-semibold)">Help keep your parish up to date</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-1)">We use AI to parse parish bulletins into a dashboard for review. We\u2019re a small team and could use the help. Become a Parish Champion \u2014 adopt your church and help keep its schedule accurate for everyone.</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-2);font-style:italic;color:var(--color-text-tertiary)">This program is coming soon. Reach out if you\u2019re interested!</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-2)"><a href="mailto:massfinderapp@gmail.com" style="color:var(--color-primary);text-decoration:none;font-weight:var(--weight-semibold)">massfinderapp@gmail.com</a></p>'
+    + '</div>'
+    + '<div class="settings-about-block" style="margin-top:var(--space-4);padding-top:var(--space-3);border-top:1px solid var(--color-border-light)">'
+    + '<p class="settings-about-text" style="font-weight:var(--weight-semibold)">Developers welcome</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-1)">MassFinder is open source. We\u2019d love contributors \u2014 whether it\u2019s code, data pipelines, or ideas. Check out the repo or drop us a line to talk shop.</p>'
+    + '<p class="settings-about-text" style="margin-top:var(--space-2)"><a href="https://github.com/monsballoon-hue/MassFinderApp" target="_blank" rel="noopener" style="color:var(--color-primary);text-decoration:none;font-weight:var(--weight-semibold)">View on GitHub \u2192</a>'
+    + ' &nbsp;\u00b7&nbsp; <a href="mailto:massfinderapp@gmail.com" style="color:var(--color-primary);text-decoration:none;font-weight:var(--weight-semibold)">Email us</a></p>'
+    + '</div>'
+    + (lastUpdated ? '<div class="settings-about-row" style="margin-top:var(--space-3);font-size:var(--text-xs);color:var(--color-text-tertiary)">Parish data updated ' + esc(lastUpdated) + '</div>' : '')
     + '</div>';
 
   body.innerHTML = html;

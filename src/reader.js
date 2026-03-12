@@ -197,6 +197,8 @@ function _initSwipeDismiss() {
     var dy = t.clientY - startY;
     var dx = Math.abs(t.clientX - startX);
     if (dy > 80 && dy > dx && body.scrollTop <= 5) {
+      // Don't allow swipe-to-dismiss for prayer modules — user must explicitly close
+      if (_current && ['rosary', 'examination', 'stations', 'novena'].indexOf(_current.mode) >= 0) return;
       readerClose();
     }
   }
