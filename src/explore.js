@@ -662,27 +662,6 @@ function _renderConnectionItem(item) {
   return html;
 }
 
-function _renderParaText(raw) {
-  var clean = utils.stripCCCRefs(raw).trim();
-  var lines = clean.split('\n');
-  var html = '', bq = false;
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i].trim();
-    if (!line) continue;
-    if (line.charAt(0) === '>') {
-      if (!bq) { html += '<blockquote class="ccc-blockquote">'; bq = true; }
-      html += '<p>' + _mdItalic(utils.esc(line.slice(1).trim())) + '</p>';
-    } else {
-      if (bq) { html += '</blockquote>'; bq = false; }
-      html += '<p>' + _mdItalic(utils.esc(line)) + '</p>';
-    }
-  }
-  if (bq) html += '</blockquote>';
-  return html;
-}
-
-function _mdItalic(t) { return t.replace(/\*([^*]+)\*/g, '<em>$1</em>'); }
-
 // ── Loading phrases (EX-01) ──
 var _loadingPhrases = [
   'Ask, and it shall be given you\u2026',
@@ -800,7 +779,7 @@ function _exploreSearch(query) {
       _baltimore.questions.forEach(function(qa) {
         var combined = (qa.question + ' ' + qa.answer).toLowerCase();
         if (q.split(/\s+/).every(function(w) { return combined.indexOf(w) >= 0; })) {
-          baltHits.push({ type: 'ccc', label: 'Q' + qa.id + '. ' + qa.question, detail: qa.answer, ref: qa.ccc ? String(qa.ccc) : null });
+          baltHits.push({ type: 'baltimore', label: 'Q' + qa.id + '. ' + qa.question, detail: qa.answer, ref: String(qa.id) });
         }
       });
       if (baltHits.length) {
@@ -836,6 +815,8 @@ function _exploreSearch(query) {
         var onclick = '';
         if (item.type === 'ccc' && item.ref) {
           onclick = ' onclick="explorePivot(\'ccc\',\'' + utils.esc(item.ref) + '\')"';
+        } else if (item.type === 'baltimore' && item.ref) {
+          onclick = ' onclick="explorePivot(\'baltimore\',\'' + utils.esc(item.ref) + '\')"';
         } else if (item.type === 'summa' && item.id) {
           onclick = ' onclick="explorePivot(\'summa\',\'' + utils.esc(item.id) + '\')"';
         } else if (item.type === 'bible' && (item.ref || item.label)) {

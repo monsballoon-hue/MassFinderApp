@@ -24,8 +24,9 @@ function readerOpen(mode, params) {
   var isNewOpen = !overlay.classList.contains('open');
   var prevMode = _current ? _current.mode : null;
 
-  // If already open with different content, push current to stack
-  if (_current && (_current.mode !== mode || _jsonKey(_current.params) !== _jsonKey(params))) {
+  // Cross-module transition → push current to stack (enables back nav)
+  // Same-module navigation (CCC §1→§2, Bible ch3→ch4) → replace current (no stack growth)
+  if (_current && _current.mode !== mode) {
     _current.scrollPos = document.getElementById('readerBody').scrollTop;
     _stack.push(_current);
   }

@@ -28,6 +28,8 @@ reader.registerModule('examination', {
       + '<button class="exam-footer-btn" onclick="examScrollToSummary()">View Summary</button>'
       + '</div>';
 
+    bodyEl.innerHTML = '<div class="exam-loading" style="text-align:center;padding:var(--space-8);color:var(--color-text-tertiary)">Preparing examination\u2026</div>';
+
     _loadData(function(d) {
       _expanded['cmd-1'] = true;
       _haptic();
@@ -132,7 +134,7 @@ function _toggleInlineCCC(span, numStr) {
     // "See full range" link — opens CCC in reader (pushes exam to stack)
     var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
     if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" onclick="reader.readerOpen(\'ccc\',{num:\'' + _esc(numStr) + '\'})">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
+      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
     }
     card.innerHTML = html;
     container.appendChild(card);
