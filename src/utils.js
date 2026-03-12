@@ -4,8 +4,16 @@ var config = require('./config.js');
 function displayName(name) { return name.replace(/ (Church|Parish)$/, ''); }
 function getNow() { return new Date(); }
 
+// Return YYYY-MM-DD in local timezone (not UTC — avoids date shift after ~8 PM EST)
+function toLocalDateStr(d) {
+  var y = d.getFullYear();
+  var m = d.getMonth() + 1;
+  var day = d.getDate();
+  return y + '-' + (m < 10 ? '0' : '') + m + '-' + (day < 10 ? '0' : '') + day;
+}
+
 function isEventActive(e) {
-  var t = getNow().toISOString().slice(0, 10);
+  var t = toLocalDateStr(getNow());
   if (e.dates && e.dates.length) { var exp = e.end_date || e.dates[e.dates.length - 1]; return exp >= t; }
   var exp2 = e.end_date || e.date;
   if (!exp2) return true;
@@ -13,14 +21,14 @@ function isEventActive(e) {
 }
 
 function getNextEventDate(e) {
-  var t = getNow().toISOString().slice(0, 10);
+  var t = toLocalDateStr(getNow());
   if (e.dates && e.dates.length) { for (var i = 0; i < e.dates.length; i++) { if (e.dates[i] >= t) return e.dates[i]; } return e.dates[e.dates.length - 1]; }
   return e.date || null;
 }
 
 function getRemainingDates(e) {
   if (!e.dates || !e.dates.length) return [];
-  var t = getNow().toISOString().slice(0, 10);
+  var t = toLocalDateStr(getNow());
   return e.dates.filter(function(d) { return d >= t; });
 }
 
@@ -31,7 +39,7 @@ function getNextDateForDay(dayName) {
   var d = getNow(); var cur = d.getDay();
   var diff = (dayIdx - cur + 7) % 7 || 7;
   d.setDate(d.getDate() + diff);
-  return d.toISOString().slice(0, 10);
+  return toLocalDateStr(d);
 }
 
 function fmt12(t) {
@@ -325,7 +333,7 @@ function esc(s) { var d = document.createElement('div'); d.textContent = s || ''
 function stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
 
 module.exports = {
-  displayName: displayName, getNow: getNow,
+  displayName: displayName, getNow: getNow, toLocalDateStr: toLocalDateStr,
   isEventActive: isEventActive, getNextEventDate: getNextEventDate,
   getRemainingDates: getRemainingDates, getNextDateForDay: getNextDateForDay,
   fmt12: fmt12, toMin: toMin, isLentSeason: isLentSeason,

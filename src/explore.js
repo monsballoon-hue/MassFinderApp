@@ -452,13 +452,13 @@ function _render() {
   var trailHtml = '';
   if (_history.length) {
     _history.forEach(function(h, i) {
-      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.type === 'summa' ? 'Summa' : h.id;
+      var label = h.type === 'ccc' ? '\u00A7' + h.id : h.type === 'summa' ? (h.label || h.id) : h.id;
       trailHtml += '<span class="explore-crumb" onclick="explorePop(' + i + ')">' + utils.esc(label) + '</span>';
       trailHtml += '<span class="explore-crumb-sep">\u203A</span>';
     });
   }
   var curLabel = _current.type === 'ccc' ? '\u00A7' + _current.id
-    : _current.type === 'summa' ? 'Summa'
+    : _current.type === 'summa' ? (_current.label || _current.id)
     : _current.id;
   trailHtml += '<span class="explore-crumb explore-crumb--active">' + utils.esc(curLabel) + '</span>';
   if (trail) trail.innerHTML = trailHtml;
@@ -1174,8 +1174,17 @@ function exploreHome() {
 }
 
 function explorePivot(type, id) {
-  if (_current) _history.push({ type: _current.type, id: _current.id });
+  if (_current) _history.push({ type: _current.type, id: _current.id, label: _current.label });
   _current = { type: type, id: id };
+  // Resolve Summa label from cache
+  if (type === 'summa' && _summaCache && _summaCache.articles) {
+    for (var si = 0; si < _summaCache.articles.length; si++) {
+      if (_summaCache.articles[si].id === id) {
+        _current.label = _summaCache.articles[si].topic;
+        break;
+      }
+    }
+  }
   var body = document.getElementById('exploreBody');
   body.style.opacity = '0';
   setTimeout(function() {

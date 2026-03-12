@@ -210,7 +210,7 @@ function parishesToChurches(parishes) {
 }
 
 function processChurches(churches) {
-  var today = new Date().toISOString().slice(0, 10);
+  var today = utils.toLocalDateStr(new Date());
   return churches.filter(function(c) {
     return c.status === 'active' && (!c.validation || c.validation.status !== 'excluded');
   }).map(function(c) {

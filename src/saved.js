@@ -14,6 +14,7 @@ var toMin = utils.toMin;
 var isEventActive = utils.isEventActive;
 var getNextEventDate = utils.getNextEventDate;
 var getRemainingDates = utils.getRemainingDates;
+var toLocalDateStr = utils.toLocalDateStr;
 var isVer = utils.isVer;
 var fmtDist = utils.fmtDist;
 var getDist = utils.getDist;
@@ -146,10 +147,10 @@ function renderUnifiedEvt(e, isYC) {
     var next = getNextEventDate(e);
     var rem = getRemainingDates(e);
     if (next) {
-      var todayStr = getNow().toISOString().slice(0, 10);
+      var todayStr = toLocalDateStr(getNow());
       var tmrw = new Date(getNow()); tmrw.setDate(tmrw.getDate() + 1);
       if (next === todayStr) whenParts.push('Today');
-      else if (next === tmrw.toISOString().slice(0, 10)) whenParts.push('Tomorrow');
+      else if (next === toLocalDateStr(tmrw)) whenParts.push('Tomorrow');
       else {
         var d = new Date(next + 'T12:00:00');
         whenParts.push(d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
@@ -158,10 +159,10 @@ function renderUnifiedEvt(e, isYC) {
     if (rem.length > 1) whenParts.push(rem.length + ' dates left');
   } else if (e.date) {
     var d2 = new Date(e.date + 'T12:00:00');
-    var todayStr2 = getNow().toISOString().slice(0, 10);
+    var todayStr2 = toLocalDateStr(getNow());
     var tmrw2 = new Date(getNow()); tmrw2.setDate(tmrw2.getDate() + 1);
     if (e.date === todayStr2) whenParts.push('Today');
-    else if (e.date === tmrw2.toISOString().slice(0, 10)) whenParts.push('Tomorrow');
+    else if (e.date === toLocalDateStr(tmrw2)) whenParts.push('Tomorrow');
     else whenParts.push(d2.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }));
   } else if (e.day) {
     whenParts.push((DAY_NAMES[e.day] || e.day) + 's');
@@ -170,7 +171,7 @@ function renderUnifiedEvt(e, isYC) {
   whenParts.push(pName);
 
   // Determine if this event is happening today
-  var todayCheck = getNow().toISOString().slice(0, 10);
+  var todayCheck = toLocalDateStr(getNow());
   var isToday = false;
   if (e.date) isToday = e.date === todayCheck;
   else if (e.dates && e.dates.length) isToday = e.dates.indexOf(todayCheck) !== -1;
@@ -201,7 +202,7 @@ function renderSaved() {
 
   // Update badges — dot only for live services or today events (ST-14)
   var now = getNow();
-  var todayStr = now.toISOString().slice(0, 10);
+  var todayStr = toLocalDateStr(now);
   var hasLive = false;
   if (favChurches.length) {
     var todaySvcsCheck = getTodayServices(favChurches);
@@ -286,10 +287,12 @@ function renderSaved() {
       var pastSvcs = todaySvcs.filter(function(s) { return s.isPast; });
       var upSvcs = todaySvcs.filter(function(s) { return !s.isPast; });
 
+      var tmrwShownInline = false;
       if (!upSvcs.length) {
         // ST-05: Today done — show tomorrow preview inline
         var tmrwPreview = getTomorrowServices(favChurches).slice(0, 2);
         if (tmrwPreview.length) {
+          tmrwShownInline = true;
           html += '<div class="sched-done-tomorrow">';
           html += '<div class="sched-done-label">Today\u2019s schedule is complete</div>';
           html += '<div class="sched-done-next-label">Tomorrow</div>';
@@ -334,8 +337,9 @@ function renderSaved() {
   }
 
   // ── 1.5. TOMORROW — preview of next day's first services (ST-03) ──
+  // Skip if already shown inline inside the "today done" card
   var tmrwSvcs = getTomorrowServices(favChurches);
-  if (tmrwSvcs.length) {
+  if (tmrwSvcs.length && !tmrwShownInline) {
     var tmrwDate = new Date(now);
     tmrwDate.setDate(tmrwDate.getDate() + 1);
     var tmrwLabel = tmrwDate.toLocaleDateString('en-US', { weekday: 'long' });
@@ -356,7 +360,7 @@ function renderSaved() {
 
     var dateGroups = {};
     var dateOrder = [];
-    var tmrwStr = (function() { var d2 = new Date(now); d2.setDate(d2.getDate() + 1); return d2.toISOString().slice(0, 10); })();
+    var tmrwStr = (function() { var d2 = new Date(now); d2.setDate(d2.getDate() + 1); return toLocalDateStr(d2); })();
 
     for (var ui = 0; ui < upcomingEvents.length; ui++) {
       var uEvt = upcomingEvents[ui].evt;
@@ -482,7 +486,7 @@ function renderSaved() {
   var totalPrayers = 0;
   try {
     var prayerLog = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-    var thirtyDaysAgo = new Date(now.getTime() - 30 * 86400000).toISOString().slice(0, 10);
+    var thirtyDaysAgo = toLocalDateStr(new Date(now.getTime() - 30 * 86400000));
     var recentEntries = prayerLog.filter(function(e) { return e.date >= thirtyDaysAgo; });
     totalPrayers = recentEntries.length;
 
@@ -492,10 +496,10 @@ function renderSaved() {
       for (var lpi = recentEntries.length - 1; lpi >= 0; lpi--) {
         if (recentEntries[lpi].date) { lastPrayerDate = recentEntries[lpi].date; break; }
       }
-      var todayKey = now.toISOString().slice(0, 10);
+      var todayKey = toLocalDateStr(now);
       var yesterdayDate = new Date(now);
       yesterdayDate.setDate(yesterdayDate.getDate() - 1);
-      var yesterdayKey = yesterdayDate.toISOString().slice(0, 10);
+      var yesterdayKey = toLocalDateStr(yesterdayDate);
 
       var recencyText = '';
       if (lastPrayerDate === todayKey) {

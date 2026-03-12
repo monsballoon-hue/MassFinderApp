@@ -131,7 +131,7 @@ function _getDailyPrompt() {
 // Check if any events today (now → midnight) at favorited churches
 function _hasTodayEventsAtFavs() {
   if (!state.eventsData || !state.favorites.length) return false;
-  var today = utils.getNow().toISOString().slice(0, 10);
+  var today = utils.toLocalDateStr(utils.getNow());
   var favSet = {};
   state.favorites.forEach(function(id) { favSet[id] = true; });
   return state.eventsData.some(function(e) {
@@ -659,7 +659,7 @@ function _renderReturnCard(daysMissed) {
   var missed = [];
   if (window._litcalCache && window._litcalCache.events) {
     var lastDate = new Date(state._lastVisit + 'T00:00:00');
-    var today = new Date(new Date().toISOString().slice(0, 10) + 'T00:00:00');
+    var today = new Date(utils.toLocalDateStr(new Date()) + 'T00:00:00');
     window._litcalCache.events.forEach(function(e) {
       var evtDate = new Date(e.year + '-' + String(e.month).padStart(2, '0') + '-' + String(e.day).padStart(2, '0') + 'T00:00:00');
       if (evtDate > lastDate && evtDate < today && e.grade >= 3 && !e.is_vigil_mass) {
@@ -684,7 +684,7 @@ function _renderReturnCard(daysMissed) {
 // ── Init ──
 async function init() {
   // ── Last-visit tracking (Change 11) ──
-  var todayStr = new Date().toISOString().slice(0, 10);
+  var todayStr = utils.toLocalDateStr(new Date());
   state._lastVisit = localStorage.getItem('mf-last-visit') || null;
   state._isReturning = !!state._lastVisit && state._lastVisit < todayStr;
   localStorage.setItem('mf-last-visit', todayStr);

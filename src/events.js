@@ -20,7 +20,7 @@ var EVT_TYPES = {
 // ── YC helpers ──
 
 function getUpcomingYC() {
-  var today = utils.getNow().toISOString().slice(0, 10);
+  var today = utils.toLocalDateStr(utils.getNow());
   return data.state.ycEvents.filter(function(e) { return e.date >= today; });
 }
 
@@ -95,7 +95,7 @@ function renderCommunityEvents(c) {
     return e.church_id === c.id && e.category !== 'yc' && utils.isEventActive(e);
   });
   if (!evts.length) return '';
-  var today = utils.getNow().toISOString().slice(0, 10);
+  var today = utils.toLocalDateStr(utils.getNow());
 
   // Split into upcoming (dated, future) and ongoing (recurring + undated)
   var upcoming = [];
@@ -240,10 +240,10 @@ function openEventDetail(eventId) {
   // ── Date / time formatting ──
   var timeStr = evt.time ? utils.fmt12(evt.time) : '';
   var endStr = evt.end_time ? ' \u2013 ' + utils.fmt12(evt.end_time) : '';
-  var today = utils.getNow().toISOString().slice(0, 10);
+  var today = utils.toLocalDateStr(utils.getNow());
   var tomorrow = new Date(utils.getNow());
   tomorrow.setDate(tomorrow.getDate() + 1);
-  var tomorrowStr = tomorrow.toISOString().slice(0, 10);
+  var tomorrowStr = utils.toLocalDateStr(tomorrow);
 
   // Primary date line (prominent)
   var dateLine = '';
@@ -544,9 +544,9 @@ function addMoreEventToCal(idx) {
     if (diff === 0) diff = 7;
     var target = new Date(now);
     target.setDate(target.getDate() + diff);
-    dateStr = target.toISOString().slice(0, 10);
+    dateStr = utils.toLocalDateStr(target);
   } else {
-    dateStr = utils.getNow().toISOString().slice(0, 10);
+    dateStr = utils.toLocalDateStr(utils.getNow());
   }
   if (!e.time) return;
   utils.generateICS(e.title, dateStr, e.time, e.end_time || '', e.churchName || '', (e.notes || '') + '\n' + (e.churchName || '') + '\nAdded from MassFinder');
