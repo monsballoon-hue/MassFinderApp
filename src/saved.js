@@ -221,7 +221,6 @@ function renderSaved() {
   //     OR when a community/YC event at a saved church falls on today's date.
   //   - Clears automatically on the next render cycle (60s auto-refresh via ST-09)
   //     when no services are live and no today events remain.
-  // savedCountBadge: 8px accent dot next to the greeting header (SPEC-005-E)
   // savedTabBadge: 8px accent dot on the heart icon in the tab bar (SPEC-005-F)
   var now = getNow();
   var todayStr = toLocalDateStr(now);
@@ -237,11 +236,6 @@ function renderSaved() {
       if (e.dates && e.dates.length) return e.dates.indexOf(todayStr) !== -1;
       return false;
     });
-  }
-  var countBadge = document.getElementById('savedCountBadge');
-  if (countBadge) {
-    countBadge.textContent = '';
-    countBadge.classList.toggle('visible', hasLive);
   }
   var tabBadge = document.getElementById('savedTabBadge');
   if (tabBadge) {
