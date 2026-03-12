@@ -335,12 +335,18 @@ function _getComingUp(church, nextSvc) {
   var seen = {}, results = [];
   // DC-R2-06: Build key for the next service hero to skip it in Coming Up
   var nextSvcKey = nextSvc ? (nextSvc.service.type + '|' + nextSvc.service.time) : '';
+  // Determine which "day slot" the hero occupies (0=today, 1=tomorrow) so we skip the right candidate
+  var nextSvcDu = -1;
+  if (nextSvc) {
+    if (nextSvc.dayLabel === 'Today' || nextSvc.isLive || nextSvc.isSoon) nextSvcDu = 0;
+    else if (nextSvc.dayLabel === 'Tomorrow') nextSvcDu = 1;
+  }
   for (var k = 0; k < cands.length && results.length < 3; k++) {
     var key = cands[k].service.type + '|' + cands[k].service.time + '|' + cands[k].dayIdx;
     if (seen[key]) continue;
     seen[key] = true;
-    // DC-R2-06: Skip the entry that matches the Next Service hero (same type+time, today only)
-    if (nextSvcKey && cands[k].daysUntil === 0 && (cands[k].service.type + '|' + cands[k].service.time) === nextSvcKey) continue;
+    // DC-R2-06: Skip the candidate that matches the Next Service hero (same type+time+day slot)
+    if (nextSvcKey && cands[k].daysUntil === nextSvcDu && (cands[k].service.type + '|' + cands[k].service.time) === nextSvcKey) continue;
     results.push(cands[k]);
   }
 
