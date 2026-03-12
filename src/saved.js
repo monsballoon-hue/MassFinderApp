@@ -122,8 +122,10 @@ function _renderSchedRow(item, isHero) {
   // Inline Directions for hero row (ST-01)
   var directionsHtml = '';
   if (isHero && (item.isLive || item.isSoon) && item.church.lat) {
-    var render = require('./render.js');
-    var mapsUrl = render.getMapsUrlCoords(item.church.lat, item.church.lng, displayName(item.church));
+    var _isApple = /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && 'ontouchend' in document;
+    var mapsUrl = _isApple
+      ? 'https://maps.apple.com/?ll=' + item.church.lat + ',' + item.church.lng + '&q=' + encodeURIComponent(displayName(item.church))
+      : 'https://maps.google.com/?q=' + item.church.lat + ',' + item.church.lng;
     directionsHtml = '<a class="sched-row-directions" href="' + mapsUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Directions</a>';
   }
 
