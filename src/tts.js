@@ -8,7 +8,12 @@ var _voice = null;
 var _voicesLoaded = false;
 var _isPlaying = false;
 var _isPaused = false;
-var _onStateChange = null; // callback: function(state) where state = 'playing'|'paused'|'stopped'
+var _warmedUp = false;
+var _chunks = [];
+var _chunkIndex = 0;
+var _onStateChange = null; // callback: function(state) where state = 'playing'|'paused'|'stopped'|'error'
+
+var _isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
 // ── Voice Selection ──
 
@@ -20,11 +25,16 @@ var _PREFERRED_VOICES = [
   /Google UK English Female/i,
   /Google UK English Male/i,
   /Google US English/i,
-  // macOS high-quality voices
+  // iOS enhanced voices
+  /^Samantha \(Enhanced\)$/i,
+  /^Daniel \(Enhanced\)$/i,
+  // macOS / iOS standard voices
   /^Samantha$/,
   /^Daniel$/,
   /^Karen$/,
+  /^Moira$/,
   // Android Google TTS
+  /^English.*Google/i,
   /en-us-x-tpc-network/i,
   /en-us-x-sfg-network/i
 ];
@@ -41,15 +51,17 @@ function _loadVoices() {
       return;
     }
     attempts++;
-    if (attempts < 10) setTimeout(_tryLoad, 250);
+    if (attempts < 20) setTimeout(_tryLoad, 250);
   }
 
   // Chrome fires voiceschanged async; Safari doesn't reliably
-  _synth.addEventListener('voiceschanged', function() {
-    var voices = _synth.getVoices();
-    if (voices.length) _pickBestVoice(voices);
-    _voicesLoaded = true;
-  });
+  if (_synth.addEventListener) {
+    _synth.addEventListener('voiceschanged', function() {
+      var voices = _synth.getVoices();
+      if (voices.length) _pickBestVoice(voices);
+      _voicesLoaded = true;
+    });
+  }
 
   _tryLoad();
 }
@@ -76,13 +88,29 @@ function _pickBestVoice(voices) {
   _voice = enVoices[0];
 }
 
+// ── iOS text chunking (15-second cutoff workaround) ──
+
+function _chunkText(text, maxLen) {
+  if (text.length <= maxLen) return [text];
+  var sentences = text.match(/[^.!?]+[.!?]+\s*/g);
+  if (!sentences) return [text];
+  var chunks = [];
+  var current = '';
+  for (var i = 0; i < sentences.length; i++) {
+    if ((current + sentences[i]).length > maxLen && current) {
+      chunks.push(current.trim());
+      current = sentences[i];
+    } else {
+      current += sentences[i];
+    }
+  }
+  if (current.trim()) chunks.push(current.trim());
+  return chunks.length ? chunks : [text];
+}
+
 // ── Playback ──
 
-function speak(text, opts) {
-  if (!_synth) return;
-  stop(); // cancel any current speech
-
-  opts = opts || {};
+function _speakChunk(text, opts) {
   _utterance = new SpeechSynthesisUtterance(text);
 
   if (_voice) _utterance.voice = _voice;
@@ -97,19 +125,66 @@ function speak(text, opts) {
   };
 
   _utterance.onend = function() {
+    // If more chunks remain, speak the next one
+    _chunkIndex++;
+    if (_chunkIndex < _chunks.length) {
+      _speakChunk(_chunks[_chunkIndex], opts);
+      return;
+    }
+    // All chunks done
     _isPlaying = false;
     _isPaused = false;
+    _chunks = [];
+    _chunkIndex = 0;
     if (_onStateChange) _onStateChange('stopped');
   };
 
-  _utterance.onerror = function() {
-    // Safari background bug — silently stop
+  _utterance.onerror = function(event) {
+    // Ignore 'interrupted' errors from stop()/cancel() calls
+    if (event && event.error === 'interrupted') return;
     _isPlaying = false;
     _isPaused = false;
-    if (_onStateChange) _onStateChange('stopped');
+    _chunks = [];
+    _chunkIndex = 0;
+    if (_onStateChange) _onStateChange('error');
   };
 
   _synth.speak(_utterance);
+}
+
+function speak(text, opts) {
+  if (!_synth) return;
+
+  // iOS warmup: silent utterance to satisfy user gesture requirement
+  if (!_warmedUp) {
+    _warmedUp = true;
+    if (_isIOS) {
+      var warmup = new SpeechSynthesisUtterance('');
+      warmup.volume = 0;
+      _synth.speak(warmup);
+      _synth.cancel();
+    }
+  }
+
+  stop(); // cancel any current speech
+
+  // Just-in-time voice resolution for late-loading mobile browsers
+  if (!_voice) {
+    var voices = _synth.getVoices();
+    if (voices.length) _pickBestVoice(voices);
+  }
+
+  opts = opts || {};
+
+  // On iOS, chunk text to avoid 15-second silent cutoff
+  if (_isIOS) {
+    _chunks = _chunkText(text, 200);
+  } else {
+    _chunks = [text];
+  }
+  _chunkIndex = 0;
+
+  _speakChunk(_chunks[0], opts);
 }
 
 function pause() {
@@ -134,6 +209,8 @@ function stop() {
   _isPlaying = false;
   _isPaused = false;
   _utterance = null;
+  _chunks = [];
+  _chunkIndex = 0;
   if (_onStateChange) _onStateChange('stopped');
 }
 

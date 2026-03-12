@@ -130,6 +130,19 @@ function _parseRef(refStr) {
     };
   }
 
+  // Colon-delimited format from data-address attributes (e.g. "Gen:2:1", "1Cor:13:4")
+  var m3 = s.match(/^([A-Za-z0-9]+):(\d+):(\d+)(?:\s*[-\u2013]\s*(\d+))?$/);
+  if (m3) {
+    var bookStr3 = m3[1].trim();
+    var book3 = _BOOK_LOOKUP[bookStr3.toLowerCase()];
+    if (book3) return {
+      book: book3,
+      chapter: parseInt(m3[2], 10),
+      startVerse: parseInt(m3[3], 10),
+      endVerse: m3[4] ? parseInt(m3[4], 10) : parseInt(m3[3], 10)
+    };
+  }
+
   // Fallback: book + chapter only (e.g. "Ps 23")
   var m2 = s.match(/^(.+?)\s+(\d+)$/);
   if (m2) {
@@ -476,7 +489,7 @@ async function _renderBibleContent(refStr) {
     scrollContainer.scrollTop = 0;
   }
 
-  _currentRef = refStr;
+  _currentRef = parsed.book.name + ' ' + parsed.chapter;
 
   // ST-04: Auto-save reading progress on scroll
   var _progressTimer = null;
@@ -516,15 +529,21 @@ function bibleGoBack() {
 function bibleReadAloud() {
   var text = _currentPlainText;
   if (!text) return;
+  tts.onStateChange(function(state) {
+    _updateListenBtn(state);
+    if (state === 'error') {
+      var render = require('./render.js');
+      if (render.showToast) render.showToast('Read Aloud is not available on this device');
+    }
+  });
   tts.togglePlayPause(text);
-  _updateListenBtn();
 }
 
-function _updateListenBtn() {
+function _updateListenBtn(state) {
   var btn = document.getElementById('bibleListenBtn');
   var label = document.getElementById('bibleListenLabel');
   if (!btn) return;
-  var state = tts.getState();
+  if (!state) state = tts.getState();
   if (state === 'playing') {
     btn.classList.add('is-playing');
     if (label) label.textContent = 'Pause';

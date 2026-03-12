@@ -161,14 +161,15 @@ async function _renderCCCContent(numStr) {
   var plainParts = [];
   ids.forEach(function(id, idx) {
     var text = _cccData && _cccData[id];
-    var numEl = '<div class="ccc-para-num annotatable' + (idx === 0 ? ' ccc-para-num--first' : '') + '" data-source="ccc" data-address="' + id + '">&#167;&nbsp;' + id + '</div>';
-    bodyHtml += numEl;
+    bodyHtml += '<div class="ccc-para-wrap annotatable" data-source="ccc" data-address="' + id + '">';
+    bodyHtml += '<div class="ccc-para-num' + (idx === 0 ? ' ccc-para-num--first' : '') + '">&#167;&nbsp;' + id + '</div>';
     if (text) {
       bodyHtml += _renderParaText(text);
       // Collect plain text for TTS — strip markdown/formatting
       plainParts.push(text.replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '').replace(/\n/g, ' '));
     }
     else { bodyHtml += '<p class="ccc-para-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>'; }
+    bodyHtml += '</div>'; // close .ccc-para-wrap
   });
   _cccPlainText = plainParts.join(' ').trim();
 
@@ -475,15 +476,21 @@ function cccSearchSelect(numStr) {
 // ST-18: CCC Read Aloud
 function cccReadAloud() {
   if (!_cccPlainText) return;
+  tts.onStateChange(function(state) {
+    _updateCCCListenBtn(state);
+    if (state === 'error') {
+      var render = require('./render.js');
+      if (render.showToast) render.showToast('Read Aloud is not available on this device');
+    }
+  });
   tts.togglePlayPause(_cccPlainText);
-  _updateCCCListenBtn();
 }
 
-function _updateCCCListenBtn() {
+function _updateCCCListenBtn(state) {
   var btn = document.getElementById('cccListenBtn');
   var label = document.getElementById('cccListenLabel');
   if (!btn) return;
-  var state = tts.getState();
+  if (!state) state = tts.getState();
   if (state === 'playing') {
     btn.classList.add('is-playing');
     if (label) label.textContent = 'Pause';

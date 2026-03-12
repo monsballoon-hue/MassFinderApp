@@ -15,6 +15,9 @@ function showActionBar(source, address, el) {
   _activeSource = source;
   _activeAddress = address;
 
+  // Highlight the selected element
+  el.classList.add('study-action-target');
+
   var bar = document.createElement('div');
   bar.className = 'study-action-bar';
   bar.id = 'studyActionBar';
@@ -29,9 +32,13 @@ function showActionBar(source, address, el) {
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>'
     + ' Bookmark</button>';
 
-  // Position the bar below the tapped element
-  el.style.position = 'relative';
-  el.appendChild(bar);
+  // Append to readerBody as sticky-bottom toolbar
+  var readerBody = document.getElementById('readerBody');
+  if (readerBody) {
+    readerBody.appendChild(bar);
+  } else {
+    el.appendChild(bar);
+  }
 
   // Close on outside tap
   setTimeout(function() {
@@ -42,6 +49,7 @@ function showActionBar(source, address, el) {
 function hideActionBar() {
   var bar = document.getElementById('studyActionBar');
   if (bar) bar.remove();
+  if (_activeEl) _activeEl.classList.remove('study-action-target');
   document.removeEventListener('click', _outsideClickHandler, true);
   _activeEl = null;
 }
