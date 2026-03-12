@@ -622,8 +622,8 @@ function openDetail(id, trapFocus, releaseFocus) {
   var footerParts = [];
   if (c.county) footerParts.push(utils.esc(c.county) + ' County');
   if (c.established) footerParts.push('Est. ' + utils.esc(c.established));
-  if (v.last_checked) footerParts.push('Last checked: ' + utils.esc(v.last_checked));
-  if (v.bulletin_date) footerParts.push('Bulletin: ' + utils.esc(v.bulletin_date));
+  if (v.last_checked) footerParts.push('Checked ' + utils.fmtRelDate(v.last_checked));
+  if (v.bulletin_date) footerParts.push(utils.fmtMonth(v.bulletin_date) + ' bulletin');
   if (v.source) footerParts.push('Source: ' + utils.esc(v.source));
   // DC-12: Footer with QR + Email Signup buttons
   var footer = '<div class="detail-footer-row">';
@@ -992,12 +992,65 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
       }
     }
 
-    // Default: single location — render with AM/PM divider
+    // Default: single location — try inline, else rows with AM/PM divider
     h += _renderRowsWithDivider(merged, locL, ml);
     return h + '</div>';
 
+    // Check if all services in a group can be rendered inline (simple times, no complex meta)
+    function _canRenderInline(rows) {
+      if (rows.length < 2) return false;
+      for (var ci = 0; ci < rows.length; ci++) {
+        var s = rows[ci];
+        if (s.end_time || s.recurrence || s.times_vary) return false;
+        if (utils.cleanNote(s)) return false;
+        if (s._mergedNotes && s._mergedNotes.length) return false;
+        // Multi-location services with visible location labels stay as rows
+        if (ml && s.location_id) return false;
+      }
+      return true;
+    }
+
+    // Render inline compact times: "8:30 · 10:00 · 11:30 AM"
+    function _renderInline(rows) {
+      var hasAM = false, hasPM = false;
+      for (var ci = 0; ci < rows.length; ci++) {
+        var m = utils.toMin(rows[ci].time);
+        if (m !== null) { if (m < 720) hasAM = true; else hasPM = true; }
+      }
+      var mixed = hasAM && hasPM;
+      var out = '<div class="schedule-inline">';
+      for (var ri = 0; ri < rows.length; ri++) {
+        var s = rows[ri];
+        if (ri > 0) out += '<span class="schedule-inline-dot">\u00b7</span>';
+        // Show bare time unless AM/PM spans cross 12 hrs
+        var tStr = mixed ? utils.fmt12(s.time) : utils.fmt12bare(s.time);
+        out += '<span class="schedule-inline-time">' + tStr;
+        // Inline badges (language, rite, vigil)
+        if (s.language && s.language !== 'en') out += '<span class="schedule-lang-badge">' + (LANG_NAMES[s.language] || s.language) + '</span>';
+        if (s.rite === 'tridentine') out += '<span class="schedule-lang-badge">TLM</span>';
+        if (s.type === 'sunday_mass' && s.day === 'saturday') out += '<span class="schedule-vigil-badge">Vigil</span>';
+        if (s.seasonal) {
+          if (s.seasonal.season === 'lent') out += '<span class="schedule-season-badge schedule-season-badge--lent">Lent</span>';
+          else if (s.seasonal.season === 'summer') out += '<span class="schedule-season-badge schedule-season-badge--summer">Summer</span>';
+          else if (s.seasonal.season === 'academic_year') out += '<span class="schedule-season-badge schedule-season-badge--academic">Academic Year</span>';
+        }
+        out += '</span>';
+      }
+      // Shared AM/PM suffix when all times are in the same half-day
+      if (!mixed && rows.length) {
+        var refMin = utils.toMin(rows[0].time);
+        var suffix = (refMin !== null && refMin >= 720) ? 'PM' : 'AM';
+        out += '<span class="schedule-inline-suffix">' + suffix + '</span>';
+      }
+      out += '</div>';
+      return out;
+    }
+
     // DC-03: AM/PM divider helper
     function _renderRowsWithDivider(rows, locL, showLoc) {
+      // Try compact inline rendering for simple day groups
+      if (_canRenderInline(rows)) return _renderInline(rows);
+
       var out = '';
       var hasAM = false, hasPM = false;
       for (var chk = 0; chk < rows.length; chk++) {

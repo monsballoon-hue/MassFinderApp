@@ -329,6 +329,41 @@ function smartDefault() {
 
 function esc(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 
+// Human-friendly relative date: "2026-03-04" → "1 week ago", "today", "3 months ago"
+function fmtRelDate(iso) {
+  if (!iso) return '';
+  var parts = iso.split('-').map(Number);
+  var then = new Date(parts[0], parts[1] - 1, parts[2] || 1);
+  var now = getNow();
+  var diffMs = now - then;
+  var days = Math.floor(diffMs / 86400000);
+  if (days < 0) return 'upcoming';
+  if (days === 0) return 'today';
+  if (days === 1) return 'yesterday';
+  if (days < 7) return days + ' days ago';
+  if (days < 14) return '1 week ago';
+  if (days < 30) return Math.floor(days / 7) + ' weeks ago';
+  if (days < 60) return '1 month ago';
+  if (days < 365) return Math.floor(days / 30) + ' months ago';
+  return Math.floor(days / 365) + '+ years ago';
+}
+
+// Human-friendly month label: "2026-03" → "March 2026"
+var _MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+function fmtMonth(iso) {
+  if (!iso) return '';
+  var parts = iso.split('-').map(Number);
+  return (_MONTH_NAMES[parts[1] - 1] || '') + ' ' + parts[0];
+}
+
+// fmt12 without AM/PM suffix — used for inline time display
+function fmt12bare(t) {
+  if (!t) return '';
+  var parts = t.split(':').map(Number), h = parts[0], m = parts[1];
+  var h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return m === 0 ? String(h12) : h12 + ':' + String(m).padStart(2, '0');
+}
+
 // TD-03: Shared CCC reference-stripping (used by ccc.js, examination.js, rosary.js)
 function stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
 
@@ -342,4 +377,5 @@ module.exports = {
   svcKey: svcKey, cleanNote: cleanNote, escRe: escRe, makeRangeLabel: makeRangeLabel,
   smartDefault: smartDefault, esc: esc, stripCCCRefs: stripCCCRefs,
   getEaster: getEaster, getSeasonProgress: getSeasonProgress,
+  fmtRelDate: fmtRelDate, fmtMonth: fmtMonth, fmt12bare: fmt12bare,
 };
