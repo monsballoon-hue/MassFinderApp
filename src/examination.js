@@ -35,7 +35,6 @@ reader.registerModule('examination', {
       // Show opening prayer as a centering moment — no progress bar, no scroll
       bodyEl.innerHTML = '<div class="exam-opening">'
         + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
-        + '<h3 class="exam-opening-title">' + _esc(d.prayers.prayer_before.title) + '</h3>'
         + '<p class="exam-opening-text">' + _esc(d.prayers.prayer_before.text) + '</p>'
         + '<button class="exam-opening-btn" onclick="window._examBeginReview()">Begin Examination</button>'
         + '</div>';
