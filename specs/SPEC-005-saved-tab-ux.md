@@ -7,12 +7,12 @@
 | ID | Idea | Title | Status |
 |----|------|-------|--------|
 | SPEC-005-A | IDEA-023 | "Prayer Life," "Your Churches," event listing text too small | open |
-| SPEC-005-B | IDEA-048 | "Your Churches" edit and X buttons too small | open |
-| SPEC-005-C | IDEA-054 | "Directions" link should open Apple Maps on iOS | open |
-| SPEC-005-D | IDEA-047 | Suppress season label during Ordinary Time | open |
-| SPEC-005-E | IDEA-044 | Clarify / document the dot on Saved tab greeting | open |
-| SPEC-005-F | IDEA-050 | Clarify / document the dot on the heart icon in tab bar | open |
-| SPEC-005-G | IDEA-045 | Today's events visually distinguished from future events | open |
+| SPEC-005-B | IDEA-048 | "Your Churches" edit and X buttons too small | done |
+| SPEC-005-C | IDEA-054 | "Directions" link should open Apple Maps on iOS | done (prior session) |
+| SPEC-005-D | IDEA-047 | Suppress season label during Ordinary Time | done |
+| SPEC-005-E | IDEA-044 | Clarify / document the dot on Saved tab greeting | done |
+| SPEC-005-F | IDEA-050 | Clarify / document the dot on the heart icon in tab bar | done |
+| SPEC-005-G | IDEA-045 | Today's events visually distinguished from future events | done |
 
 ---
 
@@ -388,3 +388,55 @@ function sortTodayEvents(events) {
 - [ ] Future events appear below today-events with a date label
 - [ ] No today events: future events render without any "TODAY" badge or section
 - [ ] Dark mode: left-border accent, surface elevation, and badge all render correctly
+
+---
+
+## Implementation Notes (2026-03-12 session)
+
+### SPEC-005-B
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** None — already implemented
+- **Approach:** Verified existing CSS: `.saved-edit-btn` has `min-height:44px`, `padding:var(--space-3)`, `display:inline-flex;align-items:center` (app.css line 1222). `.saved-church-remove` has `width:44px;height:44px`, flex-centered (app.css line 1223). Global button reset at line 188 handles `border:none;background:none;cursor:pointer`. Both elements already meet ≥ 44×44pt tap target spec.
+- **Deviations from spec:** The spec assumed buttons were undersized. Upon inspection, the ST-10 edit mode implementation (prior session) already sized both correctly. No changes needed.
+- **Known issues:** None observed.
+
+### SPEC-005-C
+- **Date:** 2026-03-12
+- **Status:** done (prior session)
+- **Files changed:** `src/saved.js` — platform-detect logic inlined at lines 124-128
+- **Approach:** Implemented in the earlier ad-hoc session on `main` branch. Uses `navigator.userAgent` check for Apple devices + `'ontouchend' in document` to detect iOS/iPadOS. Routes to `maps.apple.com` on Apple devices, `maps.google.com` otherwise. Logic inlined in `_renderSchedRow()`.
+- **Deviations from spec:** Used lat/lng coordinates with `maps.apple.com` URL format instead of address-based `maps://` protocol for more reliable pin placement. Logic was not extracted to shared utility (inlined in saved.js only, render.js uses its own detection).
+- **Known issues:** None observed.
+
+### SPEC-005-D
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` lines 499-501, `css/app.css` lines 1251-1252
+- **Approach:** Replaced the Lent-only `isLentSeason()` check with reading `data-season` attribute from `document.documentElement` (set by `setLiturgicalSeason()` in readings.js which already normalizes litcal values to 'lent', 'advent', 'christmas', 'easter', 'ordinary'). A lookup object maps each named season to a display label (e.g., 'lent' → 'Lenten Season'). Ordinary Time maps to nothing (label suppressed). Also changed the CSS from hardcoded purple (`#7C3AED`) to `var(--color-accent)` which is season-aware and resolves in dark mode via tokens — no separate dark override needed.
+- **Deviations from spec:** Did not create a shared utility function as spec suggested. The `data-season` attribute is already the shared mechanism — both saved.js and more.js (SPEC-006-A, already done) can read it independently. The More tab season sub-label was already removed entirely in SPEC-006-A.
+- **Known issues:** None observed.
+
+### SPEC-005-E
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` — added documentation comment block at lines 206-214
+- **Approach:** Outcome A — dot is functioning correctly and intentional. The `savedCountBadge` is an 8px accent-colored dot positioned next to the greeting header. It becomes visible when `hasLive` is true: a saved church has a currently-live service (based on time-of-day matching), OR a community/YC event at a saved church falls on today's date. It clears automatically on the next render cycle (60s auto-refresh via ST-09) when conditions are no longer met. Added comprehensive JSDoc comment explaining trigger, clear conditions, and relationship to SPEC-005-F badge.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+### SPEC-005-F
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` — same documentation comment block as SPEC-005-E (lines 206-214)
+- **Approach:** Outcome A — dot is functioning correctly and intentional. The `savedTabBadge` is an 8px accent-colored dot on the heart icon in the tab bar. Uses the exact same `hasLive` trigger as the greeting dot (SPEC-005-E). Both badges share the same logic block and are documented together. The tab bar badge gives users a reason to switch to the Saved tab when something relevant is happening at their saved churches.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+### SPEC-005-G
+- **Date:** 2026-03-12
+- **Status:** done
+- **Files changed:** `src/saved.js` lines 62-73 (sort), lines 341-343 (badge), `css/app.css` lines 1195-1198
+- **Approach:** Three changes: (1) Added service type prioritization to `getTodayServices()` sort — Mass types (sunday_mass, daily_mass, communion_service, Holy Week masses) sort first (priority 0), then confession/sacraments (1), then adoration types (2), then all others (9), with time as secondary sort within each priority group. (2) Updated `.saved-evt-today` CSS to use `--color-accent` (season-aware) instead of `--color-primary` for the left border, added subtle background tint and border-radius, plus dark mode override. Added `.saved-evt-today-badge` class for the label. (3) Added a "Today's Events" badge label above the today events group inside the Today Card.
+- **Deviations from spec:** Used config service type keys (e.g., 'sunday_mass') directly in the priority map rather than display labels. The existing structural separation (Today Card vs. This Week section) already handled today-first rendering — the badge and prioritization enhance what was there.
+- **Known issues:** None observed.

@@ -59,7 +59,19 @@ function getTodayServices(favChurches) {
     }
   }
 
-  results.sort(function(a, b) { return a.minutes - b.minutes; });
+  // SPEC-005-G: Sort by service type priority (Mass first), then by time
+  var SVC_PRIORITY = {
+    sunday_mass: 0, daily_mass: 0, communion_service: 0,
+    holy_thursday_mass: 0, easter_vigil_mass: 0, palm_sunday_mass: 0, easter_sunday_mass: 0,
+    confession: 1, anointing_of_sick: 1,
+    adoration: 2, perpetual_adoration: 2, holy_hour: 2
+  };
+  results.sort(function(a, b) {
+    var pa = SVC_PRIORITY[a.service.type] !== undefined ? SVC_PRIORITY[a.service.type] : 9;
+    var pb = SVC_PRIORITY[b.service.type] !== undefined ? SVC_PRIORITY[b.service.type] : 9;
+    if (pa !== pb) return pa - pb;
+    return a.minutes - b.minutes;
+  });
   return results;
 }
 
@@ -203,7 +215,14 @@ function renderSaved() {
   var favChurches = state.allChurches.filter(function(c) { return isFav(c.id); });
   var favIds = new Set(favChurches.map(function(c) { return c.id; }));
 
-  // Update badges — dot only for live services or today events (ST-14)
+  // ── Badge dots (SPEC-005-E greeting dot, SPEC-005-F tab bar dot) ──
+  // Both dots use the same "hasLive" condition:
+  //   - Visible when a saved church has a currently-live service (isLive),
+  //     OR when a community/YC event at a saved church falls on today's date.
+  //   - Clears automatically on the next render cycle (60s auto-refresh via ST-09)
+  //     when no services are live and no today events remain.
+  // savedCountBadge: 8px accent dot next to the greeting header (SPEC-005-E)
+  // savedTabBadge: 8px accent dot on the heart icon in the tab bar (SPEC-005-F)
   var now = getNow();
   var todayStr = toLocalDateStr(now);
   var hasLive = false;
@@ -328,9 +347,12 @@ function renderSaved() {
       }
     }
 
-    // Today events (below schedule, separated by divider)
+    // Today events (below schedule, separated by divider) — SPEC-005-G: TODAY badge
     if (todayEvents.length && todaySvcs.length) {
       html += '<div class="saved-today-divider"></div>';
+    }
+    if (todayEvents.length) {
+      html += '<div class="saved-evt-today-badge">Today\u2019s Events</div>';
     }
     for (var ti = 0; ti < todayEvents.length; ti++) {
       html += renderUnifiedEvt(todayEvents[ti].evt, todayEvents[ti].isYC);
@@ -496,8 +518,10 @@ function renderSaved() {
     else if (hour < 17) greeting = 'Good afternoon';
     else greeting = 'Good evening';
 
-    var isLent = utils.isLentSeason ? utils.isLentSeason() : false;
-    var seasonNote = isLent ? '<div class="saved-header-season">Lenten Season</div>' : '';
+    // SPEC-005-D: Show season label for named seasons, suppress during Ordinary Time
+    var seasonLabels = { lent: 'Lenten Season', advent: 'Advent Season', christmas: 'Christmas Season', easter: 'Easter Season' };
+    var curSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
+    var seasonNote = seasonLabels[curSeason] ? '<div class="saved-header-season">' + seasonLabels[curSeason] + '</div>' : '';
 
     headerEl.innerHTML = '<h2>' + greeting + '</h2>' + seasonNote;
   }
