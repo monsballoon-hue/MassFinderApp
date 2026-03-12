@@ -314,7 +314,9 @@ function _selectNovena(id) {
 
   var tracking = _getTracking(id);
   if (tracking) {
-    _currentDay = _computeCurrentDay(tracking);
+    // If already prayed today, open to last completed day for review, not the next locked day
+    var nextDay = _computeCurrentDay(tracking);
+    _currentDay = (_alreadyPrayedToday(tracking) && nextDay > 0) ? nextDay - 1 : nextDay;
   } else {
     var today = new Date().toISOString().slice(0, 10);
     _setTracking(id, { startDate: today, completedDays: [] });
