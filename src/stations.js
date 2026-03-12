@@ -21,8 +21,11 @@ reader.registerModule('stations', {
     footerEl.innerHTML = '';
 
     _load().then(function() {
-      _screen = 'intro';
-      _station = 0;
+      if (!params._restore) {
+        // Fresh open — reset state
+        _screen = 'intro';
+        _station = 0;
+      }
       _render();
       _acquireWakeLock();
       document.addEventListener('visibilitychange', _handleVisibility);
@@ -195,7 +198,7 @@ function _renderIntro(title, body, footer) {
     + '<p class="stations-intro-text">Walk with Jesus on His journey to Calvary through 14 stations of prayer and meditation.</p>'
     + '<p class="stations-intro-instruction">At each station, we pause to reflect on Christ\u2019s suffering and offer our prayers.</p>'
     + '</div>';
-  footer.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button>';
+  footer.innerHTML = '<div style="display:flex"><button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button></div>';
 }
 
 // ── Render: Station prayer screen ──
@@ -270,7 +273,7 @@ function _renderComplete() {
   if (titleEl) titleEl.textContent = '';
   if (footerEl) {
     footerEl.style.display = '';
-    footerEl.innerHTML = '<button class="stations-nav-btn stations-nav-primary" onclick="closeStations()">Amen</button>';
+    footerEl.innerHTML = '<div style="display:flex"><button class="stations-nav-btn stations-nav-primary" onclick="closeStations()">Amen</button></div>';
   }
   if (bodyEl) {
     bodyEl.innerHTML = '<div class="stations-complete-screen">'
@@ -303,8 +306,10 @@ function _prayerBlock(name, text) {
 }
 
 function _navHtml(prevLabel, nextLabel) {
-  return '<button class="stations-nav-btn stations-nav-secondary" onclick="stationsPrev()">' + prevLabel + '</button>'
-    + '<button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">' + nextLabel + '</button>';
+  return '<div style="display:flex;gap:var(--space-3)">'
+    + '<button class="stations-nav-btn stations-nav-secondary" onclick="stationsPrev()">' + prevLabel + '</button>'
+    + '<button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">' + nextLabel + '</button>'
+    + '</div>';
 }
 
 module.exports = {

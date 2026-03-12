@@ -18,6 +18,23 @@ function registerModule(mode, module) {
   _modules[mode] = module;
 }
 
+var _backSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>';
+
+function _updateBackBtn() {
+  var btn = document.getElementById('readerBackBtn');
+  btn.style.display = _stack.length ? '' : 'none';
+  if (_stack.length) {
+    var top = _stack[_stack.length - 1];
+    var topMod = _modules[top.mode];
+    var label = topMod && topMod.getTitle ? topMod.getTitle(top.params) : '';
+    btn.innerHTML = _backSvg + (label ? '<span class="reader-back-label">' + label + '</span>' : '');
+    btn.setAttribute('aria-label', label ? 'Back to ' + label : 'Back');
+  } else {
+    btn.innerHTML = _backSvg;
+    btn.setAttribute('aria-label', 'Back');
+  }
+}
+
 function readerOpen(mode, params) {
   var overlay = document.getElementById('readerOverlay');
   if (!overlay) return;
@@ -38,7 +55,7 @@ function readerOpen(mode, params) {
 
   // Update header
   document.getElementById('readerTitle').textContent = mod.getTitle ? mod.getTitle(params) : '';
-  document.getElementById('readerBackBtn').style.display = _stack.length ? '' : 'none';
+  _updateBackBtn();
 
   // Header extra — only replace when switching to a different mode
   // (preserves search inputs, breadcrumbs during same-mode navigation)
@@ -91,7 +108,7 @@ function readerBack() {
   overlay.setAttribute('data-mode', prev.mode);
 
   document.getElementById('readerTitle').textContent = mod.getTitle ? mod.getTitle(prev.params) : '';
-  document.getElementById('readerBackBtn').style.display = _stack.length ? '' : 'none';
+  _updateBackBtn();
 
   // Restore header extra for the module we're returning to
   var headerExtra = document.getElementById('readerHeaderExtra');
@@ -103,6 +120,7 @@ function readerBack() {
   var bodyEl = document.getElementById('readerBody');
   var footerEl = document.getElementById('readerFooter');
 
+  prev.params._restore = true;
   bodyEl.style.opacity = '0';
   setTimeout(function() {
     mod.render(prev.params, bodyEl, footerEl);

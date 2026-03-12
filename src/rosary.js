@@ -16,6 +16,7 @@ var _touchStartX = 0;
 var _touchStartY = 0;
 var _longPressTimer = null;
 var _swipeHintShown = false;
+var _beadsByDecade = [0, 0, 0, 0, 0]; // per-decade bead counts
 var _cccParagraphs = null;   // lazy-loaded catechism data for inline CCC
 
 var SET_META = {
@@ -41,12 +42,19 @@ reader.registerModule('rosary', {
     footerEl.innerHTML = '';
 
     _load().then(function() {
-      _screen = params.set ? 'opening' : 'select';
-      _set = params.set || _todaySet();
-      _mysteries = _data.mysteries[_set];
-      document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
-      _decade = 0;
-      _bead = 0;
+      if (params._restore && _set) {
+        // Returning from Bible/CCC — restore previous state
+        document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
+      } else {
+        // Fresh open — reset state
+        _screen = params.set ? 'opening' : 'select';
+        _set = params.set || _todaySet();
+        _mysteries = _data.mysteries[_set];
+        document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
+        _decade = 0;
+        _bead = 0;
+        _beadsByDecade = [0, 0, 0, 0, 0];
+      }
       _render();
       _acquireWakeLock();
       document.addEventListener('visibilitychange', _handleVisibility);
@@ -128,6 +136,7 @@ function rosarySelectSet(setName) {
   _mysteries = _data.mysteries[_set];
   _decade = 0;
   _bead = 0;
+  _beadsByDecade = [0, 0, 0, 0, 0];
   _screen = 'opening';
   document.getElementById('readerOverlay').setAttribute('data-rosary-set', _set.toLowerCase());
   _render();
@@ -152,7 +161,7 @@ function rosaryNext() {
       _haptic.error();
       return;
     }
-    if (_decade < 4) { _decade++; _bead = 0; }
+    if (_decade < 4) { _beadsByDecade[_decade] = _bead; _decade++; _bead = _beadsByDecade[_decade]; }
     else { _screen = 'closing'; }
   } else if (_screen === 'closing') {
     // Log rosary completion
@@ -170,7 +179,7 @@ function rosaryNext() {
     if (titleEl) titleEl.textContent = '';
     if (footerEl) {
       footerEl.style.display = '';
-      footerEl.innerHTML = '<button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button>';
+      footerEl.innerHTML = '<div style="display:flex"><button class="rosary-nav-btn rosary-nav-primary" onclick="closeRosary()">Amen</button></div>';
     }
     if (bodyEl) {
       var quote = SET_QUOTES[_set] || SET_QUOTES.Joyful;
@@ -193,9 +202,9 @@ function rosaryPrev() {
   if (_screen === 'closing') {
     _screen = 'decade';
     _decade = 4;
-    _bead = 0;
+    _bead = _beadsByDecade[4];
   } else if (_screen === 'decade') {
-    if (_decade > 0) { _decade--; _bead = 0; }
+    if (_decade > 0) { _beadsByDecade[_decade] = _bead; _decade--; _bead = _beadsByDecade[_decade]; }
     else { _screen = 'opening'; }
   } else if (_screen === 'opening') {
     _screen = 'select';
@@ -207,9 +216,10 @@ function rosaryPrev() {
 // ── Jump to decade from progress dots ──
 function rosaryGoTo(decadeIdx) {
   if (decadeIdx < 0 || decadeIdx > 4) return;
+  if (_screen === 'decade') _beadsByDecade[_decade] = _bead;
   _screen = 'decade';
   _decade = decadeIdx;
-  _bead = 0;
+  _bead = _beadsByDecade[decadeIdx];
   _render();
   _scrollTop();
 }
@@ -218,6 +228,7 @@ function rosaryGoTo(decadeIdx) {
 function rosaryBeadTap() {
   if (_screen !== 'decade' || _bead >= 10) return;
   _bead++;
+  _beadsByDecade[_decade] = _bead;
   _updateBeadUI();
   // Haptic rhythm: confirm on decade complete, slightly stronger at halfway, light tap otherwise
   if (_bead >= 10) {
@@ -234,6 +245,7 @@ function rosaryBeadTap() {
 function rosaryBeadReset() {
   if (_screen !== 'decade' || _bead === 0) return;
   _bead = 0;
+  _beadsByDecade[_decade] = 0;
   _updateBeadUI();
   _haptic.error(); // triple-pulse feedback for reset
 }
@@ -590,8 +602,10 @@ function _beadDotsHtml() {
 }
 
 function _navHtml(prevLabel, nextLabel) {
-  return '<button class="rosary-nav-btn rosary-nav-secondary" onclick="rosaryPrev()">' + prevLabel + '</button>'
-    + '<button class="rosary-nav-btn rosary-nav-primary" onclick="rosaryNext()">' + nextLabel + '</button>';
+  return '<div style="display:flex;gap:var(--space-3)">'
+    + '<button class="rosary-nav-btn rosary-nav-secondary" onclick="rosaryPrev()">' + prevLabel + '</button>'
+    + '<button class="rosary-nav-btn rosary-nav-primary" onclick="rosaryNext()">' + nextLabel + '</button>'
+    + '</div>';
 }
 
 module.exports = {
