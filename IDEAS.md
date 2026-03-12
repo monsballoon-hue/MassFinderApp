@@ -3,8 +3,8 @@
 ## Structured catalog of all ideas, bugs, enhancements, and observations
 
 **Last updated:** 2026-03-12
-**ID sequence:** IDEA-001 → IDEA-055
-**Total items:** 55
+**ID sequence:** IDEA-001 → IDEA-074
+**Total items:** 74
 
 -----
 
@@ -740,3 +740,237 @@ The reflection card at the top of the More tab prompts the user to reflect on a 
 **Spec ref:** (none)
 
 The contact phone number displayed in the event detail card is static text. It should be a tappable `tel:` link so the user can call directly from the card, provided the number is a valid phone number format. Files: `src/render.js` or wherever event detail cards are built, `css/app.css`.
+
+-----
+
+## IDEA-057 — Rosary: CCC/Bible toggle behavior disjointed — selecting one should auto-deselect the other
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-025, IDEA-058
+**Spec ref:** (none)
+
+When multiple CCC or Bible readings are available at the top of the Rosary, the toggle behavior is counterintuitive. Selecting a second reading while one is already active should automatically deselect the first and render the new selection — a single tap to switch. Currently the user must explicitly deselect the active reading before selecting another. A second tap on the already-active reading should be the only way to collapse/disable it. Files: `src/rosary.js`, `css/app.css`.
+
+-----
+
+## IDEA-058 — Rosary: swipe-down gesture too sensitive, dismisses entire module and loses progress
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-057
+**Spec ref:** (none)
+
+When the Rosary content extends beyond the viewport and the user scrolls up aggressively, the swipe-down dismissal gesture triggers, closing the entire Rosary module and losing all in-progress state. The dismiss gesture threshold needs to be raised significantly, or swipe-to-dismiss should be disabled entirely when the content container is scrollable. Consider requiring an intentional gesture (e.g., drag from a dedicated handle at the very top) rather than any downward swipe. Files: `src/rosary.js`, `css/app.css`.
+
+-----
+
+## IDEA-059 — Research: native voice assistant (Siri/Google) vs programmatic TTS vs hosted voice files for audio reading
+
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-003
+**Spec ref:** (none)
+
+The Web Speech API (IDEA-003) produces robotic programmatic voice that is unlikely to be acceptable for sacred text. Research three alternatives: (1) routing to the device’s native voice assistant (Siri on iOS, Google Assistant on Android) — investigate whether a deep link or handoff is possible; (2) a hosted TTS service (ElevenLabs, Google Cloud TTS, Amazon Polly) that can produce a natural-sounding voice — evaluate cost and privacy implications; (3) pre-recorded audio files for fixed texts like prayers, mysteries, and stations — feasible for bounded content, not for arbitrary scripture. Produce a recommendation with effort/cost/quality tradeoff for each option before IDEA-003 is specced.
+
+-----
+
+## IDEA-060 — Seasonal banner z-index: persists above prayer tool cards and reader overlays
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+The seasonal liturgical banner at the top of the app header persists at a z-index that renders it above the cards that open for prayer tools (Rosary, Examination, Stations, Novena) and reader overlays (CCC, Bible). It should sit beneath any modal or sheet-style overlay. Audit the z-index stack and ensure the banner is behind all overlay layers. Files: `css/app.css`, likely the z-index token section.
+
+-----
+
+## IDEA-061 — More tab: email signup and settings tiles visually indistinct from faith guide drawers
+
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+At the bottom of the More tab, the email signup and settings tiles share the same visual treatment as the faith guide accordion drawers above them. When expanded, they are nearly identical in appearance. These administrative/utility items should be visually differentiated — a distinct background, a divider, reduced visual weight, or a section label like “App” — so users understand they have reached the end of the content area and are now in utility/admin territory. Files: `src/more.js`, `css/app.css`.
+
+-----
+
+## IDEA-062 — Find tab: filter pill badge number misaligned, not vertically centered
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+When one or more filters are active on the Find tab, the badge count displayed on the filter pill is visually misaligned — it is not centered within the pill. Fix vertical and horizontal centering of the badge element. Files: `css/app.css`, badge selector within the filter pill component.
+
+-----
+
+## IDEA-063 — Find tab: filter selection highlight only applies to some service types, not all
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+When a filter is selected on the Find tab, the colored section highlight within cards renders only for certain service types (observed for Confession and Adoration). The highlight should extend consistently to every service sub-type available as a filter. Audit the card rendering logic to identify which types have highlight logic and which are missing it, then apply consistently. Files: `src/render.js`, `css/app.css`.
+
+-----
+
+## IDEA-064 — Font size settings: remap scale and normalize across all tabs
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-022, IDEA-023
+**Spec ref:** (none)
+
+Two related problems: (1) the current “Small” font size setting is uncomfortably small and unusable — the scale needs to be remapped so that the current “Medium” becomes the new minimum/Small, and a new larger step replaces the top; (2) the selected font size is not applied consistently across all tabs — approximately 80% of the app reflects the setting correctly, but the Saved tab and several other areas render at a fixed smaller size regardless of the user’s preference. Both issues need to be addressed together: remap the scale values and audit every view to ensure the font size CSS variable is inherited or explicitly applied. Files: `src/settings.js`, `css/app.css`.
+
+-----
+
+## IDEA-065 — More tab settings: feedback button is non-functional
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-066
+**Spec ref:** (none)
+
+The feedback button in the More tab settings panel does nothing when tapped. It should open the feedback/correction form (already built in `src/forms.js`). Wire the button to the existing form trigger. Files: `src/more.js` or `src/settings.js`, `src/forms.js`.
+
+-----
+
+## IDEA-066 — More tab settings: replace license display with GitHub link, collaborator CTA, and app description
+
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-065, IDEA-073, IDEA-074
+**Spec ref:** (none)
+
+The license text currently displayed in More tab settings is low-value for general users. Replace it with: (1) a link to the GitHub repo with a short “Open Source” label and a brief call for collaborators; (2) a short blurb at the very bottom of the More tab — below all other content — that explains what MassFinder is, why it was built, and who it is for. This blurb is the app’s human voice and should feel personal and mission-driven, not corporate. Files: `src/more.js`, `src/settings.js`, `css/app.css`.
+
+-----
+
+## IDEA-067 — Dev panel: ensure conditional features have test activators for deliberate QA
+
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+Any feature or UI state that is only reachable under specific runtime conditions (e.g., “happening now” service state, active novena day, streak milestone, offline mode) should have a corresponding toggle in the developer panel so these states can be activated deliberately during QA without needing to inject test data or wait for real conditions. As new conditional features are added, adding a dev panel activator for them should be a standard part of the implementation checklist. Files: dev panel module (identify location), `CLAUDE.md` (add to How to Add a New Feature checklist).
+
+-----
+
+## IDEA-068 — More tab: daily Q&A not rotating by day; Summa not keyed to Q&A topic
+
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-005
+**Spec ref:** (none)
+
+Two related issues on the More tab: (1) the daily Q&A card appears to be showing the same entry every day rather than advancing on a daily rotation — the day-keyed selection logic is either broken or not implemented; (2) the Summa Theologica daily wisdom card below it should be selected to be topically relevant to whatever the Q&A is showing that day, not independently random — if no relevant Summa article exists for that Q&A topic, the Summa card should not render rather than show something unrelated. Files: `src/more.js`, `src/readings.js`, `data/summa-daily.json`.
+
+-----
+
+## IDEA-069 — Church detail card: now/next service text misalignment and urgency color coding
+
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-070, IDEA-071, IDEA-072
+**Spec ref:** (none)
+
+Two issues on the prominent now/next service block at the top of the church detail card: (1) the text elements are not uniformly vertically aligned — labels, times, and secondary text sit at inconsistent baselines; fix to a consistent vertical rhythm. (2) Add urgency color coding to the time-until indicator in the “coming up” section: services starting in under 60 minutes (excluding exactly 60) should be colored amber/orange to signal that action is needed soon; “Happening Now” should be green. Use existing token colors or introduce `--color-urgent` if needed. Dark mode parity required. Files: `src/render.js`, `css/app.css`.
+
+-----
+
+## IDEA-070 — Church detail card: address redundancy — city/state duplicates full address
+
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-069
+**Spec ref:** (none)
+
+The church detail card currently shows “City, State” as a header line followed by the full street address below it, which already contains the city and state. This is redundant. Proposed fix: show only the full street address in the detail card — the city/state label belongs on the Find tab church card where it gives quick geographic context without full detail. If there is a design reason to keep some location summary in the header, consider showing neighborhood or just the city name without repeating it with the full address. Files: `src/render.js`, `css/app.css`.
+
+-----
+
+## IDEA-071 — Church detail card: evaluate office hours display — usefulness and rendering quality
+
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-069
+**Spec ref:** (none)
+
+Office hours are displayed on some church detail cards but the data is inconsistent — some entries have unusual or incomplete formats. Before investing in better rendering, evaluate whether office hours earn their place: do users look for this information, and is the data reliable enough to be trustworthy? If office hours are worth keeping, they should be rendered in a structured, legible format (e.g., day-by-day rows, not a freeform string). If the data quality is too variable to be useful, consider suppressing office hours entirely until a data pipeline can normalize them. Files: `src/render.js`, `parish_data.json` (sample the office hours field quality).
+
+-----
+
+## IDEA-072 — Church detail card: replace inline dot-separated schedule with stacked vertical layout
+
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-069
+**Spec ref:** (none)
+
+The current schedule display uses inline dot-separated times (e.g., “Mon · 8:00am · 12:00pm · Wed · 5:30pm”) which is visually dense and hard to scan. Replace with a stacked vertical layout where each day is its own row, with the day label and its times clearly separated — consider an indented dash or grid alignment so the user can quickly find a specific day and immediately read the times beneath or beside it. The goal is scannability at a glance. Files: `src/render.js`, `css/app.css`.
+
+-----
+
+## IDEA-073 — README: comprehensive rewrite with features, conventions, collaborator invitation
+
+**Category:** tech-debt
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-066, IDEA-074
+**Spec ref:** (none)
+
+The current README needs a full rewrite to reflect the actual state of the app. It should cover: high-level overview and mission statement; feature summary (group related features into batches — prayer tools can be one blurb rather than seven bullet points); important files and their roles; build process and data pipeline; key conventions (CommonJS, no arrow functions, config.js canonical, etc.); current limitations and the roadmap direction; and a warm, personal invitation for collaborators. The tone should make clear that this project is actively developed, mission-driven, and genuinely welcoming of contributors — not a hobby repo that might be abandoned. Files: `README.md`.
+
+-----
+
+## IDEA-074 — Research: data validation pipeline revival, contributor portal, and parish admin onboarding funnel
+
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-12
+**Source:** voice
+**Related:** IDEA-006, IDEA-019, IDEA-066, IDEA-073
+**Spec ref:** (none)
+
+The data validation and AI pipeline work has been on hold during the feature-building phase and needs to return to the roadmap. Research and design a multi-tier contributor system: (1) a developer track routing interested contributors to GitHub; (2) a validator track for general users who want to help verify parish data accuracy; (3) a parish administrator track where staff at a church can claim and maintain their own listing. The in-app entry point should be a “Want to help?” surface in settings or the bottom of the More tab — personal, mission-driven, and relatable (explain who built this and why). An optional onboarding splash for new installs could route users to the appropriate track. This is largely a research and design task before any implementation; produce a proposed architecture and UX flow before speccing.
