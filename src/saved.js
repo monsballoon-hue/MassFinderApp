@@ -122,7 +122,8 @@ function _renderSchedRow(item, isHero) {
   // Inline Directions for hero row (ST-01)
   var directionsHtml = '';
   if (isHero && (item.isLive || item.isSoon) && item.church.lat) {
-    var mapsUrl = 'https://maps.google.com/maps?daddr=' + item.church.lat + ',' + item.church.lng;
+    var render = require('./render.js');
+    var mapsUrl = render.getMapsUrlCoords(item.church.lat, item.church.lng, displayName(item.church));
     directionsHtml = '<a class="sched-row-directions" href="' + mapsUrl + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Directions</a>';
   }
 
