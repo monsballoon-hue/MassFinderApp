@@ -167,10 +167,13 @@ function _renderSelect(title, body, footer) {
         dotsHtml += '<div class="' + dotCls + '"></div>';
       }
       dotsHtml += '</div>';
+      var progressLabel = _alreadyPrayedToday(item.tracking)
+        ? 'Day ' + dayNum + ' available tomorrow'
+        : 'Day ' + dayNum + ' of 9 \u00b7 ' + completed + ' completed';
       html += '<div class="novena-master-row" onclick="novenaSelect(\'' + item.id + '\')">'
         + '<div class="novena-master-info">'
         + '<div class="novena-master-title">' + utils.esc(nov.title) + '</div>'
-        + '<div class="novena-master-progress">Day ' + dayNum + ' of 9 \u00b7 ' + completed + ' completed</div>'
+        + '<div class="novena-master-progress">' + progressLabel + '</div>'
         + '</div>'
         + dotsHtml
         + '<span class="novena-master-chevron">\u203A</span>'
@@ -236,7 +239,7 @@ function _renderPrayer(title, body, footer) {
     markBtn = '<span class="novena-completed-badge">\u2713 Day ' + dayNum + ' Complete</span>'
       + '<button class="novena-done-btn" onclick="closeNovena()">Done</button>';
   } else if (alreadyToday) {
-    markBtn = '<span class="novena-completed-badge" style="background:var(--color-accent-pale);color:var(--color-accent-text)">\u231B Come back tomorrow for Day ' + dayNum + '</span>';
+    markBtn = '<span class="novena-tomorrow-note">Day ' + dayNum + ' will be ready tomorrow</span>';
   } else {
     markBtn = '<button class="novena-mark-btn" onclick="novenaMarkDay()">Complete Day ' + dayNum + '</button>';
   }
