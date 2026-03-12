@@ -428,8 +428,8 @@ async function _renderBibleContent(refStr) {
     }
   }
 
-  // Explore button
-  relHtml += '<button class="bible-explore-btn" onclick="openExplore(\'bible\',\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
+  // Explore button — close Bible first, then open Explore (z-index fix)
+  relHtml += '<button class="bible-explore-btn" onclick="_openExploreFromBible(\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
 
   relEl.innerHTML = relHtml;
 
@@ -550,6 +550,15 @@ function bibleReadAloud() {
   _speaking = true;
   if (btn) btn.classList.add('speaking');
 }
+
+// Z-index fix: close Bible before opening Explore so it doesn't open behind the sheet
+function _openExploreFromBible(refStr) {
+  closeBible();
+  setTimeout(function() {
+    if (window.openExplore) window.openExplore('bible', refStr);
+  }, 150);
+}
+window._openExploreFromBible = _openExploreFromBible;
 
 module.exports = {
   openBible: openBible,

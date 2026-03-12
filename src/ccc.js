@@ -6,6 +6,7 @@ var cccData = require('./ccc-data.js');
 var createFuzzySearch = require('@nozbe/microfuzz').default;
 var _cccData = null, _cccXrefs = null, _cccHistory = [], _cccCurrentNum = '';
 var _cccSearchIndex = null, _cccSearchTimer = null;
+var _cccFootnotes = null;
 
 // CCC-06: Section context lookup — paragraph number ranges to section labels
 var _CCC_SECTIONS = [
@@ -58,6 +59,13 @@ async function _loadCCCData() {
   if (_cccData) return;
   var d = await cccData.load();
   if (d) { _cccData = d.paragraphs; _cccXrefs = d.xrefs; }
+  // Load footnotes in parallel (non-blocking — render works without them)
+  if (!_cccFootnotes) {
+    try {
+      var resp = await fetch('data/ccc-footnotes.json');
+      if (resp.ok) _cccFootnotes = await resp.json();
+    } catch (e) { /* footnotes are enhancement-only */ }
+  }
 }
 
 function _mdItalic(t) { return t.replace(/\*([^*]+)\*/g, '<em>$1</em>'); }
@@ -188,8 +196,36 @@ async function _renderCCCContent(numStr) {
     relHtml += '</div>';
   }
 
-  // Explore button
-  bodyHtml += '<button class="ccc-explore-btn" onclick="openExplore(\'ccc\',\'' + primaryId + '\')">Explore connections \u203A</button>';
+  // Footnotes / Sources collapsible section
+  var footnotes = _cccFootnotes && _cccFootnotes[primaryId];
+  if (footnotes && footnotes.length) {
+    bodyHtml += '<details class="ccc-sources">';
+    bodyHtml += '<summary class="ccc-sources-header">Sources <span class="ccc-sources-count">' + footnotes.length + '</span></summary>';
+    bodyHtml += '<div class="ccc-sources-body">';
+    footnotes.forEach(function(fn) {
+      var icon = fn.type === 'scripture' ? 'Scripture'
+        : fn.type === 'church_father' ? 'Church Father'
+        : fn.type === 'council' ? 'Council'
+        : fn.type === 'liturgical' ? 'Liturgical'
+        : 'Document';
+      bodyHtml += '<div class="ccc-source-item">';
+      bodyHtml += '<span class="ccc-source-type">' + utils.esc(icon) + '</span>';
+      if (fn.source) bodyHtml += '<span class="ccc-source-name">' + utils.esc(fn.source) + '</span>';
+      if (fn.work) bodyHtml += '<span class="ccc-source-work">' + utils.esc(fn.work) + '</span>';
+      if (fn.ref && fn.type === 'scripture') {
+        // Scripture refs are tappable — open Bible reader
+        var cleanRef = fn.ref.replace(/^cf\.\s*/i, '').replace(/\u21d2\s*/g, '').trim();
+        bodyHtml += '<span class="ref-tap ref-tap--bible" onclick="window._refTap(\'bible\',\'' + utils.esc(cleanRef).replace(/'/g, '&#39;') + '\')">' + utils.esc(fn.ref) + '</span>';
+      } else if (fn.ref && !fn.work) {
+        bodyHtml += '<span class="ccc-source-ref">' + utils.esc(fn.ref) + '</span>';
+      }
+      bodyHtml += '</div>';
+    });
+    bodyHtml += '</div></details>';
+  }
+
+  // Explore button — close CCC first, then open Explore (z-index fix)
+  bodyHtml += '<button class="ccc-explore-btn" onclick="_openExploreFromCCC(\'' + primaryId + '\')">Explore connections \u203A</button>';
 
   // CR-01: Prev/next sequential navigation
   var prevNum = null, nextNum = null;
@@ -441,6 +477,15 @@ function cccSearchSelect(numStr) {
   _hideSearchResults();
   cccNavigate(numStr);
 }
+
+// Z-index fix: close CCC before opening Explore so it doesn't open behind the sheet
+function _openExploreFromCCC(numStr) {
+  closeCCC();
+  setTimeout(function() {
+    if (window.openExplore) window.openExplore('ccc', numStr);
+  }, 150);
+}
+window._openExploreFromCCC = _openExploreFromCCC;
 
 module.exports = {
   openCCC: openCCC,
