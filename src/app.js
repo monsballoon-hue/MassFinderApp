@@ -517,13 +517,15 @@ function _renderDailyStrip(events) {
 
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
-    + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
+    + '<div class="daily-card-icon" style="background:' + colorHex + '">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" width="14" height="14"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="10" x2="22" y2="10"/></svg>'
+    + '</div>'
     + '<div class="daily-card-text">'
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
     + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
     + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
     + '</div>'
-    + '<span class="daily-card-arrow">\u203a</span>'
+    + '<span class="daily-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></span>'
     + '</div>'
     + '</div>';
 }

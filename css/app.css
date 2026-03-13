@@ -212,18 +212,18 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .liturgical-teaser-wrap { max-width:var(--max-width);margin:0 auto;padding:0 var(--space-4); }
 .liturgical-teaser-wrap:empty { display:none; }
 /* Daily card — liturgical day teaser on Find tab */
-.daily-card { padding:var(--space-3) var(--space-4);background:var(--color-surface);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow var(--transition-fast);animation:fadeIn 0.3s ease-out;margin-top:var(--space-2); }
+.daily-card { padding:var(--space-4);background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 100%);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;transition:box-shadow var(--transition-fast);animation:fadeIn 0.3s ease-out;margin-top:var(--space-2); }
 @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
 .daily-card:hover { box-shadow:var(--shadow-card); }
 .daily-card:active { opacity:0.9; }
 .daily-card-row { display:flex;align-items:center;gap:var(--space-3); }
-.daily-card-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+.daily-card-icon { width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
 .daily-card-text { flex:1;min-width:0; }
-.daily-card-name { font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
-.daily-card-progress { font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:1px; }
+.daily-card-name { font-family:var(--font-display);font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-text-primary);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.daily-card-progress { font-size:var(--text-xs);color:var(--color-text-secondary);margin-top:1px; }
 .daily-card-secondary { font-size:var(--text-xs);color:var(--color-accent-text);font-style:italic;margin-top:1px; }
 .daily-card-prompt { font-size:var(--text-xs);color:var(--color-text-secondary);font-style:italic;padding:var(--space-2) var(--space-3) 0;border-top:1px solid var(--color-border-light);margin-top:var(--space-2); }
-.daily-card-arrow { color:var(--color-text-tertiary);font-size:1.3rem;flex-shrink:0; }
+.daily-card-arrow { color:var(--color-text-tertiary);flex-shrink:0;display:flex;align-items:center; }
 /* More tab daily prompt */
 .more-daily-prompt { font-size:var(--text-sm);color:var(--color-text-secondary);font-style:italic;text-align:center;padding:var(--space-3) var(--space-4) 0; }
 /* Daily Formation card (MT-02: combined Baltimore Q&A + Summa) */
