@@ -2,15 +2,15 @@
 
 **Spec prefix:** FGP (Faith Guides & Prayer)
 **Created:** 2026-03-13
-**Status:** Queued
+**Status:** Implemented
 **Backlog items addressed:** IDEA-011, IDEA-020
 
 | ID | Title | Priority | Status |
 |----|-------|----------|--------|
-| FGP-01 | Faith Guides: Icon System & Visual Hierarchy | P3 | Queued |
-| FGP-02 | Faith Guides: Progressive Disclosure Drawer | P3 | Queued |
-| FGP-03 | Faith Guides: Expanded State Accent & Polish | P3 | Queued |
-| FGP-04 | Rosary: "Mysteries Only" Condensed Mode | P3 | Queued |
+| FGP-01 | Faith Guides: Icon System & Visual Hierarchy | P3 | Done |
+| FGP-02 | Faith Guides: Progressive Disclosure Drawer | P3 | Done |
+| FGP-03 | Faith Guides: Expanded State Accent & Polish | P3 | Done |
+| FGP-04 | Rosary: "Mysteries Only" Condensed Mode | P3 | Done |
 
 ---
 
@@ -101,6 +101,15 @@ The Faith Guides in the More tab are visually plain. Every guide uses the same `
 - [ ] Dark mode: icon container uses dark accent-pale, SVG uses dark accent-text
 - [ ] Summary row: vertically centered with icon present
 - [ ] Lent guide during Lent: accent-pale shifts to purple tint (seasonal)
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/devotions.js` — replaced empty `icon:''` strings with inline SVGs for all 11 guides; `css/app.css` — added `.devot-icon` container rules (36×36, accent-pale bg, centered flex), dark mode override, bumped summary min-height to 56px
+- **Approach:** Populated all 11 guide `icon` fields with stroke-based 24×24 SVGs. Initial icon set was revised per developer feedback — replaced Confession key with speech bubble, Lent cross made bolder (stroke-width 2.5), TLM closed book replaced with open book, Stations sub-guide cross reused from prayer tools. Sub-guides within Devotions group also get icons for scannability.
+- **Deviations from spec:** Changed several recommended icons after visual review on device. Confession uses speech bubble instead of key (more intuitive). TLM uses open book instead of closed book (avoids phone/tablet appearance at 18px). Lent cross uses stroke-width 2.5 for visibility. Stations sub-guide reuses exact prayer tools cross instead of abstract path icon.
+- **Known issues:** None observed
 
 ---
 
@@ -215,6 +224,15 @@ Button uses token-based colors — dark mode inherits automatically. Added expli
 - [ ] Dark mode: button styling correct
 - [ ] Content below (Catholic Library): visible sooner with progressive disclosure
 
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/more.js` — split guide rendering at index 3 with overflow div and toggle button, added `toggleDevotOverflow()` function; `src/app.js` — wired `window.toggleDevotOverflow`; `css/app.css` — added `.devot-show-all` button rules (dashed border, flex, 44px min-height, dark mode)
+- **Approach:** Built array of guide HTML, split at index 3 (Sunday Obligation, Confession, Lent visible by default). Remaining guides wrapped in `display:none` overflow div. Toggle button switches between "Show all guides" (chevron down) and "Show fewer" (chevron up). Event delegation for term/ref taps already runs on the full container including hidden elements.
+- **Deviations from spec:** None
+- **Known issues:** None observed
+
 ---
 
 ## FGP-03 — Faith Guides: Expanded State Accent & Polish
@@ -297,6 +315,15 @@ When a guide card is expanded (`<details open>`), it looks the same as when coll
 - [ ] Dark mode: accent border visible, gradient subtle, shadow appropriate
 - [ ] All five liturgical seasons: accent color shifts correctly
 - [ ] Multiple cards expanded simultaneously: each has its own accent independently
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `css/app.css` — added transition to `.devot-card`, added `.devot-card[open]` rule (accent left border, gradient background, elevated shadow), dark mode override, `.devot-card[open] .devot-sub[open]` override to prevent double-tint
+- **Approach:** Pure CSS solution using `[open]` attribute selector on `<details>`. Added smooth transitions for border, background, and box-shadow. Sub-guide override uses `var(--color-surface)` background and thinner 2px accent border to maintain visual hierarchy within expanded parent groups.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -445,3 +472,12 @@ Experienced pray-ers who know the rosary prayers by heart still see the full tex
 - [ ] Dark mode: toggle button styled correctly
 - [ ] Touch target: toggle button ≥ 32px height, comfortably tappable
 - [ ] Screen height: condensed decade screen is notably shorter (less scrolling)
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/rosary.js` — added `_condensedMode` state with localStorage persistence, toggle button in `_renderDecade()`, conditional prayer block rendering in decade/opening/closing screens, `toggleRosaryCondensed()` function; `src/app.js` — wired `window.toggleRosaryCondensed`; `css/app.css` — added `.rosary-mode-toggle`, `.rosary-mode-btn` (pill button, active state), `.rosary-condensed-summary` (italic prayer font), dark mode overrides
+- **Approach:** Added `_condensedMode` boolean initialized from `localStorage.getItem('mf-rosary-condensed')`. In decade view, prayer blocks (Our Father, Hail Mary, Glory Be, O My Jesus) are conditionally rendered — hidden entirely in condensed mode while bead counter always shows. Opening and closing screens show a single-line italic summary (e.g. "Sign of the Cross · Apostles' Creed · 3 Hail Marys · Glory Be") instead of full prayer text. Toggle calls `_render()` to re-render current screen.
+- **Deviations from spec:** Used `_render()` instead of `_renderScreen()` for the toggle re-render (they're equivalent — `_render()` dispatches to the current screen's render function). Did not modify `_prayerBlockCollapsible()` itself — used conditional rendering at the call sites instead, which is cleaner.
+- **Known issues:** None observed

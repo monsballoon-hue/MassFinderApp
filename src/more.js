@@ -237,7 +237,7 @@ function renderMore() {
   // Devotional guides
   var devotEl = document.getElementById('devotionalCards');
   if (devotEl) {
-    devotEl.innerHTML = DEVOTIONAL_GUIDES.map(function(g) {
+    var allGuideHtml = DEVOTIONAL_GUIDES.map(function(g) {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
         var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -247,7 +247,19 @@ function renderMore() {
           + '</details>';
       }
       return renderGuide(g, false);
-    }).join('');
+    });
+    // FGP-02: Progressive disclosure — show top 3, hide rest behind toggle
+    var visibleCount = 3;
+    var visibleHtml = allGuideHtml.slice(0, visibleCount).join('');
+    var hiddenHtml = allGuideHtml.slice(visibleCount).join('');
+    devotEl.innerHTML = visibleHtml;
+    if (hiddenHtml) {
+      devotEl.innerHTML += '<div class="devot-overflow" id="devotOverflow" style="display:none">'
+        + hiddenHtml + '</div>'
+        + '<button class="devot-show-all" id="devotShowAll" onclick="toggleDevotOverflow()">'
+        + 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>'
+        + '</button>';
+    }
 
     // Wire term definition taps (UX-07)
     devotions.initTermClicks(devotEl);
@@ -308,6 +320,18 @@ function dismissInstallCard() {
   }
 }
 
+// FGP-02: Toggle devotional guides overflow
+function toggleDevotOverflow() {
+  var overflow = document.getElementById('devotOverflow');
+  var btn = document.getElementById('devotShowAll');
+  if (!overflow || !btn) return;
+  var isHidden = overflow.style.display === 'none';
+  overflow.style.display = isHidden ? '' : 'none';
+  btn.innerHTML = isHidden
+    ? 'Show fewer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="18 15 12 9 6 15"/></svg>'
+    : 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+
 module.exports = {
   // Re-export forms for app.js window bindings
   expressInterest: forms.expressInterest,
@@ -325,6 +349,7 @@ module.exports = {
   // More tab own exports
   renderMore: renderMore,
   dismissInstallCard: dismissInstallCard,
+  toggleDevotOverflow: toggleDevotOverflow,
   // Re-export devotions for external consumers
   renderGuide: renderGuide,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,

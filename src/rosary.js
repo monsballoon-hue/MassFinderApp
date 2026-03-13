@@ -18,6 +18,8 @@ var _longPressTimer = null;
 var _swipeHintShown = false;
 var _beadsByDecade = [0, 0, 0, 0, 0]; // per-decade bead counts
 var _hasInteracted = false;  // PTR-06-A: hide bead hint after first tap
+var _condensedMode = false;  // FGP-04: Mysteries Only mode
+try { _condensedMode = localStorage.getItem('mf-rosary-condensed') === '1'; } catch(e) {}
 
 var SET_META = {
   Joyful:    { color: '#4A90D9', desc: 'Monday & Saturday' },
@@ -374,13 +376,20 @@ function _renderOpening(title, body, footer) {
   var p = _data.prayers;
   snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(-1)
+    + '<div class="rosary-mode-toggle">'
+    + '<button class="rosary-mode-btn' + (_condensedMode ? ' active' : '') + '" onclick="toggleRosaryCondensed()">'
+    + (_condensedMode ? 'Show prayers' : 'Mysteries only')
+    + '</button>'
+    + '</div>'
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
-    + _prayerBlock('Sign of the Cross', p.sign_of_cross)
-    + _prayerBlock('Apostles\' Creed', p.apostles_creed)
-    + _prayerBlock('Our Father', p.our_father)
-    + _prayerBlock('Three Hail Marys', p.hail_mary, 'For an increase of Faith, Hope, and Charity')
-    + _prayerBlock('Glory Be', p.glory_be)
+    + (_condensedMode
+      ? '<div class="rosary-condensed-summary">Sign of the Cross \u00b7 Apostles\' Creed \u00b7 Our Father \u00b7 3 Hail Marys \u00b7 Glory Be</div>'
+      : _prayerBlock('Sign of the Cross', p.sign_of_cross)
+        + _prayerBlock('Apostles\' Creed', p.apostles_creed)
+        + _prayerBlock('Our Father', p.our_father)
+        + _prayerBlock('Three Hail Marys', p.hail_mary, 'For an increase of Faith, Hope, and Charity')
+        + _prayerBlock('Glory Be', p.glory_be))
     + '</div>';
   footer.style.display = '';
   footer.innerHTML = _navHtml('Back', 'Begin First Decade \u2192');
@@ -395,6 +404,11 @@ function _renderDecade(title, body, footer) {
 
   snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(_decade)
+    + '<div class="rosary-mode-toggle">'
+    + '<button class="rosary-mode-btn' + (_condensedMode ? ' active' : '') + '" onclick="toggleRosaryCondensed()">'
+    + (_condensedMode ? 'Show prayers' : 'Mysteries only')
+    + '</button>'
+    + '</div>'
     + '<div class="rosary-decade">'
     // Mystery card (RC-06: compact layout)
     + '<div class="rosary-mystery" style="--set-color:' + (meta.color || '#666') + '">'
@@ -408,8 +422,8 @@ function _renderDecade(title, body, footer) {
     + utils.esc(m.scripture) + '</span>'
     + '</div>'
     + '</div>'
-    // Our Father (collapsible)
-    + _prayerBlockCollapsible('Our Father', p.our_father)
+    // Our Father (collapsible) — hidden in condensed mode
+    + (_condensedMode ? '' : _prayerBlockCollapsible('Our Father', p.our_father))
     // Hail Mary bead counter
     + '<div class="rosary-hm-section' + (_bead >= 10 ? ' complete' : '') + '" style="--set-color:' + (meta.color || '#2C3E5A') + '">'
     + '<div class="rosary-hm-header">10 Hail Marys</div>'
@@ -420,10 +434,10 @@ function _renderDecade(title, body, footer) {
     + '</div>'
     + (!_hasInteracted && _bead < 10 ? '<div class="rosary-bead-hint">' + (_bead === 0 ? 'Tap beads to count' : 'Hold to reset') + '</div>' : '')
     + '</div>'
-    + _prayerBlockCollapsible('Hail Mary', p.hail_mary)
-    // Glory Be + O My Jesus (collapsible)
-    + _prayerBlockCollapsible('Glory Be', p.glory_be)
-    + _prayerBlockCollapsible('O My Jesus', p.o_my_jesus, 'Fatima Prayer')
+    + (_condensedMode ? '' : _prayerBlockCollapsible('Hail Mary', p.hail_mary))
+    // Glory Be + O My Jesus (collapsible) — hidden in condensed mode
+    + (_condensedMode ? '' : _prayerBlockCollapsible('Glory Be', p.glory_be))
+    + (_condensedMode ? '' : _prayerBlockCollapsible('O My Jesus', p.o_my_jesus, 'Fatima Prayer'))
     + '</div>';
 
   var prevLabel = _decade === 0 ? '\u2190 Opening' : '\u2190 ' + _ordinal(_decade) + ' Decade';
@@ -477,10 +491,17 @@ function _renderClosing(title, body, footer) {
   var p = _data.prayers;
   snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(5)
+    + '<div class="rosary-mode-toggle">'
+    + '<button class="rosary-mode-btn' + (_condensedMode ? ' active' : '') + '" onclick="toggleRosaryCondensed()">'
+    + (_condensedMode ? 'Show prayers' : 'Mysteries only')
+    + '</button>'
+    + '</div>'
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'
-    + _prayerBlock('Hail, Holy Queen', p.hail_holy_queen)
-    + _prayerBlock('Sign of the Cross', p.sign_of_cross)
+    + (_condensedMode
+      ? '<div class="rosary-condensed-summary">Hail, Holy Queen \u00b7 Sign of the Cross</div>'
+      : _prayerBlock('Hail, Holy Queen', p.hail_holy_queen)
+        + _prayerBlock('Sign of the Cross', p.sign_of_cross))
     + '</div>';
   footer.style.display = '';
   footer.innerHTML = _navHtml('\u2190 Fifth Decade', 'Amen');
@@ -533,6 +554,13 @@ function _navHtml(prevLabel, nextLabel) {
     + '</div>';
 }
 
+// FGP-04: Toggle condensed mode
+function toggleRosaryCondensed() {
+  _condensedMode = !_condensedMode;
+  try { localStorage.setItem('mf-rosary-condensed', _condensedMode ? '1' : '0'); } catch(e) {}
+  _render();
+}
+
 module.exports = {
   openRosary: openRosary,
   closeRosary: closeRosary,
@@ -542,4 +570,5 @@ module.exports = {
   rosaryGoTo: rosaryGoTo,
   rosaryBeadTap: rosaryBeadTap,
   rosaryBeadReset: rosaryBeadReset,
+  toggleRosaryCondensed: toggleRosaryCondensed,
 };

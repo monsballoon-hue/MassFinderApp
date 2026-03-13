@@ -121,13 +121,17 @@ Mass times displayed at the top of the Saved tab are visually misaligned. Some e
 
 ## IDEA-011 — Faith Guides: visual facelift and placement reassessment
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-13
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
 **Spec ref:** FGP-01, FGP-02, FGP-03
+**Impl ref:** FGP-01, FGP-02, FGP-03
 
 The Faith Guides are visually basic and plain — they need a design facelift across the board. Also worth assessing whether they should be relocated to a collapsed drawer at the bottom of the view by default, or whether a better placement/interaction pattern exists. Currently they may be taking up prominent space without earning it visually.
+
+**Implemented:** 2026-03-13 via FGP-01, FGP-02, FGP-03 — Added SVG icons to all 11 guides, progressive disclosure (top 3 visible, rest behind "Show all" toggle), accent left-border + gradient + shadow on expanded cards
 
 ## IDEA-012 — Church detail: two separate hero banners for confession and mass tomorrow should merge
 **Category:** question
@@ -232,13 +236,17 @@ The Prayer Tools are functional but the experience doesn't invite people to ling
 
 ## IDEA-020 — Prayer Tools: "I know the prayers" condensed mode
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-13
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-019
 **Spec ref:** FGP-04
+**Impl ref:** FGP-04
 
 Explore adding an option for experienced users to hide prayer text they already know by heart. Possible approaches: an "I know the prayers" toggle that collapses all text, a per-prayer selector to choose which ones to show, or an expedited swipe-through mode where decades advance with a single swipe instead of 10 individual taps. Primary use case: a user who only needs the mystery announcement and blurb but not the Hail Mary / Our Father text repeated each time.
+
+**Implemented:** 2026-03-13 via FGP-04 — Added "Mysteries only" toggle to rosary decades that hides all prayer text, shows condensed summaries on opening/closing screens, persists via localStorage
 
 ## IDEA-021 — Examen: tapping CCC pill incorrectly marks item as selected
 **Category:** bug
