@@ -2,9 +2,19 @@
 
 **Spec prefix:** BT1 (Backlog Triage 1)
 **Created:** 2026-03-13
-**Status:** Queued
+**Status:** Implemented
 **Backlog items addressed:** IDEA-001, IDEA-002, IDEA-003, IDEA-004, IDEA-006, IDEA-008
 **Items skipped (out of UX scope):** IDEA-005 (API/data dependency), IDEA-007 (data pipeline), IDEA-009 (sort algorithm)
+
+| ID | Title | Status |
+|----|-------|--------|
+| BT1-01 | Liturgical Day Teaser Card: Design Uplift | Done |
+| BT1-02 | Fasting Banner: SVG Icon, Dismissibility, Visual Polish | Done |
+| BT1-03 | Readings: Gospel Border Consistency & Visual Warmth | Done |
+| BT1-04 | Reference Snippets: Prevent Premature Dismissal | Done |
+| BT1-05 | PWA Update Banner: Feedback, Styling, Auto-Dismiss | Done |
+| BT1-06a | Map Tab: Bottom Gap Fix | Done |
+| BT1-06b | Map Tab: Standalone Filter Chips | Done |
 
 ---
 
@@ -655,4 +665,97 @@ html[data-theme="dark"] .map-chip.active {
 | BT1-05 | PWA Update Banner Feedback | Bug | 30 min | P2 — poor UX on interaction |
 | BT1-03 | Readings: Gospel Border & Warmth | Bug + ref | 45 min | P2 — visual inconsistency |
 | BT1-01 | Liturgical Day Teaser Uplift | Refinement | 45 min | P3 — design polish |
+
+---
+
+## BT1-04 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/snippet.js` — DOM guard, 500ms delay, exam/rosary/devot-card exclusions; `src/examination.js` — dismissSnippet at top of _renderCurrentSection; `src/rosary.js` — require + dismissSnippet before all 4 body.innerHTML renders; `src/stations.js` — same pattern across 5 innerHTML replacements
+- **Approach:** Three-pronged fix: (1) DOM membership guard in `showSnippet()` prevents insertion into detached nodes mid-transition; (2) wider outside-click exclusion list prevents prayer tool interactions from dismissing open snippets; (3) proactive `dismissSnippet()` before every full-screen innerHTML replacement ensures clean teardown. Delay increased 100→500ms to give users time to see snippets before any stray touch dismisses them. Post-verification, also added `.devot-card` exclusion and `stations.js` coverage (not in original spec).
+- **Deviations from spec:** Added `.devot-card` exclusion (Faith Guides) after user reported snippet dismissal there — additive extension of the same pattern. SVG cross was also removed from the fasting banner icon in a separate fixup commit per user feedback.
+- **Known issues:** None observed.
+- **Follow-up suggestions:** Consider adding the same `dismissSnippet()` guard to `novena.js` if it has full-screen innerHTML replacements.
+
+---
+
+## BT1-02 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/readings.js` — sessionStorage check, SVG cross (later removed per user), dismiss button; `src/app.js` — mirror in _devSetFasting, window.dismissFastingBanner; `css/app.css` — replace hardcoded purples with color-mix seasonal tokens, icon sizing, dismiss button styles, dark mode overrides
+- **Approach:** Added sessionStorage-based dismissal that resets per browser session (not persisted). The `_devSetFasting()` panel now clears the dismissed flag when invoked, so developers can always preview the banner. The fasting-banner-icon SVG was removed after user review — the empty rounded square reads cleanly without it.
+- **Deviations from spec:** SVG cross in the icon was removed at user request (spec called for SVG cross, user preferred no icon content). `_devSetFasting` also received the `sessionStorage.removeItem` reset which wasn't in the spec but is necessary for dev workflow.
+- **Known issues:** None observed.
+
+---
+
+## BT1-06a Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/ui.js` — body.map-active toggle in switchTab doSwitch; `css/app.css` — body.map-active override removes --space-4 from padding-bottom
+- **Approach:** Used the JS-toggled class approach (not `:has()`) for broad browser compatibility. The class is toggled inside `doSwitch()` which runs inside both the `startViewTransition` path and the fallback path.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT1-05 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/app.js` — updated _showUpdateBanner text, onclick, added _handleUpdateRefresh and 30s auto-dismiss; `css/app.css` — increased min-height/min-width, added svg.spin animation, disabled opacity
+- **Approach:** The `_handleUpdateRefresh` function is exposed on `window` to be callable from the inline onclick. The 30s auto-dismiss fades out via inline opacity transition then removes the `show` class. The existing `@keyframes spin` at line 359 was reused.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT1-03 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `css/app.css` — reading entry/heading/ref/gospel overrides, gospel hover rule, remove border-bottom dividers
+- **Approach:** Pure CSS changes. Demoted `.reading-heading` to uppercase label style; promoted `.reading-ref` to medium weight primary text. Gospel heading and ref both get accent-text with Playfair Display on the ref. Border-bottom dividers removed and replaced with margin-bottom spacing. Gospel hover override uses right-only border-radius to preserve the left accent border.
+- **Deviations from spec:** Removed `.reading-entry:last-child` rule as spec directed (since border-bottom is gone, it's no longer needed).
+- **Known issues:** None observed. Psalm display was not adversely affected by the heading demotion.
+
+---
+
+## BT1-01 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/app.js` — _renderDailyStrip replaces dot span with icon div + SVG cross, replaces › with SVG chevron; `css/app.css` — .daily-card-dot replaced by .daily-card-icon, gradient background, padding/typography uplifts
+- **Approach:** Icon uses a 28×28 rounded square with the liturgical color hex as background and a white SVG cross. The gradient uses `--color-accent-pale` at 135° which shifts with the liturgical season. Typography uplift promotes the day name to Playfair Display --text-base. The arrow uses flex centering for the SVG instead of a font-size-based approach.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT1-06b Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `index.html` — #mapChipBar added before #mapFilterPill; `css/app.css` — chip bar/chip/active styles + dark mode; filter pill repositioned to top+48px; `src/map.js` — initChipBar(), _syncChipBar(), chip bar hide on search, clearMapFilter syncs chips
+- **Approach:** Chip bar uses event delegation on the bar container. `_syncChipBar()` syncs the active chip to `state.currentFilter` whenever the filter changes (called from `_updateFilterPill` and `clearMapFilter`). When a search is active, the chip bar is hidden so the filter pill can show centered at the top. The pill was repositioned to `top: calc(var(--space-3) + 48px)` to sit below the chip bar at all other times.
+- **Deviations from spec:** Filter pill always appears below chip bar (not conditionally) — cleaner than trying to toggle pill top position. Chip bar is shown on map init, not just when no filter is set from Find tab, so it's always present (reflecting current filter state).
+- **Known issues:** If a filter is set from the Find tab that doesn't correspond to one of the 4 chips (e.g. "weekend", "latin"), no chip will be highlighted — this is expected behavior.
+- **Follow-up suggestions:** Consider adding more chips (Latin Mass, Weekend) in a future pass.
 | BT1-06b | Map Tab: Standalone Filters | Enhancement | 2 hrs | P3 — new functionality |

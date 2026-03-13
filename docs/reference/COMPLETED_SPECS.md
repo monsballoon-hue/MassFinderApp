@@ -73,14 +73,15 @@ Future specs should continue this pattern with new prefixes.
 ## Queued Specs
 
 ### UX_Spec_Backlog_Triage_Round1.md (BT1 series)
-**Created:** 2026-03-13 · **Status:** Queued
+**Created:** 2026-03-13 · **Status:** Implemented
 **Backlog items:** IDEA-001, IDEA-002, IDEA-003, IDEA-004, IDEA-006, IDEA-008
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT1.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| BT1-01 | Liturgical Day Teaser Card: Design Uplift | Queued | P3 |
-| BT1-02 | Fasting Banner: SVG Icon, Dismissibility, Visual Polish | Queued | P1 |
-| BT1-03 | Readings: Gospel Border Consistency & Visual Warmth | Queued | P2 |
-| BT1-04 | Reference Snippets: Prevent Premature Dismissal | Queued | P1 |
-| BT1-05 | PWA Update Banner: Feedback, Styling, Auto-Dismiss | Queued | P2 |
-| BT1-06 | Map Tab: Bottom Gap Fix & Standalone Filter Access | Queued | P1/P3 |
+| BT1-01 | Liturgical Day Teaser Card: Design Uplift | Done | P3 |
+| BT1-02 | Fasting Banner: SVG Icon, Dismissibility, Visual Polish | Done | P1 |
+| BT1-03 | Readings: Gospel Border Consistency & Visual Warmth | Done | P2 |
+| BT1-04 | Reference Snippets: Prevent Premature Dismissal | Done | P1 |
+| BT1-05 | PWA Update Banner: Feedback, Styling, Auto-Dismiss | Done | P2 |
+| BT1-06a | Map Tab: Bottom Gap Fix | Done | P1 |
+| BT1-06b | Map Tab: Standalone Filter Chips | Done | P3 |
