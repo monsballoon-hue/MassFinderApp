@@ -81,9 +81,12 @@ function updateHDOBadge(events) {
 }
 
 // ── Fasting & Abstinence Banner (PAT-03) ──
+var _fastingDismissBtn = '<button class="fasting-banner-dismiss" onclick="dismissFastingBanner()" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+
 function renderFastingBanner(events) {
   var el = document.getElementById('fastingBanner');
   if (!el) return;
+  if (sessionStorage.getItem('fastingBannerDismissed')) return;
   var now = getNow(), m = now.getMonth() + 1, d = now.getDate(), dow = now.getDay();
   var today = events.filter(function(e) { return e.month === m && e.day === d; });
 
@@ -96,18 +99,20 @@ function renderFastingBanner(events) {
 
   if (isAshWed || isGoodFri) {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _fastingDismissBtn
+      + '</div>';
   } else if (isLentFriday) {
     el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _fastingDismissBtn
+      + '</div>';
   } else {
     el.innerHTML = '';
   }

@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var snippet = require('./snippet.js');
 
 // ── State ──
 var _data = null;
@@ -192,6 +193,7 @@ function _render() {
 // ── Render: Intro screen ──
 function _renderIntro(title, body, footer) {
   title.textContent = 'Stations of the Cross';
+  snippet.dismissSnippet();
   body.innerHTML = '<div class="stations-intro">'
     + '<div class="stations-intro-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
     + '<h3 class="stations-intro-title">The Way of the Cross</h3>'
@@ -212,6 +214,7 @@ function _renderStation(title, body, footer) {
     scriptureHtml = '<div class="stations-scripture">' + refs.renderRef('bible', s.scripture) + '</div>';
   }
 
+  snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(_station)
     + '<div class="stations-prayer">'
     + '<div class="stations-num">Station ' + s.id + '</div>'
@@ -250,6 +253,7 @@ function _renderStation(title, body, footer) {
 function _renderClosing(title, body, footer) {
   title.textContent = 'Stations of the Cross';
   var p = _data.prayers;
+  snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(14) // all complete
     + '<div class="stations-closing-prayers">'
     + '<h3 class="stations-section-title">Closing Prayer</h3>'
@@ -270,6 +274,7 @@ function _renderComplete() {
     footerEl.innerHTML = '<div style="display:flex"><button class="stations-nav-btn stations-nav-primary" onclick="closeStations()">Amen</button></div>';
   }
   if (bodyEl) {
+    snippet.dismissSnippet();
     bodyEl.innerHTML = '<div class="stations-complete-screen">'
       + '<svg class="stations-complete-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
       + '<h3 class="stations-complete-title">The Way of the Cross</h3>'

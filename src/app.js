@@ -517,13 +517,12 @@ function _renderDailyStrip(events) {
 
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
-    + '<span class="daily-card-dot" style="background:' + colorHex + '"></span>'
     + '<div class="daily-card-text">'
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
     + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
     + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
     + '</div>'
-    + '<span class="daily-card-arrow">\u203a</span>'
+    + '<span class="daily-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></span>'
     + '</div>'
     + '</div>';
 }
@@ -791,11 +790,23 @@ async function init() {
         b = document.createElement('div');
         b.id = 'mfUpdateBanner';
         b.className = 'mf-update-banner';
-        b.innerHTML = 'App updated \u2014 <button class="mf-update-banner-btn" onclick="window.location.reload()">Refresh</button>';
+        b.innerHTML = 'Update available \u00b7 <button class="mf-update-banner-btn" onclick="_handleUpdateRefresh(this)">Refresh</button>';
         document.body.appendChild(b);
       }
       requestAnimationFrame(function() { b.classList.add('show'); });
+      setTimeout(function() {
+        if (b.classList.contains('show')) {
+          b.style.opacity = '0';
+          setTimeout(function() { b.classList.remove('show'); b.style.opacity = ''; }, 300);
+        }
+      }, 30000);
     }
+
+    window._handleUpdateRefresh = function(btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+      setTimeout(function() { window.location.reload(); }, 100);
+    };
 
     // Register service worker
     if ('serviceWorker' in navigator) {
@@ -1013,29 +1024,43 @@ window._devSetSeason = function(season) {
   _toggleDevPanel();
 };
 
+var _devFastingDismissBtn = '<button class="fasting-banner-dismiss" onclick="dismissFastingBanner()" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+
 window._devSetFasting = function(mode) {
   _devState.fastingMode = mode;
+  sessionStorage.removeItem('fastingBannerDismissed');
   var el = document.getElementById('fastingBanner');
   if (!el) { _closeDevPanel(); _toggleDevPanel(); return; }
   if (mode === 'ashwed' || mode === 'goodfri') {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _devFastingDismissBtn
+      + '</div>';
   } else if (mode === 'lentfri') {
     el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _devFastingDismissBtn
+      + '</div>';
   } else {
     el.innerHTML = '';
   }
   _closeDevPanel();
   _toggleDevPanel();
+};
+
+window.dismissFastingBanner = function() {
+  sessionStorage.setItem('fastingBannerDismissed', 'true');
+  var el = document.getElementById('fastingBanner');
+  if (!el) return;
+  el.style.transition = 'opacity 0.3s';
+  el.style.opacity = '0';
+  setTimeout(function() { el.innerHTML = ''; el.style.opacity = ''; }, 300);
 };
 
 window._devQANav = function(dir) {

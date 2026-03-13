@@ -13,41 +13,45 @@
 
 ## IDEA-001 — PWA refresh banner: no feedback on click and poor styling
 **Category:** bug
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** (none)
 **Spec ref:** BT1-05
+**Implemented:** 2026-03-13 via BT1-05 — added spinner feedback, disabled state, 30s auto-dismiss, and touch target improvements to the PWA update banner
 
 The "App updated — Refresh" banner that appears above the bottom nav bar provides no visual feedback when tapped (no spinner, no confirmation). Users can't tell if it worked. The banner itself is also visually heavy and unattractive. Explore better patterns for injecting PWA update prompts — possibly a more subtle toast or inline notification that auto-dismisses after refresh completes.
 
 ## IDEA-002 — Liturgical day teaser card needs design uplift
 **Category:** refinement
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** (none)
 **Spec ref:** BT1-01
+**Implemented:** 2026-03-13 via BT1-01 — replaced dot with 28×28 color icon, added seasonal gradient background, promoted typography to Playfair Display, replaced Unicode arrow with SVG chevron
 
 The liturgical day teaser on the Find tab (e.g. "Friday of the 3rd Week of Lent · Day 23 of 45 · Lent · Abstinence from meat today") is heavy on function and low on form. It needs a design pass to make it more visually appealing and less utilitarian while preserving the same information density.
 
 ## IDEA-003 — Day of Abstinence banner: ugly, uses emoji, not dismissible
 **Category:** bug
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** IDEA-002
 **Spec ref:** BT1-02
+**Implemented:** 2026-03-13 via BT1-02 — replaced emoji with SVG (then removed icon entirely per user review), replaced hardcoded purples with seasonal accent tokens, added session-scoped dismiss button
 
 The "Day of Abstinence" banner on the home screen uses an emoji icon (purple cross emoji) instead of an SVG, which violates the app's icon standard. The purple card styling is visually rough. The banner is also not dismissible — devout users who already know it's a day of abstinence should be able to close it. Should be a simple, dismissible reminder with a proper SVG icon.
 
 ## IDEA-004 — Today's Readings: Gospel color indicator inconsistent and design is drab
 **Category:** bug
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** IDEA-005
 **Spec ref:** BT1-03
+**Implemented:** 2026-03-13 via BT1-03 — gospel hover border-radius fix (right-only), heading demoted to uppercase label, ref promoted to display font and larger size, border-bottom dividers replaced with margin spacing
 
 In the Today's Readings section, the Gospel item has a colored left-border indicator, but the style changes between the collapsed view (sharp corners) and the expanded/toggled view (rounded corners). The visual treatment for distinguishing the Gospel from other readings needs a more intentional design approach. Additionally, the overall presentation of the three readings (First Reading, Responsorial Psalm, Gospel) is drab — the relationship between the header label (e.g. "First Reading") and the scripture reference display name (e.g. "Hosea 14:2-10") could be improved.
 
@@ -63,11 +67,12 @@ The Responsorial Psalm text does not render in the proper liturgical format on r
 
 ## IDEA-006 — Bible verses in Prayer Tools and CCC in Examen fail to render
 **Category:** bug
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** IDEA-005
 **Spec ref:** BT1-04
+**Implemented:** 2026-03-13 via BT1-04 — DOM guard, wider click exclusions (exam/rosary/stations/devotions), proactive dismissSnippet before innerHTML replacements, 100→500ms delay; also fixed Faith Guides via .devot-card exclusion
 
 Bible verse references in the Prayer Tools (e.g. the Rosary scripture links like Luke 22:39-46) and Catechism (CCC) references in the Examen flash briefly on screen and then disappear. This is a glitchy rendering bug — the content appears to load momentarily and then collapses or is removed. Affects the Rosary decade view and the Examen tool.
 
@@ -83,11 +88,12 @@ Many entries in events.json have messy data where entire event details (times, d
 
 ## IDEA-008 — Map tab: bottom nav gap glitch and lack of standalone functionality
 **Category:** bug
-**Status:** specced
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** (none)
 **Spec ref:** BT1-06
+**Implemented:** 2026-03-13 via BT1-06a + BT1-06b — body.map-active class removes extra padding-bottom when on map tab; chip bar (All/Today/Confession/Adoration) added as overlay with filter delegation and pill coexistence
 
 The Map tab has a persistent visual glitch where there is a gap between the map content and the bottom navigation bar. This has been present since launch. Additionally, the Map tab only shows filter chips when navigated to from the Find tab — when accessed directly via the bottom nav, it lacks filtering. Explore adding more standalone functionality to the Map tab (e.g. filters, search, layer toggles) without overwhelming users.
 

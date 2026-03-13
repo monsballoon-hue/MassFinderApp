@@ -238,6 +238,11 @@ function switchTab(id, btn) {
     window.scrollTo(0, 0);
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
+    document.body.classList.toggle('map-active', id === 'panelMap');
+    if (id === 'panelMap') {
+      var hdr = document.querySelector('.top-header');
+      if (hdr) document.documentElement.style.setProperty('--header-height', hdr.offsetHeight + 'px');
+    }
 
     if (id === 'panelMap' && !state.mapInitialized) {
       var map = require('./map.js');
