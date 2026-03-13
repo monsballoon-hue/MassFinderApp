@@ -81,7 +81,6 @@ function updateHDOBadge(events) {
 }
 
 // ── Fasting & Abstinence Banner (PAT-03) ──
-var _fastingCrossSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="10" x2="22" y2="10"/></svg>';
 var _fastingDismissBtn = '<button class="fasting-banner-dismiss" onclick="dismissFastingBanner()" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
 
 function renderFastingBanner(events) {
@@ -100,7 +99,7 @@ function renderFastingBanner(events) {
 
   if (isAshWed || isGoodFri) {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-icon">' + _fastingCrossSvg + '</div>'
+      + '<div class="fasting-banner-icon"></div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
@@ -109,7 +108,7 @@ function renderFastingBanner(events) {
       + '</div>';
   } else if (isLentFriday) {
     el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-icon">' + _fastingCrossSvg + '</div>'
+      + '<div class="fasting-banner-icon"></div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'

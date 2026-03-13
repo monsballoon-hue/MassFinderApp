@@ -263,6 +263,7 @@ function _outsideClickHandler(e) {
   if (e.target.closest && (e.target.closest('.exam-q') || e.target.closest('.exam-checkbox'))) return;
   if (e.target.closest && (e.target.closest('.rosary-beads') || e.target.closest('.rosary-bead'))) return;
   if (e.target.closest && (e.target.closest('.exam-nav') || e.target.closest('.rosary-nav-btn'))) return;
+  if (e.target.closest && e.target.closest('.devot-card')) return;
   dismissSnippet();
 }
 
