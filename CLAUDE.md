@@ -3,47 +3,47 @@
 Catholic services directory PWA for the Diocese of Springfield / Western New England.
 **License:** AGPL-3.0-only
 
------
+---
 
 ## Architecture
 
 Vanilla JS PWA, CommonJS modules bundled via esbuild into a single IIFE (`dist/app.min.js`).
 No framework, no TypeScript, no JSX. Static site deployed to Vercel.
 
------
+---
 
 ## Module Structure (26 modules)
 
-|File                  |Purpose                                                                                              |
-|----------------------|-----------------------------------------------------------------------------------------------------|
-|`src/config.js`       |**Single source of truth** — service types, day types, languages, region config, clergy roles        |
-|`src/utils.js`        |Pure utility functions (formatting, time logic, day matching, CCC ref stripping)                     |
-|`src/data.js`         |Shared state, data operations, filter/sort, parish→church flattening                                 |
-|`src/render.js`       |Card rendering, church detail panel (next-service highlight, CSS grid accordions, schedule rendering)|
-|`src/events.js`       |YC events + community events, event detail panel                                                     |
-|`src/map.js`          |Leaflet map — filter carry-over, gold saved-church pins, dark tiles, popup save action               |
-|`src/readings.js`     |Daily readings, BibleGet integration, liturgical calendar, saint card                                |
-|`src/ui.js`           |Filter overlay, tab switching, focus management, event delegation                                    |
-|`src/saved.js`        |“Your Parishes” dashboard — Today Card timeline, compact church rows, activity card                  |
-|`src/more.js`         |More tab orchestration                                                                               |
-|`src/ccc.js`          |Catechism bottom sheet — section context, Georgia serif, accent blockquotes, crossfade nav           |
-|`src/ccc-data.js`     |**Shared CCC data loader** — single fetch, shared across ccc.js, examination.js, rosary.js           |
-|`src/rosary.js`       |Guided rosary — set-color beads, crossfade transitions, manual “Amen” completion                     |
-|`src/examination.js`  |Examination of conscience — full-row tap targets, confessional summary, centering prayer             |
-|`src/stations.js`     |Stations of the Cross — guided 14-station devotion                                                   |
-|`src/novena.js`       |Novena tracker — 9-day prayer tracking with persistent state                                         |
-|`src/bible.js`        |Bible bottom sheet — DRB/CPDV text, verse display, cross-references                                  |
-|`src/haptics.js`      |**Shared haptic feedback** — vibrate API + iOS switch trick, confirm/error variants                  |
-|`src/devotions.js`    |Faith guides — devotional content rendering                                                          |
-|`src/forms.js`        |Feedback, correction, Web3Forms integration                                                          |
-|`src/refs.js`         |Universal reference resolver — tappable CCC/Bible ref spans                                          |
-|`src/explore.js`      |CCC Explore — deep cross-reference navigation (CCC ↔ Baltimore ↔ Scripture ↔ Lectionary)             |
-|`src/settings.js`     |Settings overlay — theme, text size, notifications, prayer prefs, privacy controls                   |
-|`src/install-guide.js`|Visual PWA install guide overlay                                                                     |
-|`src/location.js`     |Geolocation, cookie persistence, data refresh                                                        |
-|`src/app.js`          |Entry point — wires all modules, window bindings, SW registration, init                              |
+| File                   | Purpose                                                                                               |
+| ---------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/config.js`        | **Single source of truth** — service types, day types, languages, region config, clergy roles         |
+| `src/utils.js`         | Pure utility functions (formatting, time logic, day matching, CCC ref stripping)                      |
+| `src/data.js`          | Shared state, data operations, filter/sort, parish→church flattening                                  |
+| `src/render.js`        | Card rendering, church detail panel (next-service highlight, CSS grid accordions, schedule rendering) |
+| `src/events.js`        | YC events + community events, event detail panel                                                      |
+| `src/map.js`           | Leaflet map — filter carry-over, gold saved-church pins, dark tiles, popup save action                |
+| `src/readings.js`      | Daily readings, BibleGet integration, liturgical calendar, saint card                                 |
+| `src/ui.js`            | Filter overlay, tab switching, focus management, event delegation                                     |
+| `src/saved.js`         | “Your Parishes” dashboard — Today Card timeline, compact church rows, activity card                   |
+| `src/more.js`          | More tab orchestration                                                                                |
+| `src/ccc.js`           | Catechism bottom sheet — section context, Georgia serif, accent blockquotes, crossfade nav            |
+| `src/ccc-data.js`      | **Shared CCC data loader** — single fetch, shared across ccc.js, examination.js, rosary.js            |
+| `src/rosary.js`        | Guided rosary — set-color beads, crossfade transitions, manual “Amen” completion                      |
+| `src/examination.js`   | Examination of conscience — full-row tap targets, confessional summary, centering prayer              |
+| `src/stations.js`      | Stations of the Cross — guided 14-station devotion                                                    |
+| `src/novena.js`        | Novena tracker — 9-day prayer tracking with persistent state                                          |
+| `src/bible.js`         | Bible bottom sheet — DRB/CPDV text, verse display, cross-references                                   |
+| `src/haptics.js`       | **Shared haptic feedback** — vibrate API + iOS switch trick, confirm/error variants                   |
+| `src/devotions.js`     | Faith guides — devotional content rendering                                                           |
+| `src/forms.js`         | Feedback, correction, Web3Forms integration                                                           |
+| `src/refs.js`          | Universal reference resolver — tappable CCC/Bible ref spans                                           |
+| `src/explore.js`       | CCC Explore — deep cross-reference navigation (CCC ↔ Baltimore ↔ Scripture ↔ Lectionary)              |
+| `src/settings.js`      | Settings overlay — theme, text size, notifications, prayer prefs, privacy controls                    |
+| `src/install-guide.js` | Visual PWA install guide overlay                                                                      |
+| `src/location.js`      | Geolocation, cookie persistence, data refresh                                                         |
+| `src/app.js`           | Entry point — wires all modules, window bindings, SW registration, init                               |
 
------
+---
 
 ## Data Files
 
@@ -65,7 +65,7 @@ data/summa-daily.json  300KB   366 curated Summa Theologica articles (lazy-loade
 
 **All data/ files are lazy-loaded on first use and SW-cached. Users who never use a feature pay zero download cost.**
 
------
+---
 
 ## Build Commands
 
@@ -93,7 +93,7 @@ node scripts/enrich-events.js      # Claude-powered event note parsing
 node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_data.json
 ```
 
------
+---
 
 ## Key Conventions
 
@@ -111,34 +111,35 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 - **Privacy-first** — examination items, personal notes, and streak data stay in memory or localStorage only. Never POST this data anywhere.
 - **Local-first** — every feature must render something useful from cached data. APIs enhance; they never gate.
 
------
+---
 
 ## Three-Layer Content Stack (Local-First Principle)
 
-|Layer             |Source                                                 |Availability                      |
-|------------------|-------------------------------------------------------|----------------------------------|
-|1 — Always present|Inline in bundle (`dist/app.min.js`)                   |100% — no network needed          |
-|2 — Cached        |Static JSON files in repo (`data/`, `parish_data.json`)|After first load — SW cached      |
-|3 — Live          |External APIs (LitCal, BibleGet, readings API)         |Online only — graceful degradation|
+| Layer              | Source                                                  | Availability                       |
+| ------------------ | ------------------------------------------------------- | ---------------------------------- |
+| 1 — Always present | Inline in bundle (`dist/app.min.js`)                    | 100% — no network needed           |
+| 2 — Cached         | Static JSON files in repo (`data/`, `parish_data.json`) | After first load — SW cached       |
+| 3 — Live           | External APIs (LitCal, BibleGet, readings API)          | Online only — graceful degradation |
 
 **Rule:** Layer 2 behaviour first. Layer 3 (API) enhances but never gates. If an API call fails, the feature must render something from cache.
 
------
+---
 
 ## CSS Design Tokens
 
 ```css
---font-display: 'Playfair Display', Georgia, serif;  /* Headings, parish names */
---font-body: 'Source Sans 3', sans-serif;             /* UI text, labels */
---font-prayer: Georgia, 'Playfair Display', serif;    /* Sacred/contemplative text */
---font-heading: 'Playfair Display', Georgia, serif;   /* Alias for display */
---color-primary: #2C3E5A;                             /* Navy — primary actions */
---color-accent: #B8963F;                              /* Gold — seasonal, shifts with liturgical season */
---color-verified: #4A7C59;                            /* Green — confirmation states */
---color-fav: #E11D48;                                 /* Red — favorites/hearts */
+--font-display: "Playfair Display", Georgia, serif; /* Headings, parish names */
+--font-body: "Source Sans 3", sans-serif; /* UI text, labels */
+--font-prayer:
+  Georgia, "Playfair Display", serif; /* Sacred/contemplative text */
+--font-heading: "Playfair Display", Georgia, serif; /* Alias for display */
+--color-primary: #2c3e5a; /* Navy — primary actions */
+--color-accent: #b8963f; /* Gold — seasonal, shifts with liturgical season */
+--color-verified: #4a7c59; /* Green — confirmation states */
+--color-fav: #e11d48; /* Red — favorites/hearts */
 ```
 
------
+---
 
 ## Tab Structure
 
@@ -147,7 +148,7 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 - **Saved** — “Your Parishes” personal dashboard (today timeline, events, compact church rows, activity)
 - **More** — daily formation + tools (saint card, CCC reflection, readings, prayer tools, faith guides)
 
------
+---
 
 ## External Services
 
@@ -159,7 +160,7 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 - **Web3Forms** — contact/correction form submissions
 - **Leaflet + MarkerCluster** — map rendering (loaded from CDN)
 
------
+---
 
 ## Branch Strategy
 
@@ -169,7 +170,7 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 
 **Do not push implementation work to `main` directly.** All `git push` commands in a normal session target `dev`.
 
------
+---
 
 ## How to Add a New Feature
 
@@ -182,7 +183,7 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 1. `npm run build` to bundle
 1. Follow the Post-Implementation Protocol below
 
------
+---
 
 ## Files NOT to Modify Directly
 
@@ -191,7 +192,7 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 - `assets/` — icons, rarely change
 - `dist/` — generated by build, never hand-edit
 
------
+---
 
 ## Spec Sheet System
 
@@ -204,7 +205,7 @@ All planned work is tracked via two living documents:
 
 **When finishing a session:** Follow the Post-Implementation Protocol below — this is not optional and does not require prompting.
 
------
+---
 
 ## Post-Implementation Protocol
 
@@ -212,7 +213,7 @@ All planned work is tracked via two living documents:
 
 This protocol exists because the developer works async in short sessions and often reviews work hours or days later. The spec sheets and `BACKLOG.md` are the shared memory of what was done and why. Keeping them current is as important as the implementation itself.
 
------
+---
 
 ### Step 1 — Update the Spec Sheet
 
@@ -222,6 +223,7 @@ For **every item you implemented**, append an implementation notes block directl
 
 ```markdown
 ### Implementation Notes
+
 - **Date:** YYYY-MM-DD
 - **Status:** done
 - **Files changed:** [list each file and briefly describe what changed — e.g., "src/rosary.js — added cancel on tab switch", "css/app.css lines 1204–1218 — button alignment fix"]
@@ -235,6 +237,7 @@ For items that were **skipped** (excluded by developer instruction this session)
 
 ```markdown
 ### Implementation Notes
+
 - **Status:** skipped — excluded by developer request this session
 ```
 
@@ -242,6 +245,7 @@ For items that were **blocked** (could not be completed due to a dependency, mis
 
 ```markdown
 ### Implementation Notes
+
 - **Status:** blocked
 - **Reason:** [What prevented completion — be specific]
 - **What is needed to unblock:** [Concrete next step before this can proceed]
@@ -249,7 +253,7 @@ For items that were **blocked** (could not be completed due to a dependency, mis
 
 After writing notes for all items, update the **header status summary** at the top of the spec file to reflect the new statuses of all items. The header should have a line for each item: ID, title, and current status (open / in-progress / done / blocked / skipped / deferred).
 
------
+---
 
 ### Step 2 — Update BACKLOG.md
 
@@ -259,7 +263,7 @@ For **every `IDEA-NNN` that corresponds to a spec item you just implemented**:
 
 1. Change `**Status:**` to `done`
 1. Append a one-line note at the end of that item’s description block:
-   
+
    ```
    **Implemented:** YYYY-MM-DD via [spec ID, e.g. CDC-01] — [one sentence describing what was done]
    ```
@@ -272,7 +276,7 @@ For any IDEA items that were **skipped or blocked**, update their status to `def
 
 Do not restructure, reorder, or reformat any other part of `BACKLOG.md`. Append and update in place only. The Inbox project maintains this file and any structural changes will break that workflow.
 
------
+---
 
 ### Step 2b — Update COMPLETED_SPECS.md
 
@@ -280,7 +284,7 @@ Open `docs/reference/COMPLETED_SPECS.md`.
 
 For each spec item you implemented, change `| Queued |` to `| Done |` in the status column. If all items in a spec series are Done, update the series status line from `Ready for implementation` to `Implemented`.
 
------
+---
 
 ### Step 3 — Build
 
@@ -294,7 +298,7 @@ npm run build
 
 **If the build passes:** Continue to Step 4.
 
------
+---
 
 ### Step 4 — Commit and Push
 
@@ -332,7 +336,7 @@ git push
 
 **Verify the branch before pushing.** In a normal working session this will be `dev`. Do not push to `main` directly unless the developer has explicitly instructed it for a specific hotfix.
 
------
+---
 
 ### Step 5 — Session Summary
 
@@ -368,7 +372,7 @@ Examples:
   "Nothing — all clear."]
 ```
 
------
+---
 
 ### Standing Pre-Approvals
 
@@ -383,26 +387,53 @@ The developer has permanently pre-approved the following actions for every sessi
 
 The only hard stop is a **failed build** — do not commit until it is resolved or the breaking change is reverted and noted.
 
------
+---
 
 ## Documentation Index
 
-|File                                             |Purpose                                                             |Status                        |
-|-------------------------------------------------|--------------------------------------------------------------------|------------------------------|
-|`CLAUDE.md`                                      |This file — architecture, conventions, module map, workflow protocol|**Current**                   |
-|`BACKLOG.md`                                     |Living backlog — master source of all planned work                  |**Living document**           |
-|`docs/plans/`                                    |Spec sheets: 4 UX specs (implemented) + 4 feature specs (planned)   |**Living documents**          |
-|`docs/reference/COMPLETED_SPECS.md`              |Spec status tracking — which items are Done vs Queued               |**Living document**           |
-|`docs/reference/PROJECT_CONTEXT.md`              |Architecture overview for Claude Projects                           |Current                       |
-|`docs/reference/MODULE_MAP.md`                   |Module dependencies and line counts                                 |Current                       |
-|`docs/reference/DESIGN_TOKENS.md`                |CSS design tokens and visual system reference                       |Current                       |
-|`docs/reference/DATA_SCHEMA.md`                  |parish_data.json and events.json schema docs                        |Current                       |
-|`docs/DATA_STANDARDS.md`                         |Authoritative data rules — service types, day values, events        |Current                       |
-|`docs/STYLE_GUIDE.md`                            |Design system — tokens, components, layout rules                    |Current                       |
-|`docs/TERMINOLOGY.md`                            |Domain knowledge — liturgical correctness, display names            |Current                       |
-|`docs/ANTI_PATTERNS.md`                          |Known gotchas — SW cache, overlays, Web3Forms                       |Current                       |
-|`docs/INTEGRATIONS.md`                           |External services — Supabase, Web3Forms, Leaflet, LitCal            |Current                       |
-|`docs/FORK_GUIDE.md`                             |How to fork and deploy for another diocese                          |Current                       |
-|`CONTRIBUTING.md`                                |Contributor quick-start (root level)                                |Current                       |
-|`docs/review/validation-checklist.md`            |Per-parish data validation runbook                                  |Current                       |
-|`docs/archive/`                                  |Archived docs, old specs, superseded plans                          |Reference only                |
+| File                                  | Purpose                                                              | Status               |
+| ------------------------------------- | -------------------------------------------------------------------- | -------------------- |
+| `CLAUDE.md`                           | This file — architecture, conventions, module map, workflow protocol | **Current**          |
+| `BACKLOG.md`                          | Living backlog — master source of all planned work                   | **Living document**  |
+| `docs/plans/`                         | Spec sheets: 4 UX specs (implemented) + 4 feature specs (planned)    | **Living documents** |
+| `docs/reference/COMPLETED_SPECS.md`   | Spec status tracking — which items are Done vs Queued                | **Living document**  |
+| `docs/reference/PROJECT_CONTEXT.md`   | Architecture overview for Claude Projects                            | Current              |
+| `docs/reference/MODULE_MAP.md`        | Module dependencies and line counts                                  | Current              |
+| `docs/reference/DESIGN_TOKENS.md`     | CSS design tokens and visual system reference                        | Current              |
+| `docs/reference/DATA_SCHEMA.md`       | parish_data.json and events.json schema docs                         | Current              |
+| `docs/DATA_STANDARDS.md`              | Authoritative data rules — service types, day values, events         | Current              |
+| `docs/STYLE_GUIDE.md`                 | Design system — tokens, components, layout rules                     | Current              |
+| `docs/TERMINOLOGY.md`                 | Domain knowledge — liturgical correctness, display names             | Current              |
+| `docs/ANTI_PATTERNS.md`               | Known gotchas — SW cache, overlays, Web3Forms                        | Current              |
+| `docs/INTEGRATIONS.md`                | External services — Supabase, Web3Forms, Leaflet, LitCal             | Current              |
+| `docs/FORK_GUIDE.md`                  | How to fork and deploy for another diocese                           | Current              |
+| `CONTRIBUTING.md`                     | Contributor quick-start (root level)                                 | Current              |
+| `docs/review/validation-checklist.md` | Per-parish data validation runbook                                   | Current              |
+| `docs/archive/`                       | Archived docs, old specs, superseded plans                           | Reference only       |
+
+---
+
+## Backlog & Spec Status Updates
+
+After implementing items from a spec sheet, ALWAYS update these two files as part of your feature branch commits:
+
+### BACKLOG.md
+
+For each IDEA-NNN that was addressed by the implemented spec items:
+
+- Change `**Status:** new` to `**Status:** done`
+- Add `**Completed:** [today's date]` below the Status line
+- Add `**Impl ref:** [spec ID, e.g. CDC-01]` below Spec ref if not already present
+
+### docs/reference/COMPLETED_SPECS.md
+
+For each spec item implemented:
+
+- Change `| Queued |` to `| Done |` in the status column
+
+### Commit convention
+
+Include these doc updates in your implementation commits or as a final commit:
+git add BACKLOG.md docs/reference/COMPLETED_SPECS.md git commit -m "docs: mark [IDEA-NNNs] and [spec IDs] as done"
+
+This keeps the backlog current when the feature branch merges to main.
