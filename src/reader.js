@@ -73,7 +73,8 @@ function readerOpen(mode, params) {
 
   if (isNewOpen) {
     overlay.classList.add('open');
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('reader-open');
+    document.body.dataset.scrollPos = String(window.scrollY);
     window._lastFocused = document.activeElement;
 
     // Content fade-in after container animation
@@ -133,7 +134,9 @@ function readerClose() {
   var overlay = document.getElementById('readerOverlay');
   if (!overlay) return;
   overlay.classList.remove('open');
-  document.body.style.overflow = '';
+  var scrollPos = parseInt(document.body.dataset.scrollPos || '0', 10);
+  document.body.classList.remove('reader-open');
+  window.scrollTo(0, scrollPos);
 
   // Notify ALL modules in the stack (privacy cleanup, wake lock release, etc.)
   _stack.forEach(function(entry) {
@@ -180,6 +183,17 @@ function _jsonKey(p) {
   try { return JSON.stringify(p); } catch (e) { return ''; }
 }
 
+// PTR-02: Backdrop click-to-dismiss (desktop) — prayer modules excluded
+function _initBackdropDismiss() {
+  var overlay = document.getElementById('readerOverlay');
+  if (!overlay) return;
+  overlay.addEventListener('click', function(e) {
+    if (e.target !== overlay) return;
+    if (_current && ['rosary', 'examination', 'stations', 'novena'].indexOf(_current.mode) >= 0) return;
+    readerClose();
+  });
+}
+
 // Swipe-to-dismiss: attach to reader body
 function _initSwipeDismiss() {
   var header = document.querySelector('.reader-header');
@@ -215,4 +229,5 @@ module.exports = {
   getCurrent: getCurrent,
   getStack: getStack,
   _initSwipeDismiss: _initSwipeDismiss,
+  _initBackdropDismiss: _initBackdropDismiss,
 };

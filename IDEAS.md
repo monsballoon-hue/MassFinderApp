@@ -437,26 +437,28 @@ The Examination of Conscience landing page loads in a scrolled-to-bottom state, 
 ## IDEA-033 — Examination: “No items noted yet | view summary” visible before starting
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-032
 **Spec ref:** (none)
 
 The “No items noted yet | view summary” UI element is visible on the Examination landing page before the user has started the examen. It should only appear after the user has begun. Files: `src/examination.js`.
+**Implemented:** 2026-03-13 via PTR-03 — examination restructured to section-by-section flow; footer nav only appears after “Begin Examination” via `_initSectionFlow`.
 
 -----
 
 ## IDEA-034 — Examination: progress tracker renders at full viewport height instead of thin horizontal bar
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-032, IDEA-025
 **Spec ref:** (none)
 
 After starting the Examination, the progress tracker at the top of the screen renders at nearly full viewport height rather than as a thin horizontal bar. Likely a cascading layout issue from the landing page scroll/height bug (IDEA-032). Files: `src/examination.js`, `css/app.css`.
+**Implemented:** 2026-03-13 via PTR-03/04 — progress bar replaced entirely by 11-dot section navigation in `#readerHeaderExtra`; dot rendering is explicit inline HTML, not flex-stretch-prone.
 
 -----
 
