@@ -517,9 +517,6 @@ function _renderDailyStrip(events) {
 
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
-    + '<div class="daily-card-icon" style="background:' + colorHex + '">'
-    + '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" width="14" height="14"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="10" x2="22" y2="10"/></svg>'
-    + '</div>'
     + '<div class="daily-card-text">'
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
     + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
@@ -1036,7 +1033,6 @@ window._devSetFasting = function(mode) {
   if (!el) { _closeDevPanel(); _toggleDevPanel(); return; }
   if (mode === 'ashwed' || mode === 'goodfri') {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-icon"></div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
@@ -1045,7 +1041,6 @@ window._devSetFasting = function(mode) {
       + '</div>';
   } else if (mode === 'lentfri') {
     el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-icon"></div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
