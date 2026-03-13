@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-13
+**Last updated:** 2026-03-13 (all 4 specs implemented)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -30,30 +30,30 @@
 | EMT-05 | More Tab — Catholic Library Teaser | Done |
 
 ### UX_Spec_Church_Detail_Card_Refinements.md (CDC series)
-**Created:** 2026-03-13 · **Status:** Ready for implementation  
+**Created:** 2026-03-13 · **Status:** Implemented  
 | ID | Title | Status |
 |----|-------|--------|
-| CDC-01 | Address Redundancy Dedup | Queued |
-| CDC-02 | Time Formatting Uniformity | Queued |
-| CDC-03 | Sacraments Accordion — Next Available | Queued |
-| CDC-04 | Adoration Accordion Polish | Queued |
-| CDC-05 | Prayer & Devotion Progressive Disclosure | Queued |
-| CDC-06 | Community Life Section Redesign | Queued |
-| CDC-07 | Notes Suppression & Truncation | Queued |
-| CDC-08 | Coming Up Label Day Context | Queued |
+| CDC-01 | Address Redundancy Dedup | Done |
+| CDC-02 | Time Formatting Uniformity | Done |
+| CDC-03 | Sacraments Accordion — Next Available | Done |
+| CDC-04 | Adoration Accordion Polish | Done |
+| CDC-05 | Prayer & Devotion Progressive Disclosure | Done |
+| CDC-06 | Community Life Section Redesign | Done |
+| CDC-07 | Notes Suppression & Truncation | Done |
+| CDC-08 | Coming Up Label Day Context | Done |
 
 ### UX_Spec_Prayer_Tools_Refinements.md (PTR series)
-**Created:** 2026-03-13 · **Status:** Ready for implementation  
+**Created:** 2026-03-13 · **Status:** Implemented  
 | ID | Title | Status |
 |----|-------|--------|
-| PTR-01 | CRITICAL: iOS Scroll-Through Bug | Queued |
-| PTR-02 | Desktop Immersive Backdrop | Queued |
-| PTR-03 | Examination Section-by-Section Flow | Queued |
-| PTR-04 | Examination Progress Dots | Queued |
-| PTR-05 | Reader Header Accent Line | Queued |
-| PTR-06 | Rosary Aesthetic Polish | Queued |
-| PTR-07 | Stations & Novena Polish | Queued |
-| PTR-08 | Dead CSS Cleanup | Queued |
+| PTR-01 | CRITICAL: iOS Scroll-Through Bug | Done |
+| PTR-02 | Desktop Immersive Backdrop | Done |
+| PTR-03 | Examination Section-by-Section Flow | Done |
+| PTR-04 | Examination Progress Dots | Done |
+| PTR-05 | Reader Header Accent Line | Done |
+| PTR-06 | Rosary Aesthetic Polish | Done |
+| PTR-07 | Stations & Novena Polish | Done |
+| PTR-08 | Dead CSS Cleanup | Done |
 
 ---
 

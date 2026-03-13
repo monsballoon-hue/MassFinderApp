@@ -1,7 +1,7 @@
 # MassFinder — Data Schema Reference
 
 **Data files:** `parish_data.json` (930KB) · `events.json` (113KB)  
-**Last synced from repo:** 2026-03-13
+**Last synced from repo: 2026-03-13
 
 > **Freshness rule:** At the start of each session, run the field population checks below to verify counts are current.
 

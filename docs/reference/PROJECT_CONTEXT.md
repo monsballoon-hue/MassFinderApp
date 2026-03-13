@@ -1,7 +1,7 @@
 # MassFinder — Project Context Reference
 ## Single-file context for new Claude chat sessions
 
-**Last updated:** 2026-03-11 | **Commit:** `57546fb`
+**Last updated: 2026-03-13
 
 ---
 
@@ -18,8 +18,8 @@ MassFinder is a free, open-source (AGPL-3.0) vanilla JS Progressive Web App help
 ## Architecture
 
 ```
-24 JS modules (src/) → esbuild IIFE → dist/app.min.js (~221KB)
-css/app.css (~167KB, ~1,800 lines)
+27 JS modules (src/) → esbuild IIFE → dist/app.min.js (~353KB)
+css/app.css (~190KB, ~2,873 lines)
 parish_data.json (930KB) + events.json (113KB) — fetched at startup
 data/ (lazy-loaded): catechism 1.36MB, bible-drb/ 74 books, bible-cpdv/ 74 books,
   bible-xrefs 4MB, prayers 47KB, examination 11KB, lectionary-index 22KB,

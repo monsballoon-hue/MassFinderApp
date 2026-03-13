@@ -1,7 +1,7 @@
 # MassFinder — Design Tokens & Visual System
 
 **Source of truth:** `css/app.css` lines 37-170  
-**Last synced from repo:** 2026-03-13
+**Last synced from repo: 2026-03-13 (post-implementation)
 
 > **Freshness rule:** At the start of each session, clone the repo and run `head -170 css/app.css` to verify these tokens are current. Update this file if any values have changed.
 

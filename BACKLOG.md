@@ -4,7 +4,7 @@
 
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 **ID sequence:** IDEA-001 → IDEA-074
 **Total items:** 74
 
@@ -817,11 +817,11 @@ The Web Speech API (IDEA-003) produces robotic programmatic voice that is unlike
 ## IDEA-060 — Seasonal banner z-index: persists above prayer tool cards and reader overlays
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** PTR-01, PTR-05
 
 The seasonal liturgical banner at the top of the app header persists at a z-index that renders it above the cards that open for prayer tools (Rosary, Examination, Stations, Novena) and reader overlays (CCC, Bible). It should sit beneath any modal or sheet-style overlay. Audit the z-index stack and ensure the banner is behind all overlay layers. Files: `css/app.css`, likely the z-index token section.
 
@@ -934,11 +934,11 @@ Two related issues on the More tab: (1) the daily Q&A card appears to be showing
 ## IDEA-069 — Church detail card: now/next service text misalignment and urgency color coding
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** IDEA-070, IDEA-071, IDEA-072
-**Spec ref:** (none)
+**Spec ref:** CDC-02, CDC-08
 
 Two issues on the prominent now/next service block at the top of the church detail card: (1) the text elements are not uniformly vertically aligned — labels, times, and secondary text sit at inconsistent baselines; fix to a consistent vertical rhythm. (2) Add urgency color coding to the time-until indicator in the “coming up” section: services starting in under 60 minutes (excluding exactly 60) should be colored amber/orange to signal that action is needed soon; “Happening Now” should be green. Use existing token colors or introduce `--color-urgent` if needed. Dark mode parity required. Files: `src/render.js`, `css/app.css`.
 
@@ -947,11 +947,11 @@ Two issues on the prominent now/next service block at the top of the church deta
 ## IDEA-070 — Church detail card: address redundancy — city/state duplicates full address
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** IDEA-069
-**Spec ref:** (none)
+**Spec ref:** CDC-01
 
 The church detail card currently shows “City, State” as a header line followed by the full street address below it, which already contains the city and state. This is redundant. Proposed fix: show only the full street address in the detail card — the city/state label belongs on the Find tab church card where it gives quick geographic context without full detail. If there is a design reason to keep some location summary in the header, consider showing neighborhood or just the city name without repeating it with the full address. Files: `src/render.js`, `css/app.css`.
 
@@ -960,11 +960,11 @@ The church detail card currently shows “City, State” as a header line follow
 ## IDEA-071 — Church detail card: evaluate office hours display — usefulness and rendering quality
 
 **Category:** research
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** IDEA-069
-**Spec ref:** (none)
+**Spec ref:** SFD-03
 
 Office hours are displayed on some church detail cards but the data is inconsistent — some entries have unusual or incomplete formats. Before investing in better rendering, evaluate whether office hours earn their place: do users look for this information, and is the data reliable enough to be trustworthy? If office hours are worth keeping, they should be rendered in a structured, legible format (e.g., day-by-day rows, not a freeform string). If the data quality is too variable to be useful, consider suppressing office hours entirely until a data pipeline can normalize them. Files: `src/render.js`, `parish_data.json` (sample the office hours field quality).
 
@@ -973,11 +973,11 @@ Office hours are displayed on some church detail cards but the data is inconsist
 ## IDEA-072 — Church detail card: replace inline dot-separated schedule with stacked vertical layout
 
 **Category:** refinement
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** voice
 **Related:** IDEA-069
-**Spec ref:** (none)
+**Spec ref:** CDC-02
 
 The current schedule display uses inline dot-separated times (e.g., “Mon · 8:00am · 12:00pm · Wed · 5:30pm”) which is visually dense and hard to scan. Replace with a stacked vertical layout where each day is its own row, with the day label and its times clearly separated — consider an indented dash or grid alignment so the user can quickly find a specific day and immediately read the times beneath or beside it. The goal is scannability at a glance. Files: `src/render.js`, `css/app.css`.
 
