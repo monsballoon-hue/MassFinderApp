@@ -393,7 +393,7 @@ function _getComingUp(church, nextSvc) {
   var allTomorrow = todayResults.length === 0 && tomorrowResults.length > 0;
 
   var html = '<div class="detail-coming-up">';
-  html += '<div class="detail-coming-label">Coming Up' + (allTomorrow ? ' \u2014 Tomorrow' : '') + '</div>';
+  html += '<div class="detail-coming-label">Coming Up' + (allTomorrow ? ' \u00b7 Tomorrow' : '') + '</div>';
 
   // Render a single Coming Up row
   function _comingRow(r, isTomorrow) {
@@ -613,8 +613,23 @@ function openDetail(id, trapFocus, releaseFocus) {
     var badgeText = '';
     if (timedCount === 0 && svcs.length > 0) {
       badgeText = 'By appt.';
-    } else if (['conf', 'ador'].indexOf(sec.k) >= 0) {
+    } else if (sec.k === 'conf') {
+      // CDC-03-C: Use "X Confession times" when confession dominates (>80%)
+      var confBadgeCount = svcs.filter(function(s) { return s.type === 'confession' && s.time; }).length;
+      var confRatio = timedCount > 0 ? confBadgeCount / timedCount : 0;
+      if (confRatio > 0.8) {
+        badgeText = confBadgeCount + (confBadgeCount === 1 ? ' Confession time' : ' Confession times');
+      } else {
+        badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
+      }
+    } else if (sec.k === 'ador') {
       badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
+    } else if (sec.k === 'devot') {
+      // CDC-05-B: Count distinct service types for Prayer & Devotion badge
+      var devTypeSet = {};
+      svcs.forEach(function(s) { if (s.type) devTypeSet[s.type] = true; });
+      var devTypeCount = Object.keys(devTypeSet).length;
+      badgeText = devTypeCount + (devTypeCount === 1 ? ' devotion' : ' devotions');
     } else {
       badgeText = dayCount + (dayCount === 1 ? ' day' : ' days');
     }
@@ -637,6 +652,29 @@ function openDetail(id, trapFocus, releaseFocus) {
         bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types, _curDay) + '</div>';
       }
       bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types, _curDay);
+      // CDC-05-A: Progressive disclosure for 8+ rows
+      var devotRowCount = (bodyInner.match(/class="schedule-row/g) || []).length;
+      if (devotRowCount >= 8) {
+        var devotTypeSet = {};
+        svcs.forEach(function(s) { if (s.type) devotTypeSet[s.type] = true; });
+        var devotTypeList = Object.keys(devotTypeSet).map(function(t) {
+          return '<li>' + utils.esc(config.SVC_LABELS[t] || t) + '</li>';
+        }).join('');
+        bodyInner = '<ul class="schedule-summary-list">' + devotTypeList + '</ul>'
+          + '<details class="schedule-full"><summary class="schedule-full-toggle">Show full schedule</summary>'
+          + bodyInner + '</details>';
+      }
+    } else if (sec.k === 'conf') {
+      // CDC-03-A: "Next available" confession callout at top
+      var nextConf = utils.getNext(c, 'confession');
+      var nextConfHtml = '';
+      if (nextConf) {
+        nextConfHtml = '<div class="schedule-next-available">'
+          + '<div class="schedule-next-available-time">' + utils.esc(nextConf.timeFormatted) + '</div>'
+          + '<div class="schedule-next-available-day">Next: ' + utils.esc(nextConf.dayLabel) + '</div>'
+          + '</div>';
+      }
+      bodyInner = nextConfHtml + renderSched(svcs, locL, ml, sec.types, _curDay);
     } else if (sec.k === 'ador') {
       // DC-20: Perpetual Adoration special card
       var perpSvcs = svcs.filter(function(s) { return s.type === 'perpetual_adoration'; });
@@ -717,9 +755,18 @@ function openDetail(id, trapFocus, releaseFocus) {
   // QR Code button disabled for v1
   footer += '</div>';
 
-  // D-01: Address below town; D-13: State name map
-  var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
-    + (c.address ? '<div class="detail-address">' + utils.esc(c.address) + '</div>' : '');
+  // D-01: Address below town; D-13: State name map; CDC-01: Smart address dedup
+  var addressContainsCity = c.address && c.city &&
+    c.address.toLowerCase().indexOf(c.city.toLowerCase()) >= 0;
+  var townHtml;
+  if (addressContainsCity) {
+    townHtml = '<div class="detail-address">' + utils.esc(c.address) + '</div>';
+  } else if (c.address) {
+    townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
+      + '<div class="detail-address">' + utils.esc(c.address) + '</div>';
+  } else {
+    townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '');
+  }
 
   document.getElementById('detailContent').innerHTML =
     '<div class="detail-header"><div class="detail-header-top"><h2 class="detail-name">' + utils.esc(utils.displayName(c.name)) + '</h2>'
@@ -1221,15 +1268,21 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
 
   // === Nested Helper: render a single schedule row ===
   function renderRow(s, locL, ml, dayLabel, extraNote) {
-    var tStr = s.end_time ? utils.fmt12(s.time) + ' \u2013 ' + utils.fmt12(s.end_time) : utils.fmt12(s.time);
-
-    // DC-22: Confession duration
-    if (s.type === 'confession' && s.end_time) {
+    // CDC-02: Two-line time rendering for ranges; duration for confession + adoration
+    var tStr;
+    if (s.end_time) {
+      var durTypes = ['confession', 'adoration', 'perpetual_adoration', 'holy_hour'];
       var durMin = (utils.toMin(s.end_time) || 0) - (utils.toMin(s.time) || 0);
-      if (durMin > 0) {
-        var durStr = durMin >= 60 ? Math.floor(durMin / 60) + ' hr' + (durMin >= 120 ? 's' : '') : durMin + ' min';
-        tStr += '<span class="schedule-duration">(' + durStr + ')</span>';
+      var durStr = '';
+      if (durTypes.indexOf(s.type) >= 0 && durMin > 0) {
+        durStr = durMin >= 60
+          ? ' (' + Math.floor(durMin / 60) + ' hr' + (durMin >= 120 ? 's' : '') + ')'
+          : ' (' + durMin + ' min)';
       }
+      tStr = utils.fmt12(s.time)
+        + '<span class="schedule-time-end">\u2013 ' + utils.fmt12(s.end_time) + durStr + '</span>';
+    } else {
+      tStr = utils.fmt12(s.time);
     }
 
     var lb = s.language && s.language !== 'en' ? '<span class="schedule-lang-badge">' + (LANG_NAMES[s.language] || s.language) + '</span>' : '';
@@ -1276,6 +1329,16 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
       if (recLabel) meta += '<span class="schedule-recurrence-badge">' + utils.esc(recLabel) + '</span>';
     }
 
+    // CDC-07-A: Suppress notes that restate start+end times (under 80 chars)
+    if (note && s.end_time && note.length < 80) {
+      var nLower = note.toLowerCase();
+      var startFmt = utils.fmt12(s.time).toLowerCase().replace(' ', '');
+      var endFmt = utils.fmt12(s.end_time).toLowerCase().replace(' ', '');
+      if (nLower.indexOf(startFmt) >= 0 && nLower.indexOf(endFmt) >= 0) {
+        note = '';
+      }
+    }
+
     if (dayLabel) meta += '<div class="schedule-location" style="font-weight:var(--weight-medium)">' + utils.esc(dayLabel) + '</div>';
     if (loc) meta += '<span class="schedule-loc-badge">' + utils.esc(loc) + '</span>';
     if (showTypeLabel) meta += '<div class="schedule-location">' + utils.esc(tl) + '</div>';
@@ -1283,8 +1346,9 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
     if (merged) meta += '<div class="schedule-note">' + utils.esc(merged) + '</div>';
     if (s.times_vary) meta += '<div class="schedule-note">Times may vary \u2014 check bulletin</div>';
 
-    // DC-06: Communion service row class
+    // DC-06: Communion service row class; CDC-02: tighter padding for range rows
     var rowCls = 'schedule-row';
+    if (s.end_time) rowCls += ' schedule-row--has-range';
     if (s.type === 'communion_service') rowCls += ' schedule-row--communion';
 
     return '<div class="' + rowCls + '"><div class="schedule-time">' + tStr + lb + rb + sb + viglBadge + '</div><div class="schedule-meta">' + meta + '</div></div>';

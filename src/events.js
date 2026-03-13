@@ -161,13 +161,23 @@ function renderCommunityEvents(c) {
       var timeStr3 = e.time ? (e.time.indexOf(':') >= 0 ? utils.fmt12(e.time) : e.time) : '';
       whenText = [dayName ? dayName + 's' : '', timeStr3].filter(Boolean).join(' \u00b7 ');
     }
-    var accent = isUpcoming ? 'upcoming' : 'ongoing';
+    // CDC-06-E: Category-colored accent bar (replaces upcoming/ongoing)
+    var accent = e.category || 'community';
+    // CDC-06-A: Category icon and label
+    var catIcon = CAT_ICONS[e.category] || CAT_ICONS.community;
+    var catLabel = CAT_LABELS[e.category] || '';
+    // CDC-06-C: Suppress notes that duplicate the title
+    var showNotes = e.notes
+      && e.notes.trim() !== e.title.trim()
+      && e.title.indexOf(e.notes.trim()) < 0
+      && e.notes.indexOf(e.title.trim()) < 0;
     return '<div class="ce-item" onclick="openEventDetail(\'' + utils.esc(e.id) + '\')" style="cursor:pointer">'
       + '<div class="ce-item-accent ' + accent + '"></div>'
+      + '<div class="ce-item-icon ce-item-icon--' + (e.category || 'community') + '">' + catIcon + '</div>'
       + '<div class="ce-item-body">'
       + '<div class="ce-item-title">' + utils.esc(e.title) + '</div>'
-      + (whenText ? '<div class="ce-item-when">' + whenText + '</div>' : '')
-      + (e.notes ? '<div class="ce-item-notes">' + utils.esc(e.notes) + '</div>' : '')
+      + (whenText ? '<div class="ce-item-when">' + (catLabel ? '<span class="ce-item-cat-label">' + utils.esc(catLabel) + '</span> \u00b7 ' : '') + whenText + '</div>' : '')
+      + (showNotes ? '<div class="ce-item-notes" onclick="event.stopPropagation(); this.classList.toggle(\'expanded\')">' + utils.esc(e.notes) + '</div>' : '')
       + '</div>'
       + '<span class="ce-item-chevron" aria-hidden="true">\u203A</span>'
       + '</div>';
