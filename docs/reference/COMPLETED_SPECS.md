@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-13 (all 4 specs implemented)
+**Last updated:** 2026-03-13 (4 specs implemented, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -65,6 +65,9 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **CDC** = Church Detail Card
 - **PTR** = Prayer Tools Reader
 - **BT1** = Backlog Triage Round 1
+- **BT2** = Backlog Triage Round 2
+- **CD2** = Church Detail Round 2
+- **FGP** = Faith Guides & Prayer
 
 Future specs should continue this pattern with new prefixes.
 
@@ -85,3 +88,37 @@ Future specs should continue this pattern with new prefixes.
 | BT1-05 | PWA Update Banner: Feedback, Styling, Auto-Dismiss | Done | P2 |
 | BT1-06a | Map Tab: Bottom Gap Fix | Done | P1 |
 | BT1-06b | Map Tab: Standalone Filter Chips | Done | P3 |
+
+### UX_Spec_Backlog_Triage_Round2.md (BT2 series)
+**Created:** 2026-03-13 · **Status:** Queued
+**Backlog items:** IDEA-021, IDEA-010, IDEA-017, IDEA-005
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_BT2.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| BT2-01 | Examen: CCC Pill Tap Toggles Parent Checkbox | Queued | P1 |
+| BT2-02 | Saved Tab: Schedule Time Column Alignment | Queued | P1 |
+| BT2-03 | Map: Filter Chips Overlap Zoom/Location Controls | Queued | P1 |
+| BT2-04 | Readings: Psalm Rendering Graceful Fallback | Queued | P2 |
+
+### UX_Spec_Church_Detail_Round2.md (CD2 series)
+**Created:** 2026-03-13 · **Status:** Queued
+**Backlog items:** IDEA-012, IDEA-013, IDEA-014, IDEA-015, IDEA-016
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CD2.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| CD2-01 | Hero Banner: Merge Same-Day Services | Queued | P2 |
+| CD2-02 | Inline Schedule Badges: Padding & Touch Targets | Queued | P2 |
+| CD2-03 | Inline Times: Badge Density Threshold | Queued | P2 |
+| CD2-04 | Community Life: Collapsible Section | Queued | P2 |
+| CD2-05 | Footer Metadata: Structured Layout | Queued | P3 |
+
+### UX_Spec_Faith_Guides_Prayer.md (FGP series)
+**Created:** 2026-03-13 · **Status:** Queued
+**Backlog items:** IDEA-011, IDEA-020
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_FGP.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| FGP-01 | Faith Guides: Icon System & Visual Hierarchy | Queued | P3 |
+| FGP-02 | Faith Guides: Progressive Disclosure Drawer | Queued | P3 |
+| FGP-03 | Faith Guides: Expanded State Accent & Polish | Queued | P3 |
+| FGP-04 | Rosary: "Mysteries Only" Condensed Mode | Queued | P3 |

@@ -61,7 +61,7 @@ In the Today's Readings section, the Gospel item has a colored left-border indic
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** IDEA-004
-**Spec ref:** (none)
+**Spec ref:** BT2-04
 
 The Responsorial Psalm text does not render in the proper liturgical format on roughly half of all renders. This may be related to the Bible API dependency. Investigate whether the psalm text and formatting can be handled locally (bundled or cached) to avoid the inconsistent rendering caused by external API calls.
 
@@ -113,7 +113,7 @@ Previously built logic to prioritize the nearest churches on the Find tab so tha
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** BT2-02
 
 Mass times displayed at the top of the Saved tab are visually misaligned. Some entries with start and end times extend further right than others, creating an inconsistent layout. The time columns need to be cleaned up so all entries align uniformly regardless of time format or length.
 
@@ -123,7 +123,7 @@ Mass times displayed at the top of the Saved tab are visually misaligned. Some e
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** FGP-01, FGP-02, FGP-03
 
 The Faith Guides are visually basic and plain — they need a design facelift across the board. Also worth assessing whether they should be relocated to a collapsed drawer at the bottom of the view by default, or whether a better placement/interaction pattern exists. Currently they may be taking up prominent space without earning it visually.
 
@@ -133,7 +133,7 @@ The Faith Guides are visually basic and plain — they need a design facelift ac
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** CD2-01
 
 At the top of the church detail card, two separate hero banners appear for confession and mass tomorrow. Since neither is for today, they should likely be consolidated into a single "tomorrow" hero that lists both services together. Need to clarify the convention: when should services get their own hero vs. being grouped by date? Establish a clear rule for hero banner logic.
 
@@ -143,7 +143,7 @@ At the top of the church detail card, two separate hero banners appear for confe
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-012
-**Spec ref:** (none)
+**Spec ref:** CD2-02
 
 Service offerings on the church detail card that are highlighted via conditional formatting have very little padding around the text. The tight spacing looks unpolished. Needs additional internal padding to give the highlighted elements a more professional appearance.
 
@@ -153,7 +153,7 @@ Service offerings on the church detail card that are highlighted via conditional
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-012, IDEA-013
-**Spec ref:** (none)
+**Spec ref:** CD2-03
 
 Mass times for a given day are currently displayed inline on the church detail card. This was an intentional design choice but warrants a UX assessment — does the inline layout actually improve readability and scannability, or would a different pattern (e.g. stacked list, table, chips) serve users better? Evaluate against common scheduling UI patterns.
 
@@ -163,7 +163,7 @@ Mass times for a given day are currently displayed inline on the church detail c
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-011, IDEA-014
-**Spec ref:** (none)
+**Spec ref:** CD2-04
 
 The Community Life section on the church detail card is always expanded. Assess whether making it collapsible would improve the UX — it may be pushing more critical content (mass times, sacraments) further down the page. Evaluate the overall information hierarchy of the church detail card and whether a collapsible pattern fits.
 
@@ -173,7 +173,7 @@ The Community Life section on the church detail card is always expanded. Assess 
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
-**Spec ref:** (none)
+**Spec ref:** CD2-05
 
 The metadata points in the church detail card footer (e.g. diocese, rite, contact info) are not formatted in an easy-to-read way. Consider restructuring the layout — possibly a two-column grid, labeled rows, or grouped sections — to improve scannability and visual clarity.
 
@@ -183,7 +183,7 @@ The metadata points in the church detail card footer (e.g. diocese, rite, contac
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-008
-**Spec ref:** (none)
+**Spec ref:** BT2-03
 
 The filter pills on the Map tab visually clash with the zoom controls (top-left) and the location button (top-right). The overlapping elements create a cluttered UI and may cause tap target conflicts. Need to reposition either the pills or the map controls to avoid overlap.
 
@@ -213,7 +213,7 @@ The Prayer Tools are functional but the experience doesn't invite people to ling
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-019
-**Spec ref:** (none)
+**Spec ref:** FGP-04
 
 Explore adding an option for experienced users to hide prayer text they already know by heart. Possible approaches: an "I know the prayers" toggle that collapses all text, a per-prayer selector to choose which ones to show, or an expedited swipe-through mode where decades advance with a single swipe instead of 10 individual taps. Primary use case: a user who only needs the mystery announcement and blurb but not the Hail Mary / Our Father text repeated each time.
 
@@ -223,7 +223,7 @@ Explore adding an option for experienced users to hide prayer text they already 
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-006
-**Spec ref:** (none)
+**Spec ref:** BT2-01
 
 Tapping a CCC (Catechism) reference pill within the Examen tool is incorrectly triggering the parent item's selected state. The CCC pill tap should only open the catechism snippet — not toggle the exam item. The touch target for the pill may need to be larger and the tap event needs to stop propagating to the parent element.
 
