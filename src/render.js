@@ -717,9 +717,18 @@ function openDetail(id, trapFocus, releaseFocus) {
   // QR Code button disabled for v1
   footer += '</div>';
 
-  // D-01: Address below town; D-13: State name map
-  var townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
-    + (c.address ? '<div class="detail-address">' + utils.esc(c.address) + '</div>' : '');
+  // D-01: Address below town; D-13: State name map; CDC-01: Smart address dedup
+  var addressContainsCity = c.address && c.city &&
+    c.address.toLowerCase().indexOf(c.city.toLowerCase()) >= 0;
+  var townHtml;
+  if (addressContainsCity) {
+    townHtml = '<div class="detail-address">' + utils.esc(c.address) + '</div>';
+  } else if (c.address) {
+    townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '')
+      + '<div class="detail-address">' + utils.esc(c.address) + '</div>';
+  } else {
+    townHtml = utils.esc(c.city) + ', ' + utils.esc(stateNames[c.state] || c.state || '');
+  }
 
   document.getElementById('detailContent').innerHTML =
     '<div class="detail-header"><div class="detail-header-top"><h2 class="detail-name">' + utils.esc(utils.displayName(c.name)) + '</h2>'
