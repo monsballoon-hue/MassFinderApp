@@ -13,17 +13,26 @@ var CORR_PLACEHOLDERS = {
   'Other': 'Tell us what needs updating'
 };
 
-// ── web3submit ──
-function web3submit(payload) {
+// ── web3submit — with one automatic retry on network failure ──
+function web3submit(payload, _attempt) {
+  var attempt = _attempt || 1;
+  var body = JSON.stringify(Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload));
   return fetch('https://api.web3forms.com/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload))
+    body: body
   }).then(function(resp) {
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     return resp.json();
   }).then(function(d) {
     if (!d.success) throw new Error(d.message || 'Web3Forms error');
     return d;
+  }).catch(function(err) {
+    if (attempt < 2) {
+      return new Promise(function(resolve) { setTimeout(resolve, 1500); })
+        .then(function() { return web3submit(payload, 2); });
+    }
+    throw err;
   });
 }
 
