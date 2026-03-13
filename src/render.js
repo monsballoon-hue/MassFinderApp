@@ -332,7 +332,7 @@ function _locationDisplay(locId) {
   }).join(' ').replace(/ Church .*$/, ' Church');
 }
 
-function _getComingUp(church, nextSvc) {
+function _getComingUp(church, nextSvc, mergedKeys) {
   var now = utils.getNow();
   var curDI = now.getDay();
   var curDay = config.DAY_ORDER[curDI];
@@ -382,6 +382,11 @@ function _getComingUp(church, nextSvc) {
     seen[key] = true;
     // DC-R2-06: Skip the candidate that matches the Next Service hero (same type+time+day slot)
     if (nextSvcKey && cands[k].daysUntil === nextSvcDu && (cands[k].service.type + '|' + cands[k].service.time) === nextSvcKey) continue;
+    // CD2-01: Skip services merged into the multi-row hero
+    if (mergedKeys && mergedKeys.length && cands[k].daysUntil === nextSvcDu) {
+      var ck = cands[k].service.type + '|' + cands[k].service.time;
+      if (mergedKeys.indexOf(ck) >= 0) continue;
+    }
     results.push(cands[k]);
   }
 
@@ -493,6 +498,56 @@ function openDetail(id, trapFocus, releaseFocus) {
       + nsBadge
       + '<span class="detail-next-day">' + nsDayLabel + '</span>'
       + '</div></div>';
+  }
+
+  // CD2-01: Merge same-day future services into hero
+  var mergedKeys = [];
+  if (nextSvc && nextSvc.dayLabel !== 'Today' && !nextSvc.isLive && !nextSvc.isSoon) {
+    var heroDay = nextSvc.dayLabel;
+    var heroDu = nextSvc._daysUntil;
+    var now2 = utils.getNow();
+    var curDI2 = now2.getDay();
+    var curMin2 = now2.getHours() * 60 + now2.getMinutes();
+    var sameDaySvcs = [];
+    for (var mi = 0; mi < c.services.length; mi++) {
+      var ms = c.services[mi];
+      if (!ms.time || !ms.day) continue;
+      if (ms.seasonal && ms.seasonal.is_seasonal) continue;
+      if (ms.type === nextSvc.service.type && ms.time === nextSvc.service.time) continue;
+      var msm = utils.toMin(ms.time);
+      if (msm === null) continue;
+      var mDays = [];
+      if (ms.day === 'weekday') mDays = [1, 2, 3, 4, 5];
+      else if (ms.day === 'daily') mDays = [0, 1, 2, 3, 4, 5, 6];
+      else { var mdi = config.DAY_ORDER.indexOf(ms.day); if (mdi >= 0) mDays = [mdi]; }
+      for (var mj = 0; mj < mDays.length; mj++) {
+        var mDayI = mDays[mj];
+        var mdu = mDayI - curDI2;
+        if (mdu < 0) mdu += 7;
+        if (mdu === 0 && curMin2 > msm + 60) mdu = 7;
+        if (mdu === heroDu) {
+          sameDaySvcs.push({ service: ms, time: msm });
+        }
+      }
+    }
+    if (sameDaySvcs.length > 0) {
+      sameDaySvcs.sort(function(a, b) { return a.time - b.time; });
+      var multiHtml = '<div class="detail-next detail-next--tomorrow">';
+      multiHtml += '<div class="detail-next-day-header">' + heroDay + '</div>';
+      multiHtml += '<div class="detail-next-multi-row">';
+      multiHtml += '<span class="detail-next-time">' + nextSvc.timeFormatted + '</span>';
+      multiHtml += '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[nextSvc.service.type] || '') + '</span>';
+      multiHtml += '</div>';
+      for (var msi = 0; msi < sameDaySvcs.length; msi++) {
+        multiHtml += '<div class="detail-next-multi-row">';
+        multiHtml += '<span class="detail-next-time">' + utils.fmt12(sameDaySvcs[msi].service.time) + '</span>';
+        multiHtml += '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[sameDaySvcs[msi].service.type] || '') + '</span>';
+        multiHtml += '</div>';
+        mergedKeys.push(sameDaySvcs[msi].service.type + '|' + sameDaySvcs[msi].service.time);
+      }
+      multiHtml += '</div>';
+      nextHtml = multiHtml;
+    }
   }
 
   // Contact section
@@ -742,16 +797,24 @@ function openDetail(id, trapFocus, releaseFocus) {
     + '</div>'
     + '<div class="verify-thanks" id="verifyThanks" style="display:none">Thank you for helping keep MassFinder accurate! God bless.</div>';
 
-  // D-04: Footer — consolidate county, established, last-checked, bulletin
-  var footerParts = [];
-  if (c.county) footerParts.push(utils.esc(c.county) + ' County');
-  if (c.established) footerParts.push('Est. ' + utils.esc(c.established));
-  if (v.last_checked) footerParts.push('Checked ' + utils.fmtRelDate(v.last_checked));
-  if (v.bulletin_date) footerParts.push(utils.fmtMonth(v.bulletin_date) + ' bulletin');
-  if (v.source) footerParts.push('Source: ' + utils.esc(v.source));
-  // DC-12: Footer with QR + Email Signup buttons
+  // CD2-05: Footer metadata — structured grid layout
+  var footerItems = [];
+  if (c.county) footerItems.push({ label: 'County', value: utils.esc(c.county) });
+  if (c.established) footerItems.push({ label: 'Established', value: utils.esc(c.established) });
+  if (v.last_checked) footerItems.push({ label: 'Last checked', value: utils.fmtRelDate(v.last_checked) });
+  if (v.bulletin_date) footerItems.push({ label: 'Bulletin', value: utils.fmtMonth(v.bulletin_date) });
+  if (v.source) footerItems.push({ label: 'Source', value: utils.esc(v.source) });
   var footer = '<div class="detail-footer-row">';
-  if (footerParts.length) footer += '<div class="detail-verified-footer">' + footerParts.join(' \u00b7 ') + '</div>';
+  if (footerItems.length) {
+    footer += '<div class="detail-footer-meta">';
+    for (var fi = 0; fi < footerItems.length; fi++) {
+      footer += '<div class="detail-footer-meta-item">'
+        + '<span class="detail-footer-meta-label">' + footerItems[fi].label + '</span>'
+        + '<span class="detail-footer-meta-value">' + footerItems[fi].value + '</span>'
+        + '</div>';
+    }
+    footer += '</div>';
+  }
   // QR Code button disabled for v1
   footer += '</div>';
 
@@ -773,7 +836,7 @@ function openDetail(id, trapFocus, releaseFocus) {
     + '<div class="detail-actions"><button class="detail-action-btn fav-btn' + (fav ? ' fav-active' : '') + '" data-id="' + c.id + '" onclick="toggleFav(\'' + c.id + '\')" aria-label="Favorite"><svg viewBox="0 0 24 24" fill="' + (fav ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></button>'
     + '<button class="detail-action-btn" onclick="closeDetail()" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>'
     + '</div></div><div class="detail-town">' + townHtml + '</div>' + nextHtml + '<div class="detail-badges">' + bg + '</div></div>'
-    + '<div class="detail-body">' + _getComingUp(c, nextSvc) + visitHtml + qa + chtml + jumpNav + secHtml + ceHtml + vp + footer + '</div>';
+    + '<div class="detail-body">' + _getComingUp(c, nextSvc, mergedKeys) + visitHtml + qa + chtml + jumpNav + secHtml + ceHtml + vp + footer + '</div>';
 
   document.getElementById('detailBackdrop').classList.add('open');
   document.getElementById('detailPanel').classList.add('open');
@@ -1165,6 +1228,7 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
     // Check if all services in a group can be rendered inline (simple times, no complex meta)
     function _canRenderInline(rows) {
       if (rows.length < 2) return false;
+      var badgeCount = 0;
       for (var ci = 0; ci < rows.length; ci++) {
         var s = rows[ci];
         if (s.end_time || s.recurrence || s.times_vary) return false;
@@ -1172,7 +1236,13 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
         if (s._mergedNotes && s._mergedNotes.length) return false;
         // Multi-location services with visible location labels stay as rows
         if (ml && s.location_id) return false;
+        // CD2-03: Count badge-producing attributes
+        if ((s.language && s.language !== 'en') || s.rite === 'tridentine' || s.seasonal) {
+          badgeCount++;
+        }
       }
+      // CD2-03: Fall back to rows if majority have badges
+      if (badgeCount > rows.length / 2) return false;
       return true;
     }
 

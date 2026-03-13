@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-13 (5 specs implemented, 2 queued)
+**Last updated:** 2026-03-13 (6 specs implemented, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -101,16 +101,16 @@ Future specs should continue this pattern with new prefixes.
 | BT2-04 | Readings: Psalm Rendering Graceful Fallback | Done | P2 |
 
 ### UX_Spec_Church_Detail_Round2.md (CD2 series)
-**Created:** 2026-03-13 · **Status:** Queued
+**Created:** 2026-03-13 · **Status:** Implemented
 **Backlog items:** IDEA-012, IDEA-013, IDEA-014, IDEA-015, IDEA-016
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_CD2.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| CD2-01 | Hero Banner: Merge Same-Day Services | Queued | P2 |
-| CD2-02 | Inline Schedule Badges: Padding & Touch Targets | Queued | P2 |
-| CD2-03 | Inline Times: Badge Density Threshold | Queued | P2 |
-| CD2-04 | Community Life: Collapsible Section | Queued | P2 |
-| CD2-05 | Footer Metadata: Structured Layout | Queued | P3 |
+| CD2-01 | Hero Banner: Merge Same-Day Services | Done | P2 |
+| CD2-02 | Inline Schedule Badges: Padding & Touch Targets | Done | P2 |
+| CD2-03 | Inline Times: Badge Density Threshold | Done | P2 |
+| CD2-04 | Community Life: Collapsible Section | Done | P2 |
+| CD2-05 | Footer Metadata: Structured Layout | Done | P3 |
 
 ### UX_Spec_Faith_Guides_Prayer.md (FGP series)
 **Created:** 2026-03-13 · **Status:** Queued

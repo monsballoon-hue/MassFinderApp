@@ -2,16 +2,16 @@
 
 **Spec prefix:** CD2 (Church Detail 2)
 **Created:** 2026-03-13
-**Status:** Queued
+**Status:** Implemented
 **Backlog items addressed:** IDEA-012, IDEA-013, IDEA-014, IDEA-015, IDEA-016
 
 | ID | Title | Priority | Status |
 |----|-------|----------|--------|
-| CD2-01 | Hero Banner: Merge Same-Day Services | P2 | Queued |
-| CD2-02 | Inline Schedule Badges: Padding & Touch Targets | P2 | Queued |
-| CD2-03 | Inline Times: Badge Density Threshold | P2 | Queued |
-| CD2-04 | Community Life: Collapsible Section | P2 | Queued |
-| CD2-05 | Footer Metadata: Structured Layout | P3 | Queued |
+| CD2-01 | Hero Banner: Merge Same-Day Services | P2 | Done |
+| CD2-02 | Inline Schedule Badges: Padding & Touch Targets | P2 | Done |
+| CD2-03 | Inline Times: Badge Density Threshold | P2 | Done |
+| CD2-04 | Community Life: Collapsible Section | P2 | Done |
+| CD2-05 | Footer Metadata: Structured Layout | P3 | Done |
 
 ---
 
@@ -476,3 +476,68 @@ The new classes use `--color-text-secondary` and `--color-text-tertiary` which a
 - [ ] Dark mode: label and value colors correct
 - [ ] Desktop: grid doesn't stretch too wide (constrained by `--max-width`)
 - [ ] Mobile: grid fits within detail panel padding
+
+---
+
+## CD2-02 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `css/app.css` — `.schedule-lang-badge` font-size 11px → var(--text-xs), padding 1px 6px → 2px 8px; `.schedule-season-badge` same changes; added shared min-height:22px + line-height:1 rule for all three badge types
+- **Approach:** Pure CSS change. Increased font size to the design token `--text-xs` (13px) and padded badges uniformly to 2px 8px, matching the vigil badge which already had the target padding. Added a shared rule for min-height and line-height consistency across all three badge types.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## CD2-03 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/render.js` — added `badgeCount` variable and badge-density threshold in `_canRenderInline()`
+- **Approach:** Counts services with badge-producing attributes (non-English language, tridentine rite, or seasonal). If more than half the services in a group have badges, falls back to row rendering via `_renderRowsWithDivider()`. Simple threshold check after the existing loop.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## CD2-04 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/events.js` — changed `renderCommunityEvents()` from div to details/summary pattern with chevron SVG; `css/app.css` — added collapsible summary styles, chevron rotation animation
+- **Approach:** Converted outer `<div>` to `<details>` and header `<div>` to `<summary>`. Added SVG chevron with margin-left:auto for right-alignment. Default collapsed for 3+ events, open for 1-2. CSS hides default marker and adds 0.2s rotation transition on the chevron.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## CD2-05 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/render.js` — replaced `footerParts` dot-separated string with `footerItems` array of label/value objects rendered as grid items; `css/app.css` — removed `.detail-verified-footer`, added `.detail-footer-meta` grid layout with `display:contents` pattern
+- **Approach:** Each metadata field (county, established, last checked, bulletin, source) is now a label-value pair in a CSS grid with `grid-template-columns: auto 1fr`. The `display:contents` trick on each item makes label and value participate directly in the parent grid for clean two-column alignment. Labels use secondary text color with medium weight; values use tertiary.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## CD2-01 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/utils.js` — added `_daysUntil` to `getNext()` return object; `src/render.js` — added same-day service merge logic after hero construction, updated `_getComingUp()` to accept and filter `mergedKeys`; `css/app.css` — added `.detail-next-day-header`, `.detail-next-multi-row` styles with dark mode border override
+- **Approach:** After building the single-service hero, if the hero is NOT for today (i.e., tomorrow or later), scans all non-seasonal services for the same `daysUntil` value. If matches are found, builds a multi-row hero with a day header ("Tomorrow", "Saturday", etc.) and individual time+type rows. Merged service keys are tracked and passed to `_getComingUp()` which filters them out of Coming Up to prevent duplication. The `_daysUntil` field was added to `getNext()`'s return object to enable day-matching.
+- **Deviations from spec:** None.
+- **Known issues:** The merge only applies when the hero is for a future day (not today). Coming Up only shows today+tomorrow candidates, so merges for day 2+ won't create dedup issues there.

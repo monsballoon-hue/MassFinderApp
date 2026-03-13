@@ -162,6 +162,7 @@ function getNext(parish, filter) {
   var best = cands[0];
   return {
     service: best.service,
+    _daysUntil: best.daysUntil,
     dayLabel: best.daysUntil === 0 ? 'Today' : best.daysUntil === 1 ? 'Tomorrow' : config.DAY_NAMES[config.DAY_ORDER[best.dayIdx]] || '',
     minutesUntil: best.totalMin,
     isLive: best.daysUntil === 0 && toMin(best.service.time) <= curMin && curMin <= (best.service.end_time ? toMin(best.service.end_time) : toMin(best.service.time) + 60),
