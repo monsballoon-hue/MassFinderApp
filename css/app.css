@@ -640,6 +640,7 @@ html[data-theme="dark"] .detail-next--tomorrow { background:linear-gradient(135d
 .detail-next-multi-row .detail-next-time { font-size:var(--text-lg);min-width:80px; }
 .detail-next-multi-row .detail-next-label { font-size:var(--text-sm); }
 html[data-theme="dark"] .detail-next-multi-row + .detail-next-multi-row { border-top-color:var(--color-border); }
+.detail-next-overflow { width:100%;font-size:var(--text-xs);color:var(--color-text-tertiary);padding-top:var(--space-1);text-align:right; }
 
 /* EVENT DETAIL PANEL */
 .event-detail-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1002; background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 92vh; max-height: 92dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateY(100%); transition: transform 0.35s var(--ease-out); box-shadow: var(--shadow-elevated); overscroll-behavior: contain; }

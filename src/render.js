@@ -531,22 +531,39 @@ function openDetail(id, trapFocus, releaseFocus) {
       }
     }
     if (sameDaySvcs.length > 0) {
-      sameDaySvcs.sort(function(a, b) { return a.time - b.time; });
+      // Sort: mass types first, then confession, then by time
+      var massTypes = ['sunday_mass', 'daily_mass', 'holy_day_mass'];
+      sameDaySvcs.sort(function(a, b) {
+        var aM = massTypes.indexOf(a.service.type) >= 0 ? 0 : a.service.type === 'confession' ? 1 : 2;
+        var bM = massTypes.indexOf(b.service.type) >= 0 ? 0 : b.service.type === 'confession' ? 1 : 2;
+        if (aM !== bM) return aM - bM;
+        return a.time - b.time;
+      });
+      // Cap at 2 additional rows (3 total including hero)
+      var maxExtra = 2;
+      var shown = sameDaySvcs.slice(0, maxExtra);
+      var overflow = sameDaySvcs.length - maxExtra;
       var multiHtml = '<div class="detail-next detail-next--tomorrow">';
       multiHtml += '<div class="detail-next-day-header">' + heroDay + '</div>';
       multiHtml += '<div class="detail-next-multi-row">';
       multiHtml += '<span class="detail-next-time">' + nextSvc.timeFormatted + '</span>';
       multiHtml += '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[nextSvc.service.type] || '') + '</span>';
       multiHtml += '</div>';
-      for (var msi = 0; msi < sameDaySvcs.length; msi++) {
+      for (var msi = 0; msi < shown.length; msi++) {
         multiHtml += '<div class="detail-next-multi-row">';
-        multiHtml += '<span class="detail-next-time">' + utils.fmt12(sameDaySvcs[msi].service.time) + '</span>';
-        multiHtml += '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[sameDaySvcs[msi].service.type] || '') + '</span>';
+        multiHtml += '<span class="detail-next-time">' + utils.fmt12(shown[msi].service.time) + '</span>';
+        multiHtml += '<span class="detail-next-label">' + utils.esc(config.SVC_LABELS[shown[msi].service.type] || '') + '</span>';
         multiHtml += '</div>';
-        mergedKeys.push(sameDaySvcs[msi].service.type + '|' + sameDaySvcs[msi].service.time);
+      }
+      if (overflow > 0) {
+        multiHtml += '<div class="detail-next-overflow">+' + overflow + ' more ' + heroDay.toLowerCase() + '</div>';
       }
       multiHtml += '</div>';
       nextHtml = multiHtml;
+      // Track ALL same-day services as merged for Coming Up dedup
+      for (var mk = 0; mk < sameDaySvcs.length; mk++) {
+        mergedKeys.push(sameDaySvcs[mk].service.type + '|' + sameDaySvcs[mk].service.time);
+      }
     }
   }
 
