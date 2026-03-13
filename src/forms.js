@@ -189,7 +189,12 @@ function submitSettingsContact() {
   thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026';
   web3submit({ subject: 'MassFinder Update [Settings]', message: msg, email: email || '(not provided)' })
     .then(function() { thanks.textContent = 'Got it \u2014 thank you!'; })
-    .catch(function() { thanks.style.color = 'var(--color-error)'; thanks.textContent = 'Could not send \u2014 check your connection and try again.'; });
+    .catch(function() {
+      thanks.style.color = 'var(--color-error)'; thanks.textContent = 'Could not send \u2014 check your connection and try again.';
+      document.getElementById('settingsContactMsg').disabled = false;
+      document.getElementById('settingsContactEmail').disabled = false;
+      document.querySelector('.settings-contact-btn').disabled = false;
+    });
 }
 
 module.exports = {

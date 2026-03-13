@@ -153,13 +153,26 @@ function renderCards() {
     var c = item.church, next = item.next, dist = item.distance;
     var ver = utils.isVer(c), fav = data.isFav(c.id), d = Math.min(i * 25, 250);
 
-    var statusBadge = '';
-    if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
-    else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
+    // SFD-01-A: Tiered badge system — imminent / available / upcoming
+    var urgencyTier = 'upcoming';
+    if (next && next.isSoon && next.minutesUntil <= 20 && dist !== null && dist <= 8) {
+      urgencyTier = 'imminent';
+    } else if (next && (next.isLive || next.isSoon)) {
+      urgencyTier = 'available';
+    }
 
-    // FT-08: Live/Soon card state class
+    var statusBadge = '';
+    if (urgencyTier === 'imminent') {
+      statusBadge = '<span class="card-imminent-badge">in ' + next.minutesUntil + ' min</span>';
+    } else if (urgencyTier === 'available') {
+      if (next.isLive) statusBadge = '<span class="card-live-badge card-live-badge--muted"><span class="pulse-dot"></span>Live</span>';
+      else statusBadge = '<span class="card-soon-badge card-soon-badge--muted"><span class="pulse-dot"></span>Soon</span>';
+    }
+
+    // FT-08 + SFD-01: Card state class with urgency tier
     var cardCls = 'parish-card';
-    if (next && next.isLive) cardCls += ' parish-card--live';
+    if (urgencyTier === 'imminent') cardCls += ' parish-card--imminent';
+    else if (next && next.isLive) cardCls += ' parish-card--live';
     else if (next && next.isSoon) cardCls += ' parish-card--soon';
 
     // FT-07: Next service — time, label, badge, and day inline
@@ -221,6 +234,28 @@ function renderCards() {
       + '</div></div><div class="card-town">' + utils.esc(townLabel) + '</div>' + nh + searchCtx + evtHtml
       + '</article>';
   });
+
+  // SFD-01-B: Smart grouping dividers — inject tier section headers
+  if (state.userLat !== null) {
+    var imminentCount = 0, availableCount = 0;
+    var tiers = state.filteredChurches.map(function(item) {
+      var n = item.next, d = item.distance;
+      if (n && n.isSoon && n.minutesUntil <= 20 && d !== null && d <= 8) { imminentCount++; return 'imminent'; }
+      if (n && (n.isLive || n.isSoon)) { availableCount++; return 'available'; }
+      return 'upcoming';
+    });
+    if (imminentCount >= 1 && availableCount >= 3) {
+      // Find insertion points (scan from end to avoid index shift issues)
+      var firstAvailIdx = -1;
+      for (var _ti = 0; _ti < tiers.length; _ti++) {
+        if (tiers[_ti] === 'available') { firstAvailIdx = _ti; break; }
+      }
+      if (firstAvailIdx > 0) {
+        cards.splice(firstAvailIdx, 0, '<div class="find-section-divider" role="separator"><span>Also happening</span></div>');
+      }
+      cards.splice(0, 0, '<div class="find-section-divider" role="separator"><span>Near you now</span></div>');
+    }
+  }
 
   // Inject saved/rest separator if applicable
   if (state._savedSplitIndex > 0 && state._savedSplitIndex < cards.length) {
@@ -352,37 +387,65 @@ function _getComingUp(church, nextSvc) {
 
   if (!results.length) return '';
 
+  // SFD-04-A: Partition into today vs tomorrow
+  var todayResults = results.filter(function(r) { return r.daysUntil === 0; });
+  var tomorrowResults = results.filter(function(r) { return r.daysUntil === 1; });
+  var allTomorrow = todayResults.length === 0 && tomorrowResults.length > 0;
+
   var html = '<div class="detail-coming-up">';
-  html += '<div class="detail-coming-label">Coming Up</div>';
-  results.forEach(function(r) {
+  html += '<div class="detail-coming-label">Coming Up' + (allTomorrow ? ' \u2014 Tomorrow' : '') + '</div>';
+
+  // Render a single Coming Up row
+  function _comingRow(r, isTomorrow) {
     var timeStr = r.service.end_time
       ? utils.fmt12(r.service.time) + ' \u2013 ' + utils.fmt12(r.service.end_time)
       : utils.fmt12(r.service.time);
     var typeLabel = config.SVC_LABELS[r.service.type] || r.service.type;
-    // DC-R2-02: Use relative time for today instead of "Today"
-    var dayLabel = 'Tomorrow';
-    if (r.daysUntil === 0) {
+    var locLabel = isMultiLoc && r.service.location_id ? _locationDisplay(r.service.location_id) : '';
+    var dayLabel = '';
+    // SFD-04-C: Today row urgency classes
+    var rowCls = 'detail-coming-row';
+    if (!isTomorrow) {
       var minsLeft = r.startMin - curMin;
       if (minsLeft <= 0) {
         dayLabel = 'Now';
+        rowCls += ' detail-coming-row--today detail-coming-row--live';
       } else if (minsLeft <= 60) {
         dayLabel = 'in ' + minsLeft + ' min';
+        rowCls += ' detail-coming-row--today detail-coming-row--soon';
       } else {
         var hrsLeft = Math.floor(minsLeft / 60);
         dayLabel = 'in ' + hrsLeft + (hrsLeft === 1 ? ' hr' : ' hrs');
+        rowCls += ' detail-coming-row--today';
       }
+    } else {
+      rowCls += ' detail-coming-row--tomorrow';
     }
-    var locLabel = isMultiLoc && r.service.location_id ? _locationDisplay(r.service.location_id) : '';
 
-    html += '<div class="detail-coming-row">';
-    html += '<div class="detail-coming-time">' + timeStr + '</div>';
-    html += '<div class="detail-coming-info">';
-    html += '<span class="detail-coming-type">' + utils.esc(typeLabel) + '</span>';
-    if (locLabel) html += '<span class="detail-coming-loc">at ' + utils.esc(locLabel) + '</span>';
-    html += '</div>';
-    html += '<span class="detail-coming-day">' + dayLabel + '</span>';
-    html += '</div>';
-  });
+    var h = '<div class="' + rowCls + '">';
+    h += '<div class="detail-coming-time">' + timeStr + '</div>';
+    h += '<div class="detail-coming-info">';
+    h += '<span class="detail-coming-type">' + utils.esc(typeLabel) + '</span>';
+    if (locLabel) h += '<span class="detail-coming-loc">at ' + utils.esc(locLabel) + '</span>';
+    h += '</div>';
+    if (dayLabel) h += '<span class="detail-coming-day">' + dayLabel + '</span>';
+    h += '</div>';
+    return h;
+  }
+
+  // Today rows first
+  for (var ti = 0; ti < todayResults.length; ti++) {
+    html += _comingRow(todayResults[ti], false);
+  }
+  // SFD-04-A: Tomorrow separator (only when both today and tomorrow rows exist)
+  if (todayResults.length > 0 && tomorrowResults.length > 0) {
+    html += '<div class="detail-coming-separator">Tomorrow</div>';
+  }
+  // Tomorrow rows
+  for (var tmi = 0; tmi < tomorrowResults.length; tmi++) {
+    html += _comingRow(tomorrowResults[tmi], true);
+  }
+
   html += '</div>';
   return html;
 }
@@ -440,34 +503,50 @@ function openDetail(id, trapFocus, releaseFocus) {
     ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
     : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
 
-  var chtml = '<div class="detail-contact">';
+  // SFD-03-B: Contact info as structured card
+  var chtml = '<div class="detail-contact-card">';
   var _pastor = getPastor(c);
   if (_pastor) {
     var roleLabel = (config.CLERGY_ROLES[_pastor.role] || {}).label || _pastor.role;
-    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><div><span>' + utils.esc(_pastor.name) + '</span><div class="contact-role">' + utils.esc(roleLabel) + '</div></div></div>';
+    chtml += '<div class="contact-pastor"><div class="contact-pastor-name">' + utils.esc(_pastor.name) + '</div><div class="contact-pastor-role">' + utils.esc(roleLabel) + '</div></div>';
   }
-  if (bulletinUrl && c.website) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="' + utils.esc(c.website) + '" target="_blank" rel="noopener">' + utils.esc(domain) + '</a></div>';
-  if (c.office_hours) chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>' + utils.esc(c.office_hours) + '</span></div>';
-  // DC-13: Email link
+  // Phone + email inline row
+  var contactLinks = '';
+  if (c.phone) contactLinks += '<a class="contact-link" href="tel:' + c.phone + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>' + utils.esc(c.phone) + '</a>';
   if (c.emails && c.emails.length) {
     var emailAddr = c.emails[0];
-    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><a href="mailto:' + utils.esc(emailAddr) + '">' + utils.esc(emailAddr) + '</a></div>';
+    contactLinks += '<a class="contact-link" href="mailto:' + utils.esc(emailAddr) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' + utils.esc(emailAddr) + '</a>';
   }
-  // DC-13: Social links
-  if (c.facebook) {
-    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg><a href="' + utils.esc(c.facebook) + '" target="_blank" rel="noopener">Facebook</a></div>';
+  if (contactLinks) chtml += '<div class="contact-links-row">' + contactLinks + '</div>';
+  // Website link
+  if (c.website) chtml += '<div class="contact-web"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><a href="' + utils.esc(c.website) + '" target="_blank" rel="noopener">' + utils.esc(domain) + '</a></div>';
+  // SFD-03-C: Office hours parsed multi-line
+  if (c.office_hours) {
+    var ohParts = utils.parseOfficeHours(c.office_hours);
+    chtml += '<div class="detail-office-hours"><div class="detail-office-hours-label">Office Hours</div>';
+    for (var ohi = 0; ohi < ohParts.length; ohi++) {
+      chtml += '<div class="detail-office-hours-line">' + utils.esc(ohParts[ohi]) + '</div>';
+    }
+    chtml += '</div>';
   }
-  if (c.instagram) {
-    chtml += '<div class="contact-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg><a href="' + utils.esc(c.instagram) + '" target="_blank" rel="noopener">Instagram</a></div>';
-  }
+  // Social links
+  if (c.facebook) chtml += '<div class="contact-social"><a href="' + utils.esc(c.facebook) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Facebook</a></div>';
+  if (c.instagram) chtml += '<div class="contact-social"><a href="' + utils.esc(c.instagram) + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/></svg>Instagram</a></div>';
   chtml += '</div>';
 
-  // D-02: Quick actions — now rendered ABOVE contact (order swapped in body below)
-  var qa = '<div class="detail-quick-actions">';
-  if (c.phone) qa += '<a class="quick-action" href="tel:' + c.phone + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><span>Call</span></a>';
-  if (mapUrl) qa += '<a class="quick-action" href="' + mapUrl + '" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg><span>Directions</span></a>';
-  if (thirdActionUrl) qa += '<a class="quick-action" href="' + utils.esc(thirdActionUrl) + '" target="_blank" rel="noopener">' + thirdActionIcon + '<span>' + thirdActionLabel + '</span></a>';
-  qa += '<button class="quick-action" onclick="shareParish(\'' + utils.esc(utils.displayName(c.name)) + "','" + c.id + "')\">" + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg><span>Share</span></button>';
+  // SFD-03-A: Quick actions — primary Directions + secondary pills
+  var dirSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="18" height="18"><polygon points="3 11 22 2 13 21 11 13 3 11"/></svg>';
+  var callSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>';
+  var shareSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>';
+
+  var qa = '';
+  // Primary: Directions (full-width)
+  if (mapUrl) qa += '<div class="detail-primary-action"><a href="' + mapUrl + '" target="_blank" rel="noopener">' + dirSvg + '<span>Directions</span></a></div>';
+  // Secondary row: Call, Bulletin/Website, Share
+  qa += '<div class="detail-secondary-actions">';
+  if (c.phone) qa += '<a class="detail-secondary-action" href="tel:' + c.phone + '">' + callSvg + '<span>Call</span></a>';
+  if (thirdActionUrl) qa += '<a class="detail-secondary-action" href="' + utils.esc(thirdActionUrl) + '" target="_blank" rel="noopener">' + thirdActionIcon + '<span>' + thirdActionLabel + '</span></a>';
+  qa += '<button class="detail-secondary-action" onclick="shareParish(\'' + utils.esc(utils.displayName(c.name)) + "','" + c.id + "')\">" + shareSvg + '<span>Share</span></button>';
   qa += '</div>';
 
   // D-07: Visitation data — CSS classes, no inline styles, no bell emoji
@@ -890,46 +969,81 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
 
   var allKeys = Object.keys(dayGrp);
   var week = allKeys.filter(function(d) { return config.DAY_ORDER.indexOf(d) >= 0; }).sort(function(a, b) { return config.DAY_ORDER.indexOf(a) - config.DAY_ORDER.indexOf(b); });
-  var html = '';
 
-  // Render order: Sunday, then Weekdays collapsed, then individual weekdays, then Saturday, then special days
-  if (dayGrp['sunday']) {
-    html += renderDayGroup('sunday', 'Sunday', dayGrp['sunday'], locL, ml);
+  // SFD-02-A: Today-first dynamic reordering — collect sections, then reorder
+  var tomorrowDayIdx = (config.DAY_ORDER.indexOf(todayDay) + 1) % 7;
+  var tomorrowDay = config.DAY_ORDER[tomorrowDayIdx];
+  var WEEKDAYS = ['monday','tuesday','wednesday','thursday','friday'];
+  var weekdayIsToday = WEEKDAYS.indexOf(todayDay) >= 0;
+  var weekdayIsTomorrow = WEEKDAYS.indexOf(tomorrowDay) >= 0;
+
+  // Build sections as {key, html} — key: 'today', 'tomorrow', 'regular', 'special'
+  var sections = [];
+  var _collapsedShowedToday = false;
+
+  // Helper to determine section priority for a day
+  function _dayPriority(day) {
+    if (day === todayDay) return 'today';
+    if (day === 'weekday' && weekdayIsToday) return 'today';
+    if (day === 'daily') return 'today';
+    if (day === tomorrowDay) return 'tomorrow';
+    if (day === 'weekday' && weekdayIsTomorrow) return 'tomorrow';
+    return 'regular';
   }
 
-  // Collapsed weekday rows right after Sunday
-  var _collapsedShowedToday = false;
+  // Collapsed weekdays
   if (collapsed.length) {
     collapsed.sort(function(a, b) { return (utils.toMin(a.svc.time) || 0) - (utils.toMin(b.svc.time) || 0); });
-    var weekdayIsToday = ['monday','tuesday','wednesday','thursday','friday'].indexOf(todayDay) >= 0;
     _collapsedShowedToday = weekdayIsToday;
     var collapsedTodayCls = weekdayIsToday ? ' schedule-day--today' : '';
-    html += '<div class="schedule-day' + collapsedTodayCls + '"><div class="schedule-day-label">Weekdays' + (weekdayIsToday ? '<span class="schedule-today-tag">Today</span>' : '') + '</div>';
+    var collapsedTag = weekdayIsToday ? '<span class="schedule-today-tag">Today</span>' : '';
+    var ch = '<div class="schedule-day' + collapsedTodayCls + '"><div class="schedule-day-label">Weekdays' + collapsedTag + '</div>';
     for (var ci = 0; ci < collapsed.length; ci++) {
-      html += renderRow(collapsed[ci].svc, locL, ml, collapsed[ci].label, collapsed[ci].extraNote);
+      ch += renderRow(collapsed[ci].svc, locL, ml, collapsed[ci].label, collapsed[ci].extraNote);
     }
-    html += '</div>';
+    ch += '</div>';
+    var collapsedPriority = weekdayIsToday ? 'today' : (weekdayIsTomorrow ? 'tomorrow' : 'regular');
+    sections.push({ priority: collapsedPriority, order: 1, html: ch });
   }
 
-  // Individual uncollapsed weekdays (Mon-Fri that didn't collapse), in day order
-  // DC-R2-01: suppress TODAY tag if collapsed weekdays already showed it (keep highlight, skip tag)
+  // Sunday
+  if (dayGrp['sunday']) {
+    sections.push({ priority: _dayPriority('sunday'), order: 0, html: renderDayGroup('sunday', 'Sunday', dayGrp['sunday'], locL, ml) });
+  }
+
+  // Individual uncollapsed weekdays (Mon-Fri that didn't collapse)
   for (var wdi = 0; wdi < week.length; wdi++) {
     var day = week[wdi];
     if (day === 'sunday' || day === 'saturday') continue;
-    if (dayGrp[day]) html += renderDayGroup(day, config.DAY_NAMES[day] || day, dayGrp[day], locL, ml, _collapsedShowedToday);
+    if (dayGrp[day]) {
+      sections.push({ priority: _dayPriority(day), order: config.DAY_ORDER.indexOf(day), html: renderDayGroup(day, config.DAY_NAMES[day] || day, dayGrp[day], locL, ml, _collapsedShowedToday) });
+    }
   }
 
   // Saturday
   if (dayGrp['saturday']) {
-    html += renderDayGroup('saturday', 'Saturday', dayGrp['saturday'], locL, ml);
+    sections.push({ priority: _dayPriority('saturday'), order: 6, html: renderDayGroup('saturday', 'Saturday', dayGrp['saturday'], locL, ml) });
   }
 
-  // Special days (first_friday, holyday, etc.)
+  // Special days (first_friday, holyday, etc.) — always after regular days
   var other = allKeys.filter(function(d) { return config.DAY_ORDER.indexOf(d) < 0; });
   for (var oi = 0; oi < other.length; oi++) {
     var oday = other[oi];
     var olabel = specLabels[oday] || oday.replace(/_/g, ' ').replace(/\b\w/g, function(ch) { return ch.toUpperCase(); });
-    html += renderDayGroup(oday, olabel, dayGrp[oday], locL, ml);
+    sections.push({ priority: 'special', order: 100 + oi, html: renderDayGroup(oday, olabel, dayGrp[oday], locL, ml) });
+  }
+
+  // Sort: today first, tomorrow second, regular in liturgical order, special last
+  var _priorityOrder = { today: 0, tomorrow: 1, regular: 2, special: 3 };
+  sections.sort(function(a, b) {
+    var pa = _priorityOrder[a.priority], pb = _priorityOrder[b.priority];
+    if (pa !== pb) return pa - pb;
+    return a.order - b.order;
+  });
+
+  var html = '';
+  for (var si = 0; si < sections.length; si++) {
+    html += sections[si].html;
   }
 
   // Easter seasonal section
