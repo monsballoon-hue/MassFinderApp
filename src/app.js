@@ -784,7 +784,7 @@ async function init() {
         b = document.createElement('div');
         b.id = 'mfUpdateBanner';
         b.className = 'mf-update-banner';
-        b.innerHTML = 'Update available \u2014 <button class="mf-update-banner-btn" onclick="window.location.reload()">Reload</button>';
+        b.innerHTML = 'App updated \u2014 <button class="mf-update-banner-btn" onclick="window.location.reload()">Refresh</button>';
         document.body.appendChild(b);
       }
       requestAnimationFrame(function() { b.classList.add('show'); });

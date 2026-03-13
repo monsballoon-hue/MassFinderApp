@@ -13,20 +13,31 @@ var CORR_PLACEHOLDERS = {
   'Other': 'Tell us what needs updating'
 };
 
-// ── web3submit ──
-function web3submit(payload) {
-  var body = Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload);
-  console.log('[MassFinder] web3submit payload:', JSON.stringify(body));
+// ── web3submit — FormData to avoid CORS preflight on *.vercel.app ──
+// Using FormData (multipart/form-data) instead of JSON keeps the request
+// "CORS-simple", so the browser skips the OPTIONS preflight that Web3Forms
+// blocks for free platform subdomains.
+function web3submit(payload, _attempt) {
+  var attempt = _attempt || 1;
+  var merged = Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload);
+  var form = new FormData();
+  Object.keys(merged).forEach(function(k) { form.append(k, merged[k]); });
   return fetch('https://api.web3forms.com/submit', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(body)
+    headers: { 'Accept': 'application/json' },
+    body: form
   }).then(function(resp) {
-    return resp.json().then(function(d) {
-      console.log('[MassFinder] web3submit response:', resp.status, JSON.stringify(d));
-      if (!d.success) throw new Error(d.message || 'Web3Forms error (HTTP ' + resp.status + ')');
-      return d;
-    });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    return resp.json();
+  }).then(function(d) {
+    if (!d.success) throw new Error(d.message || 'Web3Forms error');
+    return d;
+  }).catch(function(err) {
+    if (attempt < 2) {
+      return new Promise(function(resolve) { setTimeout(resolve, 1500); })
+        .then(function() { return web3submit(payload, 2); });
+    }
+    throw err;
   });
 }
 
