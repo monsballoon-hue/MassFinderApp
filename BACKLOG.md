@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-13
-**ID sequence:** IDEA-010 →
-**Total items:** 9
+**ID sequence:** IDEA-018 →
+**Total items:** 17
 
 ---
 
@@ -106,3 +106,83 @@ The Map tab has a persistent visual glitch where there is a gap between the map 
 **Spec ref:** (none)
 
 Previously built logic to prioritize the nearest churches on the Find tab so that during peak times (e.g. 8:30 AM with 30+ live events) users aren't inundated with a long unsorted list. This prioritization appears to no longer be working — need to investigate whether the feature was lost during a recent update or overwritten by another change. The current "By distance" sort may not be applying the expected proximity-first filtering.
+
+## IDEA-010 — Saved tab: misaligned church mass times at top of list
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+Mass times displayed at the top of the Saved tab are visually misaligned. Some entries with start and end times extend further right than others, creating an inconsistent layout. The time columns need to be cleaned up so all entries align uniformly regardless of time format or length.
+
+## IDEA-011 — Faith Guides: visual facelift and placement reassessment
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+The Faith Guides are visually basic and plain — they need a design facelift across the board. Also worth assessing whether they should be relocated to a collapsed drawer at the bottom of the view by default, or whether a better placement/interaction pattern exists. Currently they may be taking up prominent space without earning it visually.
+
+## IDEA-012 — Church detail: two separate hero banners for confession and mass tomorrow should merge
+**Category:** question
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+At the top of the church detail card, two separate hero banners appear for confession and mass tomorrow. Since neither is for today, they should likely be consolidated into a single "tomorrow" hero that lists both services together. Need to clarify the convention: when should services get their own hero vs. being grouped by date? Establish a clear rule for hero banner logic.
+
+## IDEA-013 — Church detail: highlighted service offerings lack padding
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-012
+**Spec ref:** (none)
+
+Service offerings on the church detail card that are highlighted via conditional formatting have very little padding around the text. The tight spacing looks unpolished. Needs additional internal padding to give the highlighted elements a more professional appearance.
+
+## IDEA-014 — Church detail: assess inline mass times UX on a given day
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-012, IDEA-013
+**Spec ref:** (none)
+
+Mass times for a given day are currently displayed inline on the church detail card. This was an intentional design choice but warrants a UX assessment — does the inline layout actually improve readability and scannability, or would a different pattern (e.g. stacked list, table, chips) serve users better? Evaluate against common scheduling UI patterns.
+
+## IDEA-015 — Church detail: assess whether Community Life section should be collapsible
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-011, IDEA-014
+**Spec ref:** (none)
+
+The Community Life section on the church detail card is always expanded. Assess whether making it collapsible would improve the UX — it may be pushing more critical content (mass times, sacraments) further down the page. Evaluate the overall information hierarchy of the church detail card and whether a collapsible pattern fits.
+
+## IDEA-016 — Church detail footer: metadata readability improvements
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+The metadata points in the church detail card footer (e.g. diocese, rite, contact info) are not formatted in an easy-to-read way. Consider restructuring the layout — possibly a two-column grid, labeled rows, or grouped sections — to improve scannability and visual clarity.
+
+## IDEA-017 — Map: filter pills overlap zoom and location buttons
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-008
+**Spec ref:** (none)
+
+The filter pills on the Map tab visually clash with the zoom controls (top-left) and the location button (top-right). The overlapping elements create a cluttered UI and may cause tap target conflicts. Need to reposition either the pills or the map controls to avoid overlap.
