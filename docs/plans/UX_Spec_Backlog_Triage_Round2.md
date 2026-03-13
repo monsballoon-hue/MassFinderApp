@@ -2,15 +2,15 @@
 
 **Spec prefix:** BT2 (Backlog Triage 2)
 **Created:** 2026-03-13
-**Status:** Queued
+**Status:** Implemented
 **Backlog items addressed:** IDEA-021, IDEA-010, IDEA-017, IDEA-005
 
 | ID | Title | Priority | Status |
 |----|-------|----------|--------|
-| BT2-01 | Examen: CCC Pill Tap Toggles Parent Checkbox | P1 | Queued |
-| BT2-02 | Saved Tab: Schedule Time Column Alignment | P1 | Queued |
-| BT2-03 | Map: Filter Chips Overlap Zoom/Location Controls | P1 | Queued |
-| BT2-04 | Readings: Psalm Rendering Graceful Fallback | P2 | Queued |
+| BT2-01 | Examen: CCC Pill Tap Toggles Parent Checkbox | P1 | Done |
+| BT2-02 | Saved Tab: Schedule Time Column Alignment | P1 | Done |
+| BT2-03 | Map: Filter Chips Overlap Zoom/Location Controls | P1 | Done |
+| BT2-04 | Readings: Psalm Rendering Graceful Fallback | P2 | Done |
 
 ---
 
@@ -332,3 +332,55 @@ No dark mode changes — psalm CSS classes (`.psalm-refrain`, `.psalm-verse`, `.
 - [ ] Fallback result is NOT cached in localStorage (verify no `mf-bg-` key written)
 - [ ] Dark mode: psalm-refrain, psalm-verse, psalm-r-marker colors correct
 - [ ] Non-psalm readings: no change in behavior when BibleGet fails
+
+---
+
+## BT2-01 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/refs.js` — added `event.preventDefault()` in onclick handler; `css/app.css` — added `.exam-q-ref .ref-tap` touch target rule
+- **Approach:** Two-pronged fix: (1) `event.preventDefault()` in the rendered onclick handler prevents the browser's native label-input association from toggling the checkbox when a ref-tap span inside a `<label class="exam-q">` is clicked. (2) CSS gives the pill a 32px min-height with horizontal padding for comfortable touch target separation.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT2-02 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `css/app.css` — `.sched-time` min-width 72px → 92px, added text-align:right
+- **Approach:** Pure CSS change. Widened min-width accommodates time ranges like "12:30 – 1:30 PM". Right-alignment ensures colons in times like "8:30" and "12:30" roughly align, producing cleaner visual columns with the existing tabular-nums.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT2-03 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `css/app.css` — `.map-chip-bar` top changed from `var(--space-3)` to `76px`; `.map-filter-pill` top changed to `76px` base with `124px` via `.map-chip-bar ~ .map-filter-pill` sibling combinator
+- **Approach:** Moved chip bar below Leaflet zoom controls (62px tall + margin). Filter pill uses sibling combinator to position at 124px when chip bar is present, 76px when standalone. No JS changes needed — pure CSS repositioning.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.
+
+---
+
+## BT2-04 Implementation Notes
+
+### Implementation Notes
+
+- **Date:** 2026-03-13
+- **Status:** done
+- **Files changed:** `src/readings.js` — added `formatPsalmFallback()` function; updated empty-results guard and `.catch()` block in `enhanceWithBibleGet()` to call it
+- **Approach:** New `formatPsalmFallback()` takes raw lectionary text, extracts refrain via existing `extractPsalmRefrain()`, splits body into stanzas by double-newline, wraps in psalm-verse/psalm-verse-line spans with R. markers between stanzas. Called in both the empty-results guard (rate-limited) and the .catch() block (network/timeout errors). Fallback results are deliberately NOT cached to prefer BibleGet-sourced results on future loads.
+- **Deviations from spec:** None.
+- **Known issues:** None observed.

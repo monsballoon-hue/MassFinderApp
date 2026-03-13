@@ -501,9 +501,6 @@ function _renderDailyStrip(events) {
   var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
   var colorHex = colorMap[color] || '#16A34A';
 
-  var progress = utils.getSeasonProgress();
-  var progressText = progress ? 'Day ' + progress.day + ' of ' + progress.total + ' \u00b7 ' + progress.season : '';
-
   // Secondary line
   var secondary = '';
   var dow = now.getDay();
@@ -519,7 +516,6 @@ function _renderDailyStrip(events) {
     + '<div class="daily-card-row">'
     + '<div class="daily-card-text">'
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
-    + (progressText ? '<div class="daily-card-progress">' + utils.esc(progressText) + '</div>' : '')
     + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
     + '</div>'
     + '<span class="daily-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></span>'

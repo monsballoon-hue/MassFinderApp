@@ -183,14 +183,16 @@ function renderCommunityEvents(c) {
       + '</div>';
   }
 
-  var html = '<div class="community-events-section">'
-    + '<div class="community-events-header">'
+  var openAttr = total <= 2 ? ' open' : '';
+  var html = '<details class="community-events-section community-events-collapsible"' + openAttr + '>'
+    + '<summary class="community-events-header">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">'
     + '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>'
     + '<path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>'
     + '<span class="community-events-title">Community Life</span>'
     + '<span class="community-events-count">' + total + '</span>'
-    + '</div>';
+    + '<svg class="community-events-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
+    + '</summary>';
 
   if (upcoming.length && ongoing.length) {
     html += '<div class="ce-group-label">Upcoming</div>';
@@ -203,7 +205,7 @@ function renderCommunityEvents(c) {
     html += ongoing.map(function(e) { return renderItem(e, false); }).join('');
   }
 
-  html += '</div>';
+  html += '</details>';
   return html;
 }
 
