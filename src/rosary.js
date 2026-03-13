@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var snippet = require('./snippet.js');
 
 // ── State ──
 var _data = null;
@@ -344,6 +345,7 @@ function _renderSelect(title, body, footer) {
   var dayName = days[new Date().getDay()];
   var isLent = utils.isLentSeason();
 
+  snippet.dismissSnippet();
   body.innerHTML = '<div class="rosary-select">'
     + '<div class="rosary-select-intro">'
     + '<svg class="rosary-cross-svg" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
@@ -370,6 +372,7 @@ function _renderSelect(title, body, footer) {
 function _renderOpening(title, body, footer) {
   title.textContent = _set + ' Mysteries';
   var p = _data.prayers;
+  snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(-1)
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
@@ -390,6 +393,7 @@ function _renderDecade(title, body, footer) {
   title.textContent = _set + ' Mysteries \u2014 Decade ' + (_decade + 1) + ' of 5';
   var p = _data.prayers;
 
+  snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(_decade)
     + '<div class="rosary-decade">'
     // Mystery card (RC-06: compact layout)
@@ -471,6 +475,7 @@ function _renderDecade(title, body, footer) {
 function _renderClosing(title, body, footer) {
   title.textContent = _set + ' Mysteries';
   var p = _data.prayers;
+  snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(5)
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'

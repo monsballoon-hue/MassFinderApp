@@ -421,6 +421,8 @@ function _sectionHasItems(key) {
 }
 
 function _renderCurrentSection() {
+  var snippet = require('./snippet.js');
+  snippet.dismissSnippet();
   var section = _sections[_currentSection];
   var key = section.number ? 'cmd-' + section.number : 'precepts';
   var cmdTitle = section.number ? section.number + '. ' + section.title : section.title;

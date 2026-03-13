@@ -46,6 +46,7 @@ function showSnippet(type, val, anchorEl) {
     || anchorEl.closest('p')
     || anchorEl.parentNode;
 
+  if (!document.body.contains(insertAfter)) return;
   insertAfter.parentNode.insertBefore(card, insertAfter.nextSibling);
 
   _currentSnippet = { el: card, anchorEl: anchorEl, type: type, val: String(val), expanded: false };
@@ -66,7 +67,7 @@ function showSnippet(type, val, anchorEl) {
   setTimeout(function() {
     document.addEventListener('click', _outsideClickHandler, true);
     document.addEventListener('keydown', _escapeHandler);
-  }, 100);
+  }, 500);
 }
 
 // ── CCC Snippet ──
@@ -259,6 +260,9 @@ function _outsideClickHandler(e) {
   if (_currentSnippet.el && _currentSnippet.el.contains(e.target)) return;
   if (_currentSnippet.anchorEl && _currentSnippet.anchorEl.contains(e.target)) return;
   if (e.target.closest && e.target.closest('.ref-tap')) return;
+  if (e.target.closest && (e.target.closest('.exam-q') || e.target.closest('.exam-checkbox'))) return;
+  if (e.target.closest && (e.target.closest('.rosary-beads') || e.target.closest('.rosary-bead'))) return;
+  if (e.target.closest && (e.target.closest('.exam-nav') || e.target.closest('.rosary-nav-btn'))) return;
   dismissSnippet();
 }
 
