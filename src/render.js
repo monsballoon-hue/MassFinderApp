@@ -624,6 +624,12 @@ function openDetail(id, trapFocus, releaseFocus) {
       }
     } else if (sec.k === 'ador') {
       badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
+    } else if (sec.k === 'devot') {
+      // CDC-05-B: Count distinct service types for Prayer & Devotion badge
+      var devTypeSet = {};
+      svcs.forEach(function(s) { if (s.type) devTypeSet[s.type] = true; });
+      var devTypeCount = Object.keys(devTypeSet).length;
+      badgeText = devTypeCount + (devTypeCount === 1 ? ' devotion' : ' devotions');
     } else {
       badgeText = dayCount + (dayCount === 1 ? ' day' : ' days');
     }
@@ -646,6 +652,18 @@ function openDetail(id, trapFocus, releaseFocus) {
         bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types, _curDay) + '</div>';
       }
       bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types, _curDay);
+      // CDC-05-A: Progressive disclosure for 8+ rows
+      var devotRowCount = (bodyInner.match(/class="schedule-row/g) || []).length;
+      if (devotRowCount >= 8) {
+        var devotTypeSet = {};
+        svcs.forEach(function(s) { if (s.type) devotTypeSet[s.type] = true; });
+        var devotTypeList = Object.keys(devotTypeSet).map(function(t) {
+          return '<li>' + utils.esc(config.SVC_LABELS[t] || t) + '</li>';
+        }).join('');
+        bodyInner = '<ul class="schedule-summary-list">' + devotTypeList + '</ul>'
+          + '<details class="schedule-full"><summary class="schedule-full-toggle">Show full schedule</summary>'
+          + bodyInner + '</details>';
+      }
     } else if (sec.k === 'conf') {
       // CDC-03-A: "Next available" confession callout at top
       var nextConf = utils.getNext(c, 'confession');
