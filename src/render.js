@@ -1175,7 +1175,9 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
       var langs = ss.filter(function(s) { return s.language && s.language !== 'en'; }).map(function(s) { return s.language; });
       var lb = langs.map(function(l) { return '<span class="schedule-lang-badge">' + (LANG_NAMES[l] || l) + '</span>'; }).join('');
       var rb = ss.some(function(s) { return s.rite === 'tridentine'; }) ? '<span class="schedule-lang-badge">TLM</span>' : '';
-      html += '<div class="schedule-row"><div class="schedule-time">' + utils.fmt12(trep.time) + lb + rb + '</div><div class="schedule-meta"></div></div>';
+      var cbadges = lb + rb;
+      var cbadgeHtml = cbadges ? '<div class="schedule-badges">' + cbadges + '</div>' : '';
+      html += '<div class="schedule-row"><div class="schedule-time">' + utils.fmt12(trep.time) + '</div><div class="schedule-meta">' + cbadgeHtml + '</div></div>';
     }
     html += '</div>';
   }
@@ -1423,7 +1425,9 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
     if (s.end_time) rowCls += ' schedule-row--has-range';
     if (s.type === 'communion_service') rowCls += ' schedule-row--communion';
 
-    return '<div class="' + rowCls + '"><div class="schedule-time">' + tStr + lb + rb + sb + viglBadge + '</div><div class="schedule-meta">' + meta + '</div></div>';
+    var badges = lb + rb + sb + viglBadge;
+    var badgeHtml = badges ? '<div class="schedule-badges">' + badges + '</div>' : '';
+    return '<div class="' + rowCls + '"><div class="schedule-time">' + tStr + '</div><div class="schedule-meta">' + badgeHtml + meta + '</div></div>';
   }
 }
 
