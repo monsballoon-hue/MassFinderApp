@@ -587,7 +587,11 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
   .then(function(data) {
     if (!data) return;
     if (data.errors && data.errors.length) { console.warn('[BibleGet] API errors for:', ref, data.errors.map(function(e) { return e.errMessage || e; })); }
-    if (!data.results || !data.results.length) { console.warn('[BibleGet] No results for:', ref, '(likely rate-limited)'); return; }
+    if (!data.results || !data.results.length) {
+      console.warn('[BibleGet] No results for:', ref, '(likely rate-limited)');
+      if (isPsalm && fallbackText) { textEl.innerHTML = formatPsalmFallback(fallbackText); }
+      return;
+    }
 
     var html = '';
     if (isPsalm) {
@@ -605,7 +609,10 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
     textEl.innerHTML = html;
     try { localStorage.setItem(cacheKey, html); } catch (e) { /* noop */ }
   })
-  .catch(function(e) { console.error('[BibleGet] Error for:', ref, e.message || e); });
+  .catch(function(e) {
+    console.error('[BibleGet] Error for:', ref, e.message || e);
+    if (isPsalm && fallbackText) { textEl.innerHTML = formatPsalmFallback(fallbackText); }
+  });
 }
 
 // ── Render Prose Verses ──
@@ -690,6 +697,32 @@ function extractConclusionLine(raw) {
     if (/^The (word|Gospel) of the Lord\.?\s*$/i.test(lines[i])) return lines[i];
   }
   return '';
+}
+
+// ── Format Psalm Fallback (when BibleGet fails/rate-limits) ──
+function formatPsalmFallback(raw) {
+  if (!raw) return '';
+  var refrain = extractPsalmRefrain(raw);
+  var html = '';
+  if (refrain) html += '<span class="psalm-refrain">R. ' + esc(refrain) + '</span>';
+  var body = raw;
+  if (refrain) {
+    body = body.replace(refrain, '').trim();
+    body = body.replace(/^R[\.\:]\s*/i, '').trim();
+  }
+  var stanzas = body.split(/\n\s*\n/).filter(function(s) { return s.trim().length > 0; });
+  for (var i = 0; i < stanzas.length; i++) {
+    var lines = stanzas[i].trim().split(/\n/).filter(function(l) { return l.trim().length > 0; });
+    var stanzaHtml = '';
+    for (var j = 0; j < lines.length; j++) {
+      stanzaHtml += '<span class="psalm-verse-line">' + esc(lines[j].trim()) + '</span>';
+    }
+    html += '<span class="psalm-verse">' + stanzaHtml + '</span>';
+    if (i < stanzas.length - 1) {
+      html += '<span class="psalm-r-marker">R.</span>';
+    }
+  }
+  return html;
 }
 
 // ── Toggle Reading ──
