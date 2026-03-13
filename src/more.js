@@ -248,7 +248,18 @@ function renderMore() {
       }
       return renderGuide(g, false);
     });
-    devotEl.innerHTML = allGuideHtml.join('');
+    // FGP-02: Progressive disclosure — show top 3, hide rest behind toggle
+    var visibleCount = 3;
+    var visibleHtml = allGuideHtml.slice(0, visibleCount).join('');
+    var hiddenHtml = allGuideHtml.slice(visibleCount).join('');
+    devotEl.innerHTML = visibleHtml;
+    if (hiddenHtml) {
+      devotEl.innerHTML += '<div class="devot-overflow" id="devotOverflow" style="display:none">'
+        + hiddenHtml + '</div>'
+        + '<button class="devot-show-all" id="devotShowAll" onclick="toggleDevotOverflow()">'
+        + 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>'
+        + '</button>';
+    }
 
     // Wire term definition taps (UX-07)
     devotions.initTermClicks(devotEl);
