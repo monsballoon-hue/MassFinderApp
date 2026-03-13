@@ -13,14 +13,19 @@ var CORR_PLACEHOLDERS = {
   'Other': 'Tell us what needs updating'
 };
 
-// ── web3submit — with one automatic retry on network failure ──
+// ── web3submit — FormData to avoid CORS preflight on *.vercel.app ──
+// Using FormData (multipart/form-data) instead of JSON keeps the request
+// "CORS-simple", so the browser skips the OPTIONS preflight that Web3Forms
+// blocks for free platform subdomains.
 function web3submit(payload, _attempt) {
   var attempt = _attempt || 1;
-  var body = JSON.stringify(Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload));
+  var merged = Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload);
+  var form = new FormData();
+  Object.keys(merged).forEach(function(k) { form.append(k, merged[k]); });
   return fetch('https://api.web3forms.com/submit', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: body
+    headers: { 'Accept': 'application/json' },
+    body: form
   }).then(function(resp) {
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
     return resp.json();
