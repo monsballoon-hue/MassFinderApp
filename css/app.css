@@ -1604,12 +1604,18 @@ html[data-theme="dark"] .library-teaser { border-color:var(--color-border); }
 .seasonal-nudge { font-size:var(--text-sm);color:var(--color-text-secondary);font-style:italic;margin-bottom:var(--space-3);line-height:1.5; }
 
 /* DEVOTIONAL CARDS */
-.devot-card { border: 1px solid var(--color-border-light); border-radius: var(--radius-md); margin-bottom: var(--space-3); overflow: hidden; background: var(--color-surface); }
+.devot-card { border: 1px solid var(--color-border-light); border-radius: var(--radius-md); margin-bottom: var(--space-3); overflow: hidden; background: var(--color-surface); transition: border-left-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast); }
 .devot-card:last-child { margin-bottom: 0; }
-.devot-card summary { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); cursor: pointer; list-style: none; font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); min-height: 52px; }
+.devot-card summary { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); cursor: pointer; list-style: none; font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); min-height: 56px; }
 .devot-card summary::-webkit-details-marker { display: none; }
 .devot-title { flex: 1; }
 .devot-chevron { width: 18px; height: 18px; color: var(--color-text-tertiary); transition: transform 0.2s; flex-shrink: 0; }
+.devot-icon { width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.devot-icon svg { width:18px;height:18px;color:var(--color-accent-text); }
+html[data-theme="dark"] .devot-icon { background:var(--color-accent-pale); }
+.devot-card[open] { border-left:3px solid var(--color-accent);background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 60%);box-shadow:var(--shadow-card-hover); }
+html[data-theme="dark"] .devot-card[open] { background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 60%);box-shadow:var(--shadow-card-hover); }
+.devot-card[open] .devot-sub[open] { background:var(--color-surface);border-left:2px solid var(--color-accent);box-shadow:none; }
 .devot-card[open] .devot-chevron { transform: rotate(180deg); }
 .devot-body { padding: 0 var(--space-4) var(--space-5); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.75; }
 .devot-body p { margin-bottom: var(--space-3); }
@@ -1626,6 +1632,10 @@ html[data-theme="dark"] .library-teaser { border-color:var(--color-border); }
 .devot-sub summary { padding: var(--space-3) var(--space-4); min-height: 44px; background: var(--color-surface-hover); }
 .devot-sub[open] summary { border-bottom: 1px solid var(--color-border-light); }
 .devot-sub .devot-body { padding: var(--space-3) var(--space-4) var(--space-4); }
+.devot-show-all { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-3) var(--space-4);margin-top:var(--space-2);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);background:none;border:1px dashed var(--color-border);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px; }
+.devot-show-all:active { background:var(--color-surface-hover); }
+.devot-show-all svg { color:var(--color-text-tertiary);transition:transform 0.2s; }
+html[data-theme="dark"] .devot-show-all { color:var(--color-primary);border-color:var(--color-border); }
 
 /* UX-07: Term Definition Popovers */
 .term-trigger { color:var(--color-primary);text-decoration:underline;text-decoration-style:dotted;text-underline-offset:2px;cursor:pointer;-webkit-tap-highlight-color:transparent; }
@@ -2026,6 +2036,13 @@ html[data-theme="dark"] .saint-verse { background:rgba(212,168,75,0.06); }
 .rosary-prayer-collapsible[open] > summary { margin-bottom:var(--space-2); }
 .rosary-prayer-chev { width:16px;height:16px;color:var(--color-text-tertiary);flex-shrink:0;transition:transform 0.2s; }
 .rosary-prayer-collapsible:not([open]) .rosary-prayer-chev { transform:rotate(-90deg); }
+.rosary-mode-toggle { display:flex;justify-content:flex-end;padding:0 0 var(--space-2); }
+.rosary-mode-btn { font-size:var(--text-xs);font-weight:var(--weight-medium);color:var(--color-text-tertiary);background:none;border:1px solid var(--color-border);border-radius:var(--radius-full);padding:var(--space-1) var(--space-3);cursor:pointer;min-height:32px;-webkit-tap-highlight-color:transparent;transition:all var(--transition-fast); }
+.rosary-mode-btn.active { color:var(--color-primary);border-color:var(--color-primary);background:var(--color-primary-bg); }
+.rosary-mode-btn:active { opacity:0.85; }
+.rosary-condensed-summary { font-size:var(--text-sm);color:var(--color-text-secondary);text-align:center;padding:var(--space-4);font-family:var(--font-prayer);font-style:italic; }
+html[data-theme="dark"] .rosary-mode-btn { border-color:var(--color-border);color:var(--color-text-tertiary); }
+html[data-theme="dark"] .rosary-mode-btn.active { color:var(--color-primary);border-color:var(--color-primary);background:var(--color-primary-bg); }
 
 /* Completion */
 .rosary-complete { text-align:center;margin-top:var(--space-5);padding:var(--space-5) 0; }

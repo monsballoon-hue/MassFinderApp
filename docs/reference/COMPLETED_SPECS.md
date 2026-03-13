@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-13 (6 specs implemented, 1 queued)
+**Last updated:** 2026-03-13 (7 specs implemented, 0 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -113,12 +113,12 @@ Future specs should continue this pattern with new prefixes.
 | CD2-05 | Footer Metadata: Structured Layout | Done | P3 |
 
 ### UX_Spec_Faith_Guides_Prayer.md (FGP series)
-**Created:** 2026-03-13 · **Status:** Queued
+**Created:** 2026-03-13 · **Status:** Implemented
 **Backlog items:** IDEA-011, IDEA-020
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_FGP.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| FGP-01 | Faith Guides: Icon System & Visual Hierarchy | Queued | P3 |
-| FGP-02 | Faith Guides: Progressive Disclosure Drawer | Queued | P3 |
-| FGP-03 | Faith Guides: Expanded State Accent & Polish | Queued | P3 |
-| FGP-04 | Rosary: "Mysteries Only" Condensed Mode | Queued | P3 |
+| FGP-01 | Faith Guides: Icon System & Visual Hierarchy | Done | P3 |
+| FGP-02 | Faith Guides: Progressive Disclosure Drawer | Done | P3 |
+| FGP-03 | Faith Guides: Expanded State Accent & Polish | Done | P3 |
+| FGP-04 | Rosary: "Mysteries Only" Condensed Mode | Done | P3 |

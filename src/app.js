@@ -198,6 +198,7 @@ window.submitMoreCorrection = more.submitMoreCorrection;
 window.expressInterest = more.expressInterest;
 window.submitSettingsContact = more.submitSettingsContact;
 window.dismissInstallCard = more.dismissInstallCard;
+window.toggleDevotOverflow = more.toggleDevotOverflow;
 window.openInstallGuide = installGuide.openInstallGuide;
 window.closeInstallGuide = installGuide.closeInstallGuide;
 // installGuideNav is set dynamically inside openInstallGuide()
@@ -235,6 +236,7 @@ window.rosaryPrev = rosary.rosaryPrev;
 window.rosaryBeadTap = rosary.rosaryBeadTap;
 window.rosaryBeadReset = rosary.rosaryBeadReset;
 window.rosaryGoTo = rosary.rosaryGoTo;
+window.toggleRosaryCondensed = rosary.toggleRosaryCondensed;
 window.openExamination = examination.openExamination;
 window.closeExamination = examination.closeExamination;
 window.examToggleSection = examination.examToggleSection;
