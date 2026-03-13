@@ -238,6 +238,7 @@ function switchTab(id, btn) {
     window.scrollTo(0, 0);
     btn.classList.add('active');
     btn.setAttribute('aria-selected', 'true');
+    document.body.classList.toggle('map-active', id === 'panelMap');
 
     if (id === 'panelMap' && !state.mapInitialized) {
       var map = require('./map.js');
