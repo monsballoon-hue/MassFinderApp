@@ -376,6 +376,11 @@ function _renderOpening(title, body, footer) {
   var p = _data.prayers;
   snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(-1)
+    + '<div class="rosary-mode-toggle">'
+    + '<button class="rosary-mode-btn' + (_condensedMode ? ' active' : '') + '" onclick="toggleRosaryCondensed()">'
+    + (_condensedMode ? 'Show prayers' : 'Mysteries only')
+    + '</button>'
+    + '</div>'
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
     + (_condensedMode
@@ -486,6 +491,11 @@ function _renderClosing(title, body, footer) {
   var p = _data.prayers;
   snippet.dismissSnippet();
   body.innerHTML = _dotsHtml(5)
+    + '<div class="rosary-mode-toggle">'
+    + '<button class="rosary-mode-btn' + (_condensedMode ? ' active' : '') + '" onclick="toggleRosaryCondensed()">'
+    + (_condensedMode ? 'Show prayers' : 'Mysteries only')
+    + '</button>'
+    + '</div>'
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'
     + (_condensedMode
