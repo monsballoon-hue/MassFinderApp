@@ -408,7 +408,8 @@ function openDetail(id, trapFocus, releaseFocus) {
   var nextSvc = utils.getNext(c, 'all');
   var nextHtml = '';
   if (nextSvc) {
-    var nsCls = nextSvc.isLive ? ' detail-next--live' : nextSvc.isSoon ? ' detail-next--soon' : '';
+    var isTomorrow = nextSvc.dayLabel === 'Tomorrow';
+    var nsCls = nextSvc.isLive ? ' detail-next--live' : nextSvc.isSoon ? ' detail-next--soon' : isTomorrow ? ' detail-next--tomorrow' : '';
     var nsBadge = '';
     if (nextSvc.isLive) nsBadge = '<span class="detail-next-badge live"><span class="pulse-dot"></span>Happening now</span>';
     else if (nextSvc.isSoon) nsBadge = '<span class="detail-next-badge soon">Starting soon</span>';
