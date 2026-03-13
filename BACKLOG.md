@@ -57,11 +57,12 @@ In the Today's Readings section, the Gospel item has a colored left-border indic
 
 ## IDEA-005 — Responsorial Psalm renders incorrectly ~50% of the time
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** screenshot
 **Related:** IDEA-004
 **Spec ref:** BT2-04
+**Implemented:** 2026-03-13 via BT2-04 — added formatPsalmFallback() that applies liturgical formatting (refrain, stanzas, R. markers) when BibleGet API fails or rate-limits
 
 The Responsorial Psalm text does not render in the proper liturgical format on roughly half of all renders. This may be related to the Bible API dependency. Investigate whether the psalm text and formatting can be handled locally (bundled or cached) to avoid the inconsistent rendering caused by external API calls.
 
@@ -109,11 +110,12 @@ Previously built logic to prioritize the nearest churches on the Find tab so tha
 
 ## IDEA-010 — Saved tab: misaligned church mass times at top of list
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
 **Spec ref:** BT2-02
+**Implemented:** 2026-03-13 via BT2-02 — widened .sched-time min-width to 92px with text-align:right for clean column alignment
 
 Mass times displayed at the top of the Saved tab are visually misaligned. Some entries with start and end times extend further right than others, creating an inconsistent layout. The time columns need to be cleaned up so all entries align uniformly regardless of time format or length.
 
@@ -179,11 +181,12 @@ The metadata points in the church detail card footer (e.g. diocese, rite, contac
 
 ## IDEA-017 — Map: filter pills overlap zoom and location buttons
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-008
 **Spec ref:** BT2-03
+**Implemented:** 2026-03-13 via BT2-03 — repositioned chip bar to top:76px (below zoom controls), filter pill to 76px/124px via sibling combinator
 
 The filter pills on the Map tab visually clash with the zoom controls (top-left) and the location button (top-right). The overlapping elements create a cluttered UI and may cause tap target conflicts. Need to reposition either the pills or the map controls to avoid overlap.
 
@@ -219,11 +222,12 @@ Explore adding an option for experienced users to hide prayer text they already 
 
 ## IDEA-021 — Examen: tapping CCC pill incorrectly marks item as selected
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-006
 **Spec ref:** BT2-01
+**Implemented:** 2026-03-13 via BT2-01 — added event.preventDefault() in refs.js onclick to stop label's native checkbox toggle; enlarged touch target via CSS
 
 Tapping a CCC (Catechism) reference pill within the Examen tool is incorrectly triggering the parent item's selected state. The CCC pill tap should only open the catechism snippet — not toggle the exam item. The touch target for the pill may need to be larger and the tap event needs to stop propagating to the parent element.
 

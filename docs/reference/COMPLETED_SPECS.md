@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-13 (4 specs implemented, 3 queued)
+**Last updated:** 2026-03-13 (5 specs implemented, 2 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -90,15 +90,15 @@ Future specs should continue this pattern with new prefixes.
 | BT1-06b | Map Tab: Standalone Filter Chips | Done | P3 |
 
 ### UX_Spec_Backlog_Triage_Round2.md (BT2 series)
-**Created:** 2026-03-13 · **Status:** Queued
+**Created:** 2026-03-13 · **Status:** Implemented
 **Backlog items:** IDEA-021, IDEA-010, IDEA-017, IDEA-005
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT2.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| BT2-01 | Examen: CCC Pill Tap Toggles Parent Checkbox | Queued | P1 |
-| BT2-02 | Saved Tab: Schedule Time Column Alignment | Queued | P1 |
-| BT2-03 | Map: Filter Chips Overlap Zoom/Location Controls | Queued | P1 |
-| BT2-04 | Readings: Psalm Rendering Graceful Fallback | Queued | P2 |
+| BT2-01 | Examen: CCC Pill Tap Toggles Parent Checkbox | Done | P1 |
+| BT2-02 | Saved Tab: Schedule Time Column Alignment | Done | P1 |
+| BT2-03 | Map: Filter Chips Overlap Zoom/Location Controls | Done | P1 |
+| BT2-04 | Readings: Psalm Rendering Graceful Fallback | Done | P2 |
 
 ### UX_Spec_Church_Detail_Round2.md (CD2 series)
 **Created:** 2026-03-13 · **Status:** Queued
