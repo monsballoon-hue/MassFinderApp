@@ -842,8 +842,8 @@ html[data-theme="dark"] .ce-item-icon--devotional svg { color: #C084FC; }
 .detail-office-hours { margin-top:var(--space-1); }
 .detail-office-hours-label { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-1); }
 .detail-office-hours-line { font-size:var(--text-sm);color:var(--color-text-secondary);font-variant-numeric:tabular-nums;line-height:1.6; }
-.contact-social { margin-top:var(--space-1); }
-.contact-social a { display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-info);text-decoration:none; }
+.contact-social-row { display:flex;flex-wrap:wrap;gap:var(--space-3);margin-top:var(--space-2); }
+.contact-social-link { display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);color:var(--color-info);text-decoration:none;min-height:44px; }
 html[data-theme="dark"] .detail-contact-card { background:var(--color-surface);border-color:var(--color-border); }
 html[data-theme="dark"] .detail-primary-action a { background:var(--color-primary); }
 html[data-theme="dark"] .detail-secondary-action { border-color:var(--color-border); }
