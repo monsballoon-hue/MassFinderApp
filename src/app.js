@@ -195,6 +195,7 @@ window.showMoreCorrection = more.showMoreCorrection;
 window.selectMoreCorrPill = more.selectMoreCorrPill;
 window.submitMoreCorrection = more.submitMoreCorrection;
 window.expressInterest = more.expressInterest;
+window.submitSettingsContact = more.submitSettingsContact;
 window.dismissInstallCard = more.dismissInstallCard;
 window.openInstallGuide = installGuide.openInstallGuide;
 window.closeInstallGuide = installGuide.closeInstallGuide;

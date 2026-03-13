@@ -257,6 +257,7 @@ module.exports = {
   submitMoreCorrection: forms.submitMoreCorrection,
   selectFbType: forms.selectFbType,
   submitFeedback: forms.submitFeedback,
+  submitSettingsContact: forms.submitSettingsContact,
   web3submit: forms.web3submit,
   // More tab own exports
   renderMore: renderMore,

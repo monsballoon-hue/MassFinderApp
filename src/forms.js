@@ -163,6 +163,21 @@ function submitFeedback() {
   });
 }
 
+// ── submitSettingsContact ──
+function submitSettingsContact() {
+  var msg = document.getElementById('settingsContactMsg').value.trim();
+  var email = document.getElementById('settingsContactEmail').value.trim();
+  var thanks = document.getElementById('settingsContactThanks');
+  if (!msg) { document.getElementById('settingsContactMsg').style.borderColor = 'var(--color-error)'; return; }
+  document.getElementById('settingsContactMsg').disabled = true;
+  document.getElementById('settingsContactEmail').disabled = true;
+  document.querySelector('.settings-contact-btn').disabled = true;
+  thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026';
+  web3submit({ subject: 'MassFinder Update [Settings]', message: msg, email: email || '(not provided)' })
+    .then(function() { thanks.textContent = 'Got it \u2014 thank you!'; })
+    .catch(function() { thanks.style.color = 'var(--color-error)'; thanks.textContent = 'Could not send \u2014 check your connection and try again.'; });
+}
+
 module.exports = {
   web3submit: web3submit,
   expressInterest: expressInterest,
@@ -175,5 +190,6 @@ module.exports = {
   submitMoreCorrection: submitMoreCorrection,
   selectFbType: selectFbType,
   submitFeedback: submitFeedback,
+  submitSettingsContact: submitSettingsContact,
   CORR_PLACEHOLDERS: CORR_PLACEHOLDERS,
 };
