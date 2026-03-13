@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-13
-**ID sequence:** IDEA-018 →
-**Total items:** 17
+**ID sequence:** IDEA-022 →
+**Total items:** 21
 
 ---
 
@@ -186,3 +186,43 @@ The metadata points in the church detail card footer (e.g. diocese, rite, contac
 **Spec ref:** (none)
 
 The filter pills on the Map tab visually clash with the zoom controls (top-left) and the location button (top-right). The overlapping elements create a cluttered UI and may cause tap target conflicts. Need to reposition either the pills or the map controls to avoid overlap.
+
+## IDEA-018 — Dev panel: surface all conditionally rendered elements for testing
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+The dev panel (accessed via 5 taps on the More tab footer) does not include all conditionally rendered elements. The "click for updates" CTA is one known omission, but there are likely others. Every element that requires specific conditions to render should be toggleable from the dev panel so they can be triggered on demand during testing. Additionally, the dev panel UI itself needs a buildout to make adding/managing these toggles more organized and usable.
+
+## IDEA-019 — Prayer Tools: UX and ambient experience research
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-020
+**Spec ref:** (none)
+
+The Prayer Tools are functional but the experience doesn't invite people to linger. Research how to elevate the feel — ambient background Gregorian chant audio (small loopable files bundled in the repo), refined color scheming, better haptic feedback, and overall atmosphere without adding images or heavy iconography. The goal is a steady balance of form and function that drives people toward prayer, not gamification or social engagement traps. Target reaction: "check out this app for the rosary — I love it."
+
+## IDEA-020 — Prayer Tools: "I know the prayers" condensed mode
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-019
+**Spec ref:** (none)
+
+Explore adding an option for experienced users to hide prayer text they already know by heart. Possible approaches: an "I know the prayers" toggle that collapses all text, a per-prayer selector to choose which ones to show, or an expedited swipe-through mode where decades advance with a single swipe instead of 10 individual taps. Primary use case: a user who only needs the mystery announcement and blurb but not the Hail Mary / Our Father text repeated each time.
+
+## IDEA-021 — Examen: tapping CCC pill incorrectly marks item as selected
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-006
+**Spec ref:** (none)
+
+Tapping a CCC (Catechism) reference pill within the Examen tool is incorrectly triggering the parent item's selected state. The CCC pill tap should only open the catechism snippet — not toggle the exam item. The touch target for the pill may need to be larger and the tap event needs to stop propagating to the parent element.
