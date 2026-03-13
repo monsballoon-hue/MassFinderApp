@@ -161,6 +161,13 @@ function _updateFilterPill() {
     label = count + ' filter' + (count !== 1 ? 's' : '') + ' active';
   }
 
+  // Hide chip bar when search is active (pill takes over); otherwise sync chip state
+  var bar = document.getElementById('mapChipBar');
+  if (bar) {
+    bar.style.display = hasSearch ? 'none' : '';
+    if (!hasSearch) _syncChipBar();
+  }
+
   if (!label) {
     pill.style.display = 'none';
     return;
@@ -188,6 +195,32 @@ function clearMapFilter() {
   ui.updateMFChip();
   // Reset to all
   ui.applyQuickFilter('all');
+  _syncChipBar('all');
+}
+
+// ── Sync chip bar active state ──
+function _syncChipBar(filter) {
+  var bar = document.getElementById('mapChipBar');
+  if (!bar) return;
+  var active = filter || state.currentFilter || 'all';
+  bar.querySelectorAll('.map-chip').forEach(function(c) {
+    c.classList.toggle('active', c.dataset.filter === active);
+  });
+}
+
+// ── Init chip bar click handlers ──
+function initChipBar() {
+  var bar = document.getElementById('mapChipBar');
+  if (!bar || bar._chipInit) return;
+  bar._chipInit = true;
+  bar.addEventListener('click', function(e) {
+    var chip = e.target.closest('.map-chip');
+    if (!chip) return;
+    var filter = chip.dataset.filter;
+    _syncChipBar(filter);
+    var ui = require('./ui.js');
+    ui.applyQuickFilter(filter);
+  });
 }
 
 // ── Init Map ──
@@ -247,6 +280,7 @@ function initMap() {
 
   // Add cluster group to map, then populate with filtered markers + fit bounds
   _map.addLayer(_cluster);
+  initChipBar();
   applyMapFilter();
 
   // User location marker

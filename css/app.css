@@ -1166,8 +1166,17 @@ body.map-active { padding-bottom: calc(var(--tab-bar-height) + var(--safe-bottom
   display: flex; align-items: center; justify-content: center;
 }
 
+/* MAP CHIP BAR — standalone filter chips overlaid on map */
+.map-chip-bar { position:absolute;top:var(--space-3);left:var(--space-3);right:var(--space-3);z-index:501;display:flex;gap:var(--space-2);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:var(--space-1); }
+.map-chip-bar::-webkit-scrollbar { display:none; }
+.map-chip { flex-shrink:0;padding:var(--space-2) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border);border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-medium);color:var(--color-text-secondary);box-shadow:var(--shadow-card);min-height:36px;cursor:pointer;-webkit-tap-highlight-color:transparent; }
+.map-chip.active { background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary); }
+.map-chip:active { opacity:0.85; }
+html[data-theme="dark"] .map-chip { background:var(--color-surface);border-color:var(--color-border);color:var(--color-text-secondary);box-shadow:0 1px 4px rgba(0,0,0,0.3); }
+html[data-theme="dark"] .map-chip.active { background:var(--color-primary);color:var(--color-text-inverse);border-color:var(--color-primary); }
+
 /* MAP FILTER PILL — floating indicator showing active filter */
-.map-filter-pill { position:absolute;top:var(--space-3);left:50%;transform:translateX(-50%);z-index:500;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--color-surface);border-radius:var(--radius-full);box-shadow:var(--shadow-elevated);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);white-space:nowrap;cursor:default;max-width:calc(100% - 120px); }
+.map-filter-pill { position:absolute;top:calc(var(--space-3) + 48px);left:50%;transform:translateX(-50%);z-index:500;display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-4);background:var(--color-surface);border-radius:var(--radius-full);box-shadow:var(--shadow-elevated);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);white-space:nowrap;cursor:default;max-width:calc(100% - 120px); }
 .map-filter-pill-dot { width:8px;height:8px;border-radius:50%;background:var(--color-primary);flex-shrink:0; }
 .map-filter-pill-label { overflow:hidden;text-overflow:ellipsis; }
 .map-filter-pill-clear { width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;color:var(--color-text-tertiary);font-size:var(--text-xs);flex-shrink:0;cursor:pointer;margin:-2px -8px -2px 0;-webkit-tap-highlight-color:transparent;background:none;border:none; }

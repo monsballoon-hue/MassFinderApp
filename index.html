@@ -90,6 +90,12 @@ if (location.hostname === 'massfinder.vercel.app') {
 </main>
 
 <div id="panelMap" class="tab-panel" role="tabpanel">
+  <div id="mapChipBar" class="map-chip-bar">
+    <button class="map-chip active" data-filter="all">All</button>
+    <button class="map-chip" data-filter="today">Today</button>
+    <button class="map-chip" data-filter="confession">Confession</button>
+    <button class="map-chip" data-filter="adoration">Adoration</button>
+  </div>
   <div id="mapFilterPill" class="map-filter-pill" style="display:none"></div>
   <div id="mapContainer"></div>
 </div>
