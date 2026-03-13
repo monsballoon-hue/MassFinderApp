@@ -150,25 +150,88 @@ function renderMore() {
     var confStatus = exam.getConfessionStatus();
     var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
 
+    // EMT-03-A: SVG icons for prayer tools
+    var ptIcons = {
+      // Rosary: circle of beads with cross — simplified rosary silhouette
+      rosary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="3" r="1.2"/><circle cx="5.5" cy="6.5" r="1.2"/><circle cx="5.5" cy="13.5" r="1.2"/><circle cx="18.5" cy="6.5" r="1.2"/><circle cx="18.5" cy="13.5" r="1.2"/><line x1="12" y1="17" x2="12" y2="20"/><line x1="10" y1="19" x2="14" y2="19"/></svg>',
+      // Examination: heart with magnifying glass — self-examination
+      examination: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+      // Stations: Latin cross — matches existing cross SVG in stations.js
+      stations: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
+      // Novena: candle flame
+      novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>'
+    };
+    var ptColors = {
+      rosary: 'var(--color-accent)',
+      examination: '#6B21A8',
+      stations: isLentSeason() ? '#6B21A8' : 'var(--color-text-secondary)',
+      novena: 'var(--color-accent)'
+    };
+    var ptBgColors = {
+      rosary: 'var(--color-accent-pale)',
+      examination: 'rgba(107,33,168,0.08)',
+      stations: isLentSeason() ? 'rgba(107,33,168,0.08)' : 'var(--color-surface-hover)',
+      novena: 'var(--color-accent-pale)'
+    };
+
+    // EMT-03-B: Contextual "today" highlight
+    var promotedId = '';
+    if (isLentSeason()) {
+      promotedId = 'stations';
+    } else if (new Date().getDay() === 5) {
+      promotedId = 'rosary';
+    } else if (confStatus && confStatus.daysAgo > 30) {
+      promotedId = 'examination';
+    }
+
+    // EMT-03-C: Active progress subtitle styling
+    var ptSubtitleClass = {
+      rosary: '',
+      examination: confStatus && confStatus.daysAgo <= 7 ? 'prayer-tool-subtitle--active' : (confStatus && confStatus.daysAgo > 30 ? 'prayer-tool-subtitle--nudge' : ''),
+      stations: '',
+      novena: ''
+    };
+    // Enhance novena subtitle with day fractions
+    var novSub = _getNovenaSubtitle();
+    if (novSub.indexOf('in progress') !== -1) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
+
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
-      { id: 'novena', title: 'Novena Tracker', subtitle: _getNovenaSubtitle(), action: 'openNovena()', active: true },
-      { id: 'explore', title: 'Discover the Faith', subtitle: 'Bible, CCC & more coming soon', action: '', active: false }
+      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
-      return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'
-        + (c.active ? ' onclick="' + c.action + '" role="button" tabindex="0"' : '')
+      var isPromoted = c.id === promotedId;
+      var iconHtml = ptIcons[c.id]
+        ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
+        : '';
+      var subClass = 'prayer-tool-subtitle' + (ptSubtitleClass[c.id] ? ' ' + ptSubtitleClass[c.id] : '');
+      return '<div class="prayer-tool-card' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
+        + ' onclick="' + c.action + '" role="button" tabindex="0"'
+        + (isPromoted ? ' style="border-left-color:' + ptColors[c.id] + '"' : '')
         + '>'
+        + iconHtml
         + '<div class="prayer-tool-body">'
         + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
-        + '<div class="prayer-tool-subtitle">' + esc(c.subtitle) + '</div>'
+        + '<div class="' + subClass + '">' + esc(c.subtitle) + '</div>'
         + '</div>'
         + '</div>';
     }).join('');
 
-    // Prayer activity tracker lives on the Saved tab now
+    // EMT-05: Library teaser — standalone card below grid
+    var libTeaser = document.getElementById('libraryTeaser');
+    if (libTeaser) {
+      libTeaser.innerHTML = '<div class="library-teaser">'
+        + '<div class="prayer-tool-icon" style="background:var(--color-surface-hover);color:var(--color-text-secondary)">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>'
+        + '</div>'
+        + '<div class="prayer-tool-body">'
+        + '<div class="prayer-tool-title">Catholic Library</div>'
+        + '<div class="prayer-tool-subtitle">Bible, Catechism & Catholic classics \u2014 coming soon</div>'
+        + '</div>'
+        + '</div>';
+    }
   }
 
   // Devotional guides
