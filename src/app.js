@@ -1013,29 +1013,46 @@ window._devSetSeason = function(season) {
   _toggleDevPanel();
 };
 
+var _devFastingCrossSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="10" x2="22" y2="10"/></svg>';
+var _devFastingDismissBtn = '<button class="fasting-banner-dismiss" onclick="dismissFastingBanner()" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
+
 window._devSetFasting = function(mode) {
   _devState.fastingMode = mode;
+  sessionStorage.removeItem('fastingBannerDismissed');
   var el = document.getElementById('fastingBanner');
   if (!el) { _closeDevPanel(); _toggleDevPanel(); return; }
   if (mode === 'ashwed' || mode === 'goodfri') {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-icon">' + _devFastingCrossSvg + '</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _devFastingDismissBtn
+      + '</div>';
   } else if (mode === 'lentfri') {
     el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-icon">\u271D</div>'
+      + '<div class="fasting-banner-icon">' + _devFastingCrossSvg + '</div>'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Abstinence</div>'
       + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
-      + '</div></div>';
+      + '</div>'
+      + _devFastingDismissBtn
+      + '</div>';
   } else {
     el.innerHTML = '';
   }
   _closeDevPanel();
   _toggleDevPanel();
+};
+
+window.dismissFastingBanner = function() {
+  sessionStorage.setItem('fastingBannerDismissed', 'true');
+  var el = document.getElementById('fastingBanner');
+  if (!el) return;
+  el.style.transition = 'opacity 0.3s';
+  el.style.opacity = '0';
+  setTimeout(function() { el.innerHTML = ''; el.style.opacity = ''; }, 300);
 };
 
 window._devQANav = function(dir) {
