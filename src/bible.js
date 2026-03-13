@@ -7,6 +7,7 @@ var reader = require('./reader.js');
 var studyDb = require('./study-db.js');
 var studyUi = require('./study-ui.js');
 var tts = require('./tts.js');
+var connections = require('./connections.js');
 
 var _bookCache = {};    // { 'matthew': { book, abbr, testament, chapters, verses } }
 var _xrefs = null;      // bible-xrefs.json data (null until first load)
@@ -250,8 +251,8 @@ reader.registerModule('bible', {
     return parsed.book.name;
   },
   render: function(params, bodyEl, footerEl) {
-    // Create wrapper divs inside bodyEl for _renderBibleContent to target
-    bodyEl.innerHTML = '<div id="bibleSheetBody"></div><div id="bibleSheetRelated"></div>';
+    // Create wrapper div inside bodyEl for _renderBibleContent to target
+    bodyEl.innerHTML = '<div id="bibleSheetBody"></div>';
     footerEl.style.display = 'none';
     _renderBibleContent(params.ref);
   },
@@ -263,9 +264,7 @@ reader.registerModule('bible', {
 // ── Content rendering ──
 async function _renderBibleContent(refStr) {
   var bodyEl = document.getElementById('bibleSheetBody');
-  var relEl = document.getElementById('bibleSheetRelated');
   bodyEl.innerHTML = '<div class="bible-loading">Loading\u2026</div>';
-  relEl.innerHTML = '';
 
   var parsed = _parseRef(refStr);
   if (!parsed) {
@@ -438,45 +437,12 @@ async function _renderBibleContent(refStr) {
   }
   studyUi.applyAnnotations('bible', scrollEl, verseAddresses);
 
-  // ── BR-04: Cross-references as collapsible margin notes ──
-  var relHtml = '';
-  if (_xrefs) {
-    var relatedRefs = [];
-    var checkEnd = Math.min(isWholeChapter ? 5 : parsed.endVerse, parsed.startVerse + 5);
-    for (var rv = parsed.startVerse; rv <= checkEnd; rv++) {
-      var xkey = parsed.book.abbr + ':' + parsed.chapter + ':' + rv;
-      var xkeyNoSpace = parsed.book.abbr.replace(/\s+/g, '') + ':' + parsed.chapter + ':' + rv;
-      var refs = _xrefs[xkey] || _xrefs[xkeyNoSpace] || [];
-      refs.forEach(function(r) {
-        var ref = Array.isArray(r) ? r[0] : r;
-        if (relatedRefs.indexOf(ref) < 0) relatedRefs.push(ref);
-      });
-    }
-
-    if (relatedRefs.length) {
-      var passages = _groupConsecutiveRefs(relatedRefs);
-      relHtml += '<details class="bible-refs-section">'
-        + '<summary class="bible-refs-summary">Cross-References <span class="bible-refs-count">' + passages.length + '</span></summary>'
-        + '<div class="bible-refs-body">';
-      passages.forEach(function(p) {
-        var pBook = _resolveAbbrToBook(p.abbr);
-        var label = pBook ? pBook.name : p.abbr;
-        var refLabel = label + ' ' + p.chapter + ':' + p.startVerse;
-        if (p.endVerse !== p.startVerse) refLabel += '\u2013' + p.endVerse;
-        var genre = pBook ? pBook.genre : '';
-        relHtml += '<div class="bible-related-item" onclick="bibleNavigate(\'' + _esc(refLabel) + '\')">'
-          + '<span class="bible-related-ref">' + _esc(refLabel) + '</span>'
-          + (genre ? ' <span class="bible-related-genre">' + _esc(genre) + '</span>' : '')
-          + '</div>';
-      });
-      relHtml += '</div></details>';
-    }
-  }
-
-  // Explore button — reader handles switching, no need to close first
-  relHtml += '<button class="bible-explore-btn" onclick="_openExploreFromBible(\'' + _esc(refStr).replace(/'/g, '\\\'') + '\')">Explore connections \u203A</button>';
-
-  relEl.innerHTML = relHtml;
+  // Inline connections (async — tiered connections below chapter content)
+  var connEl = document.createElement('div');
+  connEl.id = 'bibleConnections';
+  connEl.className = 'reader-connections';
+  bodyEl.appendChild(connEl);
+  connections.renderConnections('bible', refStr, connEl);
 
   // Scroll: target verse or top — use readerBody as scroll container
   var scrollContainer = document.getElementById('readerBody');
@@ -555,12 +521,6 @@ function _updateListenBtn(state) {
 
 function getCurrentPlainText() { return _currentPlainText || ''; }
 
-// Open Explore from Bible — reader stack handles cross-module navigation
-function _openExploreFromBible(refStr) {
-  reader.readerOpen('explore', { type: 'bible', id: refStr });
-}
-window._openExploreFromBible = _openExploreFromBible;
-
 module.exports = {
   openBible: openBible,
   closeBible: closeBible,
@@ -568,5 +528,7 @@ module.exports = {
   bibleGoBack: bibleGoBack,
   bibleReadAloud: bibleReadAloud,
   getCurrentPlainText: getCurrentPlainText,
-  BOOKS: _BOOKS
+  BOOKS: _BOOKS,
+  BOOK_LOOKUP: _BOOK_LOOKUP,
+  parseRef: _parseRef
 };

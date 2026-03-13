@@ -295,6 +295,25 @@ function forCCC(num) {
   return result;
 }
 
+// ── Bible book cache (shared with bible.js and snippet.js) ──
+var _bibleBookCache = {}; // filename → book data object
+
+function loadBibleBook(filename) {
+  if (_bibleBookCache[filename]) return Promise.resolve(_bibleBookCache[filename]);
+  return _loadOnce('bible:' + filename, function() {
+    return fetch('/data/bible-drb/' + filename + '.json')
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(d) { _bibleBookCache[filename] = d; return d; });
+  });
+}
+
+function getBibleBookCached(filename) {
+  return _bibleBookCache[filename] || null;
+}
+
 // Direct data accessors
 function getCCCParagraph(num) { return _cccParas ? _cccParas[parseInt(num, 10)] : null; }
 function getCCCParagraphs() { return _cccParas; }
@@ -303,13 +322,34 @@ function getBaltimore() { return _baltimore; }
 function getSumma() { return _summa; }
 function getLectionary() { return _lectionary; }
 
+// Hierarchy breadcrumb path for CCC paragraphs (e.g. "Part One > Section Two > Chapter One")
+function getHierarchyPath(num) {
+  if (!_cccHierarchy || !_cccHierarchy.lookup || !_cccHierarchy.hierarchy) return '';
+  var idx = _cccHierarchy.lookup[num];
+  if (!idx) return '';
+  var h = _cccHierarchy.hierarchy;
+  var parts = [];
+  if (idx[0] >= 0 && h[idx[0]]) parts.push(h[idx[0]].title);
+  if (idx[1] >= 0 && h[idx[0]] && h[idx[0]].sections && h[idx[0]].sections[idx[1]]) {
+    parts.push(h[idx[0]].sections[idx[1]].title);
+  }
+  if (idx[2] >= 0 && h[idx[0]] && h[idx[0]].sections && h[idx[0]].sections[idx[1]] &&
+      h[idx[0]].sections[idx[1]].chapters && h[idx[0]].sections[idx[1]].chapters[idx[2]]) {
+    parts.push(h[idx[0]].sections[idx[1]].chapters[idx[2]].title);
+  }
+  return parts.join(' \u203A ');
+}
+
 module.exports = {
   ensure: ensure,
   forBible: forBible,
   forCCC: forCCC,
+  loadBibleBook: loadBibleBook,
+  getBibleBookCached: getBibleBookCached,
   getCCCParagraph: getCCCParagraph,
   getCCCParagraphs: getCCCParagraphs,
   getCCCHierarchy: getCCCHierarchy,
+  getHierarchyPath: getHierarchyPath,
   getBaltimore: getBaltimore,
   getSumma: getSumma,
   getLectionary: getLectionary

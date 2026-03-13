@@ -43,6 +43,8 @@ var studyDb = require('./study-db.js');
 var graph = require('./graph.js');
 var search = require('./search.js');
 var boardUi = require('./board-ui.js');
+var snippet = require('./snippet.js');
+var connections = require('./connections.js');
 
 var state = data.state;
 
@@ -788,8 +790,7 @@ async function init() {
     // Initialize reader swipe-to-dismiss
     reader._initSwipeDismiss();
 
-    // Initialize reference preview dismiss handlers
-    refs.initPreviewDismiss();
+    // (Preview sheet removed — Tier 1 inline snippets handled by snippet.js)
 
     // Initialize History API integration for Android back button
     reader._initHistoryIntegration();

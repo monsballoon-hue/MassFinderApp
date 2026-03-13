@@ -382,14 +382,6 @@ function _renderDecade(title, body, footer) {
   title.textContent = _set + ' Mysteries \u2014 Decade ' + (_decade + 1) + ' of 5';
   var p = _data.prayers;
 
-  // CCC refs for inline meta display (RC-06)
-  var cccSpans = '';
-  if (m.ccc && m.ccc.length) {
-    cccSpans = m.ccc.map(function(n) {
-      return '<span class="ccc-ref rosary-ccc-ref" data-ccc="' + n + '">CCC ' + n + '</span>';
-    }).join(' ');
-  }
-
   body.innerHTML = _dotsHtml(_decade)
     + '<div class="rosary-decade">'
     // Mystery card (RC-06: compact layout)
@@ -399,10 +391,9 @@ function _renderDecade(title, body, footer) {
     + '<h3 class="rosary-mystery-title">' + utils.esc(m.title) + '</h3>'
     + '<p class="rosary-mystery-meditation">' + utils.esc(m.meditation) + '</p>'
     + '<div class="rosary-mystery-meta">'
-    + '<span class="rosary-mystery-scripture" onclick="window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\')">'
+    + '<span class="rosary-mystery-scripture" onclick="window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\',this)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> '
     + utils.esc(m.scripture) + '</span>'
-    + (cccSpans ? '<span class="rosary-mystery-meta-sep">\u00b7</span><span class="rosary-mystery-refs">' + cccSpans + '</span>' : '')
     + '</div>'
     + '</div>'
     // Our Father (collapsible)
@@ -466,15 +457,6 @@ function _renderDecade(title, body, footer) {
     });
   }
 
-  // Wire inline CCC refs → preview sheet via refs.js
-  var cccRefs = document.querySelectorAll('.rosary-ccc-ref');
-  cccRefs.forEach(function(span) {
-    span.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      if (window._refTap) window._refTap('ccc', span.dataset.ccc);
-    });
-  });
 }
 
 // ── Render: Closing ──

@@ -155,7 +155,7 @@ function renderMore() {
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
       { id: 'novena', title: 'Novena Tracker', subtitle: _getNovenaSubtitle(), action: 'openNovena()', active: true },
-      { id: 'explore', title: 'Explore', subtitle: 'CCC \u00b7 Scripture \u00b7 Baltimore', action: 'openExplore(\'landing\',\'\')', active: true }
+      { id: 'explore', title: 'Library', subtitle: 'CCC \u00b7 Scripture \u00b7 Baltimore', action: 'openExplore(\'landing\',\'\')', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       return '<div class="prayer-tool-card' + (c.active ? '' : ' coming-soon') + '"'

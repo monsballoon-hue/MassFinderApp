@@ -2,7 +2,7 @@
 
 ## Structured catalog of all ideas, bugs, enhancements, and observations
 
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-13
 **ID sequence:** IDEA-001 → IDEA-074
 **Total items:** 74
 
@@ -681,13 +681,15 @@ The Summa Theologica is academically dense and may not serve general users well 
 ## IDEA-052 — CCC “See Also” references clipped at bottom of screen
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
 
 The “See Also” section at the bottom of a CCC entry is sometimes cut off and not fully visible. Likely a max-height or overflow issue on the sheet container. Files: `src/ccc.js`, `css/app.css`.
+
+**Implemented:** 2026-03-13 — “See Also” section removed entirely; replaced by inline tiered connections rendered by new shared connections.js module.
 
 -----
 

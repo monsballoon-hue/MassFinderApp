@@ -9,6 +9,7 @@ var search = require('./search.js');
 var studyDb = require('./study-db.js');
 var studyUi = require('./study-ui.js');
 var tts = require('./tts.js');
+var connections = require('./connections.js');
 var _cccData = null, _cccXrefs = null, _cccCurrentNum = '';
 var _cccPlainText = '';
 var _cccSearchTimer = null;
@@ -82,7 +83,7 @@ function _wrapCCCScriptureRefs(html) {
 
   return html.replace(pattern, function(ref) {
     var escaped = ref.replace(/'/g, '&#39;');
-    return '<span class="ref-tap ref-tap--bible" role="button" tabindex="0" onclick="window._refTap(\'bible\',\'' + escaped + '\')" aria-label="Scripture: ' + escaped + '">' + ref + '</span>';
+    return '<span class="ref-tap ref-tap--bible" role="button" tabindex="0" onclick="window._refTap(\'bible\',\'' + escaped + '\',this)" aria-label="Scripture: ' + escaped + '">' + ref + '</span>';
   });
 }
 
@@ -121,7 +122,6 @@ function _parseCCCRange(numStr) {
 
 async function _renderCCCContent(numStr) {
   var bodyEl = document.getElementById('cccSheetBody');
-  var relEl = document.getElementById('cccSheetRelated');
   bodyEl.innerHTML = '<div class="ccc-loading">Loading\u2026</div>';
   relEl.innerHTML = '';
   await _loadCCCData();
@@ -179,38 +179,6 @@ async function _renderCCCContent(numStr) {
       + ' <span id="cccListenLabel">Listen</span></button>';
   }
 
-  // Related paragraphs (forward + reverse refs from primary id)
-  var relatedIds = [], seen = {};
-  ids.forEach(function(id) { seen[id] = true; });
-  if (_cccXrefs && _cccXrefs[primaryId]) {
-    var xr = _cccXrefs[primaryId];
-    (xr.fwd || []).concat(xr.rev || []).forEach(function(id) {
-      if (!seen[id]) { seen[id] = true; relatedIds.push(id); }
-    });
-    relatedIds.sort(function(a, b) { return a - b; });
-  }
-
-  // CCC-07: Related teachings as invitation cards with section context
-  var relHtml = '';
-  if (relatedIds.length) {
-    relHtml += '<div class="ccc-related-section">';
-    relHtml += '<div class="ccc-related-header">See Also</div>';
-    relatedIds.forEach(function(id) {
-      var text = _cccData && _cccData[id];
-      if (!text) return;
-      var preview = _getPreview(text);
-      var ctx = _getSectionContext(id);
-      relHtml += '<div class="ccc-related-item" onclick="cccNavigate(\'' + id + '\')">'
-        + '<div class="ccc-related-top">'
-        + '<span class="ccc-related-num">&#167;&nbsp;' + id + '</span>'
-        + (ctx ? '<span class="ccc-related-context">' + utils.esc(ctx) + '</span>' : '')
-        + '</div>'
-        + '<div class="ccc-related-preview">' + utils.esc(preview) + '</div>'
-        + '</div>';
-    });
-    relHtml += '</div>';
-  }
-
   // Footnotes / Sources collapsible section
   var footnotes = _cccFootnotes && _cccFootnotes[primaryId];
   if (footnotes && footnotes.length) {
@@ -229,7 +197,7 @@ async function _renderCCCContent(numStr) {
       if (fn.work) bodyHtml += '<span class="ccc-source-work">' + utils.esc(fn.work) + '</span>';
       if (fn.ref && fn.type === 'scripture') {
         var cleanRef = fn.ref.replace(/^cf\.\s*/i, '').replace(/\u21d2\s*/g, '').trim();
-        bodyHtml += '<span class="ref-tap ref-tap--bible" onclick="window._refTap(\'bible\',\'' + utils.esc(cleanRef).replace(/'/g, '&#39;') + '\')">' + utils.esc(fn.ref) + '</span>';
+        bodyHtml += '<span class="ref-tap ref-tap--bible" onclick="window._refTap(\'bible\',\'' + utils.esc(cleanRef).replace(/'/g, '&#39;') + '\',this)">' + utils.esc(fn.ref) + '</span>';
       } else if (fn.ref && !fn.work) {
         bodyHtml += '<span class="ccc-source-ref">' + utils.esc(fn.ref) + '</span>';
       }
@@ -238,8 +206,8 @@ async function _renderCCCContent(numStr) {
     bodyHtml += '</div></details>';
   }
 
-  // Explore button — reader stack handles layering automatically
-  bodyHtml += '<button class="ccc-explore-btn" onclick="_openExploreFromCCC(\'' + primaryId + '\')">Explore connections \u203A</button>';
+  // Inline connections (tiered — populated async after render)
+  bodyHtml += '<div id="cccConnections" class="reader-connections"></div>';
 
   // CR-01: Prev/next sequential navigation
   var prevNum = null, nextNum = null;
@@ -272,7 +240,6 @@ async function _renderCCCContent(numStr) {
   }
 
   bodyEl.innerHTML = bodyHtml;
-  relEl.innerHTML = relHtml;
   // Scroll readerBody (the scrollable container) to top
   var readerBody = document.getElementById('readerBody');
   if (readerBody) readerBody.scrollTop = 0;
@@ -297,29 +264,9 @@ async function _renderCCCContent(numStr) {
     }, { passive: true });
   }
 
-  // Baltimore companion card — async append if mapping exists
-  cccData.loadBaltimore().then(function(b) {
-    if (!b) return;
-    var card = _renderBaltimoreCard(b, ids[0]);
-    if (card) {
-      var cardEl = document.createElement('div');
-      cardEl.innerHTML = card;
-      // Insert before the explore button
-      var exploreBtn = bodyEl.querySelector('.ccc-explore-btn');
-      if (exploreBtn) bodyEl.insertBefore(cardEl.firstChild, exploreBtn);
-      else bodyEl.appendChild(cardEl.firstChild);
-    }
-  });
-}
-
-function _renderBaltimoreCard(baltimore, cccNum) {
-  var qa = baltimore.byCCC[String(cccNum)];
-  if (!qa) return '';
-  return '<div class="ccc-baltimore-card">'
-    + '<div class="ccc-baltimore-label">Baltimore Catechism #' + qa.id + '</div>'
-    + '<div class="ccc-baltimore-q">Q. ' + utils.esc(qa.question) + '</div>'
-    + '<div class="ccc-baltimore-a">A. ' + utils.esc(qa.answer) + '</div>'
-    + '</div>';
+  // Inline connections (async — loads data, renders tiered connections below content)
+  var connEl = document.getElementById('cccConnections');
+  if (connEl) connections.renderConnections('ccc', String(primaryId), connEl);
 }
 
 // ── Reader module registration ──
@@ -332,9 +279,8 @@ reader.registerModule('ccc', {
     footerEl.style.display = 'none';
     footerEl.innerHTML = '';
 
-    // Create wrapper divs inside bodyEl to preserve _renderCCCContent's DOM expectations
+    // Create wrapper divs inside bodyEl for _renderCCCContent
     bodyEl.innerHTML = '<div id="cccSheetBody"></div>'
-      + '<div id="cccSheetRelated"></div>'
       + '<div id="cccSearchResults" style="display:none"></div>';
 
     _renderCCCContent(numStr);
@@ -402,13 +348,11 @@ function _doSearch(query) {
 function _showSearchResults(results) {
   var el = document.getElementById('cccSearchResults');
   var body = document.getElementById('cccSheetBody');
-  var related = document.getElementById('cccSheetRelated');
   if (!el) return;
   if (!results.length) {
     el.innerHTML = '<div class="ccc-search-empty">No results found</div>';
     el.style.display = '';
     if (body) body.style.display = 'none';
-    if (related) related.style.display = 'none';
     return;
   }
   el.innerHTML = results.map(function(r) {
@@ -424,16 +368,13 @@ function _showSearchResults(results) {
   }).join('');
   el.style.display = '';
   if (body) body.style.display = 'none';
-  if (related) related.style.display = 'none';
 }
 
 function _hideSearchResults() {
   var el = document.getElementById('cccSearchResults');
   var body = document.getElementById('cccSheetBody');
-  var related = document.getElementById('cccSheetRelated');
   if (el) el.style.display = 'none';
   if (body) body.style.display = '';
-  if (related) related.style.display = '';
 }
 
 function cccSearchSelect(numStr) {
@@ -471,12 +412,6 @@ function _updateCCCListenBtn(state) {
 }
 
 function getCurrentPlainText() { return _cccPlainText || ''; }
-
-// Open Explore from CCC — reader stack handles layering automatically
-function _openExploreFromCCC(numStr) {
-  reader.readerOpen('explore', { type: 'ccc', id: String(numStr) });
-}
-window._openExploreFromCCC = _openExploreFromCCC;
 
 module.exports = {
   openCCC: openCCC,

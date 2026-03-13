@@ -43,7 +43,7 @@ function _updateBackBtn() {
 var _contextMap = {
   rosary: 'Rosary', examination: 'Examination', stations: 'Stations',
   novena: 'Novena', ccc: 'Catechism', bible: 'Bible',
-  explore: 'Explore', settings: 'Settings'
+  explore: 'Library', settings: 'Settings'
 };
 
 function _updateOriginBanner() {
@@ -83,8 +83,7 @@ function readerOpen(mode, params) {
 
   // Cross-module transition → push current to stack (enables back nav)
   // Same-module navigation (CCC §1→§2, Bible ch3→ch4) → replace current (no stack growth)
-  // Exception: explore with _pushExplore flag → push even for same-module (source pivots)
-  if (_current && (_current.mode !== mode || (mode === 'explore' && params._pushExplore))) {
+  if (_current && _current.mode !== mode) {
     _current.scrollPos = document.getElementById('readerBody').scrollTop;
     // Let the current module enrich its params before stacking
     var curMod = _modules[_current.mode];
@@ -140,7 +139,7 @@ function readerOpen(mode, params) {
     ui.trapFocus(overlay);
   } else {
     // Push history on cross-module transitions within reader
-    if (prevMode !== mode || (mode === 'explore' && params._pushExplore)) {
+    if (prevMode !== mode) {
       history.pushState({ mf: 'reader', depth: _stack.length }, '');
     }
 
@@ -264,9 +263,9 @@ function _initHistoryIntegration() {
       }
       return;
     }
-    // If ref preview is open, close it
-    if (typeof window._refPreviewClose === 'function') {
-      window._refPreviewClose();
+    // If inline snippet is open, dismiss it
+    if (typeof window._snippetDismiss === 'function') {
+      window._snippetDismiss();
     }
   });
 }

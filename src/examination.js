@@ -8,6 +8,12 @@ var ui = require('./ui.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
 
+function _esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 // ── State ──
 var _examData = null;
 var _expanded = {};         // section key → bool
