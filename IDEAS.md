@@ -297,13 +297,14 @@ Font sizes are inconsistent across the app — some areas look correct while oth
 ## IDEA-023 — Saved tab: “Prayer Life,” “Your Churches,” and event listing text too small
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-022
 **Spec ref:** (none)
 
 “Prayer Life” and “Your Churches” section labels in the Saved tab, along with event listing text, are rendering too small to be comfortably readable — particularly for older parishioners. Priority fix given the demographic. Files: `css/app.css`, `src/saved.js`.
+**Implemented:** 2026-03-13 via SFD-05-B — Typography bumped across Your Churches section: church name to text-base, meta to text-sm, next-time to text-base, row min-height to 72px.
 
 -----
 
@@ -726,13 +727,14 @@ Rather than a simple list of prayer tool links, the “Prayer Life” section co
 ## IDEA-054 — Saved tab: “Directions” link should route to Apple Maps on iOS, not Google Maps
 
 **Category:** bug
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
 
 The “Directions” link under the today service banner in the Saved tab currently routes to Google Maps regardless of device. On iPhone it should open Apple Maps, matching the behavior already implemented in the church detail card. The fix should detect the user’s platform and route to the appropriate default maps application. Files: `src/saved.js`.
+**Implemented:** 2026-03-13 via SFD-06-D — Verified _isApple check at saved.js:137 already routes to Apple Maps on iOS. No code change needed.
 
 -----
 

@@ -443,18 +443,31 @@ function renderSaved() {
     return aMin - bMin;
   });
 
+  // SFD-05-A: Build lookup of services already shown in Today card
+  var todaySvcKeys = {};
+  for (var tsi = 0; tsi < todaySvcs.length; tsi++) {
+    var ts = todaySvcs[tsi];
+    if (!ts.isPast) todaySvcKeys[ts.church.id + '|' + ts.service.type + '|' + ts.service.time] = true;
+  }
+
   html += '<div class="saved-divider saved-divider--editable"><span>Your churches \u00b7 ' + favChurches.length + '</span><button class="saved-edit-btn" id="savedEditBtn" onclick="toggleSavedEdit()">Edit</button></div>';
   html += '<div class="saved-churches-card">';
   html += sortedFav.map(function(item) {
     var c = item.c, next = item.next, dist = item.dist;
     var ver = isVer(c);
+    // SFD-05-A: Suppress badge when same service is already in Today card
     var statusBadge = '';
-    if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
-    else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
+    var nextKey = next ? (c.id + '|' + next.service.type + '|' + next.service.time) : '';
+    var alreadyInToday = nextKey && todaySvcKeys[nextKey];
+    if (!alreadyInToday) {
+      if (next && next.isLive) statusBadge = '<span class="card-live-badge"><span class="pulse-dot"></span>Live</span>';
+      else if (next && next.isSoon) statusBadge = '<span class="card-soon-badge"><span class="pulse-dot"></span>Soon</span>';
+    }
     var metaParts = [esc(c.city)];
     if (dist !== null) metaParts.push(fmtDist(dist));
     var ec = evtCounts[c.id];
-    if (ec) metaParts.push('<span class="saved-evt-count">' + ec + ' event' + (ec !== 1 ? 's' : '') + '</span>');
+    // SFD-05-D: Tappable event badge — opens detail panel
+    if (ec) metaParts.push('<span class="saved-evt-count saved-evt-count--tap" onclick="event.stopPropagation();openDetail(\'' + c.id + '\')">' + ec + ' event' + (ec !== 1 ? 's' : '') + '</span>');
 
     // ST-02: Next service line
     var nextLine = '';
@@ -515,9 +528,10 @@ function renderSaved() {
     // SPEC-005-D: Show season label for named seasons, suppress during Ordinary Time
     var seasonLabels = { lent: 'Lenten Season', advent: 'Advent Season', christmas: 'Christmas Season', easter: 'Easter Season' };
     var curSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
-    var seasonNote = seasonLabels[curSeason] ? '<div class="saved-header-season">' + seasonLabels[curSeason] + '</div>' : '';
+    // SFD-06-A: Merge greeting + season onto single line
+    var seasonInline = seasonLabels[curSeason] ? ' <span class="saved-header-season">\u00b7 ' + seasonLabels[curSeason] + '</span>' : '';
 
-    headerEl.innerHTML = '<h2>' + greeting + '</h2>' + seasonNote;
+    headerEl.innerHTML = '<h2>' + greeting + seasonInline + '</h2>';
   }
 
   el.innerHTML = html;

@@ -361,11 +361,20 @@ function fmt12bare(t) {
   if (!t) return '';
   var parts = t.split(':').map(Number), h = parts[0], m = parts[1];
   var h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
-  return m === 0 ? String(h12) : h12 + ':' + String(m).padStart(2, '0');
+  // SFD-02-C: Always show minutes for readability (10:00 not 10)
+  return h12 + ':' + String(m).padStart(2, '0');
 }
 
 // TD-03: Shared CCC reference-stripping (used by ccc.js, examination.js, rosary.js)
 function stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
+
+// SFD-03-C: Parse office hours string into multi-line segments
+function parseOfficeHours(str) {
+  if (!str) return [];
+  var parts = str.split(/[,;]\s*/);
+  if (parts.length <= 1) return [str];
+  return parts;
+}
 
 module.exports = {
   displayName: displayName, getNow: getNow, toLocalDateStr: toLocalDateStr,
@@ -378,4 +387,5 @@ module.exports = {
   smartDefault: smartDefault, esc: esc, stripCCCRefs: stripCCCRefs,
   getEaster: getEaster, getSeasonProgress: getSeasonProgress,
   fmtRelDate: fmtRelDate, fmtMonth: fmtMonth, fmt12bare: fmt12bare,
+  parseOfficeHours: parseOfficeHours,
 };
