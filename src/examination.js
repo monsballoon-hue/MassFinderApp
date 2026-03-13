@@ -12,8 +12,10 @@ var reader = require('./reader.js');
 // ── State ──
 var _examData = null;
 var _expanded = {};         // section key → bool
-var _checked = {};          // question id → { text, commandment }
+var _checked = {};          // question id → { text, commandment, skey }
 var _cccParagraphs = null;  // lazy-loaded catechism paragraph map
+var _sections = [];         // PTR-03: all sections (commandments + precepts)
+var _currentSection = 0;    // PTR-03: current section index
 
 // ── Reader module registration ──
 reader.registerModule('examination', {
@@ -42,26 +44,7 @@ reader.registerModule('examination', {
       window._examBeginReview = function() {
         delete window._examBeginReview;
         _haptic();
-        // Show progress bar locked to header (outside scroll area)
-        var headerExtra = document.getElementById('readerHeaderExtra');
-        if (headerExtra) {
-          headerExtra.innerHTML = '<div class="exam-progress-track"><div class="exam-progress-bar" id="examProgress"></div></div>';
-          headerExtra.style.display = '';
-        }
-        // Now show the footer bar
-        var ft = document.getElementById('readerFooter');
-        if (ft) {
-          ft.style.display = '';
-          ft.innerHTML = '<div class="exam-footer" id="examFooter">'
-            + '<span id="examCheckedCount">No items noted yet</span>'
-            + '<button class="exam-footer-btn" onclick="examScrollToSummary()">View Summary</button>'
-            + '</div>';
-          setTimeout(function() {
-            var bar = document.getElementById('examFooter');
-            if (bar) bar.classList.add('visible');
-          }, 50);
-        }
-        _renderExamination(d);
+        _initSectionFlow(d);
       };
     });
   },
@@ -307,12 +290,7 @@ function _renderSummaryHTML() {
 function _updateCheckedUI() {
   var count = Object.keys(_checked).length;
 
-  var countEl = document.getElementById('examCheckedCount');
-  if (countEl) {
-    countEl.textContent = count > 0 ? count + ' item' + (count !== 1 ? 's' : '') + ' noted' : 'No items noted yet';
-  }
-
-  // Summary section
+  // Summary section (visible on summary screen)
   var summaryList = document.getElementById('examSummaryList');
   if (summaryList) {
     summaryList.innerHTML = _renderSummaryHTML();
@@ -322,6 +300,11 @@ function _updateCheckedUI() {
   var summaryCount = document.getElementById('examSummaryCount');
   if (summaryCount) {
     summaryCount.textContent = count ? ' (' + count + ')' : '';
+  }
+
+  // In section-by-section flow, refresh footer nav (shows updated count)
+  if (_sections.length > 0 && _currentSection < _sections.length) {
+    _updateFooterNav();
   }
 }
 
@@ -469,6 +452,301 @@ function _initScrollProgress() {
     var pct = body.scrollTop / (body.scrollHeight - body.clientHeight);
     bar.style.transform = 'scaleX(' + Math.min(1, Math.max(0, pct)) + ')';
   }, { passive: true });
+}
+
+// ── PTR-03: Section-by-section flow ──
+
+function _initSectionFlow(d) {
+  _sections = d.commandments.concat([d.precepts]);
+  _currentSection = 0;
+
+  // Build headerExtra: dots row + How-to-Confess icon button
+  var headerExtra = document.getElementById('readerHeaderExtra');
+  if (headerExtra) {
+    headerExtra.innerHTML = _buildHeaderExtraHTML();
+    headerExtra.style.display = '';
+  }
+
+  // Show footer
+  var ft = document.getElementById('readerFooter');
+  if (ft) { ft.style.display = ''; }
+
+  _renderCurrentSection();
+}
+
+function _buildHeaderExtraHTML() {
+  var infoSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+  return '<div class="exam-header-extra-row">'
+    + '<div class="exam-dots" id="examDots"></div>'
+    + '<button class="exam-howto-icon-btn" onclick="examShowHowTo()" aria-label="How to Go to Confession">' + infoSvg + '</button>'
+    + '</div>';
+}
+
+function _updateDots() {
+  var dotsEl = document.getElementById('examDots');
+  if (!dotsEl) return;
+  var html = '';
+  for (var i = 0; i < _sections.length; i++) {
+    var section = _sections[i];
+    var key = section.number ? 'cmd-' + section.number : 'precepts';
+    var hasItems = _sectionHasItems(key);
+    var cls = 'exam-dot';
+    if (i === _currentSection) {
+      cls += ' active';
+    } else if (hasItems) {
+      cls += ' has-items';
+    } else if (i < _currentSection) {
+      cls += ' done';
+    }
+    html += '<button class="exam-dot-btn" onclick="examGoToSection(' + i + ')" aria-label="Section ' + (i + 1) + '">'
+      + '<span class="' + cls + '"></span>'
+      + '</button>';
+  }
+  dotsEl.innerHTML = html;
+}
+
+function _sectionHasItems(key) {
+  var keys = Object.keys(_checked);
+  for (var i = 0; i < keys.length; i++) {
+    if (_checked[keys[i]].skey === key) return true;
+  }
+  return false;
+}
+
+function _renderCurrentSection() {
+  var section = _sections[_currentSection];
+  var key = section.number ? 'cmd-' + section.number : 'precepts';
+  var cmdTitle = section.number ? section.number + '. ' + section.title : section.title;
+
+  var body = document.getElementById('readerBody');
+
+  // Section hero
+  var cccRef = section.ccc ? refs.renderRef('ccc', section.ccc) : '';
+  var html = '<div class="exam-section-hero">';
+  html += '<div class="exam-section-num">' + (section.number ? section.number : 'P') + '</div>';
+  html += '<div class="exam-section-title">' + _esc(section.title) + '</div>';
+  if (cccRef) { html += '<div class="exam-section-ccc">' + cccRef + '</div>'; }
+  html += '</div>';
+
+  // Questions — always expanded
+  html += '<div class="exam-section-questions">';
+  section.questions.forEach(function(q) {
+    var qRef = q.ccc ? refs.renderRef('ccc', q.ccc) : '';
+    var isChecked = !!_checked[q.id];
+    html += '<label class="exam-q' + (isChecked ? ' checked' : '') + '" data-qid="' + q.id + '">';
+    html += '<input type="checkbox" class="exam-checkbox" data-qid="' + q.id + '" data-cmd="' + _esc(cmdTitle) + '" data-skey="' + key + '"' + (isChecked ? ' checked' : '') + '>';
+    html += '<span class="exam-checkmark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>';
+    html += '<div class="exam-q-content">';
+    html += '<div class="exam-q-text">' + _esc(q.text) + '</div>';
+    if (qRef) { html += '<div class="exam-q-ref">' + qRef + '</div>'; }
+    html += '</div></label>';
+  });
+  html += '</div>';
+
+  // Crossfade
+  body.style.opacity = '0';
+  body.style.transition = 'opacity 0.15s ease';
+  setTimeout(function() {
+    body.innerHTML = html;
+    body.scrollTop = 0;
+    body.style.opacity = '1';
+    _wireInlineCCC();
+    refs.initRefTaps(body);
+    _wireCheckboxes(body);
+    _updateDots();
+    _updateFooterNav();
+  }, 150);
+}
+
+function _wireCheckboxes(body) {
+  if (body._examChangeWired) return;
+  body._examChangeWired = true;
+  body.addEventListener('change', function(e) {
+    var cb = e.target;
+    if (!cb.classList.contains('exam-checkbox')) return;
+    var qid = parseInt(cb.dataset.qid, 10);
+    var qEl = cb.closest('.exam-q');
+    if (cb.checked) {
+      _checked[qid] = {
+        text: qEl.querySelector('.exam-q-text').textContent,
+        commandment: cb.dataset.cmd,
+        skey: cb.dataset.skey || ''
+      };
+      qEl.classList.add('checked');
+    } else {
+      delete _checked[qid];
+      qEl.classList.remove('checked');
+    }
+    _haptic();
+    _updateCheckedUI();
+  });
+}
+
+function _updateFooterNav() {
+  var ft = document.getElementById('readerFooter');
+  if (!ft) return;
+  if (_currentSection >= _sections.length) return; // summary screen manages its own footer
+
+  var count = Object.keys(_checked).length;
+  var isFirst = (_currentSection === 0);
+  var isLast = (_currentSection === _sections.length - 1);
+
+  var countLabel = count > 0
+    ? '<button class="exam-nav-count exam-nav-count--link" onclick="examViewSummary()">' + count + ' item' + (count !== 1 ? 's' : '') + ' noted</button>'
+    : '<span class="exam-nav-count">No items noted</span>';
+  var nextLabel = isLast ? 'View Summary \u2192' : 'Next \u2192';
+
+  ft.innerHTML = '<div class="exam-nav" id="examNav">'
+    + '<button class="exam-nav-back" onclick="examPrevSection()"' + (isFirst ? ' disabled' : '') + '>\u2190 Previous</button>'
+    + countLabel
+    + '<button class="exam-nav-next" onclick="examNextSection()">' + nextLabel + '</button>'
+    + '</div>';
+}
+
+function examNextSection() {
+  _haptic();
+  if (_currentSection >= _sections.length - 1) {
+    examViewSummary();
+    return;
+  }
+  _currentSection++;
+  _renderCurrentSection();
+}
+
+function examPrevSection() {
+  _haptic();
+  if (_currentSection <= 0) return;
+  _currentSection--;
+  _renderCurrentSection();
+}
+
+function examGoToSection(n) {
+  _haptic();
+  if (n < 0 || n >= _sections.length) return;
+  _currentSection = n;
+  _renderCurrentSection();
+}
+
+function examViewSummary() {
+  _haptic();
+  _renderSummaryScreen();
+  // Log examination review
+  try {
+    var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var today = new Date().toISOString().slice(0, 10);
+    var alreadyLogged = log.some(function(e) { return e.type === 'examination' && e.date === today; });
+    if (!alreadyLogged) {
+      log.push({ type: 'examination', date: today });
+      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
+      log = log.filter(function(e) { return e.date >= cutoff; });
+      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
+    }
+  } catch (e) {}
+}
+
+function _renderSummaryScreen() {
+  var d = _examData;
+  if (!d) return;
+  var body = document.getElementById('readerBody');
+  body.style.opacity = '0';
+  body.style.transition = 'opacity 0.15s ease';
+
+  // Mark as past-last so _updateFooterNav and _updateDots know we're in summary
+  _currentSection = _sections.length;
+
+  setTimeout(function() {
+    var html = '';
+
+    // Summary section
+    html += '<div class="exam-summary" id="examSummary">';
+    html += '<div class="exam-summary-header">';
+    html += '<svg class="exam-summary-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>';
+    html += '<div><div class="exam-summary-title">Summary for Confession<span id="examSummaryCount"></span></div>';
+    html += '<div class="exam-summary-privacy">This list exists only during this session. Nothing is saved.</div></div>';
+    html += '</div>';
+    html += '<div class="exam-summary-list" id="examSummaryList">' + _renderSummaryHTML() + '</div>';
+    html += '</div>';
+
+    // Prayers
+    html += '<div class="exam-group-label">Prayers</div>';
+    html += '<div class="exam-contrition">';
+    html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
+    d.prayers.act_of_contrition.text.split('\n\n').forEach(function(p) {
+      html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+    });
+    html += '</div>';
+    html += _renderPrayer(d.prayers.thanksgiving);
+
+    // Confession tracker
+    var lastConf = localStorage.getItem('mf-last-confession');
+    var trackerHtml = '';
+    if (lastConf) {
+      var daysAgo = Math.floor((Date.now() - parseInt(lastConf, 10)) / 86400000);
+      trackerHtml = '<div class="exam-tracker-status">Last Confession: ' + (daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago') + '</div>';
+    }
+    html += '<div class="exam-tracker">' + trackerHtml;
+    html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">I received the Sacrament of Reconciliation</button>';
+    html += '</div>';
+
+    // Find Confession Near Me
+    html += '<button class="exam-find-btn" onclick="examFindConfession()">';
+    html += '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>';
+    html += 'Find Confession Near Me</button>';
+
+    // Graceful ending
+    html += '<div class="exam-ending">';
+    html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
+    html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
+    html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
+    html += '</div>';
+
+    body.innerHTML = html;
+    body.scrollTop = 0;
+    body.style.opacity = '1';
+    _wireInlineCCC();
+    refs.initRefTaps(body);
+    _updateCheckedUI();
+    _updateDots();
+
+    // Summary screen footer: back to examination + done
+    var ft = document.getElementById('readerFooter');
+    if (ft) {
+      ft.innerHTML = '<div class="exam-nav" id="examNav">'
+        + '<button class="exam-nav-back" onclick="examGoToSection(' + (_sections.length - 1) + ')">\u2190 Back</button>'
+        + '<span class="exam-nav-count"></span>'
+        + '<button class="exam-nav-next" onclick="examGracefulClose()">Done</button>'
+        + '</div>';
+    }
+  }, 150);
+}
+
+function examShowHowTo() {
+  _haptic();
+  var d = _examData;
+  if (!d || !d.how_to_confess) return;
+  var overlay = document.getElementById('readerOverlay');
+  if (!overlay || overlay.querySelector('.exam-howto-modal')) return;
+
+  var stepsHtml = '';
+  d.how_to_confess.steps.forEach(function(step) {
+    stepsHtml += '<li>' + _esc(step) + '</li>';
+  });
+
+  var closeSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+  var wrapEl = document.createElement('div');
+  wrapEl.className = 'exam-howto-modal';
+  wrapEl.innerHTML = '<div class="exam-howto-modal-inner">'
+    + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">'
+    + '<span style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-primary);">' + _esc(d.how_to_confess.title) + '</span>'
+    + '<button class="exam-howto-close" style="background:none;border:none;cursor:pointer;padding:var(--space-1);color:var(--color-text-secondary);-webkit-tap-highlight-color:transparent;">' + closeSvg + '</button>'
+    + '</div>'
+    + '<ol class="exam-howto-steps">' + stepsHtml + '</ol>'
+    + '</div>';
+
+  overlay.appendChild(wrapEl);
+  wrapEl.querySelector('.exam-howto-close').addEventListener('click', function() { wrapEl.remove(); });
+  wrapEl.addEventListener('click', function(e) { if (e.target === wrapEl) wrapEl.remove(); });
+  requestAnimationFrame(function() { wrapEl.classList.add('visible'); });
 }
 
 // ── Toggle commandment section (animated) ──
@@ -625,4 +903,10 @@ module.exports = {
   examScrollToSummary: examScrollToSummary,
   getConfessionStatus: getConfessionStatus,
   _updateMoreTabTracker: _updateMoreTabTracker,
+  // PTR-03: Section-by-section navigation
+  examNextSection: examNextSection,
+  examPrevSection: examPrevSection,
+  examGoToSection: examGoToSection,
+  examViewSummary: examViewSummary,
+  examShowHowTo: examShowHowTo,
 };

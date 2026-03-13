@@ -18,6 +18,7 @@ var _longPressTimer = null;
 var _swipeHintShown = false;
 var _beadsByDecade = [0, 0, 0, 0, 0]; // per-decade bead counts
 var _cccParagraphs = null;   // lazy-loaded catechism data for inline CCC
+var _hasInteracted = false;  // PTR-06-A: hide bead hint after first tap
 
 var SET_META = {
   Joyful:    { color: '#4A90D9', desc: 'Monday & Saturday' },
@@ -54,6 +55,7 @@ reader.registerModule('rosary', {
         _decade = 0;
         _bead = 0;
         _beadsByDecade = [0, 0, 0, 0, 0];
+        _hasInteracted = false;
       }
       _render();
       _acquireWakeLock();
@@ -230,6 +232,12 @@ function rosaryBeadTap() {
   _bead++;
   _beadsByDecade[_decade] = _bead;
   _updateBeadUI();
+  // PTR-06-A: Hide bead hint after first tap
+  if (!_hasInteracted) {
+    _hasInteracted = true;
+    var hint = document.querySelector('.rosary-bead-hint');
+    if (hint) hint.style.display = 'none';
+  }
   // Haptic rhythm: confirm on decade complete, slightly stronger at halfway, light tap otherwise
   if (_bead >= 10) {
     _haptic.confirm();
@@ -485,7 +493,7 @@ function _renderDecade(title, body, footer) {
     + '<div class="rosary-bead-label" id="rosaryBeadLabel">'
     + (_bead === 0 ? 'Tap to count' : _bead >= 10 ? 'All 10 complete' : 'Hail Mary ' + _bead + ' of 10')
     + '</div>'
-    + (_bead < 10 ? '<div class="rosary-bead-hint">' + (_bead === 0 ? 'Tap beads to count' : 'Hold to reset') + '</div>' : '')
+    + (!_hasInteracted && _bead < 10 ? '<div class="rosary-bead-hint">' + (_bead === 0 ? 'Tap beads to count' : 'Hold to reset') + '</div>' : '')
     + '</div>'
     + _prayerBlockCollapsible('Hail Mary', p.hail_mary)
     // Glory Be + O My Jesus (collapsible)

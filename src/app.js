@@ -241,6 +241,11 @@ window.examMarkConfession = examination.examMarkConfession;
 window.examFindConfession = examination.examFindConfession;
 window.examGracefulClose = examination.examGracefulClose;
 window.examScrollToSummary = examination.examScrollToSummary;
+window.examNextSection = examination.examNextSection;
+window.examPrevSection = examination.examPrevSection;
+window.examGoToSection = examination.examGoToSection;
+window.examViewSummary = examination.examViewSummary;
+window.examShowHowTo = examination.examShowHowTo;
 window.openStations = stations.openStations;
 window.closeStations = stations.closeStations;
 window.stationsNext = stations.stationsNext;
@@ -774,8 +779,9 @@ async function init() {
       }
     }).catch(function() {});
 
-    // Initialize reader swipe-to-dismiss
+    // Initialize reader swipe-to-dismiss and backdrop click-to-dismiss (PTR-02)
     reader._initSwipeDismiss();
+    reader._initBackdropDismiss();
 
     // Show update banner when SW installs a new cache
     function _showUpdateBanner() {
