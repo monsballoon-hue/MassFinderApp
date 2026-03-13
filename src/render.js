@@ -393,7 +393,7 @@ function _getComingUp(church, nextSvc) {
   var allTomorrow = todayResults.length === 0 && tomorrowResults.length > 0;
 
   var html = '<div class="detail-coming-up">';
-  html += '<div class="detail-coming-label">Coming Up' + (allTomorrow ? ' \u2014 Tomorrow' : '') + '</div>';
+  html += '<div class="detail-coming-label">Coming Up' + (allTomorrow ? ' \u00b7 Tomorrow' : '') + '</div>';
 
   // Render a single Coming Up row
   function _comingRow(r, isTomorrow) {
