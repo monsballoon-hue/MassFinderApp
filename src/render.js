@@ -1298,8 +1298,9 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
     if (merged) meta += '<div class="schedule-note">' + utils.esc(merged) + '</div>';
     if (s.times_vary) meta += '<div class="schedule-note">Times may vary \u2014 check bulletin</div>';
 
-    // DC-06: Communion service row class
+    // DC-06: Communion service row class; CDC-02: tighter padding for range rows
     var rowCls = 'schedule-row';
+    if (s.end_time) rowCls += ' schedule-row--has-range';
     if (s.type === 'communion_service') rowCls += ' schedule-row--communion';
 
     return '<div class="' + rowCls + '"><div class="schedule-time">' + tStr + lb + rb + sb + viglBadge + '</div><div class="schedule-meta">' + meta + '</div></div>';
