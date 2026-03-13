@@ -613,7 +613,16 @@ function openDetail(id, trapFocus, releaseFocus) {
     var badgeText = '';
     if (timedCount === 0 && svcs.length > 0) {
       badgeText = 'By appt.';
-    } else if (['conf', 'ador'].indexOf(sec.k) >= 0) {
+    } else if (sec.k === 'conf') {
+      // CDC-03-C: Use "X Confession times" when confession dominates (>80%)
+      var confBadgeCount = svcs.filter(function(s) { return s.type === 'confession' && s.time; }).length;
+      var confRatio = timedCount > 0 ? confBadgeCount / timedCount : 0;
+      if (confRatio > 0.8) {
+        badgeText = confBadgeCount + (confBadgeCount === 1 ? ' Confession time' : ' Confession times');
+      } else {
+        badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
+      }
+    } else if (sec.k === 'ador') {
       badgeText = timedCount + (timedCount === 1 ? ' time' : ' times');
     } else {
       badgeText = dayCount + (dayCount === 1 ? ' day' : ' days');
@@ -637,6 +646,17 @@ function openDetail(id, trapFocus, releaseFocus) {
         bodyInner += '<div class="first-devotion-highlight">' + renderSched(firstDevSvcs, locL, ml, sec.types, _curDay) + '</div>';
       }
       bodyInner += renderSched(regularDevSvcs, locL, ml, sec.types, _curDay);
+    } else if (sec.k === 'conf') {
+      // CDC-03-A: "Next available" confession callout at top
+      var nextConf = utils.getNext(c, 'confession');
+      var nextConfHtml = '';
+      if (nextConf) {
+        nextConfHtml = '<div class="schedule-next-available">'
+          + '<div class="schedule-next-available-time">' + utils.esc(nextConf.timeFormatted) + '</div>'
+          + '<div class="schedule-next-available-day">Next: ' + utils.esc(nextConf.dayLabel) + '</div>'
+          + '</div>';
+      }
+      bodyInner = nextConfHtml + renderSched(svcs, locL, ml, sec.types, _curDay);
     } else if (sec.k === 'ador') {
       // DC-20: Perpetual Adoration special card
       var perpSvcs = svcs.filter(function(s) { return s.type === 'perpetual_adoration'; });
