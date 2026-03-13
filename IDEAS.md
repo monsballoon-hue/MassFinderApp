@@ -311,13 +311,15 @@ Font sizes are inconsistent across the app — some areas look correct while oth
 ## IDEA-024 — Research: should Prayer Life CTAs live in Saved tab or only in More tab?
 
 **Category:** research
-**Status:** new
+**Status:** done
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-053
 **Spec ref:** (none)
 
 Prayer Life CTAs appear at the top of the More tab and again in the Saved tab. Evaluate whether this duplication is useful (two convenient entry points) or confusing and redundant. Consider whether the Saved tab instance serves a distinct purpose — e.g., surfacing active streaks or saved progress — that justifies the presence, or whether it should be removed from one location.
+
+**Implemented:** 2026-03-13 via EMT-02-A — More tab reordered: readings moved above prayer tools, section headers added ("Prayer & Devotion", "Grow in Faith"), spacing tightened
 
 -----
 
@@ -607,6 +609,7 @@ A dot appears next to the contextual greeting on the Saved tab. The purpose and 
 Events happening today in the Saved tab should be visually differentiated from upcoming events — e.g., via a highlight, badge, or elevated position. When multiple services fall today, a prioritization strategy is needed (e.g., next chronologically, or Mass over other service types). Design decision required before implementation. Files: `src/saved.js`, `css/app.css`.
 
 **Implemented:** 2026-03-12 via SPEC-005-G — added service type prioritization (Mass first), season-aware accent border, subtle background tint, and "Today's Events" badge label
+**Enhanced:** 2026-03-13 via EMT-01 — added category icons, category labels, seasonal tinting, title clamping, notes snippets, church name separation
 
 -----
 
@@ -714,13 +717,15 @@ The “See Also” section at the bottom of a CCC entry is sometimes cut off and
 ## IDEA-053 — Pie in the sky: rename and reimagine “Prayer Life” as a devotional/study tracker
 
 **Category:** pie-in-the-sky
-**Status:** new
+**Status:** in-progress
 **Date logged:** 2026-03-12
 **Source:** typed
 **Related:** IDEA-024, IDEA-049
 **Spec ref:** (none)
 
 Rather than a simple list of prayer tool links, the “Prayer Life” section could be renamed (e.g., “Devotional Life”) and expanded into a personal progress tracker. If the app’s content library grows to include classic Catholic books, this section could track reading progress through those works. A more ambitious version would turn the explorer modules into a study aid with bookmarking and note-jotting, with those notes and bookmarks surfacing here for review. Requires significant design and architecture decisions before any implementation.
+
+**Partial:** 2026-03-13 via EMT-03 — prayer tool cards now have SVG icons, contextual promotion (Stations during Lent), active/nudge subtitle styling. “Catholic Library” teaser extracted as standalone card. Section renamed “Prayer & Devotion”.
 
 -----
 

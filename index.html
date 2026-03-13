@@ -119,15 +119,17 @@ if (location.hostname === 'massfinder.vercel.app') {
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
     </div>
 
-    <!-- PRAYER TOOLS — moved up, no section title -->
-    <div class="more-section more-section--tight" id="prayerToolsSection">
-      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
-    </div>
-
-    <!-- DAILY READINGS -->
-    <div class="more-section">
+    <!-- DAILY READINGS — THE WORD (EMT-02-A: moved above prayer tools) -->
+    <div class="more-section" id="readingsSection">
       <h2 class="more-section-title">Today's Readings</h2>
       <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
+    </div>
+
+    <!-- PRAYER TOOLS — THE PRACTICE -->
+    <div class="more-section more-section--tight" id="prayerToolsSection">
+      <h2 class="more-section-title">Prayer &amp; Devotion</h2>
+      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
+      <div id="libraryTeaser"></div>
     </div>
 
     <!-- DAILY FORMATION — combined Baltimore Q&A + Summa -->
@@ -135,7 +137,7 @@ if (location.hostname === 'massfinder.vercel.app') {
 
     <!-- DEVOTIONAL GUIDES — collapsed by default -->
     <details class="more-section">
-      <summary class="more-section-title more-section-collapsible">Faith Guides<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
+      <summary class="more-section-title more-section-collapsible">Grow in Faith<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
       <div id="devotionalCards"></div>
     </details>
 

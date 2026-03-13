@@ -22,6 +22,16 @@ var getNext = utils.getNext;
 var state = data.state;
 var isFav = data.isFav;
 
+// EMT-01-A: Import category icons and labels from events.js (lazy to avoid circular at load)
+var _catCache = null;
+function _getCatData() {
+  if (!_catCache) {
+    var events = require('./events.js');
+    _catCache = { icons: events.CAT_ICONS, labels: events.CAT_LABELS };
+  }
+  return _catCache;
+}
+
 // ── getTodayServices — all services at saved churches happening today ──
 function getTodayServices(favChurches) {
   var now = getNow();
@@ -155,9 +165,16 @@ function _renderSchedRow(item, isHero) {
 function renderUnifiedEvt(e, isYC) {
   var c = state.allChurches.find(function(x) { return x.id === e.church_id; }) || {};
   var pName = displayName(c.name || '');
+  var catData = _getCatData();
 
-  // When text
+  // EMT-01-A: Category icon and label
+  var cat = e.category || 'community';
+  var catIcon = catData.icons[cat] || catData.icons.community;
+  var catLabel = catData.labels[cat] || '';
+
+  // When text — EMT-01-A: category label first, church name on its own line
   var whenParts = [];
+  if (catLabel) whenParts.push('<span class="saved-evt-cat-label saved-evt-cat--' + cat + '">' + esc(catLabel) + '</span>');
   if (e.dates && e.dates.length) {
     var next = getNextEventDate(e);
     var rem = getRemainingDates(e);
@@ -183,7 +200,6 @@ function renderUnifiedEvt(e, isYC) {
     whenParts.push((DAY_NAMES[e.day] || e.day) + 's');
   }
   if (e.time) whenParts.push(fmt12(e.time));
-  whenParts.push(pName);
 
   // Determine if this event is happening today
   var todayCheck = toLocalDateStr(getNow());
@@ -194,13 +210,30 @@ function renderUnifiedEvt(e, isYC) {
   var rowClass = 'saved-evt-unified';
   if (isYC) rowClass += ' evt-yc-row';
   if (isToday) rowClass += ' saved-evt-today';
+
+  // EMT-01-B: Seasonal tint class
+  if (e.seasonal && e.seasonal.is_seasonal) {
+    var season = (e.seasonal.season || '').toLowerCase();
+    if (season) rowClass += ' saved-evt-season-' + season;
+  }
+
   var ycBadge = isYC ? ' <span class="evt-yc-badge">YC</span>' : '';
   var onclick = 'openEventDetail(\'' + e.id + '\')';
 
+  // EMT-01-C: Notes snippet (show first ~60 chars if notes differ from title)
+  var noteSnippet = '';
+  if (e.notes && e.notes !== e.title && e.notes.substring(0, 20) !== e.title.substring(0, 20)) {
+    var snippet = e.notes.length > 60 ? e.notes.substring(0, 57) + '\u2026' : e.notes;
+    noteSnippet = '<div class="saved-evt-unified-note">' + esc(snippet) + '</div>';
+  }
+
   return '<div class="' + rowClass + '" onclick="' + onclick + '">'
+    + '<div class="saved-evt-icon saved-evt-icon--' + cat + '">' + catIcon + '</div>'
     + '<div class="saved-evt-unified-body">'
     + '<div class="saved-evt-unified-title">' + esc(e.title) + ycBadge + '</div>'
     + '<div class="saved-evt-unified-when">' + whenParts.join(' \u00b7 ') + '</div>'
+    + '<div class="saved-evt-unified-church">' + esc(pName) + '</div>'
+    + noteSnippet
     + '</div>'
     + '<svg class="saved-evt-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg>'
     + '</div>';

@@ -238,7 +238,9 @@ function fetchReadings() {
             + '</svg>'
             + ' Listen</button>';
         }
-        return '<div class="reading-entry" id="' + id + '" ' + (hasText ? 'onclick="toggleReading(\'' + id + '\')"' : '') + '>'
+        var isGospel = s.heading.toLowerCase().indexOf('gospel') !== -1;
+        var entryClass = 'reading-entry' + (isGospel ? ' reading-entry--gospel' : '');
+        return '<div class="' + entryClass + '" id="' + id + '" ' + (hasText ? 'onclick="toggleReading(\'' + id + '\')"' : '') + '>'
           + '<div class="reading-entry-header">'
           + '<div>'
           + '<div class="reading-heading">' + esc(s.heading) + '</div>'
