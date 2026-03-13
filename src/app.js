@@ -791,11 +791,23 @@ async function init() {
         b = document.createElement('div');
         b.id = 'mfUpdateBanner';
         b.className = 'mf-update-banner';
-        b.innerHTML = 'App updated \u2014 <button class="mf-update-banner-btn" onclick="window.location.reload()">Refresh</button>';
+        b.innerHTML = 'Update available \u00b7 <button class="mf-update-banner-btn" onclick="_handleUpdateRefresh(this)">Refresh</button>';
         document.body.appendChild(b);
       }
       requestAnimationFrame(function() { b.classList.add('show'); });
+      setTimeout(function() {
+        if (b.classList.contains('show')) {
+          b.style.opacity = '0';
+          setTimeout(function() { b.classList.remove('show'); b.style.opacity = ''; }, 300);
+        }
+      }, 30000);
     }
+
+    window._handleUpdateRefresh = function(btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>';
+      setTimeout(function() { window.location.reload(); }, 100);
+    };
 
     // Register service worker
     if ('serviceWorker' in navigator) {
