@@ -1,16 +1,18 @@
 // src/refs.js — Universal Reference Resolver (MOD-01)
 // Renders tappable HTML spans for CCC paragraphs and Bible references.
-// Phase 1: CCC only.  Phase 4: Bible (lazy-load data/bible-drb/).
+// Context-aware routing: Tier 1 inline snippet in prayer/outside contexts,
+// Tier 2 direct navigation when already in a reading module.
 //
 // Usage:
 //   refs.renderRef('ccc', '2180')           → '<span class="ref-tap ...">CCC 2180</span>'
 //   refs.renderRef('bible', 'John 3:16')    → '<span class="ref-tap ...">John 3:16</span>'
 //   refs.renderRef('ccc', '613', 'see CCC') → custom label
 //
-// In HTML onclick handlers, calls window._refTap(type, val).
+// In HTML onclick handlers, calls window._refTap(type, val, this).
 // After rendering dynamic HTML, call refs.initRefTaps(container) to wire keyboard.
 
 var reader = require('./reader.js');
+var snippet = require('./snippet.js');
 
 function _esc(s) {
   return String(s)
@@ -36,17 +38,23 @@ function renderRef(type, val, label) {
     aria = String(val);
   }
   return '<span class="ref-tap ref-tap--' + type + '"'
-    + ' onclick="window._refTap(\'' + _esc(type) + '\',\'' + _esc(String(val)) + '\')"'
+    + ' onclick="event.stopPropagation();window._refTap(\'' + _esc(type) + '\',\'' + _esc(String(val)) + '\',this)"'
     + ' role="button" tabindex="0"'
     + ' aria-label="' + _esc(aria) + '">'
     + display + '</span>';
 }
 
-function handleRefTap(type, val) {
-  // v1 prod gate: Bible and CCC full readers disabled — inline/popup refs still work
-  if (type === 'ccc' || type === 'bible') {
+// Context-aware routing: snippet (Tier 1) inside prayer tools or outside reader;
+// direct navigation (Tier 2) when already in a reading context.
+function handleRefTap(type, val, el) {
+  var current = reader.getCurrent();
+  var inPrayer = current && ['rosary', 'examination', 'stations', 'novena'].indexOf(current.mode) >= 0;
+
+  if (!current || inPrayer) {
+    snippet.showSnippet(type, val, el);
     return;
   }
+  // Tier 2 (CCC/Bible full readers) gated in v1 on this branch
 }
 
 // Wire keyboard activation (Enter/Space) for ref-tap spans in a container.

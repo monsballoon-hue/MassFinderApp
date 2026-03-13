@@ -30,6 +30,7 @@ var more = require('./more.js');
 var location_ = require('./location.js');
 var ccc = require('./ccc.js');
 var refs = require('./refs.js');
+var snippet = require('./snippet.js');
 var rosary = require('./rosary.js');
 var examination = require('./examination.js');
 var stations = require('./stations.js');

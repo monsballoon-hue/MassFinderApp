@@ -525,5 +525,9 @@ module.exports = {
   closeBible: closeBible,
   bibleNavigate: bibleNavigate,
   bibleGoBack: bibleGoBack,
-  bibleReadAloud: bibleReadAloud
+  bibleReadAloud: bibleReadAloud,
+  // Shared helpers for snippet.js
+  parseRef: _parseRef,
+  loadBook: _loadBook,
+  getBookCached: function(filename) { return _bookCache[filename] || null; },
 };

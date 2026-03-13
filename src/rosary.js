@@ -1,7 +1,6 @@
 // src/rosary.js — Guided Rosary Module (MOD-02 + UX-05 + LIB-01)
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
-var cccData = require('./ccc-data.js');
 var reader = require('./reader.js');
 
 // ── State ──
@@ -17,7 +16,6 @@ var _touchStartY = 0;
 var _longPressTimer = null;
 var _swipeHintShown = false;
 var _beadsByDecade = [0, 0, 0, 0, 0]; // per-decade bead counts
-var _cccParagraphs = null;   // lazy-loaded catechism data for inline CCC
 var _hasInteracted = false;  // PTR-06-A: hide bead hint after first tap
 
 var SET_META = {
@@ -321,76 +319,8 @@ function _onTouchEnd(e) {
   else rosaryPrev();         // swipe right → prev
 }
 
-// ── Inline CCC expansion (avoids z-index collision with z-2000 overlay) ──
-// TD-04: shared loader — single copy of catechism.json across all modules
-function _loadCCC(cb) {
-  if (_cccParagraphs) return cb();
-  cccData.load(function(d) {
-    if (d) _cccParagraphs = d.paragraphs;
-    cb();
-  });
-}
-
 // TD-02+03: Use shared utils
 function _esc(s) { return utils.esc(s); }
-function _stripCCCRefs(t) { return utils.stripCCCRefs(t); }
-
-function _toggleInlineCCC(span, numStr) {
-  // Insert CCC card after the mystery card, not inside the refs inline-flex container
-  var mysteryCard = span.closest('.rosary-mystery');
-  var container = mysteryCard || span.parentNode;
-
-  // If already expanded, collapse
-  var existing = container.parentNode.querySelector('.exam-ccc-card');
-  if (existing) {
-    existing.remove();
-    span.classList.remove('ref-tap--active');
-    return;
-  }
-
-  // Close any other open inline CCC
-  var body = document.getElementById('readerBody');
-  body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
-  body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
-
-  span.classList.add('ref-tap--active');
-  _haptic();
-
-  _loadCCC(function() {
-    var id = parseInt(numStr, 10);
-    var card = document.createElement('div');
-    card.className = 'exam-ccc-card';
-    // Header
-    var html = '<div class="exam-ccc-card-header">';
-    html += '<div class="exam-ccc-card-icon">\u00A7</div>';
-    html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
-    html += '</div>';
-    // Body — show first paragraph only (compact for rosary context)
-    html += '<div class="exam-ccc-card-body">';
-    var text = _cccParagraphs && _cccParagraphs[id];
-    if (text) {
-      var clean = _stripCCCRefs(text).trim();
-      var firstLine = clean.split('\n').filter(function(l) { return l.trim(); })[0] || '';
-      if (firstLine.charAt(0) === '>') {
-        html += '<p class="exam-ccc-card-quote">' + _esc(firstLine.slice(1).trim()) + '</p>';
-      } else {
-        html += '<p class="exam-ccc-card-text">' + _esc(firstLine) + '</p>';
-      }
-    } else {
-      html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
-    }
-    html += '</div>';
-    card.innerHTML = html;
-    // Insert after the mystery card, not inside the refs flex container
-    if (mysteryCard && mysteryCard.nextSibling) {
-      mysteryCard.parentNode.insertBefore(card, mysteryCard.nextSibling);
-    } else if (mysteryCard) {
-      mysteryCard.parentNode.appendChild(card);
-    } else {
-      container.appendChild(card);
-    }
-  });
-}
 
 // ── Render main dispatcher ──
 function _render() {
@@ -460,14 +390,6 @@ function _renderDecade(title, body, footer) {
   title.textContent = _set + ' Mysteries \u2014 Decade ' + (_decade + 1) + ' of 5';
   var p = _data.prayers;
 
-  // CCC refs for inline meta display (RC-06)
-  var cccSpans = '';
-  if (m.ccc && m.ccc.length) {
-    cccSpans = m.ccc.map(function(n) {
-      return '<span class="ccc-ref rosary-ccc-ref" data-ccc="' + n + '">CCC ' + n + '</span>';
-    }).join(' ');
-  }
-
   body.innerHTML = _dotsHtml(_decade)
     + '<div class="rosary-decade">'
     // Mystery card (RC-06: compact layout)
@@ -477,10 +399,9 @@ function _renderDecade(title, body, footer) {
     + '<h3 class="rosary-mystery-title">' + utils.esc(m.title) + '</h3>'
     + '<p class="rosary-mystery-meditation">' + utils.esc(m.meditation) + '</p>'
     + '<div class="rosary-mystery-meta">'
-    + '<span class="rosary-mystery-scripture" onclick="window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\')">'
+    + '<span class="rosary-mystery-scripture" onclick="event.stopPropagation();window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\',this)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> '
     + utils.esc(m.scripture) + '</span>'
-    + (cccSpans ? '<span class="rosary-mystery-meta-sep">\u00b7</span><span class="rosary-mystery-refs">' + cccSpans + '</span>' : '')
     + '</div>'
     + '</div>'
     // Our Father (collapsible)
@@ -544,15 +465,6 @@ function _renderDecade(title, body, footer) {
     });
   }
 
-  // Wire inline CCC refs
-  var cccRefs = document.querySelectorAll('.rosary-ccc-ref');
-  cccRefs.forEach(function(span) {
-    span.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      _toggleInlineCCC(span, span.dataset.ccc);
-    });
-  });
 }
 
 // ── Render: Closing ──
