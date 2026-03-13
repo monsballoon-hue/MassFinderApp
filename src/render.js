@@ -1291,6 +1291,16 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
       if (recLabel) meta += '<span class="schedule-recurrence-badge">' + utils.esc(recLabel) + '</span>';
     }
 
+    // CDC-07-A: Suppress notes that restate start+end times (under 80 chars)
+    if (note && s.end_time && note.length < 80) {
+      var nLower = note.toLowerCase();
+      var startFmt = utils.fmt12(s.time).toLowerCase().replace(' ', '');
+      var endFmt = utils.fmt12(s.end_time).toLowerCase().replace(' ', '');
+      if (nLower.indexOf(startFmt) >= 0 && nLower.indexOf(endFmt) >= 0) {
+        note = '';
+      }
+    }
+
     if (dayLabel) meta += '<div class="schedule-location" style="font-weight:var(--weight-medium)">' + utils.esc(dayLabel) + '</div>';
     if (loc) meta += '<span class="schedule-loc-badge">' + utils.esc(loc) + '</span>';
     if (showTypeLabel) meta += '<div class="schedule-location">' + utils.esc(tl) + '</div>';
