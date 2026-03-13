@@ -123,7 +123,6 @@ function _parseCCCRange(numStr) {
 async function _renderCCCContent(numStr) {
   var bodyEl = document.getElementById('cccSheetBody');
   bodyEl.innerHTML = '<div class="ccc-loading">Loading\u2026</div>';
-  relEl.innerHTML = '';
   await _loadCCCData();
 
   var ids = _parseCCCRange(numStr);
