@@ -38,7 +38,7 @@ function renderRef(type, val, label) {
     aria = String(val);
   }
   return '<span class="ref-tap ref-tap--' + type + '"'
-    + ' onclick="event.stopPropagation();window._refTap(\'' + _esc(type) + '\',\'' + _esc(String(val)) + '\',this)"'
+    + ' onclick="event.stopPropagation();event.preventDefault();window._refTap(\'' + _esc(type) + '\',\'' + _esc(String(val)) + '\',this)"'
     + ' role="button" tabindex="0"'
     + ' aria-label="' + _esc(aria) + '">'
     + display + '</span>';
