@@ -391,20 +391,18 @@ The only hard stop is a **failed build** — do not commit until it is resolved 
 |-------------------------------------------------|--------------------------------------------------------------------|------------------------------|
 |`CLAUDE.md`                                      |This file — architecture, conventions, module map, workflow protocol|**Current**                   |
 |`BACKLOG.md`                                     |Living backlog — master source of all planned work                  |**Living document**           |
-|`docs/plans/`                                    |Implementation-ready spec sheets (UX_Spec_*.md)                     |**Living documents**          |
+|`docs/plans/`                                    |Spec sheets: 4 UX specs (implemented) + 4 feature specs (planned)   |**Living documents**          |
 |`docs/reference/COMPLETED_SPECS.md`              |Spec status tracking — which items are Done vs Queued               |**Living document**           |
 |`docs/reference/PROJECT_CONTEXT.md`              |Architecture overview for Claude Projects                           |Current                       |
 |`docs/reference/MODULE_MAP.md`                   |Module dependencies and line counts                                 |Current                       |
 |`docs/reference/DESIGN_TOKENS.md`                |CSS design tokens and visual system reference                       |Current                       |
 |`docs/reference/DATA_SCHEMA.md`                  |parish_data.json and events.json schema docs                        |Current                       |
-|`docs/archive/BACKLOG_ARCHIVE_2026-03-13.md`     |Archived backlog (74 items from initial dev phase)                  |Archived                      |
 |`docs/DATA_STANDARDS.md`                         |Authoritative data rules — service types, day values, events        |Current                       |
-|`docs/STYLE_GUIDE.md`                            |Design system — tokens, components, layout rules                    |Needs `--font-prayer` addition|
+|`docs/STYLE_GUIDE.md`                            |Design system — tokens, components, layout rules                    |Current                       |
 |`docs/TERMINOLOGY.md`                            |Domain knowledge — liturgical correctness, display names            |Current                       |
-|`docs/PERSONAS.md`                               |User personas (50+, millennial, Gen Z) and UX principles            |Current                       |
-|`docs/ANTI_PATTERNS.md`                          |Known gotchas — SW cache, overlays, Web3Forms                       |Needs Node v12→v18 update     |
-|`docs/INTEGRATIONS.md`                           |External services — Supabase, Web3Forms, Leaflet, LitCal            |Needs Bible/litcal additions  |
-|`docs/CONTRIBUTING.md`                           |Contributor onboarding — setup, workflow, file map                  |Current                       |
+|`docs/ANTI_PATTERNS.md`                          |Known gotchas — SW cache, overlays, Web3Forms                       |Current                       |
+|`docs/INTEGRATIONS.md`                           |External services — Supabase, Web3Forms, Leaflet, LitCal            |Current                       |
 |`docs/FORK_GUIDE.md`                             |How to fork and deploy for another diocese                          |Current                       |
-|`docs/DEV_CHEATSHEET.md`                         |Quick reference for working with Claude Code                        |Current                       |
-|`docs/plans/MassFinder_Master_Feature_Catalog.md`|Master feature catalog — 48 done, 19 open                           |**Living document**           |
+|`CONTRIBUTING.md`                                |Contributor quick-start (root level)                                |Current                       |
+|`docs/review/validation-checklist.md`            |Per-parish data validation runbook                                  |Current                       |
+|`docs/archive/`                                  |Archived docs, old specs, superseded plans                          |Reference only                |
