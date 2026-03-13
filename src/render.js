@@ -1230,15 +1230,21 @@ function renderSched(svcs, locL, ml, sectionTypes, todayDay) {
 
   // === Nested Helper: render a single schedule row ===
   function renderRow(s, locL, ml, dayLabel, extraNote) {
-    var tStr = s.end_time ? utils.fmt12(s.time) + ' \u2013 ' + utils.fmt12(s.end_time) : utils.fmt12(s.time);
-
-    // DC-22: Confession duration
-    if (s.type === 'confession' && s.end_time) {
+    // CDC-02: Two-line time rendering for ranges; duration for confession + adoration
+    var tStr;
+    if (s.end_time) {
+      var durTypes = ['confession', 'adoration', 'perpetual_adoration', 'holy_hour'];
       var durMin = (utils.toMin(s.end_time) || 0) - (utils.toMin(s.time) || 0);
-      if (durMin > 0) {
-        var durStr = durMin >= 60 ? Math.floor(durMin / 60) + ' hr' + (durMin >= 120 ? 's' : '') : durMin + ' min';
-        tStr += '<span class="schedule-duration">(' + durStr + ')</span>';
+      var durStr = '';
+      if (durTypes.indexOf(s.type) >= 0 && durMin > 0) {
+        durStr = durMin >= 60
+          ? ' (' + Math.floor(durMin / 60) + ' hr' + (durMin >= 120 ? 's' : '') + ')'
+          : ' (' + durMin + ' min)';
       }
+      tStr = utils.fmt12(s.time)
+        + '<span class="schedule-time-end">\u2013 ' + utils.fmt12(s.end_time) + durStr + '</span>';
+    } else {
+      tStr = utils.fmt12(s.time);
     }
 
     var lb = s.language && s.language !== 'en' ? '<span class="schedule-lang-badge">' + (LANG_NAMES[s.language] || s.language) + '</span>' : '';
