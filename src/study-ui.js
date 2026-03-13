@@ -22,7 +22,7 @@ function showActionBar(source, address, el) {
   bar.className = 'study-action-bar';
   bar.id = 'studyActionBar';
 
-  bar.innerHTML = '<button class="study-action-btn study-action-highlight" onclick="_studyDoHighlight()">'
+  var btnHtml = '<button class="study-action-btn study-action-highlight" onclick="_studyDoHighlight()">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/></svg>'
     + ' Highlight</button>'
     + '<button class="study-action-btn study-action-note" onclick="_studyDoNote()">'
@@ -30,7 +30,11 @@ function showActionBar(source, address, el) {
     + ' Note</button>'
     + '<button class="study-action-btn study-action-bookmark" onclick="_studyDoBookmark()">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>'
-    + ' Bookmark</button>';
+    + ' Bookmark</button>'
+    + '<button class="study-action-btn study-action-board" onclick="_studyDoAddToBoard()">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>'
+    + ' Board</button>';
+  bar.innerHTML = btnHtml;
 
   // Append to readerBody as sticky-bottom toolbar
   var readerBody = document.getElementById('readerBody');
@@ -61,22 +65,94 @@ function _outsideClickHandler(e) {
   }
 }
 
-// ── Highlight action ──
+// ── Highlight action (multi-color picker) ──
 
 function doHighlight() {
   if (!_activeSource || !_activeAddress) return;
+  var bar = document.getElementById('studyActionBar');
+  if (!bar) return;
+
+  // Show color picker
+  bar.innerHTML = '<div class="study-color-picker">'
+    + '<button class="study-color-dot study-color-dot--gold" onclick="_studyDoHighlightColor(\'gold\')" aria-label="Gold highlight"></button>'
+    + '<button class="study-color-dot study-color-dot--blue" onclick="_studyDoHighlightColor(\'blue\')" aria-label="Blue highlight"></button>'
+    + '<button class="study-color-dot study-color-dot--green" onclick="_studyDoHighlightColor(\'green\')" aria-label="Green highlight"></button>'
+    + '<button class="study-color-dot study-color-dot--rose" onclick="_studyDoHighlightColor(\'rose\')" aria-label="Rose highlight"></button>'
+    + '</div>';
+}
+
+function doHighlightColor(color) {
+  if (!_activeSource || !_activeAddress) return;
   var haptics = require('./haptics.js');
-  studyDb.addHighlight(_activeSource, _activeAddress, 'gold').then(function(result) {
-    if (result) {
-      // Added — apply highlight class
-      if (_activeEl) _activeEl.classList.add('study-hl', 'study-hl--gold');
+  studyDb.addHighlight(_activeSource, _activeAddress, color).then(function(result) {
+    if (result === null) {
+      // Toggled off
+      if (_activeEl) {
+        _activeEl.classList.remove('study-hl', 'study-hl--gold', 'study-hl--blue', 'study-hl--green', 'study-hl--rose');
+      }
+      haptics.confirm();
+      hideActionBar();
+      _showToast('Highlight removed');
     } else {
-      // Toggled off — remove highlight class
-      if (_activeEl) _activeEl.classList.remove('study-hl', 'study-hl--gold');
+      // Applied new color
+      if (_activeEl) {
+        _activeEl.classList.remove('study-hl--gold', 'study-hl--blue', 'study-hl--green', 'study-hl--rose');
+        _activeEl.classList.add('study-hl', 'study-hl--' + result);
+      }
+      haptics.confirm();
+      hideActionBar();
+      _showToast('Highlighted');
     }
+  });
+}
+
+// ── Add to Board action ──
+
+function doAddToBoard() {
+  if (!_activeSource || !_activeAddress) return;
+  var bar = document.getElementById('studyActionBar');
+  if (!bar) return;
+
+  studyDb.getAllBoards().then(function(boards) {
+    var html = '<div class="study-board-picker">'
+      + '<div class="study-board-picker-title">Add to board</div>';
+
+    boards.forEach(function(b) {
+      html += '<button class="study-board-picker-item" onclick="_studyAddToBoard(' + b.id + ')">'
+        + '<span class="study-board-dot" style="background:var(--study-color-' + utils.esc(b.color || 'gold') + ')"></span>'
+        + '<span>' + utils.esc(b.title) + '</span>'
+        + '</button>';
+    });
+
+    html += '<button class="study-board-picker-item study-board-picker-new" onclick="_studyNewBoardFromPicker()">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+      + ' New board'
+      + '</button>';
+
+    html += '</div>';
+    bar.innerHTML = html;
+  });
+}
+
+function _addItemToBoard(boardId) {
+  if (!_activeSource || !_activeAddress) return;
+  var haptics = require('./haptics.js');
+  studyDb.addBoardItem(boardId, _activeSource, _activeAddress).then(function() {
     haptics.confirm();
     hideActionBar();
-    _showToast(result ? 'Highlighted' : 'Highlight removed');
+    _showToast('Added to board');
+  });
+}
+
+function _newBoardFromPicker() {
+  if (!_activeSource || !_activeAddress) return;
+  var haptics = require('./haptics.js');
+  studyDb.createBoard('Untitled Board', 'gold').then(function(boardId) {
+    return studyDb.addBoardItem(boardId, _activeSource, _activeAddress);
+  }).then(function() {
+    haptics.confirm();
+    hideActionBar();
+    _showToast('New board created');
   });
 }
 
@@ -210,10 +286,14 @@ function initStudyLayer(containerEl) {
 
 // Window bindings for onclick handlers in action bar HTML
 window._studyDoHighlight = doHighlight;
+window._studyDoHighlightColor = doHighlightColor;
 window._studyDoNote = doNote;
 window._studyDoBookmark = doBookmark;
 window._studySaveNote = saveNote;
 window._studyHideActionBar = hideActionBar;
+window._studyDoAddToBoard = doAddToBoard;
+window._studyAddToBoard = _addItemToBoard;
+window._studyNewBoardFromPicker = _newBoardFromPicker;
 
 module.exports = {
   initStudyLayer: initStudyLayer,

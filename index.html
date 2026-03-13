@@ -194,8 +194,19 @@ if (location.hostname === 'massfinder.vercel.app') {
     </button>
   </div>
   <div class="reader-header-extra" id="readerHeaderExtra" style="display:none"></div>
+  <div class="reader-origin" id="readerOrigin" style="display:none">
+    <div class="reader-origin-label" id="readerOriginLabel"></div>
+    <button class="reader-origin-btn" id="readerOriginBtn" onclick="readerClose()">Return</button>
+  </div>
   <div class="reader-body" id="readerBody"></div>
   <div class="reader-footer" id="readerFooter" style="display:none"></div>
+</div>
+
+<!-- Reference Preview Mini-Sheet -->
+<div id="refPreviewBackdrop" class="ref-preview-backdrop"></div>
+<div id="refPreview" class="ref-preview" role="dialog" aria-modal="false" aria-label="Reference preview">
+  <div class="ref-preview-handle"></div>
+  <div class="ref-preview-content" id="refPreviewContent"></div>
 </div>
 
 <!-- Toast -->

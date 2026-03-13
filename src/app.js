@@ -40,6 +40,9 @@ var explore = require('./explore.js');
 var settings = require('./settings.js');
 var reader = require('./reader.js');
 var studyDb = require('./study-db.js');
+var graph = require('./graph.js');
+var search = require('./search.js');
+var boardUi = require('./board-ui.js');
 
 var state = data.state;
 
@@ -784,6 +787,12 @@ async function init() {
 
     // Initialize reader swipe-to-dismiss
     reader._initSwipeDismiss();
+
+    // Initialize reference preview dismiss handlers
+    refs.initPreviewDismiss();
+
+    // Initialize History API integration for Android back button
+    reader._initHistoryIntegration();
 
     // Register service worker
     if ('serviceWorker' in navigator) {

@@ -367,6 +367,17 @@ function fmt12bare(t) {
 // TD-03: Shared CCC reference-stripping (used by ccc.js, examination.js, rosary.js)
 function stripCCCRefs(t) { return t.replace(/\s*\(\d[\d,\s\-\u2013]*\)\s*/g, ' ').trim(); }
 
+// Shared preview text generator — first sentence or truncated clean text
+function getPreview(raw, maxLen) {
+  if (!raw) return '';
+  maxLen = maxLen || 140;
+  var clean = stripCCCRefs(raw).replace(/>/g, '').replace(/\*/g, '').trim();
+  var m = clean.match(/^(.{10,}?[.!?]["\u201d]?)(\s|$)/);
+  var preview = m && m[1].length <= maxLen ? m[1].trim() : clean.slice(0, maxLen).trim();
+  if (preview.length < clean.length) preview += '\u2026';
+  return preview;
+}
+
 module.exports = {
   displayName: displayName, getNow: getNow, toLocalDateStr: toLocalDateStr,
   isEventActive: isEventActive, getNextEventDate: getNextEventDate,
@@ -375,7 +386,7 @@ module.exports = {
   getNext: getNext, hav: hav, getDist: getDist, fmtDist: fmtDist,
   isVer: isVer, generateICS: generateICS,
   svcKey: svcKey, cleanNote: cleanNote, escRe: escRe, makeRangeLabel: makeRangeLabel,
-  smartDefault: smartDefault, esc: esc, stripCCCRefs: stripCCCRefs,
+  smartDefault: smartDefault, esc: esc, stripCCCRefs: stripCCCRefs, getPreview: getPreview,
   getEaster: getEaster, getSeasonProgress: getSeasonProgress,
   fmtRelDate: fmtRelDate, fmtMonth: fmtMonth, fmt12bare: fmt12bare,
 };

@@ -5,13 +5,13 @@
 var utils = require('./utils.js');
 var cccData = require('./ccc-data.js');
 var reader = require('./reader.js');
-var createFuzzySearch = require('@nozbe/microfuzz').default;
+var search = require('./search.js');
 var studyDb = require('./study-db.js');
 var studyUi = require('./study-ui.js');
 var tts = require('./tts.js');
 var _cccData = null, _cccXrefs = null, _cccCurrentNum = '';
 var _cccPlainText = '';
-var _cccSearchIndex = null, _cccSearchTimer = null;
+var _cccSearchTimer = null;
 var _cccFootnotes = null;
 
 // CCC-06: Section context lookup — paragraph number ranges to section labels
@@ -106,11 +106,7 @@ function _renderParaText(raw) {
 }
 
 function _getPreview(raw) {
-  var clean = utils.stripCCCRefs(raw).replace(/>/g, '').replace(/\*/g, '').trim();
-  var m = clean.match(/^(.{10,160}[.!?]["\u201d]?)(\s|$)/);
-  var preview = m ? m[1].trim() : clean.slice(0, 140).trim();
-  if (preview.length < clean.length) preview += '\u2026';
-  return preview;
+  return utils.getPreview(raw);
 }
 
 function _parseCCCRange(numStr) {
@@ -380,18 +376,7 @@ function openCCCAboveExam(numStr) {
   openCCC(numStr);
 }
 
-// ── CCC Search (LIB-02: microfuzz) ──
-function _buildSearchIndex() {
-  if (_cccSearchIndex || !_cccData) return;
-  var items = [];
-  Object.keys(_cccData).forEach(function(num) {
-    var text = _cccData[num].replace(/\*([^*]+)\*/g, '$1').replace(/>/g, '').replace(/\n/g, ' ');
-    items.push({ num: num, text: text });
-  });
-  _cccSearchIndex = createFuzzySearch(items, {
-    getText: function(item) { return [item.text]; }
-  });
-}
+// ── CCC Search (powered by unified search.js) ──
 
 function _initSearch() {
   var input = document.getElementById('cccSearchInput');
@@ -401,29 +386,17 @@ function _initSearch() {
     clearTimeout(_cccSearchTimer);
     var q = input.value.trim();
     if (!q) { _hideSearchResults(); return; }
-    // If user types a paragraph number directly, navigate to it
-    if (/^\d+$/.test(q) && parseInt(q) >= 1 && parseInt(q) <= 2865) {
-      _cccSearchTimer = setTimeout(function() {
-        _showSearchResults([{ item: { num: q, text: _cccData && _cccData[q] ? _cccData[q].slice(0, 140) : '' } }]);
-      }, 200);
-      return;
-    }
-    _cccSearchTimer = setTimeout(function() { _doSearch(q); }, 250);
+    _cccSearchTimer = setTimeout(function() { _doSearch(q); }, 200);
   });
 }
 
 function _doSearch(query) {
-  if (!_cccData) {
-    _loadCCCData().then(function() {
-      _buildSearchIndex();
-      _doSearch(query);
-    });
-    return;
-  }
-  _buildSearchIndex();
-  if (!_cccSearchIndex) return;
-  var results = _cccSearchIndex(query);
-  _showSearchResults(results.slice(0, 12));
+  var sr = search.query(query, { sources: ['ccc'], maxPerGroup: 12 });
+  var items = [];
+  sr.groups.forEach(function(g) {
+    if (g.source === 'ccc') items = g.items;
+  });
+  _showSearchResults(items);
 }
 
 function _showSearchResults(results) {
@@ -439,17 +412,14 @@ function _showSearchResults(results) {
     return;
   }
   el.innerHTML = results.map(function(r) {
-    var num = r.item.num;
-    var text = r.item.text || '';
-    var preview = text.slice(0, 120);
-    if (text.length > 120) preview += '\u2026';
-    var ctx = _getSectionContext(num);
+    var num = r.ref;
+    var ctx = r.context || _getSectionContext(num);
     return '<div class="ccc-search-item" onclick="cccSearchSelect(\'' + num + '\')">'
       + '<div class="ccc-search-item-top">'
       + '<span class="ccc-search-num">\u00A7' + num + '</span>'
       + (ctx ? '<span class="ccc-search-ctx">' + utils.esc(ctx) + '</span>' : '')
       + '</div>'
-      + '<div class="ccc-search-preview">' + utils.esc(preview) + '</div>'
+      + '<div class="ccc-search-preview">' + utils.esc(r.preview || '') + '</div>'
       + '</div>';
   }).join('');
   el.style.display = '';

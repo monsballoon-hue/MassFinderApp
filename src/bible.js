@@ -567,5 +567,6 @@ module.exports = {
   bibleNavigate: bibleNavigate,
   bibleGoBack: bibleGoBack,
   bibleReadAloud: bibleReadAloud,
-  getCurrentPlainText: getCurrentPlainText
+  getCurrentPlainText: getCurrentPlainText,
+  BOOKS: _BOOKS
 };

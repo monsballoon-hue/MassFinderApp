@@ -6,14 +6,12 @@
 var refs = require('./refs.js');
 var ui = require('./ui.js');
 var _haptic = require('./haptics.js');
-var cccData = require('./ccc-data.js');
 var reader = require('./reader.js');
 
 // ── State ──
 var _examData = null;
 var _expanded = {};         // section key → bool
 var _checked = {};          // question id → { text, commandment }
-var _cccParagraphs = null;  // lazy-loaded catechism paragraph map
 
 // ── Reader module registration ──
 reader.registerModule('examination', {
@@ -71,99 +69,6 @@ function _loadData(cb) {
   fetch('/data/examination.json').then(function(r) { return r.json(); })
     .then(function(d) { _examData = d; cb(d); })
     .catch(function(e) { console.warn('[Examination] Failed to load data:', e); });
-}
-
-// ── Load catechism data for inline CCC (TD-04: shared loader) ──
-function _loadCCC(cb) {
-  if (_cccParagraphs) return cb();
-  cccData.load(function(d) {
-    if (d) _cccParagraphs = d.paragraphs;
-    cb();
-  });
-}
-
-// ── Parse CCC range — always returns topline paragraph only ──
-function _parseCCCRange(numStr) {
-  var m = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
-  if (m) {
-    return [parseInt(m[1], 10)];
-  }
-  return [parseInt(numStr, 10)];
-}
-
-// ── Escape HTML ──
-var utils = require('./utils.js');
-function _esc(s) { return utils.esc(s); }
-function _stripRefs(t) { return utils.stripCCCRefs(t); }
-
-// ── Toggle inline CCC expansion ──
-function _toggleInlineCCC(span, numStr) {
-  var container = span.closest('.exam-q-content') || span.closest('.exam-ccc-ref') || span.parentNode;
-
-  // If already expanded, collapse
-  var existing = container.querySelector('.exam-ccc-card');
-  if (existing) {
-    existing.remove();
-    span.classList.remove('ref-tap--active');
-    return;
-  }
-
-  // Close any other open inline CCC
-  var body = document.getElementById('readerBody');
-  body.querySelectorAll('.exam-ccc-card').forEach(function(el) { el.remove(); });
-  body.querySelectorAll('.ref-tap--active').forEach(function(el) { el.classList.remove('ref-tap--active'); });
-
-  span.classList.add('ref-tap--active');
-  _haptic();
-
-  _loadCCC(function() {
-    var ids = _parseCCCRange(numStr);
-    var card = document.createElement('div');
-    card.className = 'exam-ccc-card';
-    var html = '<div class="exam-ccc-card-header">';
-    html += '<div class="exam-ccc-card-icon">\u00A7</div>';
-    html += '<div class="exam-ccc-card-label">Catechism \u00A7' + _esc(numStr) + '</div>';
-    html += '</div>';
-    html += '<div class="exam-ccc-card-body">';
-    ids.forEach(function(id) {
-      var text = _cccParagraphs && _cccParagraphs[id];
-      if (text) {
-        var clean = _stripRefs(text).trim();
-        var firstLine = clean.split('\n').filter(function(l) { return l.trim(); })[0] || '';
-        if (firstLine.charAt(0) === '>') {
-          html += '<p class="exam-ccc-card-quote">' + _esc(firstLine.slice(1).trim()) + '</p>';
-        } else {
-          html += '<p class="exam-ccc-card-text">' + _esc(firstLine) + '</p>';
-        }
-      } else {
-        html += '<p class="exam-ccc-card-text" style="color:var(--color-text-tertiary)">Full text not in local dataset.</p>';
-      }
-    });
-    html += '</div>';
-    // "See full range" link — opens CCC in reader (pushes exam to stack)
-    var rangeMatch = String(numStr).match(/(\d+)[\-\u2013](\d+)/);
-    if (rangeMatch && (parseInt(rangeMatch[2], 10) - parseInt(rangeMatch[1], 10)) > 0) {
-      html += '<p class="exam-ccc-card-more" onclick="openCCCAboveExam(\'' + _esc(numStr) + '\')">See full range \u00A7' + _esc(numStr) + ' in Catechism \u2192</p>';
-    }
-    card.innerHTML = html;
-    container.appendChild(card);
-  });
-}
-
-// ── Wire inline CCC on all ref-tap spans inside exam body ──
-function _wireInlineCCC() {
-  var body = document.getElementById('readerBody');
-  body.querySelectorAll('.ref-tap--ccc').forEach(function(span) {
-    var match = (span.getAttribute('onclick') || '').match(/_refTap\('ccc','([^']+)'\)/);
-    if (!match) return;
-    var cccNum = match[1];
-    span.removeAttribute('onclick');
-    span.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      _toggleInlineCCC(span, cccNum);
-    });
-  });
 }
 
 // ── Render a commandment row within a group ──
@@ -412,9 +317,6 @@ function _renderExamination(d) {
   html += '</div>';
 
   body.innerHTML = html;
-
-  // Wire inline CCC (override default openCCC behavior within overlay)
-  _wireInlineCCC();
 
   // Wire keyboard for remaining ref-tap spans
   refs.initRefTaps(body);

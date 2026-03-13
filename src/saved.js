@@ -602,17 +602,19 @@ function renderStudyDashboard() {
   var el = document.getElementById('studyDashboard');
   if (!el) return;
 
-  // Run all three queries in parallel, then build HTML
+  // Run all four queries in parallel, then build HTML
   Promise.all([
     studyDb.getAllProgress(),
     studyDb.getAllBookmarks(),
-    studyDb.getAllNotes()
+    studyDb.getAllNotes(),
+    studyDb.getAllBoards()
   ]).then(function(results) {
     var progressItems = results[0];
     var bookmarks = results[1];
     var notes = results[2];
+    var boards = results[3];
 
-    if (!progressItems.length && !bookmarks.length && !notes.length) {
+    if (!progressItems.length && !bookmarks.length && !notes.length && !boards.length) {
       el.innerHTML = '';
       return;
     }
@@ -645,6 +647,28 @@ function renderStudyDashboard() {
       });
 
       html += '</div>';
+    }
+
+    // ── Research Boards ──
+    if (boards.length) {
+      html += '<div class="study-section">';
+      html += '<div class="study-section-label">Research Boards</div>';
+      html += '<div class="study-boards-grid">';
+
+      boards.forEach(function(b) {
+        html += '<button class="study-board-card" onclick="openBoard(' + b.id + ')">'
+          + '<div class="study-board-card-color" style="background:var(--study-color-' + esc(b.color || 'gold') + ')"></div>'
+          + '<div class="study-board-card-title">' + esc(b.title) + '</div>'
+          + '<div class="study-board-card-time">' + esc(_timeAgo(b.updated)) + '</div>'
+          + '</button>';
+      });
+
+      html += '<button class="study-board-card study-board-card--new" onclick="createNewBoard()">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+        + '<div class="study-board-card-title">New Board</div>'
+        + '</button>';
+
+      html += '</div></div>';
     }
 
     // ── Bookmarks (ST-12) ──

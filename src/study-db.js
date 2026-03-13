@@ -11,6 +11,18 @@ db.version(1).stores({
   progress: 'key, source, updated'
 });
 
+// Version 2: Research boards + multi-color highlights
+db.version(2).stores({
+  annotations: '++id, type, source, address, created, boardId, [source+address]',
+  progress: 'key, source, updated',
+  boards: '++id, title, created, updated',
+  boardItems: '++id, boardId, source, address, position, created'
+}).upgrade(function(tx) {
+  return tx.table('annotations').toCollection().modify(function(ann) {
+    if (ann.boardId === undefined) ann.boardId = null;
+  });
+});
+
 // ── Notes ──
 
 function addNote(source, address, text) {
@@ -53,15 +65,19 @@ function getAllNotes(source) {
 // ── Highlights ──
 
 function addHighlight(source, address, color) {
-  // Check for existing highlight on same address — toggle off if exists
+  // Check for existing highlight — same color toggles off, different color updates
   return db.annotations
     .where({ source: source, address: address })
     .and(function(a) { return a.type === 'highlight'; })
     .first()
     .then(function(existing) {
       if (existing) {
-        // Toggle: remove existing highlight
-        return db.annotations.delete(existing.id).then(function() { return null; });
+        if (existing.color === (color || 'gold')) {
+          // Same color — toggle off
+          return db.annotations.delete(existing.id).then(function() { return null; });
+        }
+        // Different color — update
+        return db.annotations.update(existing.id, { color: color }).then(function() { return color; });
       }
       return db.annotations.add({
         type: 'highlight',
@@ -71,8 +87,9 @@ function addHighlight(source, address, color) {
         text: null,
         color: color || 'gold',
         label: null,
+        boardId: null,
         created: new Date().toISOString()
-      });
+      }).then(function() { return color || 'gold'; });
     });
 }
 
@@ -186,8 +203,113 @@ function deleteAnnotation(id) {
 function clearAllData() {
   return Promise.all([
     db.annotations.clear(),
-    db.progress.clear()
+    db.progress.clear(),
+    db.boards.clear(),
+    db.boardItems.clear()
   ]);
+}
+
+// ── Boards ──
+
+function createBoard(title, color) {
+  var now = new Date().toISOString();
+  return db.boards.add({
+    title: title || 'Untitled Board',
+    description: '',
+    color: color || 'gold',
+    created: now,
+    updated: now
+  });
+}
+
+function updateBoard(id, updates) {
+  updates.updated = new Date().toISOString();
+  return db.boards.update(id, updates);
+}
+
+function deleteBoard(id) {
+  return db.transaction('rw', [db.boards, db.boardItems, db.annotations], function() {
+    db.boards.delete(id);
+    db.boardItems.where({ boardId: id }).delete();
+    db.annotations.where({ boardId: id }).modify({ boardId: null });
+  });
+}
+
+function getAllBoards() {
+  return db.boards.orderBy('updated').reverse().toArray();
+}
+
+function getBoard(id) {
+  return db.boards.get(id);
+}
+
+// ── Board Items ──
+
+function addBoardItem(boardId, source, address) {
+  return db.boardItems.where({ boardId: boardId }).count().then(function(count) {
+    return db.boardItems.add({
+      boardId: boardId,
+      source: source,
+      address: address,
+      position: count,
+      label: '',
+      created: new Date().toISOString()
+    });
+  }).then(function() {
+    return db.boards.update(boardId, { updated: new Date().toISOString() });
+  });
+}
+
+function removeBoardItem(id) {
+  return db.boardItems.delete(id);
+}
+
+function getBoardItems(boardId) {
+  return db.boardItems.where({ boardId: boardId }).sortBy('position');
+}
+
+function reorderBoardItem(id, newPosition) {
+  return db.boardItems.update(id, { position: newPosition });
+}
+
+// ── Annotations for boards ──
+
+function getAnnotationsForBoard(boardId) {
+  return db.annotations.where({ boardId: boardId }).toArray();
+}
+
+function linkAnnotationToBoard(annotationId, boardId) {
+  return db.annotations.update(annotationId, { boardId: boardId });
+}
+
+// ── Export / Import ──
+
+function exportAllData() {
+  return Promise.all([
+    db.annotations.toArray(),
+    db.progress.toArray(),
+    db.boards.toArray(),
+    db.boardItems.toArray()
+  ]).then(function(results) {
+    return {
+      version: 2,
+      exported: new Date().toISOString(),
+      annotations: results[0],
+      progress: results[1],
+      boards: results[2],
+      boardItems: results[3]
+    };
+  });
+}
+
+function importData(data) {
+  if (!data || !data.version) return Promise.reject(new Error('Invalid data'));
+  return db.transaction('rw', [db.annotations, db.progress, db.boards, db.boardItems], function() {
+    if (data.annotations) db.annotations.bulkPut(data.annotations);
+    if (data.progress) db.progress.bulkPut(data.progress);
+    if (data.boards) db.boards.bulkPut(data.boards);
+    if (data.boardItems) db.boardItems.bulkPut(data.boardItems);
+  });
 }
 
 module.exports = {
@@ -208,5 +330,18 @@ module.exports = {
   getAnnotationCounts: getAnnotationCounts,
   deleteAnnotation: deleteAnnotation,
   clearAllData: clearAllData,
+  createBoard: createBoard,
+  updateBoard: updateBoard,
+  deleteBoard: deleteBoard,
+  getAllBoards: getAllBoards,
+  getBoard: getBoard,
+  addBoardItem: addBoardItem,
+  removeBoardItem: removeBoardItem,
+  getBoardItems: getBoardItems,
+  reorderBoardItem: reorderBoardItem,
+  getAnnotationsForBoard: getAnnotationsForBoard,
+  linkAnnotationToBoard: linkAnnotationToBoard,
+  exportAllData: exportAllData,
+  importData: importData,
   db: db
 };
