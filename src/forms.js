@@ -15,15 +15,18 @@ var CORR_PLACEHOLDERS = {
 
 // ── web3submit ──
 function web3submit(payload) {
+  var body = Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload);
+  console.log('[MassFinder] web3submit payload:', JSON.stringify(body));
   return fetch('https://api.web3forms.com/submit', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify(Object.assign({ access_key: '3d503d58-e668-4ef8-81ff-70ad5ec3ecf6', from_name: 'MassFinder' }, payload))
+    body: JSON.stringify(body)
   }).then(function(resp) {
-    return resp.json();
-  }).then(function(d) {
-    if (!d.success) throw new Error(d.message || 'Web3Forms error');
-    return d;
+    return resp.json().then(function(d) {
+      console.log('[MassFinder] web3submit response:', resp.status, JSON.stringify(d));
+      if (!d.success) throw new Error(d.message || 'Web3Forms error (HTTP ' + resp.status + ')');
+      return d;
+    });
   });
 }
 
