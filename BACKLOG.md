@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-13
-**ID sequence:** IDEA-022 →
-**Total items:** 21
+**ID sequence:** IDEA-023 →
+**Total items:** 22
 
 ---
 
@@ -205,7 +205,7 @@ The dev panel (accessed via 5 taps on the More tab footer) does not include all 
 **Related:** IDEA-020
 **Spec ref:** (none)
 
-The Prayer Tools are functional but the experience doesn't invite people to linger. Research how to elevate the feel — ambient background Gregorian chant audio (small loopable files bundled in the repo), refined color scheming, better haptic feedback, and overall atmosphere without adding images or heavy iconography. The goal is a steady balance of form and function that drives people toward prayer, not gamification or social engagement traps. Target reaction: "check out this app for the rosary — I love it."
+The Prayer Tools are functional but the experience doesn't invite people to linger. Research how to elevate the feel — ambient background Gregorian chant audio (small loopable files bundled in the repo), refined color scheming, better haptic feedback, and overall atmosphere without adding images or heavy iconography. Minimal or zero icons/SVGs. The goal is a steady balance of form and function that drives people toward prayer, not gamification or social engagement traps. The UX should make someone want to stay and pray, not just complete a task. Target reaction: "check out this app for the rosary — I love it."
 
 ## IDEA-020 — Prayer Tools: "I know the prayers" condensed mode
 **Category:** new-feature
@@ -226,3 +226,13 @@ Explore adding an option for experienced users to hide prayer text they already 
 **Spec ref:** (none)
 
 Tapping a CCC (Catechism) reference pill within the Examen tool is incorrectly triggering the parent item's selected state. The CCC pill tap should only open the catechism snippet — not toggle the exam item. The touch target for the pill may need to be larger and the tap event needs to stop propagating to the parent element.
+
+## IDEA-022 — Lenten counter shows incorrect 45-day total; consider removing tracker
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-13
+**Source:** typed
+**Related:** IDEA-002
+**Spec ref:** (none)
+
+The liturgical day teaser's Lenten counter displays "Day X of 45" but the actual length of Lent is not 45 days. Beyond the incorrect number, the day-tracking format itself may gamify Lent in a way that conflicts with the spirit of the season. Leaning toward removing the "Day X of Y" counter entirely rather than fixing the count.
