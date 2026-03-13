@@ -197,8 +197,8 @@ node scripts/apply-changes.js      # Apply Supabase bulletin changes to parish_d
 
 All planned work is tracked via two living documents:
 
-- **`IDEAS.md`** (repo root) — the master idea and bug catalog. Every discrete item has an `IDEA-NNN` ID, a category, a status, and relationship links to other items. This file is maintained by a dedicated Claude chat session and updated by the developer throughout the day via voice notes. Do not restructure or reformat this file — append and update only.
-- **`specs/`** (repo root folder) — implementation-ready spec sheets, one per logical group of work. Each spec file is named `SPEC-NNN-slug.md`. Each item within a spec has an ID like `SPEC-NNN-A`. Specs reference the `IDEA-NNN` items that originated them.
+- **`BACKLOG.md`** (repo root) — the master backlog. Every discrete item has an `IDEA-NNN` ID, a category, a status, and relationship links to other items. New entries are added by the Inbox project (Claude.ai) and pushed to main. Status updates (done/deferred) are made by Claude Code on working branches and merge to main via PR. Do not restructure or reformat this file — append and update only.
+- **`docs/plans/`** — implementation-ready spec sheets produced by the UX & Design project. Each spec file is named `UX_Spec_[Name].md`. Each item has a 3-letter prefix + 2-digit ID (e.g., CDC-01, PTR-03). Specs reference `IDEA-NNN` backlog items where applicable.
 
 **When starting a session:** The developer will tell you which spec file to read and which item IDs to implement. Read the full spec file before touching any code. If items have dependencies on other items in the spec, implement prerequisites first.
 
@@ -210,13 +210,13 @@ All planned work is tracked via two living documents:
 
 **These steps are mandatory after every spec implementation session, without exception. Execute them automatically — do not wait to be asked.**
 
-This protocol exists because the developer works async in short sessions and often reviews work hours or days later. The spec sheets and `IDEAS.md` are the shared memory of what was done and why. Keeping them current is as important as the implementation itself.
+This protocol exists because the developer works async in short sessions and often reviews work hours or days later. The spec sheets and `BACKLOG.md` are the shared memory of what was done and why. Keeping them current is as important as the implementation itself.
 
 -----
 
 ### Step 1 — Update the Spec Sheet
 
-Open the spec file you worked from (e.g., `specs/SPEC-NNN-slug.md`).
+Open the spec file you worked from (e.g., `docs/plans/UX_Spec_[Name].md`).
 
 For **every item you implemented**, append an implementation notes block directly below that item’s spec content. Do not delete the original spec content — add the notes block beneath it.
 
@@ -251,9 +251,9 @@ After writing notes for all items, update the **header status summary** at the t
 
 -----
 
-### Step 2 — Update IDEAS.md
+### Step 2 — Update BACKLOG.md
 
-Open `IDEAS.md` in the repo root.
+Open `BACKLOG.md` in the repo root.
 
 For **every `IDEA-NNN` that corresponds to a spec item you just implemented**:
 
@@ -261,16 +261,24 @@ For **every `IDEA-NNN` that corresponds to a spec item you just implemented**:
 1. Append a one-line note at the end of that item’s description block:
    
    ```
-   **Implemented:** YYYY-MM-DD via SPEC-NNN-X — [one sentence describing what was done]
+   **Implemented:** YYYY-MM-DD via [spec ID, e.g. CDC-01] — [one sentence describing what was done]
    ```
 
 For any IDEA items that were **skipped or blocked**, update their status to `deferred` and add:
 
 ```
-**Deferred:** YYYY-MM-DD — [brief reason, e.g. "blocked on back-navigation refactor — see IDEA-029"]
+**Deferred:** YYYY-MM-DD — [brief reason]
 ```
 
-Do not restructure, reorder, or reformat any other part of `IDEAS.md`. Append and update in place only. The developer’s chat session maintains this file and any structural changes will break that workflow.
+Do not restructure, reorder, or reformat any other part of `BACKLOG.md`. Append and update in place only. The Inbox project maintains this file and any structural changes will break that workflow.
+
+-----
+
+### Step 2b — Update COMPLETED_SPECS.md
+
+Open `docs/reference/COMPLETED_SPECS.md`.
+
+For each spec item you implemented, change `| Queued |` to `| Done |` in the status column. If all items in a spec series are Done, update the series status line from `Ready for implementation` to `Implemented`.
 
 -----
 
@@ -290,7 +298,7 @@ npm run build
 
 ### Step 4 — Commit and Push
 
-Stage all changed files — source files, the spec sheet, and `IDEAS.md`:
+Stage all changed files — source files, spec status docs, and `BACKLOG.md`:
 
 ```bash
 git add -A
@@ -299,13 +307,13 @@ git add -A
 Write a commit message using this format:
 
 ```
-<type>: <brief description> [<SPEC-NNN-A,B,C>]
+<type>: <brief description> [<spec IDs, e.g. CDC-01,02,03>]
 
-- SPEC-NNN-A: <one line describing what was done>
-- SPEC-NNN-B: <one line describing what was done>
-- SPEC-NNN-C: <one line describing what was done>
+- CDC-01: <one line describing what was done>
+- CDC-02: <one line describing what was done>
+- CDC-03: <one line describing what was done>
 
-Spec and IDEAS.md updated.
+BACKLOG.md and COMPLETED_SPECS.md updated.
 ```
 
 **Commit type prefixes:**
@@ -339,14 +347,14 @@ After pushing, output a session summary in this format. Write it clearly and com
 **Pushed:** yes / no
 
 ### Items Implemented
-- SPEC-NNN-A — [title] ✓
-- SPEC-NNN-B — [title] ✓
+- [ID]-A — [title] ✓
+- [ID]-B — [title] ✓
 
 ### Items Skipped
-- SPEC-NNN-C — [title] (excluded by request)
+- [ID]-C — [title] (excluded by request)
 
 ### Items Blocked
-- SPEC-NNN-D — [title] ✗ — [one sentence reason]
+- [ID]-D — [title] ✗ — [one sentence reason]
 
 ### Files Changed
 [list each file modified]
@@ -355,8 +363,8 @@ After pushing, output a session summary in this format. Write it clearly and com
 [List anything the developer needs to do, check, decide, or test before this work is considered complete.
 Be specific — name the item, the platform, or the edge case.
 Examples:
-  "Test SPEC-NNN-A on iOS Safari — speechSynthesis cancel behavior may differ from Chrome"
-  "SPEC-NNN-D is blocked — the back-navigation strategy needs to be decided first (see IDEA-029)"
+  "Test [ID]-A on iOS Safari — speechSynthesis cancel behavior may differ from Chrome"
+  "[ID]-D is blocked — the back-navigation strategy needs to be decided first (see IDEA-029)"
   "Nothing — all clear."]
 ```
 
@@ -367,9 +375,10 @@ Examples:
 The developer has permanently pre-approved the following actions for every session. You do not need to request confirmation before doing any of these:
 
 - Running `npm run build`
-- Editing `IDEAS.md` to update statuses and append implementation notes
-- Editing any spec file in `specs/` to append implementation notes and update the status summary
-- Running `git add -A`, `git commit`, and `git push` to the `dev` branch after a successful build
+- Editing `BACKLOG.md` to update statuses and append implementation notes
+- Editing any spec file in `docs/plans/` to append implementation notes and update the status summary
+- Editing `docs/reference/COMPLETED_SPECS.md` to mark spec items as Done
+- Running `git add -A`, `git commit`, and `git push` to the current working branch after a successful build
 - Reading any file in the repo to inform implementation decisions
 
 The only hard stop is a **failed build** — do not commit until it is resolved or the breaking change is reverted and noted.
@@ -381,8 +390,14 @@ The only hard stop is a **failed build** — do not commit until it is resolved 
 |File                                             |Purpose                                                             |Status                        |
 |-------------------------------------------------|--------------------------------------------------------------------|------------------------------|
 |`CLAUDE.md`                                      |This file — architecture, conventions, module map, workflow protocol|**Current**                   |
-|`IDEAS.md`                                       |Living idea and bug catalog — master source of all planned work     |**Living document**           |
-|`specs/`                                         |Implementation-ready spec sheets, one per logical work group        |**Living documents**          |
+|`BACKLOG.md`                                     |Living backlog — master source of all planned work                  |**Living document**           |
+|`docs/plans/`                                    |Implementation-ready spec sheets (UX_Spec_*.md)                     |**Living documents**          |
+|`docs/reference/COMPLETED_SPECS.md`              |Spec status tracking — which items are Done vs Queued               |**Living document**           |
+|`docs/reference/PROJECT_CONTEXT.md`              |Architecture overview for Claude Projects                           |Current                       |
+|`docs/reference/MODULE_MAP.md`                   |Module dependencies and line counts                                 |Current                       |
+|`docs/reference/DESIGN_TOKENS.md`                |CSS design tokens and visual system reference                       |Current                       |
+|`docs/reference/DATA_SCHEMA.md`                  |parish_data.json and events.json schema docs                        |Current                       |
+|`docs/archive/BACKLOG_ARCHIVE_2026-03-13.md`     |Archived backlog (74 items from initial dev phase)                  |Archived                      |
 |`docs/DATA_STANDARDS.md`                         |Authoritative data rules — service types, day values, events        |Current                       |
 |`docs/STYLE_GUIDE.md`                            |Design system — tokens, components, layout rules                    |Needs `--font-prayer` addition|
 |`docs/TERMINOLOGY.md`                            |Domain knowledge — liturgical correctness, display names            |Current                       |
