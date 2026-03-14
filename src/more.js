@@ -249,11 +249,12 @@ function renderMore() {
     var allGuideHtml = orderedGuides.map(function(g) {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
+        var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
         var groupIcon = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
-        return '<div class="devot-card devot-card--group">'
-          + '<div class="devot-header">' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span></div>'
+        return '<details class="devot-card devot-card--group">'
+          + '<summary>' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
           + '<div class="devot-group-body">' + childrenHtml + '</div>'
-          + '</div>';
+          + '</details>';
       }
       var html = renderGuide(g, false);
       if (g.season === currentSeason) {
