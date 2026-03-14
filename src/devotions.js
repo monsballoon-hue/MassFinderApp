@@ -322,7 +322,6 @@ var DEVOTIONAL_GUIDES = [
 function renderGuide(g, sub) {
   var switchTab = require('./ui.js').switchTab;
   var cls = 'devot-card' + (sub ? ' devot-sub' : '');
-  var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   var findLink = '';
   if (g.searchTerm) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'' + g.searchTerm + '\';si.dispatchEvent(new Event(\'input\'));}">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
@@ -331,9 +330,10 @@ function renderGuide(g, sub) {
   }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
   var body = _wrapScriptureRefs(_wrapTerms(g.body));
-  return '<details class="' + cls + '"><summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
+  return '<div class="' + cls + '">'
+    + '<div class="devot-header">' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span></div>'
     + '<div class="devot-body">' + body + findLink + '</div>'
-    + '</details>';
+    + '</div>';
 }
 
 module.exports = {

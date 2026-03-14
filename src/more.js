@@ -249,11 +249,11 @@ function renderMore() {
     var allGuideHtml = orderedGuides.map(function(g) {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
-        var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
         var groupIcon = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
-        return '<details class="devot-card"><summary>' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
+        return '<div class="devot-card devot-card--group">'
+          + '<div class="devot-header">' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span></div>'
           + '<div class="devot-group-body">' + childrenHtml + '</div>'
-          + '</details>';
+          + '</div>';
       }
       var html = renderGuide(g, false);
       if (g.season === currentSeason) {
@@ -270,6 +270,23 @@ function renderMore() {
     var refs = require('./refs.js');
     refs.initRefTaps(devotEl);
 
+    // Wire inline .ccc-ref spans to use snippet system (openCCC is v1-gated)
+    var snippet = require('./snippet.js');
+    devotEl.querySelectorAll('.ccc-ref').forEach(function(el) {
+      var numMatch = el.textContent.trim().match(/CCC\s*(\d+)/);
+      if (!numMatch) return;
+      var refNum = numMatch[1];
+      el.removeAttribute('onclick');
+      el.classList.add('ref-tap', 'ref-tap--ccc');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        snippet.showSnippet('ccc', refNum, el);
+      });
+    });
+
     // Wire CCC reference taps — replace <strong> with ref-tap pill spans
     devotEl.querySelectorAll('strong').forEach(function(el) {
       var m = el.textContent.trim().match(/^CCC ([\d\u2013\-]+):?$/);
@@ -284,7 +301,7 @@ function renderMore() {
       span.addEventListener('click', function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
-        window.openCCC(num);
+        snippet.showSnippet('ccc', num, span);
       });
       el.parentNode.replaceChild(span, el);
     });
