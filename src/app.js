@@ -1022,6 +1022,9 @@ window._devToggle = function(key, checked) {
 window._devSetSeason = function(season) {
   _devState.season = season;
   document.documentElement.setAttribute('data-season', season);
+  // Re-render More tab to update seasonal guide pinning
+  var more = require('./more.js');
+  more.renderMore();
   _closeDevPanel();
   _toggleDevPanel();
 };

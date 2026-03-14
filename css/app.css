@@ -1818,12 +1818,12 @@ body.reader-open { overflow:hidden;position:fixed;width:100%;top:0;left:0; }
   :root[data-season="easter"] .reader-body, :root[data-season="christmas"] .reader-body { background:linear-gradient(180deg,#F8F6F1 0%,#F2EDDF 100%); }
   :root[data-season="ordinary"] .reader-body { background:linear-gradient(180deg,#F6F8F5 0%,#ECF0EA 100%); }
 }
-/* PTR-02: Dark mode desktop */
+/* PTR-02: Dark mode desktop — :root needed to beat seasonal tint specificity */
 @media (min-width:768px) {
-  html[data-theme="dark"] .reader-overlay::before { background:rgba(0,0,0,0.6); }
-  html[data-theme="dark"] .reader-body { background:var(--color-bg);box-shadow:0 8px 40px rgba(0,0,0,0.4); }
-  html[data-theme="dark"] .reader-header { background:rgba(26,28,34,0.97); }
-  html[data-theme="dark"] .reader-footer { background:rgba(26,28,34,0.97); }
+  :root[data-theme="dark"] .reader-overlay::before { background:rgba(0,0,0,0.6); }
+  :root[data-theme="dark"] .reader-body { background:var(--color-bg);box-shadow:0 8px 40px rgba(0,0,0,0.4); }
+  :root[data-theme="dark"] .reader-header { background:rgba(26,28,34,0.97); }
+  :root[data-theme="dark"] .reader-footer { background:rgba(26,28,34,0.97); }
 }
 
 /* ── CCC Reader (Reading Room) ── */
@@ -2878,9 +2878,6 @@ html[data-theme="dark"] .settings-seg { background:var(--color-surface);border-c
 html[data-theme="dark"] .settings-seg-btn:not(:last-child) { border-color:var(--color-border); }
 html[data-theme="dark"] .settings-action-btn { border-color:var(--color-border); }
 html[data-theme="dark"] .settings-row { border-color:var(--color-border); }
-html[data-theme="dark"] .settings-group { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4); }
-html[data-theme="dark"] .settings-about-text { color:var(--color-text-secondary); }
-html[data-theme="dark"] .settings-about-text a { color:var(--color-primary); }
 html[data-theme="dark"] .settings-seg-btn { color:var(--color-text-secondary); }
 html[data-theme="dark"] .settings-seg-btn.active { background:var(--color-primary);color:white; }
 
