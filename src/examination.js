@@ -277,8 +277,6 @@ function _renderExamination(d) {
   html += '</div></div>';
 
   // Prayers section
-  html += '<div class="exam-group-label">Prayers</div>';
-
   // Act of Contrition — elevated presentation
   html += '<div class="exam-contrition">';
   html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
@@ -288,7 +286,15 @@ function _renderExamination(d) {
   });
   html += '</div>';
 
-  html += _renderPrayer(d.prayers.thanksgiving);
+  if (d.prayers.thanksgiving) {
+    html += '<div class="exam-prayer-divider"></div>';
+    html += '<div class="exam-contrition">';
+    html += '<div class="exam-contrition-title">' + _esc(d.prayers.thanksgiving.title) + '</div>';
+    d.prayers.thanksgiving.text.split('\n\n').forEach(function(p) {
+      html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+    });
+    html += '</div>';
+  }
 
   // Confession tracker
   var lastConf = localStorage.getItem('mf-last-confession');
@@ -300,7 +306,7 @@ function _renderExamination(d) {
   html += '<div class="exam-tracker">';
   html += trackerHtml;
   html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">';
-  html += 'I received the Sacrament of Reconciliation</button>';
+  html += 'I went to confession today</button>';
   html += '</div>';
 
   // Find Confession Near Me
@@ -312,7 +318,6 @@ function _renderExamination(d) {
   html += '<div class="exam-ending">';
   html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
   html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
-  html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
   html += '</div>';
 
   body.innerHTML = html;
@@ -597,7 +602,15 @@ function _renderSummaryScreen() {
       html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
     });
     html += '</div>';
-    html += _renderPrayer(d.prayers.thanksgiving);
+    if (d.prayers.thanksgiving) {
+    html += '<div class="exam-prayer-divider"></div>';
+    html += '<div class="exam-contrition">';
+    html += '<div class="exam-contrition-title">' + _esc(d.prayers.thanksgiving.title) + '</div>';
+    d.prayers.thanksgiving.text.split('\n\n').forEach(function(p) {
+      html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+    });
+    html += '</div>';
+  }
 
     // Confession tracker
     var lastConf = localStorage.getItem('mf-last-confession');
@@ -607,7 +620,7 @@ function _renderSummaryScreen() {
       trackerHtml = '<div class="exam-tracker-status">Last Confession: ' + (daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago') + '</div>';
     }
     html += '<div class="exam-tracker">' + trackerHtml;
-    html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">I received the Sacrament of Reconciliation</button>';
+    html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">I went to confession today</button>';
     html += '</div>';
 
     // Find Confession Near Me

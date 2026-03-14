@@ -243,8 +243,7 @@ function fetchReadings() {
             + '</svg>'
             + ' Listen</button>';
         }
-        var isGospel = s.heading.toLowerCase().indexOf('gospel') !== -1;
-        var entryClass = 'reading-entry' + (isGospel ? ' reading-entry--gospel' : '');
+        var entryClass = 'reading-entry';
         return '<div class="' + entryClass + '" id="' + id + '" ' + (hasText ? 'onclick="toggleReading(\'' + id + '\')"' : '') + '>'
           + '<div class="reading-entry-header">'
           + '<div>'

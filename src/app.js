@@ -198,7 +198,6 @@ window.submitMoreCorrection = more.submitMoreCorrection;
 window.expressInterest = more.expressInterest;
 window.submitSettingsContact = more.submitSettingsContact;
 window.dismissInstallCard = more.dismissInstallCard;
-window.toggleDevotOverflow = more.toggleDevotOverflow;
 window.openInstallGuide = installGuide.openInstallGuide;
 window.closeInstallGuide = installGuide.closeInstallGuide;
 // installGuideNav is set dynamically inside openInstallGuide()
@@ -781,8 +780,10 @@ async function init() {
     reader._initSwipeDismiss();
     reader._initBackdropDismiss();
 
-    // Show update banner when SW installs a new cache
+    // Show update banner when SW installs a new cache (once per session)
     function _showUpdateBanner() {
+      if (sessionStorage.getItem('mf-update-banner-shown')) return;
+      sessionStorage.setItem('mf-update-banner-shown', 'true');
       var b = document.getElementById('mfUpdateBanner');
       if (!b) {
         b = document.createElement('div');

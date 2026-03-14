@@ -148,7 +148,7 @@ function renderMore() {
   var ptGrid = document.getElementById('prayerToolsGrid');
   if (ptGrid) {
     var confStatus = exam.getConfessionStatus();
-    var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
+    var confLabel = confStatus ? (confStatus.daysAgo === 0 ? 'Last confession: today' : confStatus.daysAgo === 1 ? 'Last confession: yesterday' : 'Last confession: ' + confStatus.daysAgo + ' days ago') : '';
 
     // EMT-03-A: SVG icons for prayer tools
     var ptIcons = {
@@ -197,7 +197,7 @@ function renderMore() {
 
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
       { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true }
     ];
@@ -248,18 +248,7 @@ function renderMore() {
       }
       return renderGuide(g, false);
     });
-    // FGP-02: Progressive disclosure — show top 3, hide rest behind toggle
-    var visibleCount = 3;
-    var visibleHtml = allGuideHtml.slice(0, visibleCount).join('');
-    var hiddenHtml = allGuideHtml.slice(visibleCount).join('');
-    devotEl.innerHTML = visibleHtml;
-    if (hiddenHtml) {
-      devotEl.innerHTML += '<div class="devot-overflow" id="devotOverflow" style="display:none">'
-        + hiddenHtml + '</div>'
-        + '<button class="devot-show-all" id="devotShowAll" onclick="toggleDevotOverflow()">'
-        + 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>'
-        + '</button>';
-    }
+    devotEl.innerHTML = allGuideHtml.join('');
 
     // Wire term definition taps (UX-07)
     devotions.initTermClicks(devotEl);
@@ -268,17 +257,23 @@ function renderMore() {
     var refs = require('./refs.js');
     refs.initRefTaps(devotEl);
 
-    // Wire CCC reference taps
+    // Wire CCC reference taps — replace <strong> with ref-tap pill spans
     devotEl.querySelectorAll('strong').forEach(function(el) {
       var m = el.textContent.trim().match(/^CCC ([\d\u2013\-]+):?$/);
       if (!m) return;
-      el.classList.add('ccc-ref');
       var num = m[1];
-      el.addEventListener('click', function(ev) {
+      var span = document.createElement('span');
+      span.className = 'ref-tap ref-tap--ccc';
+      span.textContent = 'CCC\u00A0' + num;
+      span.setAttribute('role', 'button');
+      span.setAttribute('tabindex', '0');
+      span.setAttribute('aria-label', 'Catechism paragraph ' + num);
+      span.addEventListener('click', function(ev) {
         ev.stopPropagation();
         ev.preventDefault();
         window.openCCC(num);
       });
+      el.parentNode.replaceChild(span, el);
     });
   }
 
@@ -321,18 +316,6 @@ function dismissInstallCard() {
   }
 }
 
-// FGP-02: Toggle devotional guides overflow
-function toggleDevotOverflow() {
-  var overflow = document.getElementById('devotOverflow');
-  var btn = document.getElementById('devotShowAll');
-  if (!overflow || !btn) return;
-  var isHidden = overflow.style.display === 'none';
-  overflow.style.display = isHidden ? '' : 'none';
-  btn.innerHTML = isHidden
-    ? 'Show fewer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="18 15 12 9 6 15"/></svg>'
-    : 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>';
-}
-
 module.exports = {
   // Re-export forms for app.js window bindings
   expressInterest: forms.expressInterest,
@@ -350,7 +333,6 @@ module.exports = {
   // More tab own exports
   renderMore: renderMore,
   dismissInstallCard: dismissInstallCard,
-  toggleDevotOverflow: toggleDevotOverflow,
   // Re-export devotions for external consumers
   renderGuide: renderGuide,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,
