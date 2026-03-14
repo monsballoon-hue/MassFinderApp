@@ -91,7 +91,6 @@ if (location.hostname === 'massfinder.vercel.app') {
 
 <div id="panelMap" class="tab-panel" role="tabpanel">
   <div id="mapChipBar" class="map-chip-bar">
-    <button class="map-chip active" data-filter="all">All</button>
     <button class="map-chip" data-filter="today">Today</button>
     <button class="map-chip" data-filter="confession">Confession</button>
     <button class="map-chip" data-filter="adoration">Adoration</button>
@@ -117,9 +116,6 @@ if (location.hostname === 'massfinder.vercel.app') {
     <!-- HOLY DAY OF OBLIGATION BANNER — shown day-of and day-before -->
     <div id="hdoBanner"></div>
 
-    <!-- FASTING & ABSTINENCE BANNER — Ash Wednesday, Good Friday, Lenten Fridays -->
-    <div id="fastingBanner"></div>
-
     <!-- Saint/celebration card -->
     <div class="more-section more-section--tight" id="saintSection">
       <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
@@ -141,11 +137,11 @@ if (location.hostname === 'massfinder.vercel.app') {
     <!-- DAILY FORMATION — combined Baltimore Q&A + Summa -->
     <div id="dailyFormation" class="more-section more-section--tight" style="display:none"></div>
 
-    <!-- DEVOTIONAL GUIDES — open by default -->
-    <details class="more-section" open>
-      <summary class="more-section-title more-section-collapsible">Grow in Faith<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:18px;height:18px;flex-shrink:0;transition:transform 0.2s"><polyline points="6 9 12 15 18 9"/></svg></summary>
+    <!-- DEVOTIONAL GUIDES -->
+    <div class="more-section">
+      <h2 class="more-section-title">Grow in Faith</h2>
       <div id="devotionalCards"></div>
-    </details>
+    </div>
 
     <!-- PWA INSTALL CARD — after Faith Guides -->
     <div id="moreInstallCard"></div>
@@ -191,7 +187,7 @@ if (location.hostname === 'massfinder.vercel.app') {
 <!-- Universal Reader — one container for all content overlays -->
 <div id="readerOverlay" class="reader-overlay" role="dialog" aria-modal="true">
   <div class="reader-header" id="readerHeader">
-    <button class="reader-back-btn" id="readerBackBtn" onclick="readerBack()" aria-label="Back" style="display:none">
+    <button class="reader-back-btn" id="readerBackBtn" onclick="readerBack()" aria-label="Back" style="visibility:hidden">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div class="reader-title" id="readerTitle"></div>

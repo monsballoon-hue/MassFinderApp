@@ -148,7 +148,7 @@ function renderMore() {
   var ptGrid = document.getElementById('prayerToolsGrid');
   if (ptGrid) {
     var confStatus = exam.getConfessionStatus();
-    var confLabel = confStatus ? 'Last Confession: ' + confStatus.daysAgo + (confStatus.daysAgo === 1 ? ' day' : ' days') + ' ago' : '';
+    var confLabel = confStatus ? (confStatus.daysAgo === 0 ? 'Last confession: today' : confStatus.daysAgo === 1 ? 'Last confession: yesterday' : 'Last confession: ' + confStatus.daysAgo + ' days ago') : '';
 
     // EMT-03-A: SVG icons for prayer tools
     var ptIcons = {
@@ -162,16 +162,16 @@ function renderMore() {
       novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>'
     };
     var ptColors = {
-      rosary: 'var(--color-accent)',
-      examination: '#6B21A8',
-      stations: isLentSeason() ? '#6B21A8' : 'var(--color-text-secondary)',
-      novena: 'var(--color-accent)'
+      rosary: 'var(--color-sacred)',
+      examination: 'var(--color-sacred)',
+      stations: isLentSeason() ? 'var(--color-accent)' : 'var(--color-sacred)',
+      novena: 'var(--color-sacred)'
     };
     var ptBgColors = {
-      rosary: 'var(--color-accent-pale)',
-      examination: 'rgba(107,33,168,0.08)',
-      stations: isLentSeason() ? 'rgba(107,33,168,0.08)' : 'var(--color-surface-hover)',
-      novena: 'var(--color-accent-pale)'
+      rosary: 'var(--color-sacred-pale)',
+      examination: 'var(--color-sacred-pale)',
+      stations: isLentSeason() ? 'var(--color-accent-pale)' : 'var(--color-sacred-pale)',
+      novena: 'var(--color-sacred-pale)'
     };
 
     // EMT-03-B: Contextual "today" highlight
@@ -197,7 +197,7 @@ function renderMore() {
 
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for Reconciliation', action: 'openExamination()', active: true },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
       { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true }
     ];
@@ -234,32 +234,35 @@ function renderMore() {
     }
   }
 
-  // Devotional guides
+  // Devotional guides — pin current season's guide to top
   var devotEl = document.getElementById('devotionalCards');
   if (devotEl) {
-    var allGuideHtml = DEVOTIONAL_GUIDES.map(function(g) {
+    var currentSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
+    var seasonalGuides = [];
+    var otherGuides = [];
+    DEVOTIONAL_GUIDES.forEach(function(g) {
+      if (g.season && g.season === currentSeason) seasonalGuides.push(g);
+      else if (g.season && g.season !== currentSeason) {} // hide non-current seasonal guides
+      else otherGuides.push(g);
+    });
+    var orderedGuides = seasonalGuides.concat(otherGuides);
+    var allGuideHtml = orderedGuides.map(function(g) {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
         var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
         var groupIcon = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
-        return '<details class="devot-card"><summary>' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
+        return '<details class="devot-card devot-card--group">'
+          + '<summary>' + groupIcon + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
           + '<div class="devot-group-body">' + childrenHtml + '</div>'
           + '</details>';
       }
-      return renderGuide(g, false);
+      var html = renderGuide(g, false);
+      if (g.season === currentSeason) {
+        html = html.replace('class="devot-card', 'class="devot-card devot-card--seasonal');
+      }
+      return html;
     });
-    // FGP-02: Progressive disclosure — show top 3, hide rest behind toggle
-    var visibleCount = 3;
-    var visibleHtml = allGuideHtml.slice(0, visibleCount).join('');
-    var hiddenHtml = allGuideHtml.slice(visibleCount).join('');
-    devotEl.innerHTML = visibleHtml;
-    if (hiddenHtml) {
-      devotEl.innerHTML += '<div class="devot-overflow" id="devotOverflow" style="display:none">'
-        + hiddenHtml + '</div>'
-        + '<button class="devot-show-all" id="devotShowAll" onclick="toggleDevotOverflow()">'
-        + 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>'
-        + '</button>';
-    }
+    devotEl.innerHTML = allGuideHtml.join('');
 
     // Wire term definition taps (UX-07)
     devotions.initTermClicks(devotEl);
@@ -268,16 +271,40 @@ function renderMore() {
     var refs = require('./refs.js');
     refs.initRefTaps(devotEl);
 
-    // Wire CCC reference taps
+    // Wire inline .ccc-ref spans to use snippet system (openCCC is v1-gated)
+    var snippet = require('./snippet.js');
+    devotEl.querySelectorAll('.ccc-ref').forEach(function(el) {
+      var numMatch = el.textContent.trim().match(/CCC\s*(\d+)/);
+      if (!numMatch) return;
+      var refNum = numMatch[1];
+      el.removeAttribute('onclick');
+      el.classList.add('ref-tap', 'ref-tap--ccc');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        snippet.showSnippet('ccc', refNum, el);
+      });
+    });
+
+    // Wire CCC reference taps — replace <strong> with ref-tap pill spans
     devotEl.querySelectorAll('strong').forEach(function(el) {
       var m = el.textContent.trim().match(/^CCC ([\d\u2013\-]+):?$/);
       if (!m) return;
-      el.classList.add('ccc-ref');
       var num = m[1];
-      el.addEventListener('click', function(ev) {
+      var span = document.createElement('span');
+      span.className = 'ref-tap ref-tap--ccc';
+      span.textContent = 'CCC\u00A0' + num;
+      span.setAttribute('role', 'button');
+      span.setAttribute('tabindex', '0');
+      span.setAttribute('aria-label', 'Catechism paragraph ' + num);
+      span.addEventListener('click', function(ev) {
         ev.stopPropagation();
-        window.openCCC(num);
+        ev.preventDefault();
+        snippet.showSnippet('ccc', num, span);
       });
+      el.parentNode.replaceChild(span, el);
     });
   }
 
@@ -320,18 +347,6 @@ function dismissInstallCard() {
   }
 }
 
-// FGP-02: Toggle devotional guides overflow
-function toggleDevotOverflow() {
-  var overflow = document.getElementById('devotOverflow');
-  var btn = document.getElementById('devotShowAll');
-  if (!overflow || !btn) return;
-  var isHidden = overflow.style.display === 'none';
-  overflow.style.display = isHidden ? '' : 'none';
-  btn.innerHTML = isHidden
-    ? 'Show fewer <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="18 15 12 9 6 15"/></svg>'
-    : 'Show all guides <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="6 9 12 15 18 9"/></svg>';
-}
-
 module.exports = {
   // Re-export forms for app.js window bindings
   expressInterest: forms.expressInterest,
@@ -349,7 +364,6 @@ module.exports = {
   // More tab own exports
   renderMore: renderMore,
   dismissInstallCard: dismissInstallCard,
-  toggleDevotOverflow: toggleDevotOverflow,
   // Re-export devotions for external consumers
   renderGuide: renderGuide,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,

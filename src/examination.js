@@ -14,6 +14,7 @@ var _expanded = {};         // section key → bool
 var _checked = {};          // question id → { text, commandment, skey }
 var _sections = [];         // PTR-03: all sections (commandments + precepts)
 var _currentSection = 0;    // PTR-03: current section index
+var _shownLogHint = false;  // BT3-04: first-check toast flag
 
 // ── Reader module registration ──
 reader.registerModule('examination', {
@@ -49,6 +50,7 @@ reader.registerModule('examination', {
   onClose: function() {
     // Privacy first — clear session state
     _checked = {};
+    _shownLogHint = false;
   }
 });
 
@@ -275,8 +277,6 @@ function _renderExamination(d) {
   html += '</div></div>';
 
   // Prayers section
-  html += '<div class="exam-group-label">Prayers</div>';
-
   // Act of Contrition — elevated presentation
   html += '<div class="exam-contrition">';
   html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
@@ -286,7 +286,15 @@ function _renderExamination(d) {
   });
   html += '</div>';
 
-  html += _renderPrayer(d.prayers.thanksgiving);
+  if (d.prayers.thanksgiving) {
+    html += '<div class="exam-prayer-divider"></div>';
+    html += '<div class="exam-contrition">';
+    html += '<div class="exam-contrition-title">' + _esc(d.prayers.thanksgiving.title) + '</div>';
+    d.prayers.thanksgiving.text.split('\n\n').forEach(function(p) {
+      html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+    });
+    html += '</div>';
+  }
 
   // Confession tracker
   var lastConf = localStorage.getItem('mf-last-confession');
@@ -298,7 +306,7 @@ function _renderExamination(d) {
   html += '<div class="exam-tracker">';
   html += trackerHtml;
   html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">';
-  html += 'I received the Sacrament of Reconciliation</button>';
+  html += 'I went to confession today</button>';
   html += '</div>';
 
   // Find Confession Near Me
@@ -310,7 +318,6 @@ function _renderExamination(d) {
   html += '<div class="exam-ending">';
   html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
   html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
-  html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
   html += '</div>';
 
   body.innerHTML = html;
@@ -338,6 +345,12 @@ function _renderExamination(d) {
       }
       _haptic();
       _updateCheckedUI();
+      var count = Object.keys(_checked).length;
+      if (count === 1 && !_shownLogHint) {
+        _shownLogHint = true;
+        var render = require('./render.js');
+        render.showToast('Noted for your confession summary');
+      }
     });
   }
 
@@ -487,6 +500,12 @@ function _wireCheckboxes(body) {
     }
     _haptic();
     _updateCheckedUI();
+    var count = Object.keys(_checked).length;
+    if (count === 1 && !_shownLogHint) {
+      _shownLogHint = true;
+      var render = require('./render.js');
+      render.showToast('Noted for your confession summary');
+    }
   });
 }
 
@@ -575,15 +594,22 @@ function _renderSummaryScreen() {
     html += '<div class="exam-summary-list" id="examSummaryList">' + _renderSummaryHTML() + '</div>';
     html += '</div>';
 
-    // Prayers
-    html += '<div class="exam-group-label">Prayers</div>';
+    // Act of Contrition — elevated presentation
     html += '<div class="exam-contrition">';
     html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
     d.prayers.act_of_contrition.text.split('\n\n').forEach(function(p) {
       html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
     });
     html += '</div>';
-    html += _renderPrayer(d.prayers.thanksgiving);
+    if (d.prayers.thanksgiving) {
+    html += '<div class="exam-prayer-divider"></div>';
+    html += '<div class="exam-contrition">';
+    html += '<div class="exam-contrition-title">' + _esc(d.prayers.thanksgiving.title) + '</div>';
+    d.prayers.thanksgiving.text.split('\n\n').forEach(function(p) {
+      html += '<p class="exam-contrition-text">' + _esc(p.trim()) + '</p>';
+    });
+    html += '</div>';
+  }
 
     // Confession tracker
     var lastConf = localStorage.getItem('mf-last-confession');
@@ -593,7 +619,7 @@ function _renderSummaryScreen() {
       trackerHtml = '<div class="exam-tracker-status">Last Confession: ' + (daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : daysAgo + ' days ago') + '</div>';
     }
     html += '<div class="exam-tracker">' + trackerHtml;
-    html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">I received the Sacrament of Reconciliation</button>';
+    html += '<button class="exam-tracker-btn" onclick="examMarkConfession()">I went to confession today</button>';
     html += '</div>';
 
     // Find Confession Near Me
@@ -605,7 +631,6 @@ function _renderSummaryScreen() {
     html += '<div class="exam-ending">';
     html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
     html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
-    html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
     html += '</div>';
 
     body.innerHTML = html;
@@ -644,7 +669,7 @@ function examShowHowTo() {
   wrapEl.className = 'exam-howto-modal';
   wrapEl.innerHTML = '<div class="exam-howto-modal-inner">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">'
-    + '<span style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-primary);">' + _esc(d.how_to_confess.title) + '</span>'
+    + '<span style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--color-text-primary);">' + _esc(d.how_to_confess.title) + '</span>'
     + '<button class="exam-howto-close" style="background:none;border:none;cursor:pointer;padding:var(--space-1);color:var(--color-text-secondary);-webkit-tap-highlight-color:transparent;">' + closeSvg + '</button>'
     + '</div>'
     + '<ol class="exam-howto-steps">' + stepsHtml + '</ol>'

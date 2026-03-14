@@ -197,7 +197,7 @@ var DEVOTIONAL_GUIDES = [
 +'  <div class="conf-act-text">O my God, I am heartily sorry for having offended Thee, and I detest all my sins because I dread the loss of heaven and the pains of hell; but most of all because they offend Thee, my God, who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to confess my sins, to do penance, and to amend my life. Amen.</div>'
 +'</div>'
   ,findLabel:'Confession',filter:'confession'},
-  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',title:'Lent',findLabel:'Lent',filter:'lent',body:
+  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',title:'Lent',findLabel:'Lent',filter:'lent',season:'lent',body:
 '<p><strong>Lent</strong> is the 40-day liturgical season of prayer, fasting, and almsgiving that prepares Catholics for Easter \u2014 the celebration of Christ\u2019s Resurrection. It begins on <strong>Ash Wednesday</strong> and ends on the evening of <strong>Holy Thursday</strong>, the start of the Sacred Paschal Triduum.</p>'
 +'<p>The 40 days recall Christ\u2019s 40 days of fasting in the desert before beginning His public ministry (Matthew 4:1\u201311). Sundays are not counted among the 40 days of penance, as every Sunday is a celebration of the Resurrection.</p>'
 +'<h4>The Three Pillars of Lent</h4>'
@@ -227,11 +227,48 @@ var DEVOTIONAL_GUIDES = [
 +'<p><strong>CCC 1438:</strong> \u201cThe seasons and days of penance in the course of the liturgical year (Lent, and each Friday in memory of the death of the Lord) are intense moments of the Church\u2019s penitential practice.\u201d</p>'
 +'<p><strong>CCC 1095:</strong> Lent is a time when the Church \u201cre-reads and re-lives the great events of salvation history\u201d as a preparation for the Easter sacraments.</p>'
   },
-  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',title:'The Traditional Latin Mass',body:
-'<p>The Traditional Latin Mass \u2014 also known as the <em>Extraordinary Form</em> or the <em>Usus Antiquior</em> \u2014 is the form of the Roman Rite that was the universal norm before the liturgical reforms of the Second Vatican Council (1962\u20131965). It is celebrated entirely in Latin, with the priest facing the altar (<em>ad orientem</em>) for much of the liturgy.</p>'
-+'<p>Key differences from the Ordinary Form (the standard Mass most Catholics attend): the prayers are from the 1962 Roman Missal, the congregation participates primarily through interior prayer and sung responses, and the structure includes prayers like the <strong>Last Gospel</strong> and the <strong>Prayers at the Foot of the Altar</strong> that are not part of the newer form.</p>'
-+'<p>Catholics who attend the Traditional Latin Mass do so for a variety of reasons, including its contemplative character, its continuity with centuries of Catholic worship, and its rich musical tradition of Gregorian chant and polyphony. The Mass fulfills the Sunday obligation. Missals with Latin-English translations are usually available at the church to help you follow along.</p>'
-  ,findLabel:'Latin Mass',filter:'latin'},
+  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',title:'Easter',season:'easter',body:
+'<p><strong>Easter</strong> is the greatest and most joyful season of the liturgical year, celebrating Christ\u2019s Resurrection from the dead. The Easter season lasts 50 days \u2014 from Easter Sunday through Pentecost Sunday \u2014 and is marked by the color white (or gold) in the Church\u2019s vestments and decorations.</p>'
++'<p>The Resurrection is the central event of the Christian faith. As St. Paul writes: \u201cIf Christ has not been raised, then our preaching is in vain and your faith is in vain\u201d (1 Corinthians 15:14). Every Sunday Mass throughout the year is a \u201clittle Easter,\u201d a weekly celebration of this mystery.</p>'
++'<h4>Key Observances</h4>'
++'<ul>'
++'<li><strong>The Easter Octave</strong> \u2014 The eight days from Easter Sunday through the following Sunday (Divine Mercy Sunday) are celebrated as one continuous feast. Each day is treated as a solemnity.</li>'
++'<li><strong>Divine Mercy Sunday</strong> \u2014 The Second Sunday of Easter, established by St. John Paul II at the request of St. Faustina Kowalska. The faithful who go to Confession, receive Communion, and pray for the Pope\u2019s intentions on this day receive a plenary indulgence.</li>'
++'<li><strong>Ascension of the Lord</strong> \u2014 Celebrated 40 days after Easter (or transferred to the following Sunday in some dioceses). Commemorates Christ\u2019s bodily ascent into heaven. A Holy Day of Obligation.</li>'
++'<li><strong>Pentecost Sunday</strong> \u2014 The 50th day after Easter. Celebrates the descent of the Holy Spirit upon the apostles and the birth of the Church. Vestments are red, symbolizing the fire of the Spirit.</li>'
++'</ul>'
++'<h4>From the Catechism</h4>'
++'<p><strong>CCC 638:</strong> \u201cThe Resurrection of Jesus is the crowning truth of our faith in Christ, a faith believed and lived as the central truth by the first Christian community.\u201d</p>'
++'<p><strong>CCC 1169:</strong> \u201cEaster is not simply one feast among others, but the Feast of feasts, the Solemnity of solemnities.\u201d</p>'
+  },
+  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',title:'Advent',season:'advent',body:
+'<p><strong>Advent</strong> is the four-week liturgical season of preparation for Christmas \u2014 the celebration of Christ\u2019s birth. It begins on the Sunday nearest to the feast of St. Andrew (November 30) and ends on Christmas Eve. The liturgical color is purple (or violet), symbolizing penance and preparation, with rose on the Third Sunday (Gaudete Sunday).</p>'
++'<p>Advent has a dual focus: preparing to celebrate the historical birth of Jesus at Christmas, and preparing for Christ\u2019s second coming at the end of time. It is a season of joyful anticipation, not penitential in the same way as Lent.</p>'
++'<h4>Key Observances</h4>'
++'<ul>'
++'<li><strong>Advent Wreath</strong> \u2014 A wreath with four candles (three purple, one rose) is lit progressively each Sunday. The candles represent Hope, Peace, Joy, and Love.</li>'
++'<li><strong>Gaudete Sunday</strong> \u2014 The Third Sunday of Advent, marked by rose vestments and a lighter tone. \u201cGaudete\u201d means \u201cRejoice\u201d \u2014 the Lord is near.</li>'
++'<li><strong>Immaculate Conception</strong> \u2014 December 8, a Holy Day of Obligation. Celebrates the conception of the Blessed Virgin Mary without original sin \u2014 not to be confused with the virginal conception of Jesus.</li>'
++'<li><strong>O Antiphons</strong> \u2014 December 17\u201323, the Church prays ancient antiphons at Vespers, each beginning with \u201cO\u201d and addressing Christ by a Messianic title. These form the basis of the hymn \u201cO Come, O Come, Emmanuel.\u201d</li>'
++'</ul>'
++'<h4>From the Catechism</h4>'
++'<p><strong>CCC 524:</strong> \u201cWhen the Church celebrates the liturgy of Advent each year, she makes present this ancient expectancy of the Messiah, for by sharing in the long preparation for the Savior\u2019s first coming, the faithful renew their ardent desire for his second coming.\u201d</p>'
+  },
+  {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',title:'Christmas',season:'christmas',body:
+'<p><strong>Christmas</strong> is the liturgical season celebrating the Incarnation \u2014 God becoming man in the person of Jesus Christ. The season begins with the Christmas Vigil Mass on December 24 and extends through the Baptism of the Lord (the Sunday after Epiphany, typically in early January). The liturgical color is white or gold.</p>'
++'<p>Christmas is not just one day but an entire season of celebration. The Church invites the faithful to contemplate the mystery that \u201cthe Word became flesh and dwelt among us\u201d (John 1:14).</p>'
++'<h4>Key Observances</h4>'
++'<ul>'
++'<li><strong>Christmas Day</strong> \u2014 December 25, a Holy Day of Obligation and Solemnity. Many parishes celebrate a Vigil Mass, a Midnight Mass, and a Mass during the day, each with distinct readings.</li>'
++'<li><strong>The Holy Family</strong> \u2014 The Sunday within the Octave of Christmas celebrates the family life of Jesus, Mary, and Joseph.</li>'
++'<li><strong>Solemnity of Mary, Mother of God</strong> \u2014 January 1, a Holy Day of Obligation. The octave day of Christmas honors Mary\u2019s role as Theotokos (God-bearer).</li>'
++'<li><strong>Epiphany</strong> \u2014 Celebrates the manifestation of Christ to the nations, represented by the visit of the Magi. Observed on January 6 or the nearest Sunday.</li>'
++'<li><strong>Baptism of the Lord</strong> \u2014 The Sunday after Epiphany, marking the end of the Christmas season and the beginning of Ordinary Time.</li>'
++'</ul>'
++'<h4>From the Catechism</h4>'
++'<p><strong>CCC 525:</strong> \u201cJesus was born in a humble stable, into a poor family. Simple shepherds were the first witnesses to this event. In this poverty heaven\u2019s glory was made manifest.\u201d</p>'
++'<p><strong>CCC 526:</strong> \u201cTo become a child in relation to God is the condition for entering the kingdom.\u201d</p>'
+  },
   {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',title:'Devotions',isGroup:true,children:[
     {icon:'',title:'Eucharistic Adoration',body:
 '<p><strong>Eucharistic Adoration</strong> is time spent in prayer before the Blessed Sacrament \u2014 the consecrated host \u2014 which Catholics believe is truly the Body of Christ. The host is placed in a vessel called a monstrance and displayed on the altar. You simply sit, kneel, or stand in its presence.</p>'
@@ -285,7 +322,6 @@ var DEVOTIONAL_GUIDES = [
 function renderGuide(g, sub) {
   var switchTab = require('./ui.js').switchTab;
   var cls = 'devot-card' + (sub ? ' devot-sub' : '');
-  var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   var findLink = '';
   if (g.searchTerm) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'' + g.searchTerm + '\';si.dispatchEvent(new Event(\'input\'));}">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
@@ -293,8 +329,10 @@ function renderGuide(g, sub) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
   }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
+  var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   var body = _wrapScriptureRefs(_wrapTerms(g.body));
-  return '<details class="' + cls + '"><summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
+  return '<details class="' + cls + '">'
+    + '<summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
     + '<div class="devot-body">' + body + findLink + '</div>'
     + '</details>';
 }

@@ -149,7 +149,7 @@ function _updateFilterPill() {
     confession: 'Confession', adoration: 'Adoration', latin: 'Latin Mass',
     spanish: 'Spanish Mass', lent: 'Lent', today: 'Today',
     weekend: 'This Weekend', yc: 'YC Events',
-    advent: 'Advent', easter: 'Easter'
+    advent: 'Advent', easter: 'Easter', christmas: 'Christmas'
   };
 
   if (hasSearch) {
@@ -193,9 +193,9 @@ function clearMapFilter() {
   state.advancedFilters = { types: [], days: [], languages: [] };
   var ui = require('./ui.js');
   ui.updateMFChip();
-  // Reset to all
+  // Reset to all — clear chip active states
   ui.applyQuickFilter('all');
-  _syncChipBar('all');
+  _syncChipBar('none');
 }
 
 // ── Sync chip bar active state ──
@@ -213,10 +213,31 @@ function initChipBar() {
   var bar = document.getElementById('mapChipBar');
   if (!bar || bar._chipInit) return;
   bar._chipInit = true;
+
+  // Inject seasonal chip if not ordinary time
+  var season = document.documentElement.getAttribute('data-season') || 'ordinary';
+  var seasonLabels = { lent: 'Lent', advent: 'Advent', easter: 'Easter', christmas: 'Christmas' };
+  var seasonFilters = { lent: 'lent', advent: 'advent', easter: 'easter', christmas: 'christmas' };
+  if (season !== 'ordinary' && seasonLabels[season]) {
+    var btn = document.createElement('button');
+    btn.className = 'map-chip';
+    btn.dataset.filter = seasonFilters[season];
+    btn.textContent = seasonLabels[season];
+    bar.appendChild(btn);
+  }
+
   bar.addEventListener('click', function(e) {
     var chip = e.target.closest('.map-chip');
     if (!chip) return;
     var filter = chip.dataset.filter;
+    var wasActive = chip.classList.contains('active');
+    if (wasActive) {
+      // Deselect — show all
+      chip.classList.remove('active');
+      var ui = require('./ui.js');
+      ui.applyQuickFilter('all');
+      return;
+    }
     _syncChipBar(filter);
     var ui = require('./ui.js');
     ui.applyQuickFilter(filter);
