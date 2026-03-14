@@ -10,12 +10,32 @@ This document defines the authoritative conventions for structuring services and
 
 | | Services (`parish_data.json`) | Events (`events.json`) |
 |---|---|---|
-| **Nature** | Regularly recurring, indefinite schedule items | Time-bounded happenings |
-| **Examples** | Mass, Confession, Adoration, Rosary | Fish fry, retreat, Lenten series, social gathering |
-| **Duration** | Ongoing until manually changed | Expires after date(s) pass |
-| **Tied to** | A parish's permanent schedule | A parish's calendar/bulletin |
+| **Nature** | Liturgical or devotional offerings | Social, educational, or community happenings |
+| **Examples** | Mass, Confession, Adoration, Rosary, Novena | Fish fry, fundraiser, Bible study, retreat, social gathering |
+| **Duration** | Ongoing or bounded (with `effective_date` / `end_date`) | Expires after date(s) pass |
+| **Tied to** | A parish's worship life | A parish's calendar/bulletin |
 
-**Rule of thumb:** If it appears on a parish's weekly schedule year after year, it's a **service**. If it has a start/end or specific dates, it's an **event**.
+**The decisive question is type, not duration.** If the offering has a service type defined in `config.js` (Mass, Confession, Adoration, Novena, Stations of the Cross, etc.), it is a **service** — even if it only runs for a few days. A 9-day novena is a service. A Lenten Stations series is a service. A 40 Hours devotion is a service. These are liturgical offerings with set times at a church, not social happenings.
+
+**Events** are everything else: fish fries, spaghetti suppers, fundraisers, Bible studies, retreats, volunteer drives, youth nights, parish missions by visiting speakers. If it doesn't map to a `SERVICE_TYPES` key in `config.js`, it's an event.
+
+### Bounded Services
+
+Services that run for a limited period use `effective_date` and `end_date` to define their window. They still get a `seasonal` object and follow all other service rules. The frontend should surface these separately from the permanent schedule (e.g., a "Special Services" drawer on the church detail card) so users can discover them without cluttering the regular weekly view.
+
+```json
+{
+  "type": "novena",
+  "time": "17:15",
+  "effective_date": "2026-03-16",
+  "end_date": "2026-03-24",
+  "seasonal": { "is_seasonal": true, "season": "lent" },
+  "notes": "St. Francis Novena of Grace. Saturday March 21 at 12:00 noon instead of 5:15 PM.",
+  "source": "bulletin_2026-03"
+}
+```
+
+Common bounded service patterns: parish novenas (9 days), 40 Hours devotion (3 days), Lenten/Advent daily Mass additions, temporary confession schedules during penance services, Triduum-adjacent adoration.
 
 ---
 

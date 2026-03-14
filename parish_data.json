@@ -4,7 +4,7 @@
     "source": "Diocese of Springfield, MA - Online Directory",
     "extracted_date": "2026-02-19",
     "total_parishes": 98,
-    "total_services": 1690,
+    "total_services": 1692,
     "service_types_found": {
       "sunday_mass": 331,
       "daily_mass": 547,
@@ -18968,6 +18968,23 @@
           "source": "bulletin_2026-03"
         },
         {
+          "id": "parish_065-smass-sat-1730",
+          "type": "sunday_mass",
+          "day": "saturday",
+          "time": "17:30",
+          "end_time": null,
+          "location_id": "sacred-heart-church-springfield",
+          "language": "en",
+          "notes": "Vigil Mass",
+          "seasonal": {
+            "is_seasonal": false,
+            "season": "year_round",
+            "start_date": null,
+            "end_date": null
+          },
+          "source": "bulletin_2026-03"
+        },
+        {
           "id": "parish_065-smass-holyeve-1715",
           "type": "sunday_mass",
           "day": "holyday_eve",
@@ -19143,6 +19160,23 @@
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
+          },
+          "source": "bulletin_2026-03"
+        },
+        {
+          "id": "parish_065-novena-lent-1715-francis",
+          "type": "novena",
+          "day": null,
+          "time": "17:15",
+          "end_time": null,
+          "effective_date": "2026-03-16",
+          "end_date": "2026-03-24",
+          "location_id": "sacred-heart-church-springfield",
+          "language": "en",
+          "notes": "St. Francis Novena of Grace. Saturday March 21 at 12:00 noon instead of 5:15 PM. Lenten Penance Service follows the Novena Mass on Thursday, March 19.",
+          "seasonal": {
+            "is_seasonal": true,
+            "season": "lent"
           },
           "source": "bulletin_2026-03"
         }
@@ -22025,10 +22059,10 @@
           "location_id": "st-thomas-the-apostle-church-west-springfield"
         },
         {
-          "id": "parish_076-ador-fri-1930-lent",
+          "id": "parish_076-ador-fri-1900-lent",
           "type": "adoration",
           "day": "friday",
-          "time": "19:30",
+          "time": "19:00",
           "end_time": "20:00",
           "language": "en",
           "notes": "Adoration of the Blessed Sacrament and Benediction following Stations until 8pm",
