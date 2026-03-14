@@ -215,7 +215,7 @@ function processChurches(churches) {
     return c.status === 'active' && (!c.validation || c.validation.status !== 'excluded');
   }).map(function(c) {
     c.services = (c.services || []).filter(function(s) {
-      if (s.status === 'inactive' && s.end_date && s.end_date <= today) return false;
+      if (s.end_date && s.end_date < today) return false;
       if (s.effective_date && s.effective_date > today) return false;
       return true;
     });
