@@ -502,11 +502,14 @@ function _renderDailyStrip(events) {
   var colorMap = { purple: '#6B21A8', red: '#DC2626', white: '#94A3B8', green: '#16A34A', rose: '#DB2777' };
   var colorHex = colorMap[color] || '#16A34A';
 
-  // Secondary line
+  // Secondary line — fasting/abstinence info renders here (sole location)
   var secondary = '';
   var dow = now.getDay();
   var season = document.documentElement.getAttribute('data-season');
-  if (dow === 5 && season === 'lent') secondary = 'Abstinence from meat today';
+  var isAshWed = today.some(function(e) { return e.event_key === 'AshWednesday'; });
+  var isGoodFri = today.some(function(e) { return e.event_key === 'GoodFri'; });
+  if (isAshWed || isGoodFri) secondary = 'Day of fasting and abstinence';
+  else if (dow === 5 && season === 'lent') secondary = 'Abstinence from meat today';
   var tomorrow = new Date(now.getTime() + 86400000);
   var tomorrowHDO = events.filter(function(e) {
     return e.month === (tomorrow.getMonth() + 1) && e.day === tomorrow.getDate() && e.holy_day_of_obligation;
@@ -1023,31 +1026,28 @@ window._devSetSeason = function(season) {
   _toggleDevPanel();
 };
 
-var _devFastingDismissBtn = '<button class="fasting-banner-dismiss" onclick="dismissFastingBanner()" aria-label="Dismiss"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>';
-
 window._devSetFasting = function(mode) {
   _devState.fastingMode = mode;
-  sessionStorage.removeItem('fastingBannerDismissed');
-  var el = document.getElementById('fastingBanner');
-  if (!el) { _closeDevPanel(); _toggleDevPanel(); return; }
-  if (mode === 'ashwed' || mode === 'goodfri') {
-    el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
-      + '<div class="fasting-banner-text">'
-      + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
-      + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
-      + '</div>'
-      + _devFastingDismissBtn
-      + '</div>';
-  } else if (mode === 'lentfri') {
-    el.innerHTML = '<div class="fasting-banner">'
-      + '<div class="fasting-banner-text">'
-      + '<div class="fasting-banner-title">Day of Abstinence</div>'
-      + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
-      + '</div>'
-      + _devFastingDismissBtn
-      + '</div>';
-  } else {
-    el.innerHTML = '';
+  // Fasting info now renders in the liturgical teaser secondary line
+  // Update the teaser to reflect the simulated fasting state
+  var teaser = document.getElementById('liturgicalTeaser');
+  if (teaser) {
+    var secondary = teaser.querySelector('.daily-card-secondary');
+    if (mode === 'ashwed' || mode === 'goodfri') {
+      if (secondary) { secondary.textContent = 'Day of fasting and abstinence'; }
+      else {
+        var textEl = teaser.querySelector('.daily-card-text');
+        if (textEl) textEl.insertAdjacentHTML('beforeend', '<div class="daily-card-secondary">Day of fasting and abstinence</div>');
+      }
+    } else if (mode === 'lentfri') {
+      if (secondary) { secondary.textContent = 'Abstinence from meat today'; }
+      else {
+        var textEl = teaser.querySelector('.daily-card-text');
+        if (textEl) textEl.insertAdjacentHTML('beforeend', '<div class="daily-card-secondary">Abstinence from meat today</div>');
+      }
+    } else {
+      if (secondary) secondary.remove();
+    }
   }
   _closeDevPanel();
   _toggleDevPanel();

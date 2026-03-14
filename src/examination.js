@@ -594,8 +594,7 @@ function _renderSummaryScreen() {
     html += '<div class="exam-summary-list" id="examSummaryList">' + _renderSummaryHTML() + '</div>';
     html += '</div>';
 
-    // Prayers
-    html += '<div class="exam-group-label">Prayers</div>';
+    // Act of Contrition — elevated presentation
     html += '<div class="exam-contrition">';
     html += '<div class="exam-contrition-title">' + _esc(d.prayers.act_of_contrition.title) + '</div>';
     d.prayers.act_of_contrition.text.split('\n\n').forEach(function(p) {
@@ -632,7 +631,6 @@ function _renderSummaryScreen() {
     html += '<div class="exam-ending">';
     html += '<div class="exam-ending-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="28" height="36"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>';
     html += '<p class="exam-ending-text">Go in peace to love and serve the Lord.</p>';
-    html += '<button class="exam-ending-btn" onclick="examGracefulClose()">Return to MassFinder</button>';
     html += '</div>';
 
     body.innerHTML = html;

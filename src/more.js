@@ -234,10 +234,19 @@ function renderMore() {
     }
   }
 
-  // Devotional guides
+  // Devotional guides — pin current season's guide to top
   var devotEl = document.getElementById('devotionalCards');
   if (devotEl) {
-    var allGuideHtml = DEVOTIONAL_GUIDES.map(function(g) {
+    var currentSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
+    var seasonalGuides = [];
+    var otherGuides = [];
+    DEVOTIONAL_GUIDES.forEach(function(g) {
+      if (g.season && g.season === currentSeason) seasonalGuides.push(g);
+      else if (g.season && g.season !== currentSeason) {} // hide non-current seasonal guides
+      else otherGuides.push(g);
+    });
+    var orderedGuides = seasonalGuides.concat(otherGuides);
+    var allGuideHtml = orderedGuides.map(function(g) {
       if (g.isGroup) {
         var childrenHtml = g.children.map(function(c) { return renderGuide(c, true); }).join('');
         var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -246,7 +255,11 @@ function renderMore() {
           + '<div class="devot-group-body">' + childrenHtml + '</div>'
           + '</details>';
       }
-      return renderGuide(g, false);
+      var html = renderGuide(g, false);
+      if (g.season === currentSeason) {
+        html = html.replace('class="devot-card', 'class="devot-card devot-card--seasonal');
+      }
+      return html;
     });
     devotEl.innerHTML = allGuideHtml.join('');
 

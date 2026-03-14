@@ -224,6 +224,11 @@ input { font-family: inherit; font-size: inherit; border: none; outline: none; b
 .daily-card-secondary { font-size:var(--text-xs);color:var(--color-accent-text);font-style:italic;margin-top:1px; }
 .daily-card-prompt { font-size:var(--text-xs);color:var(--color-text-secondary);font-style:italic;padding:var(--space-2) var(--space-3) 0;border-top:1px solid var(--color-border-light);margin-top:var(--space-2); }
 .daily-card-arrow { color:var(--color-text-tertiary);flex-shrink:0;display:flex;align-items:center; }
+/* Dark mode — daily card */
+html[data-theme="dark"] .daily-card { background:linear-gradient(135deg, rgba(184,150,63,0.08) 0%, var(--color-surface) 100%);border:1px solid var(--color-border); }
+html[data-theme="dark"] .daily-card-name { color:var(--color-text-primary); }
+html[data-theme="dark"] .daily-card-secondary { color:var(--color-accent-light); }
+html[data-theme="dark"] .daily-card-arrow { color:var(--color-text-secondary); }
 /* More tab daily prompt */
 .more-daily-prompt { font-size:var(--text-sm);color:var(--color-text-secondary);font-style:italic;text-align:center;padding:var(--space-3) var(--space-4) 0; }
 /* Daily Formation card (MT-02: combined Baltimore Q&A + Summa) */
@@ -1539,8 +1544,7 @@ details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; 
 .reading-listen-btn:active { transform:scale(0.97); }
 .reading-listen-btn.speaking { background:var(--color-primary);color:white;border-color:var(--color-primary); }
 .reading-listen-btn.speaking svg { stroke:white; }
-.reading-entry:not(.expanded):hover .reading-ref { color: var(--color-accent-text); }
-.reading-entry:hover { background:var(--color-surface-hover);margin:0 calc(-1 * var(--space-3));padding-left:var(--space-3);padding-right:var(--space-3);border-radius:var(--radius-sm); }
+.reading-entry:hover { background:var(--color-surface-hover); }
 .reading-entry:active { opacity:0.85; }
 
 /* UPDATE BANNER */
@@ -1616,6 +1620,10 @@ html[data-theme="dark"] .devot-card[open] .conf-exam-body { color:var(--color-te
 html[data-theme="dark"] .devot-card[open] .conf-exam-body p { color:var(--color-text-primary); }
 .devot-card[open] .devot-sub[open] { background:var(--color-surface);border-left:2px solid var(--color-accent);box-shadow:none; }
 .devot-card[open] .devot-chevron { transform: rotate(180deg); }
+/* Seasonal guide pinned to top */
+.devot-card--seasonal { border-left:3px solid var(--color-accent);background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 80%); }
+.devot-card--seasonal .devot-icon { background:color-mix(in srgb, var(--color-accent) 15%, transparent); }
+html[data-theme="dark"] .devot-card--seasonal { background:linear-gradient(135deg, rgba(212,168,75,0.04) 0%, var(--color-surface) 60%);border-left-color:var(--color-accent); }
 .devot-body { padding: 0 var(--space-4) var(--space-5); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.75; }
 .devot-body p { margin-bottom: var(--space-3); }
 .devot-body p:last-child { margin-bottom: 0; }
@@ -2493,7 +2501,8 @@ html[data-theme="dark"] .ref-tap--active { background:var(--color-primary);color
 /* PTR-04: Dot navigation */
 .exam-dots { display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:nowrap; }
 .exam-dot-btn { background:none;border:none;padding:10px 4px;min-height:44px;cursor:pointer;display:flex;align-items:center;-webkit-tap-highlight-color:transparent; }
-.exam-dot { width:8px;height:8px;border-radius:50%;background:var(--color-border-light);transition:all 0.3s; }
+.exam-dot { width:8px;height:8px;border-radius:50%;background:var(--color-text-tertiary);opacity:0.4;transition:all 0.3s; }
+.exam-dot.active, .exam-dot.done, .exam-dot.has-items { opacity:1; }
 .exam-dot.active { background:var(--color-primary);transform:scale(1.4); }
 .exam-dot.done { background:var(--color-primary); }
 .exam-dot.has-items { background:var(--color-verified); }
@@ -2869,6 +2878,11 @@ html[data-theme="dark"] .settings-seg { background:var(--color-surface);border-c
 html[data-theme="dark"] .settings-seg-btn:not(:last-child) { border-color:var(--color-border); }
 html[data-theme="dark"] .settings-action-btn { border-color:var(--color-border); }
 html[data-theme="dark"] .settings-row { border-color:var(--color-border); }
+html[data-theme="dark"] .settings-group { background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4); }
+html[data-theme="dark"] .settings-about-text { color:var(--color-text-secondary); }
+html[data-theme="dark"] .settings-about-text a { color:var(--color-primary); }
+html[data-theme="dark"] .settings-seg-btn { color:var(--color-text-secondary); }
+html[data-theme="dark"] .settings-seg-btn.active { background:var(--color-primary);color:white; }
 
 /* ══════════════════════════════════════════════════════════════════════════════
    DESKTOP RESPONSIVE — centered panels, contained overlays, better grids
