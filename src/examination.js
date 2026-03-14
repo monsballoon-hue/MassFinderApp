@@ -14,6 +14,7 @@ var _expanded = {};         // section key → bool
 var _checked = {};          // question id → { text, commandment, skey }
 var _sections = [];         // PTR-03: all sections (commandments + precepts)
 var _currentSection = 0;    // PTR-03: current section index
+var _shownLogHint = false;  // BT3-04: first-check toast flag
 
 // ── Reader module registration ──
 reader.registerModule('examination', {
@@ -49,6 +50,7 @@ reader.registerModule('examination', {
   onClose: function() {
     // Privacy first — clear session state
     _checked = {};
+    _shownLogHint = false;
   }
 });
 
@@ -338,6 +340,12 @@ function _renderExamination(d) {
       }
       _haptic();
       _updateCheckedUI();
+      var count = Object.keys(_checked).length;
+      if (count === 1 && !_shownLogHint) {
+        _shownLogHint = true;
+        var render = require('./render.js');
+        render.showToast('Noted for your confession summary');
+      }
     });
   }
 
@@ -487,6 +495,12 @@ function _wireCheckboxes(body) {
     }
     _haptic();
     _updateCheckedUI();
+    var count = Object.keys(_checked).length;
+    if (count === 1 && !_shownLogHint) {
+      _shownLogHint = true;
+      var render = require('./render.js');
+      render.showToast('Noted for your confession summary');
+    }
   });
 }
 
@@ -644,7 +658,7 @@ function examShowHowTo() {
   wrapEl.className = 'exam-howto-modal';
   wrapEl.innerHTML = '<div class="exam-howto-modal-inner">'
     + '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--space-3);">'
-    + '<span style="font-family:var(--font-display);font-size:var(--text-sm);font-weight:600;color:var(--color-text-primary);">' + _esc(d.how_to_confess.title) + '</span>'
+    + '<span style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:600;color:var(--color-text-primary);">' + _esc(d.how_to_confess.title) + '</span>'
     + '<button class="exam-howto-close" style="background:none;border:none;cursor:pointer;padding:var(--space-1);color:var(--color-text-secondary);-webkit-tap-highlight-color:transparent;">' + closeSvg + '</button>'
     + '</div>'
     + '<ol class="exam-howto-steps">' + stepsHtml + '</ol>'

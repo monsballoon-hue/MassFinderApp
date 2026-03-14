@@ -276,6 +276,7 @@ function renderMore() {
       var num = m[1];
       el.addEventListener('click', function(ev) {
         ev.stopPropagation();
+        ev.preventDefault();
         window.openCCC(num);
       });
     });

@@ -22,7 +22,7 @@ var _backSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 
 function _updateBackBtn() {
   var btn = document.getElementById('readerBackBtn');
-  btn.style.display = _stack.length ? '' : 'none';
+  btn.style.visibility = _stack.length ? 'visible' : 'hidden';
   if (_stack.length) {
     var top = _stack[_stack.length - 1];
     var topMod = _modules[top.mode];
