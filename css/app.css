@@ -1607,13 +1607,19 @@ html[data-theme="dark"] .library-teaser { border-color:var(--color-border); }
 /* DEVOTIONAL CARDS */
 .devot-card { border: 1px solid var(--color-border-light); border-radius: var(--radius-md); margin-bottom: var(--space-3); overflow: hidden; background: var(--color-surface); transition: border-left-color var(--transition-fast), background var(--transition-fast), box-shadow var(--transition-fast); }
 .devot-card:last-child { margin-bottom: 0; }
+.devot-card summary { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); cursor: pointer; list-style: none; font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); min-height: 56px; -webkit-tap-highlight-color: transparent; }
+.devot-card summary::-webkit-details-marker { display: none; }
 .devot-header { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-4); font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); min-height: 56px; }
 .devot-title { flex: 1; }
+.devot-chevron { width: 18px; height: 18px; color: var(--color-text-tertiary); transition: transform 0.2s; flex-shrink: 0; }
+.devot-card[open] .devot-chevron { transform: rotate(180deg); }
 .devot-icon { width:36px;height:36px;border-radius:var(--radius-sm);background:var(--color-accent-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0; }
 .devot-icon svg { width:18px;height:18px;color:var(--color-accent-text); }
 html[data-theme="dark"] .devot-icon { background:var(--color-accent-pale); }
-html[data-theme="dark"] .devot-card .conf-exam-body { color:var(--color-text-secondary); }
-html[data-theme="dark"] .devot-card .conf-exam-body p { color:var(--color-text-primary); }
+.devot-card[open] { border-left:3px solid var(--color-accent);background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 60%);box-shadow:var(--shadow-card-hover); }
+html[data-theme="dark"] .devot-card[open] { background:linear-gradient(135deg, rgba(212,168,75,0.06) 0%, var(--color-surface) 40%);box-shadow:var(--shadow-card-hover);border-left-color:var(--color-accent); }
+html[data-theme="dark"] .devot-card[open] .conf-exam-body { color:var(--color-text-secondary); }
+html[data-theme="dark"] .devot-card[open] .conf-exam-body p { color:var(--color-text-primary); }
 /* Seasonal guide pinned to top */
 .devot-card--seasonal { border-left:3px solid var(--color-accent);background:linear-gradient(135deg, var(--color-accent-pale) 0%, var(--color-surface) 80%); }
 .devot-card--seasonal .devot-icon { background:color-mix(in srgb, var(--color-accent) 15%, transparent); }
@@ -1630,7 +1636,8 @@ html[data-theme="dark"] .devot-card--seasonal { background:linear-gradient(135de
 .devot-group-body { padding: var(--space-3) var(--space-4) var(--space-4); background: var(--color-bg); border-top: 1px solid var(--color-border-light); }
 .devot-sub { margin-bottom: var(--space-2); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); overflow: hidden; }
 .devot-sub:last-child { margin-bottom: 0; }
-.devot-sub .devot-header { padding: var(--space-3) var(--space-4); min-height: 44px; background: var(--color-surface-hover); border-bottom: 1px solid var(--color-border-light); }
+.devot-sub summary { padding: var(--space-3) var(--space-4); min-height: 44px; background: var(--color-surface-hover); }
+.devot-sub[open] summary { border-bottom: 1px solid var(--color-border-light); }
 .devot-sub .devot-body { padding: var(--space-3) var(--space-4) var(--space-4); }
 .devot-show-all { display:flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:var(--space-3) var(--space-4);margin-top:var(--space-2);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);background:none;border:1px dashed var(--color-border);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px; }
 .devot-show-all:active { background:var(--color-surface-hover); }

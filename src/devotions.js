@@ -329,11 +329,12 @@ function renderGuide(g, sub) {
     findLink = '<div class="devot-find-link" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));document.querySelector(\'[data-filter=' + g.filter + ']\')&&document.querySelector(\'[data-filter=' + g.filter + ']\').click()">Find ' + (g.findLabel || g.title) + ' near me \u2192</div>';
   }
   var iconHtml = g.icon ? '<span class="devot-icon">' + g.icon + '</span>' : '';
+  var chevSvg = '<svg class="devot-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   var body = _wrapScriptureRefs(_wrapTerms(g.body));
-  return '<div class="' + cls + '">'
-    + '<div class="devot-header">' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span></div>'
+  return '<details class="' + cls + '">'
+    + '<summary>' + iconHtml + '<span class="devot-title">' + esc(g.title) + '</span>' + chevSvg + '</summary>'
     + '<div class="devot-body">' + body + findLink + '</div>'
-    + '</div>';
+    + '</details>';
 }
 
 module.exports = {
