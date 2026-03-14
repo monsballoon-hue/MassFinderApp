@@ -164,13 +164,13 @@ function renderMore() {
     var ptColors = {
       rosary: 'var(--color-sacred)',
       examination: 'var(--color-sacred)',
-      stations: 'var(--color-sacred)',
+      stations: isLentSeason() ? 'var(--color-accent)' : 'var(--color-sacred)',
       novena: 'var(--color-sacred)'
     };
     var ptBgColors = {
       rosary: 'var(--color-sacred-pale)',
       examination: 'var(--color-sacred-pale)',
-      stations: 'var(--color-sacred-pale)',
+      stations: isLentSeason() ? 'var(--color-accent-pale)' : 'var(--color-sacred-pale)',
       novena: 'var(--color-sacred-pale)'
     };
 
