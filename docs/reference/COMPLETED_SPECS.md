@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (7 specs implemented, 2 queued)
+**Last updated:** 2026-03-14 (9 specs implemented, 1 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -70,6 +70,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **FGP** = Faith Guides & Prayer
 - **BT3** = Backlog Triage Round 3
 - **CCS** = Color Channel Separation
+- **CSO** = Color System Overhaul
 
 Future specs should continue this pattern with new prefixes.
 
@@ -126,52 +127,67 @@ Future specs should continue this pattern with new prefixes.
 | FGP-04 | Rosary: "Mysteries Only" Condensed Mode | Done | P3 |
 
 ### UX_Spec_Backlog_Triage_Round3.md (BT3 series)
-**Created:** 2026-03-14 · **Status:** Queued
+**Created:** 2026-03-14 · **Status:** In progress (24/28 done, 4 Phase 3 remaining)
 **Backlog items:** IDEA-023, IDEA-024, IDEA-025, IDEA-026, IDEA-027, IDEA-028, IDEA-029, IDEA-030, IDEA-031, IDEA-033, IDEA-034, IDEA-035, IDEA-036, IDEA-037, IDEA-038, IDEA-039, IDEA-040, IDEA-041, IDEA-042, IDEA-043, IDEA-044, IDEA-045, IDEA-046, IDEA-048, IDEA-049, IDEA-050, IDEA-051, IDEA-052
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT3.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| BT3-01 | Exam Subtitle: "Confession" Not "Reconciliation" | Queued | P1 |
-| BT3-02 | Exam Header Not Centered | Queued | P1 |
-| BT3-03 | How-to-Confess Modal: Illegible, Inaccurate, Not Full-Screen | Queued | P1 |
-| BT3-04 | Exam: Unclear Selections Are Logged | Queued | P1 |
-| BT3-05 | Exam: Remove "Prayers" Group Label | Queued | P2 |
-| BT3-06 | Exam: Style Thanksgiving to Match Act of Contrition | Queued | P2 |
-| BT3-07 | Exam: Confession Tracker Feedback | Queued | P2 |
-| BT3-08 | Exam: Consolidate Exit Paths | Queued | P2 |
-| BT3-09 | Exam: Tooltip Step 1 Fix (ref BT3-03) | Queued | P1 |
-| BT3-10 | Exam: Full-Screen Modal (ref BT3-03) | Queued | P2 |
-| BT3-11 | Remove Fasting Banner from More Tab | Queued | P2 |
-| BT3-12 | Remove Gospel Special Formatting | Queued | P2 |
+| BT3-01 | Exam Subtitle: "Confession" Not "Reconciliation" | Done | P1 |
+| BT3-02 | Exam Header Not Centered | Done | P1 |
+| BT3-03 | How-to-Confess Modal: Illegible, Inaccurate, Not Full-Screen | Done | P1 |
+| BT3-04 | Exam: Unclear Selections Are Logged | Done | P1 |
+| BT3-05 | Exam: Remove "Prayers" Group Label | Done | P2 |
+| BT3-06 | Exam: Style Thanksgiving to Match Act of Contrition | Done | P2 |
+| BT3-07 | Exam: Confession Tracker Feedback | Done | P2 |
+| BT3-08 | Exam: Consolidate Exit Paths | Done | P2 |
+| BT3-09 | Exam: Tooltip Step 1 Fix (ref BT3-03) | Done | P1 |
+| BT3-10 | Exam: Full-Screen Modal (ref BT3-03) | Done | P2 |
+| BT3-11 | Remove Fasting Banner from More Tab | Done | P2 |
+| BT3-12 | Remove Gospel Special Formatting | Done | P2 |
 | BT3-13 | Novena Card Elevation When Active | Queued | P3 |
-| BT3-14 | Faith Guides: Remove Toggle and TLM | Queued | P2 |
+| BT3-14 | Faith Guides: Remove Toggle and TLM | Done | P2 |
 | BT3-15 | Remove Holy Days Dispensation Footnote | Queued | P3 |
-| BT3-16 | Faith Guides Dark Mode Readability | Queued | P1 |
-| BT3-17 | Find Tab Sort Text Too Small | Queued | P1 |
-| BT3-18 | Saved Tab Schedule Font Too Small | Queued | P1 |
+| BT3-16 | Faith Guides Dark Mode Readability | Done | P1 |
+| BT3-17 | Find Tab Sort Text Too Small | Done | P1 |
+| BT3-18 | Saved Tab Schedule Font Too Small | Done | P1 |
 | BT3-19 | Saved Tab Alternating Row Colors | Queued | P3 |
-| BT3-20 | Chip Bar Swipe Triggers Refresh | Queued | P1 |
-| BT3-21 | YC Cards Subtler Design | Queued | P2 |
-| BT3-22 | Bottom Nav Bar Fixed Position Defense | Queued | P1 |
+| BT3-20 | Chip Bar Swipe Triggers Refresh | Done | P1 |
+| BT3-21 | YC Cards Subtler Design | Done | P2 |
+| BT3-22 | Bottom Nav Bar Fixed Position Defense | Done | P1 |
 | BT3-23 | Rosary Opening Prayers Collapsible | Queued | P2 |
-| BT3-24 | CCC Pills Not Rendering in Faith Guides | Queued | P1 |
-| BT3-25 | Remove About Section from Settings | Queued | P2 |
-| BT3-26 | Map Chips to Bottom on Mobile | Queued | P1 |
-| BT3-27 | Detail Links Open in External Browser | Queued | P2 |
-| BT3-28 | PWA Banner Session Guard | Queued | P2 |
+| BT3-24 | CCC Pills Not Rendering in Faith Guides | Done | P1 |
+| BT3-25 | Remove About Section from Settings | Done | P2 |
+| BT3-26 | Map Chips to Bottom on Mobile | Done | P1 |
+| BT3-27 | Detail Links Open in External Browser | Done | P2 |
+| BT3-28 | PWA Banner Session Guard | Done | P2 |
 
 ### UX_Spec_Color_Channel_Separation.md (CCS series)
-**Created:** 2026-03-14 · **Status:** Queued
+**Created:** 2026-03-14 · **Status:** Implemented
 **Backlog items:** New (color system redesign — not from existing backlog)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_CCS.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| CCS-01 | New Token Definitions (sacred, service, category) | Queued | P1 |
-| CCS-02 | Sacred Content Channel Migration (~22 rules + 16 rgba) | Queued | P1 |
-| CCS-03 | Service Type Dot Color Separation | Queued | P1 |
-| CCS-04 | Event Category Color Separation | Queued | P1 |
-| CCS-05 | YC Brand Color to Sacred Channel | Queued | P1 |
-| CCS-06 | Remaining Accent Usage Audit | Queued | P2 |
-| CCS-07 | Dark Mode Hardcoded Badge Audit | Queued | P2 |
-| CCS-08 | Saint Card Sacred Channel Migration | Queued | P1 |
-| CCS-09 | Confession Card Verified Color Audit | Queued | P3 |
+| CCS-01 | New Token Definitions (sacred, service, category) | Done | P1 |
+| CCS-02 | Sacred Content Channel Migration (~22 rules + 16 rgba) | Done | P1 |
+| CCS-03 | Service Type Dot Color Separation | Done | P1 |
+| CCS-04 | Event Category Color Separation | Done | P1 |
+| CCS-05 | YC Brand Color to Sacred Channel | Done | P1 |
+| CCS-06 | Remaining Accent Usage Audit | Done | P2 |
+| CCS-07 | Dark Mode Hardcoded Badge Audit | Done | P2 |
+| CCS-08 | Saint Card Sacred Channel Migration | Done | P1 |
+| CCS-09 | Confession Card Verified Color Audit | Done | P3 |
+
+### UX_Spec_Color_System_Overhaul.md (CSO series)
+**Created:** 2026-03-14 · **Status:** Implemented
+**Backlog items:** New (follow-on to CCS — not from existing backlog)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CSO.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| CSO-01 | New Tokens (soon, notice) | Done | P1 |
+| CSO-02 | Temporal Urgency Migration (27 rules) | Done | P1 |
+| CSO-03 | Notice Banner Migration (10 rules) | Done | P1 |
+| CSO-04 | Daily Card & Text Neutralization | Done | P2 |
+| CSO-05 | Accent-Pale Ultra-Subtlety | Done | P2 |
+| CSO-06 | Body Gradient Subtlety | Done | P2 |
+| CSO-07 | Prayer Overlay Subtlety (15 rules) | Done | P2 |
+| CSO-08 | Verification Counts | Done | P3 |
