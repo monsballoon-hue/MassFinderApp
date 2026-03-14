@@ -426,6 +426,11 @@
               "type": "null"
             }
           ]
+        },
+        "timezone": {
+          "description": "IANA timezone identifier (e.g. America/New_York). Derivable from lat/lng but stored explicitly.",
+          "type": "string",
+          "pattern": "^[A-Za-z_]+/[A-Za-z_]+$"
         }
       },
       "additionalProperties": false
