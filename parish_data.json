@@ -4,7 +4,7 @@
     "source": "Diocese of Springfield, MA - Online Directory",
     "extracted_date": "2026-02-19",
     "total_parishes": 98,
-    "total_services": 1690,
+    "total_services": 1691,
     "service_types_found": {
       "sunday_mass": 331,
       "daily_mass": 547,
@@ -101,7 +101,8 @@
           "is_accessible": null,
           "lat": 42.6246,
           "lng": -73.12,
-          "short_name": "Notre Dame"
+          "short_name": "Notre Dame",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-stanislaus-church-adams",
@@ -114,7 +115,8 @@
           "is_accessible": null,
           "lat": 42.6248,
           "lng": -73.1135,
-          "short_name": "St. Stan's"
+          "short_name": "St. Stan's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-marys-church-adams",
@@ -127,7 +129,8 @@
           "is_accessible": null,
           "lat": 42.5628,
           "lng": -73.1601,
-          "short_name": "St. Mary's"
+          "short_name": "St. Mary's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -347,7 +350,7 @@
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "notre-dame-church-adams",
           "seasonal": {
             "is_seasonal": true,
             "season": "lent"
@@ -379,7 +382,8 @@
           "id": "parish_001-ador-wed-lent",
           "end_time": null,
           "language": "en",
-          "source": "bulletin_2026-03"
+          "source": "bulletin_2026-03",
+          "location_id": "st-marys-church-adams"
         },
         {
           "id": "parish_001-ador-wed-0900-st",
@@ -409,7 +413,8 @@
           "id": "parish_001-ador-thu-lent",
           "end_time": null,
           "language": "en",
-          "source": "bulletin_2026-03"
+          "source": "bulletin_2026-03",
+          "location_id": "st-marys-church-adams"
         },
         {
           "id": "parish_001-ador-thu-0900-st",
@@ -425,19 +430,6 @@
           },
           "source": "bulletin_2026-03",
           "day": "thursday"
-        },
-        {
-          "type": "adoration",
-          "day": "friday",
-          "notes": "Following Daily Mass",
-          "seasonal": {
-            "is_seasonal": true,
-            "season": "lent"
-          },
-          "id": "parish_001-ador-fri-lent",
-          "end_time": null,
-          "language": "en",
-          "source": "bulletin_2026-03"
         },
         {
           "id": "parish_001-ador-fri-0900-notre",
@@ -461,11 +453,11 @@
           "time": "08:00",
           "end_time": null,
           "language": "en",
-          "notes": "Before Daily Mass, Monday–Friday",
+          "notes": "Before Daily Mass; location rotates seasonally",
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "st-stanislaus-church-adams",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -482,7 +474,7 @@
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "notre-dame-church-adams",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -499,7 +491,7 @@
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "st-marys-church-adams",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -516,7 +508,7 @@
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "st-marys-church-adams",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -533,7 +525,7 @@
           "source": "bulletin_2026-03",
           "rite": null,
           "times_vary": false,
-          "location_id": null,
+          "location_id": "notre-dame-church-adams",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -736,7 +728,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.0695,
-          "lng": -72.6148
+          "lng": -72.6148,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -1001,7 +994,8 @@
           "is_accessible": null,
           "lat": 42.3732,
           "lng": -72.5199,
-          "short_name": "Newman Catholic"
+          "short_name": "Newman Catholic",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -1326,7 +1320,8 @@
           "is_accessible": null,
           "lat": 42.3732,
           "lng": -72.5189,
-          "short_name": "St. Brigid"
+          "short_name": "St. Brigid",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -1676,7 +1671,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.2779,
-          "lng": -72.409
+          "lng": -72.409,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -1985,7 +1981,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.1228,
-          "lng": -72.1882
+          "lng": -72.1882,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -2164,7 +2161,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.1716,
-          "lng": -72.6138
+          "lng": -72.6138,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -2588,7 +2586,8 @@
           "is_accessible": null,
           "lat": 42.17,
           "lng": -72.6003,
-          "short_name": "St. Anthony of Padua"
+          "short_name": "St. Anthony of Padua",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -2839,7 +2838,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.1487,
-          "lng": -72.6078
+          "lng": -72.6078,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -3210,7 +3210,8 @@
           "is_accessible": null,
           "lat": 42.1565,
           "lng": -72.6076,
-          "short_name": "St. Stanislaus Bishop & Martyr"
+          "short_name": "St. Stanislaus Bishop & Martyr",
+          "timezone": "America/New_York"
         },
         {
           "id": "ststans-office-chicopee",
@@ -3223,7 +3224,8 @@
           "is_accessible": null,
           "lat": 42.1565,
           "lng": -72.6076,
-          "short_name": "Parish"
+          "short_name": "Parish",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -4184,7 +4186,8 @@
           "lat": 42.4736,
           "lng": -73.166,
           "accessibility_notes": "Hearing assist devices available — inquire at sacristy",
-          "short_name": "St. Agnes"
+          "short_name": "St. Agnes",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-patricks-chapel-hinsdale",
@@ -4197,7 +4200,8 @@
           "is_accessible": null,
           "lat": 42.4373,
           "lng": -73.1215,
-          "short_name": "St. Patrick's"
+          "short_name": "St. Patrick's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -4852,7 +4856,8 @@
           "zip": "01027",
           "lat": 42.2668,
           "lng": -72.6687,
-          "short_name": "Our Lady of the Valley"
+          "short_name": "Our Lady of the Valley",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -5403,7 +5408,8 @@
           "lng": -72.5093,
           "city": "East Longmeadow",
           "state": "MA",
-          "zip": "01028"
+          "zip": "01028",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -5629,7 +5635,8 @@
           "short_name": "Sacred Heart",
           "city": "Feeding Hills",
           "state": "MA",
-          "zip": "01030"
+          "zip": "01030",
+          "timezone": "America/New_York"
         },
         {
           "id": "sacredheart-office-feedinghills",
@@ -5641,7 +5648,8 @@
           "short_name": "Parish Center",
           "city": "Feeding Hills",
           "state": "MA",
-          "zip": "01030"
+          "zip": "01030",
+          "timezone": "America/New_York"
         },
         {
           "id": "sacredheart-rectory-feedinghills",
@@ -5653,7 +5661,8 @@
           "short_name": "Rectory",
           "city": "Feeding Hills",
           "state": "MA",
-          "zip": "01030"
+          "zip": "01030",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -5885,7 +5894,8 @@
           "is_accessible": null,
           "lat": 42.1959,
           "lng": -73.3624,
-          "short_name": "St. Peter"
+          "short_name": "St. Peter",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -6019,7 +6029,8 @@
           "address": "221 Federal Street, Greenfield, MA 01301",
           "lat": 42.5876,
           "lng": -72.5987,
-          "short_name": "BSC"
+          "short_name": "BSC",
+          "timezone": "America/New_York"
         },
         {
           "id": "holy-trinity-church-greenfield",
@@ -6028,7 +6039,8 @@
           "address": "135 Main Street, Greenfield, MA 01301",
           "lat": 42.588,
           "lng": -72.601,
-          "short_name": "HTC"
+          "short_name": "HTC",
+          "timezone": "America/New_York"
         },
         {
           "id": "adoration-chapel-greenfield",
@@ -6038,7 +6050,8 @@
           "notes": "Located at Blessed Sacrament Church site. Open daily 6 AM-10 PM. Additional coverage being sought.",
           "lat": 42.5876,
           "lng": -72.5987,
-          "short_name": "PAC"
+          "short_name": "PAC",
+          "timezone": "America/New_York"
         },
         {
           "id": "blessed-trinity-pastoral-center",
@@ -6047,7 +6060,8 @@
           "address": "14 Beacon Street, Greenfield, MA 01301",
           "lat": 42.5882,
           "lng": -72.5995,
-          "short_name": "Pastoral Center & Parish Offices"
+          "short_name": "Pastoral Center & Parish Offices",
+          "timezone": "America/New_York"
         },
         {
           "id": "casey-hall-greenfield",
@@ -6056,7 +6070,8 @@
           "address": "135 Main Street, Greenfield, MA 01301",
           "lat": 42.588,
           "lng": -72.601,
-          "short_name": "Father James Casey Hall"
+          "short_name": "Father James Casey Hall",
+          "timezone": "America/New_York"
         },
         {
           "id": "pastoral-center-hall-greenfield",
@@ -6065,7 +6080,8 @@
           "address": "14 Beacon Street, Greenfield, MA 01301",
           "lat": 42.5882,
           "lng": -72.5995,
-          "short_name": "Pastoral Center Hall"
+          "short_name": "Pastoral Center Hall",
+          "timezone": "America/New_York"
         },
         {
           "id": "koc-conference-room-greenfield",
@@ -6074,7 +6090,8 @@
           "address": "14 Beacon Street, Greenfield, MA 01301",
           "lat": 42.5882,
           "lng": -72.5995,
-          "short_name": "K of C Conference Room"
+          "short_name": "K of C Conference Room",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -6631,7 +6648,8 @@
           "is_accessible": null,
           "lat": 42.3526,
           "lng": -72.5723,
-          "short_name": "Most Holy Redeemer"
+          "short_name": "Most Holy Redeemer",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -6961,7 +6979,8 @@
           "is_accessible": null,
           "lat": 42.0645,
           "lng": -72.4132,
-          "short_name": "St. Mary"
+          "short_name": "St. Mary",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -7176,7 +7195,8 @@
           "lat": 42.3813,
           "lng": -72.6163,
           "short_name": "Our Lady of Grace",
-          "notes": "Shares administrator with Most Holy Redeemer Parish, Hadley (parish_023)"
+          "notes": "Shares administrator with Most Holy Redeemer Parish, Hadley (parish_023)",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -7362,7 +7382,8 @@
           "is_accessible": null,
           "lat": 42.3812,
           "lng": -72.7003,
-          "short_name": "Our Lady of the Hills"
+          "short_name": "Our Lady of the Hills",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -7560,7 +7581,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.196,
-          "lng": -72.631
+          "lng": -72.631,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -8022,7 +8044,8 @@
           "is_accessible": null,
           "lat": 42.2113,
           "lng": -72.6053,
-          "short_name": "Our Lady of the Cross"
+          "short_name": "Our Lady of the Cross",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -8558,7 +8581,8 @@
           "is_accessible": null,
           "lat": 42.2097,
           "lng": -72.6083,
-          "short_name": "St. Jerome"
+          "short_name": "St. Jerome",
+          "timezone": "America/New_York"
         },
         {
           "id": "immaculate-conception-chapel-holyoke",
@@ -8571,7 +8595,8 @@
           "is_accessible": null,
           "lat": 42.2053,
           "lng": -72.5951,
-          "short_name": "Immaculate Conception"
+          "short_name": "Immaculate Conception",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -8890,7 +8915,8 @@
           "accessibility_notes": null,
           "notes": "Chapel on premises for weekday Masses",
           "lat": 42.2443,
-          "lng": -72.572
+          "lng": -72.572,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -9171,7 +9197,8 @@
           "is_accessible": true,
           "lat": 42.153,
           "lng": -72.507,
-          "short_name": "Immaculate Conception"
+          "short_name": "Immaculate Conception",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -9541,7 +9568,8 @@
           "is_accessible": null,
           "lat": 42.304,
           "lng": -73.248,
-          "short_name": "St. Mary's"
+          "short_name": "St. Mary's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-joseph-church-stockbridge",
@@ -9554,7 +9582,8 @@
           "is_accessible": null,
           "lat": 42.2818,
           "lng": -73.3073,
-          "short_name": "St. Joseph's"
+          "short_name": "St. Joseph's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-mary-of-the-lakes-otis",
@@ -9567,7 +9596,8 @@
           "is_accessible": null,
           "lat": 42.1952,
           "lng": -73.0928,
-          "short_name": "St. Mary of the Lakes"
+          "short_name": "St. Mary of the Lakes",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -9853,7 +9883,8 @@
           "is_accessible": null,
           "lat": 42.3534,
           "lng": -73.2854,
-          "short_name": "St. Ann's"
+          "short_name": "St. Ann's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-vincent-de-paul-church-lenox-dale",
@@ -9866,7 +9897,8 @@
           "is_accessible": null,
           "lat": 42.3284,
           "lng": -73.2665,
-          "short_name": "St. Vincent's"
+          "short_name": "St. Vincent's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-patrick-church-west-stockbridge",
@@ -9879,7 +9911,8 @@
           "is_accessible": null,
           "lat": 42.3454,
           "lng": -73.3668,
-          "short_name": "St. Patrick's"
+          "short_name": "St. Patrick's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-ann-family-center-lenox",
@@ -9892,7 +9925,8 @@
           "is_accessible": null,
           "lat": 42.3534,
           "lng": -73.2854,
-          "short_name": "Family Center"
+          "short_name": "Family Center",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -10268,7 +10302,8 @@
           "is_accessible": null,
           "lat": 42.0498,
           "lng": -72.5826,
-          "short_name": "St. Mary’s"
+          "short_name": "St. Mary’s",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -10662,7 +10697,8 @@
           "is_accessible": null,
           "lat": 42.1641,
           "lng": -72.4819,
-          "short_name": "Christ the King"
+          "short_name": "Christ the King",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -11414,7 +11450,8 @@
           "is_accessible": null,
           "lat": 42.1584,
           "lng": -72.4689,
-          "short_name": "Our Lady of Fatima"
+          "short_name": "Our Lady of Fatima",
+          "timezone": "America/New_York"
         },
         {
           "id": "chapel-of-the-little-shepherds-ludlow",
@@ -11427,7 +11464,8 @@
           "is_accessible": null,
           "lat": 42.1583,
           "lng": -72.4689,
-          "short_name": "Little Shepherds Chapel"
+          "short_name": "Little Shepherds Chapel",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -11797,7 +11835,8 @@
           "is_accessible": null,
           "lat": 42.16,
           "lng": -72.4769,
-          "short_name": "St. Elizabeth"
+          "short_name": "St. Elizabeth",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -12062,7 +12101,8 @@
           "is_accessible": null,
           "lat": 42.104,
           "lng": -72.3188,
-          "short_name": "St. Patrick"
+          "short_name": "St. Patrick",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-christopher-church-brimfield",
@@ -12077,7 +12117,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": null,
-          "lng": null
+          "lng": null,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -12346,7 +12387,8 @@
           "is_accessible": null,
           "lat": 42.7009,
           "lng": -73.1087,
-          "short_name": "St. Elizabeth of Hungary"
+          "short_name": "St. Elizabeth of Hungary",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -12779,7 +12821,8 @@
           "is_accessible": null,
           "lat": 42.3209,
           "lng": -72.6412,
-          "short_name": "Church"
+          "short_name": "Church",
+          "timezone": "America/New_York"
         },
         {
           "id": "seas-chapel-florence",
@@ -12792,7 +12835,8 @@
           "is_accessible": null,
           "lat": 42.3209,
           "lng": -72.6784,
-          "short_name": "Chapel"
+          "short_name": "Chapel",
+          "timezone": "America/New_York"
         },
         {
           "id": "seas-office-florence",
@@ -12805,7 +12849,8 @@
           "is_accessible": null,
           "lat": 42.3209,
           "lng": -72.6784,
-          "short_name": "Parish"
+          "short_name": "Parish",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -13094,7 +13139,8 @@
           "is_accessible": null,
           "lat": 42.6959,
           "lng": -72.4527,
-          "short_name": "St. Patrick"
+          "short_name": "St. Patrick",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -13126,9 +13172,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "pdf"
         },
@@ -13143,9 +13187,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "pdf"
         },
@@ -13160,9 +13202,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "pdf"
         },
@@ -13177,9 +13217,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "pdf"
         },
@@ -13194,9 +13232,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "pdf"
         },
@@ -13286,7 +13322,8 @@
           "is_accessible": true,
           "lat": 42.5901,
           "lng": -72.3099,
-          "short_name": "St. Mary"
+          "short_name": "St. Mary",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -13583,7 +13620,8 @@
           "zip": "01069",
           "is_accessible": null,
           "lat": 42.1587,
-          "lng": -72.3288
+          "lng": -72.3288,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -13818,7 +13856,8 @@
           "is_accessible": null,
           "lat": 42.4441,
           "lng": -73.2364,
-          "short_name": "Sacred Heart"
+          "short_name": "Sacred Heart",
+          "timezone": "America/New_York"
         },
         {
           "id": "sacred-heart-office-pittsfield",
@@ -13831,7 +13870,8 @@
           "is_accessible": null,
           "lat": 42.4485,
           "lng": -73.2528,
-          "short_name": "Parish"
+          "short_name": "Parish",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -14158,7 +14198,8 @@
           "is_accessible": null,
           "lat": 42.4661,
           "lng": -73.2504,
-          "short_name": "St. Charles"
+          "short_name": "St. Charles",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-charles-chapel-pittsfield",
@@ -14171,7 +14212,8 @@
           "short_name": "Daily Chapel",
           "notes": "Building across the street from the church. Open Mon-Wed & Fri 9:30 AM - 2:00 PM.",
           "lat": 42.4661,
-          "lng": -73.2504
+          "lng": -73.2504,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -14526,7 +14568,8 @@
           "is_accessible": null,
           "lat": 42.4541,
           "lng": -73.2516,
-          "short_name": "St. Joseph"
+          "short_name": "St. Joseph",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -14554,9 +14597,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14571,9 +14612,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14588,9 +14627,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14605,9 +14642,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14622,9 +14657,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14639,9 +14672,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14656,9 +14687,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14673,9 +14702,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14765,9 +14792,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -14947,9 +14972,7 @@
           "notes": "Stations of the Cross & Bitter Lamentations (Gorzkie Żale)",
           "seasonal": {
             "is_seasonal": true,
-            "season": "lent",
-            "start_date": null,
-            "end_date": null
+            "season": "lent"
           },
           "source": "bulletin_2026-03"
         },
@@ -15011,7 +15034,8 @@
           "is_accessible": true,
           "lat": 42.451,
           "lng": -73.2666,
-          "short_name": "St. Mark"
+          "short_name": "St. Mark",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -15036,9 +15060,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -15053,9 +15075,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -15070,9 +15090,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -15087,9 +15105,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -15104,9 +15120,7 @@
           "notes": "West African Liturgy",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -15360,7 +15374,8 @@
           "is_accessible": null,
           "lat": 42.1645,
           "lng": -72.8474,
-          "short_name": "Holy Family"
+          "short_name": "Holy Family",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -15534,7 +15549,8 @@
           "is_accessible": null,
           "lat": 42.1095,
           "lng": -73.3598,
-          "short_name": "Our Lady of the Valley"
+          "short_name": "Our Lady of the Valley",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -15770,7 +15786,8 @@
           "is_accessible": null,
           "lat": 42.6122,
           "lng": -72.7396,
-          "short_name": "St. Joseph"
+          "short_name": "St. Joseph",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-john-the-baptist-church-colrain",
@@ -15782,7 +15799,8 @@
           "zip": "01340",
           "lat": 42.67,
           "lng": -72.695,
-          "short_name": "St. John's"
+          "short_name": "St. John's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-christopher-church-charlemont",
@@ -15794,7 +15812,8 @@
           "zip": "01339",
           "lat": 42.629,
           "lng": -72.87,
-          "short_name": "St. Christopher's"
+          "short_name": "St. Christopher's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -16249,7 +16268,8 @@
           "is_accessible": null,
           "lat": 42.4773,
           "lng": -72.6077,
-          "short_name": "Holy Family"
+          "short_name": "Holy Family",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-marks-mission-conway",
@@ -16263,7 +16283,8 @@
           "lat": 42.5079,
           "lng": -72.7103,
           "short_name": "St. Mark's",
-          "notes": "Mission church of Holy Family Parish"
+          "notes": "Mission church of Holy Family Parish",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -16623,7 +16644,8 @@
           "zip": "01075",
           "is_accessible": null,
           "lat": 42.2155,
-          "lng": -72.5971
+          "lng": -72.5971,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -16943,7 +16965,8 @@
           "is_accessible": null,
           "lat": 42.0548,
           "lng": -72.7706,
-          "short_name": "Our Lady of the Lake"
+          "short_name": "Our Lady of the Lake",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -16970,9 +16993,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -16987,9 +17008,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17004,9 +17023,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17021,9 +17038,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17038,9 +17053,7 @@
           "notes": "Miraculous Medal Novena follows Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17055,9 +17068,7 @@
           "notes": "St. Joseph Novena follows Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17072,9 +17083,7 @@
           "notes": "St. Jude Novena follows Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17089,9 +17098,7 @@
           "notes": "Also available by appointment",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -17192,7 +17199,8 @@
           "is_accessible": null,
           "lat": 42.1194,
           "lng": -72.6146,
-          "short_name": "All Souls"
+          "short_name": "All Souls",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -17244,7 +17252,8 @@
           "accessibility_notes": null,
           "notes": "Old St. Thomas Aquinas Church",
           "lat": 42.1187,
-          "lng": -72.6063
+          "lng": -72.6063,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -17517,7 +17526,8 @@
           "is_accessible": null,
           "lat": 42.0952,
           "lng": -72.5393,
-          "short_name": "Holy Cross"
+          "short_name": "Holy Cross",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -17922,7 +17932,8 @@
           "is_accessible": null,
           "lat": 42.0883,
           "lng": -72.5597,
-          "short_name": "Holy Name"
+          "short_name": "Holy Name",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -18364,7 +18375,8 @@
           "is_accessible": null,
           "lat": 42.1444,
           "lng": -72.5523,
-          "short_name": "Mary, Mother of Hope"
+          "short_name": "Mary, Mother of Hope",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -18622,7 +18634,8 @@
           "is_accessible": null,
           "lat": 42.1297,
           "lng": -72.5278,
-          "short_name": "Our Lady of the Sacred Heart"
+          "short_name": "Our Lady of the Sacred Heart",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -18901,7 +18914,8 @@
           "is_accessible": null,
           "lat": 42.105,
           "lng": -72.587,
-          "short_name": "Sacred Heart"
+          "short_name": "Sacred Heart",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -18927,9 +18941,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -18944,9 +18956,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -18961,9 +18971,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -18978,9 +18986,7 @@
           "notes": "Vigil Mass",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19010,9 +19016,7 @@
           "notes": "Weekday holiday Masses at 9:00 AM instead",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19027,9 +19031,7 @@
           "notes": "Weekday holiday Masses at 9:00 AM instead",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19044,9 +19046,7 @@
           "notes": "Weekday holiday Masses at 9:00 AM instead",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19061,9 +19061,7 @@
           "notes": "Weekday holiday Masses at 9:00 AM instead",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19078,9 +19076,7 @@
           "notes": "Weekday holiday Masses at 9:00 AM instead",
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19115,7 +19111,7 @@
           "source": "bulletin_2026-03"
         },
         {
-          "id": "parish_065-conf-sat-1500",
+          "id": "parish_065-conf-sat-1500-es",
           "type": "confession",
           "day": "saturday",
           "time": "15:00",
@@ -19125,14 +19121,12 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
         {
-          "id": "parish_065-conf-sat-1700",
+          "id": "parish_065-conf-sat-1700-es",
           "type": "confession",
           "day": "saturday",
           "time": "17:00",
@@ -19142,9 +19136,7 @@
           "notes": null,
           "seasonal": {
             "is_seasonal": false,
-            "season": "year_round",
-            "start_date": null,
-            "end_date": null
+            "season": "year_round"
           },
           "source": "bulletin_2026-03"
         },
@@ -19225,7 +19217,8 @@
           "is_accessible": null,
           "lat": 42.1232,
           "lng": -72.4964,
-          "short_name": "St. Catherine of Siena"
+          "short_name": "St. Catherine of Siena",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -19526,7 +19519,8 @@
           "zip": "01103",
           "is_accessible": null,
           "lat": 42.1044,
-          "lng": -72.5845
+          "lng": -72.5845,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -19824,7 +19818,8 @@
           "zip": "01118",
           "is_accessible": true,
           "lat": 42.0832,
-          "lng": -72.5337
+          "lng": -72.5337,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -20106,7 +20101,8 @@
           "is_accessible": true,
           "lat": 42.0751,
           "lng": -72.538,
-          "short_name": "St. Paul the Apostle"
+          "short_name": "St. Paul the Apostle",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -20325,7 +20321,8 @@
           "lat": 42.1812,
           "lng": -72.3604,
           "short_name": "Sts. Peter & Paul",
-          "notes": "Divine Mercy Rectory on premises. Parish formed 2009 from merger of Sts. Peter & Paul and St. Anne parishes."
+          "notes": "Divine Mercy Rectory on premises. Parish formed 2009 from merger of Sts. Peter & Paul and St. Anne parishes.",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -20703,7 +20700,8 @@
           "is_accessible": null,
           "lat": 42.6034,
           "lng": -72.5606,
-          "short_name": "Our Lady of Czestochowa"
+          "short_name": "Our Lady of Czestochowa",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -21079,7 +21077,8 @@
           "is_accessible": null,
           "lat": 42.6045,
           "lng": -72.5582,
-          "short_name": "Our Lady of Peace"
+          "short_name": "Our Lady of Peace",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -21374,7 +21373,8 @@
           "is_accessible": null,
           "lat": 42.2613,
           "lng": -72.2411,
-          "short_name": "All Saints"
+          "short_name": "All Saints",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-marys-church-ware",
@@ -21389,7 +21389,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.256,
-          "lng": -72.2408
+          "lng": -72.2408,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -21640,7 +21641,8 @@
           "lat": 42.2563,
           "lng": -72.2411,
           "short_name": "St. Mary",
-          "notes": "Shares pastor with All Saints Church, Ware (parish_074). Rectory at 60 South Street."
+          "notes": "Shares pastor with All Saints Church, Ware (parish_074). Rectory at 60 South Street.",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -21842,7 +21844,8 @@
           "lat": 42.1055,
           "lng": -72.6415,
           "name": "St. Thomas the Apostle Church",
-          "type": "church"
+          "type": "church",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -21850,7 +21853,8 @@
         "emails": [
           "stthomassecretary@comcast.net"
         ],
-        "website": "https://www.stthomaswestspringfield.org"
+        "website": "https://www.stthomaswestspringfield.org",
+        "office_hours": "Mon.–Fri. 9:30 a.m. – 4:30 p.m."
       },
       "staff": [
         "pastor",
@@ -21989,7 +21993,7 @@
           "day": "first_friday",
           "time": "08:00",
           "language": "en",
-          "notes": "First Friday Mass",
+          "notes": "First Friday Mass (Civil Holidays 9am)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22073,12 +22077,28 @@
           "location_id": "st-thomas-the-apostle-church-west-springfield"
         },
         {
+          "id": "parish_076-rosary-sun",
+          "type": "rosary",
+          "day": "sunday",
+          "time": null,
+          "language": "en",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "seasonal": {
+            "is_seasonal": false,
+            "season": "year_round"
+          },
+          "source": "bulletin_2026-03",
+          "time_is_inferred": true,
+          "location_id": "st-thomas-the-apostle-church-west-springfield",
+          "end_time": null
+        },
+        {
           "id": "parish_076-rosary-mon",
           "type": "rosary",
           "day": "monday",
-          "time": "08:45",
+          "time": null,
           "language": "en",
-          "notes": "After 8:00 AM Daily Mass",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22092,9 +22112,9 @@
           "id": "parish_076-rosary-tue",
           "type": "rosary",
           "day": "tuesday",
-          "time": "08:45",
+          "time": null,
           "language": "en",
-          "notes": "After 8:00 AM Daily Mass",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22108,9 +22128,9 @@
           "id": "parish_076-rosary-wed",
           "type": "rosary",
           "day": "wednesday",
-          "time": "08:45",
+          "time": null,
           "language": "en",
-          "notes": "After 8:00 AM Daily Mass",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22138,9 +22158,9 @@
           "id": "parish_076-rosary-thu",
           "type": "rosary",
           "day": "thursday",
-          "time": "08:45",
+          "time": null,
           "language": "en",
-          "notes": "After 8:00 AM Daily Mass",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22154,9 +22174,25 @@
           "id": "parish_076-rosary-fri",
           "type": "rosary",
           "day": "friday",
-          "time": "08:45",
+          "time": null,
           "language": "en",
-          "notes": "After 8:00 AM Daily Mass",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "seasonal": {
+            "is_seasonal": false,
+            "season": "year_round"
+          },
+          "source": "bulletin_2026-03",
+          "time_is_inferred": true,
+          "location_id": "st-thomas-the-apostle-church-west-springfield",
+          "end_time": null
+        },
+        {
+          "id": "parish_076-rosary-sat",
+          "type": "rosary",
+          "day": "saturday",
+          "time": null,
+          "language": "en",
+          "notes": "Daily after Morning Mass (~8:45 AM est.)",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22193,8 +22229,8 @@
           },
           "source": "bulletin_2026-03",
           "location_id": "st-thomas-the-apostle-church-west-springfield",
-          "end_time": "19:00",
-          "notes": "Stations of the Cross. Followed by Adoration and Benediction until 8:00 PM. Continuing until Friday, March 27th."
+          "end_time": null,
+          "notes": "Continuing until Friday, March 27th"
         },
         {
           "id": "parish_076-stcr-2026-04-03",
@@ -22256,7 +22292,8 @@
           "lng": -72.7498,
           "short_name": "Holy Trinity",
           "name": "Holy Trinity Church",
-          "notes": "Shares administration with St. Peter & St. Casimir Parish (parish_080)"
+          "notes": "Shares administration with St. Peter & St. Casimir Parish (parish_080)",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -22491,7 +22528,8 @@
           "name": "Our Lady of the Blessed Sacrament Church",
           "city": "Westfield",
           "state": "MA",
-          "zip": "01085"
+          "zip": "01085",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -22779,7 +22817,8 @@
           "zip": "01085",
           "is_accessible": null,
           "lat": 42.1255,
-          "lng": -72.7455
+          "lng": -72.7455,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -23033,7 +23072,8 @@
           "lng": -72.7475,
           "short_name": "St. Peter & St. Casimir",
           "name": "St. Peter & St. Casimir Church",
-          "notes": "Shares administration with Holy Trinity Parish (parish_077)"
+          "notes": "Shares administration with Holy Trinity Parish (parish_077)",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -23242,7 +23282,8 @@
           "is_accessible": true,
           "lat": 42.124,
           "lng": -72.4312,
-          "short_name": "St. Cecilia"
+          "short_name": "St. Cecilia",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -23475,7 +23516,8 @@
           "zip": "01267",
           "is_accessible": null,
           "lat": 42.7121,
-          "lng": -73.2037
+          "lng": -73.2037,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -23813,7 +23855,8 @@
           "zip": "01262",
           "is_accessible": null,
           "lat": 42.2876,
-          "lng": -73.3201
+          "lng": -73.3201,
+          "timezone": "America/New_York"
         }
       ],
       "validation": {
@@ -24543,7 +24586,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.2584,
-          "lng": -72.5154
+          "lng": -72.5154,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -24737,7 +24781,8 @@
           "accessibility_notes": null,
           "notes": null,
           "lat": 42.0973,
-          "lng": -72.5838
+          "lng": -72.5838,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -24996,7 +25041,8 @@
           "accessibility_notes": null,
           "notes": "Chapel of the Holy Spouses (Mary and Joseph) on premises",
           "lat": 42.1436,
-          "lng": -71.5121
+          "lng": -71.5121,
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -25298,7 +25344,8 @@
           "is_accessible": null,
           "lat": 41.9515,
           "lng": -72.5595,
-          "short_name": "Holy Family"
+          "short_name": "Holy Family",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -25508,7 +25555,8 @@
           "is_accessible": null,
           "lat": 41.9862,
           "lng": -72.5311,
-          "short_name": "St. Bernard"
+          "short_name": "St. Bernard",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -25737,7 +25785,8 @@
           "is_accessible": null,
           "lat": 41.9967,
           "lng": -72.5992,
-          "short_name": "St. Patrick's"
+          "short_name": "St. Patrick's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -25962,7 +26011,8 @@
           "is_accessible": null,
           "lat": 42.0197,
           "lng": -72.5645,
-          "short_name": "St. Martha's"
+          "short_name": "St. Martha's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -26341,7 +26391,8 @@
           "is_accessible": null,
           "lat": 41.9837,
           "lng": -72.6668,
-          "short_name": "Sacred Heart"
+          "short_name": "Sacred Heart",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -26625,7 +26676,8 @@
           "is_accessible": null,
           "lat": 43.3982,
           "lng": -72.7014,
-          "short_name": "Annunciation"
+          "short_name": "Annunciation",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -26948,7 +27000,8 @@
           "is_accessible": null,
           "lat": 43.2985,
           "lng": -72.4805,
-          "short_name": "St. Mary's"
+          "short_name": "St. Mary's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-josephs-church-chester",
@@ -26961,7 +27014,8 @@
           "is_accessible": null,
           "lat": 43.2613,
           "lng": -72.5929,
-          "short_name": "St. Joseph's"
+          "short_name": "St. Joseph's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -27215,7 +27269,8 @@
           "is_accessible": null,
           "lat": 43.2331,
           "lng": -72.4236,
-          "short_name": "St. Catherine's"
+          "short_name": "St. Catherine's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-peter-church-north-walpole",
@@ -27228,7 +27283,8 @@
           "is_accessible": null,
           "lat": 43.1418,
           "lng": -72.4493,
-          "short_name": "St. Peter's"
+          "short_name": "St. Peter's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -27491,7 +27547,8 @@
           "is_accessible": null,
           "lat": 43.1346,
           "lng": -72.4481,
-          "short_name": "St. Charles"
+          "short_name": "St. Charles",
+          "timezone": "America/New_York"
         },
         {
           "id": "our-lady-of-the-valley-townshend",
@@ -27504,7 +27561,8 @@
           "is_accessible": null,
           "lat": 43.0475,
           "lng": -72.6675,
-          "short_name": "OLV"
+          "short_name": "OLV",
+          "timezone": "America/New_York"
         },
         {
           "id": "chapel-of-the-snows-bondville",
@@ -27517,7 +27575,8 @@
           "is_accessible": null,
           "lat": 43.1147,
           "lng": -72.9051,
-          "short_name": "Chapel of the Snows"
+          "short_name": "Chapel of the Snows",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -27830,7 +27889,8 @@
           "is_accessible": null,
           "lat": 42.8561,
           "lng": -72.5578,
-          "short_name": "St. Michael's"
+          "short_name": "St. Michael's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -28295,7 +28355,8 @@
           "is_accessible": null,
           "lat": 41.9214,
           "lng": -73.0647,
-          "short_name": "St. Joseph's"
+          "short_name": "St. Joseph's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -28623,7 +28684,8 @@
           "is_accessible": null,
           "lat": 41.8783,
           "lng": -72.9804,
-          "short_name": "IC"
+          "short_name": "IC",
+          "timezone": "America/New_York"
         },
         {
           "id": "immaculate-heart-of-mary-harwinton",
@@ -28636,7 +28698,8 @@
           "is_accessible": null,
           "lat": 41.7708,
           "lng": -73.0671,
-          "short_name": "IHOM"
+          "short_name": "IHOM",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -28847,7 +28910,7 @@
           "day": null,
           "time": null,
           "end_time": null,
-          "location_id": null,
+          "location_id": "immaculate-conception-new-hartford",
           "language": "en",
           "notes": "By appointment",
           "seasonal": {
@@ -29025,7 +29088,8 @@
           "is_accessible": null,
           "lat": 41.8811,
           "lng": -72.7993,
-          "short_name": "St. Mary's"
+          "short_name": "St. Mary's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -29320,7 +29384,8 @@
           "accessibility_notes": "Accessible by side entrance",
           "lat": 41.8478,
           "lng": -72.6454,
-          "short_name": "St. Gabriel's"
+          "short_name": "St. Gabriel's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-joseph-church-windsor",
@@ -29334,7 +29399,8 @@
           "accessibility_notes": "Accessible by side entrance; chairlift at Adoration Chapel",
           "lat": 41.9035,
           "lng": -72.6795,
-          "short_name": "St. Joseph's"
+          "short_name": "St. Joseph's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -29519,7 +29585,7 @@
           "day": null,
           "time": null,
           "end_time": null,
-          "location_id": null,
+          "location_id": "st-gabriel-church-windsor",
           "language": "en",
           "notes": "By appointment",
           "seasonal": {
@@ -29712,7 +29778,8 @@
           "is_accessible": null,
           "lat": 41.9305,
           "lng": -72.6301,
-          "short_name": "St. Mary's"
+          "short_name": "St. Mary's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-robert-bellarmine-windsor-locks",
@@ -29725,7 +29792,8 @@
           "is_accessible": null,
           "lat": 41.9233,
           "lng": -72.6463,
-          "short_name": "St. Robert's"
+          "short_name": "St. Robert's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -30119,7 +30187,8 @@
           "lat": 42.4828,
           "lng": -71.6226,
           "short_name": "IHM Chapel",
-          "notes": "Private monastery chapel open to public; Latin Mass exclusive; monastery dress code enforced"
+          "notes": "Private monastery chapel open to public; Latin Mass exclusive; monastery dress code enforced",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -30639,7 +30708,8 @@
           "is_accessible": null,
           "lat": 41.3347,
           "lng": -72.8037,
-          "short_name": "St. Augustine's"
+          "short_name": "St. Augustine's",
+          "timezone": "America/New_York"
         },
         {
           "id": "st-monica-church-northford",
@@ -30652,7 +30722,8 @@
           "is_accessible": null,
           "lat": 41.3879,
           "lng": -72.7955,
-          "short_name": "St. Monica's"
+          "short_name": "St. Monica's",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -30945,7 +31016,7 @@
           "day": "wednesday",
           "time": "17:00",
           "end_time": "18:00",
-          "location_id": null,
+          "location_id": "st-augustine-church-north-branford",
           "language": "en",
           "notes": "At St. Barnabas; with opportunity for Confession",
           "seasonal": {
@@ -30960,7 +31031,7 @@
           "day": "wednesday",
           "time": "17:00",
           "end_time": "18:00",
-          "location_id": null,
+          "location_id": "st-augustine-church-north-branford",
           "language": "en",
           "notes": "During Adoration at St. Barnabas",
           "seasonal": {
@@ -31034,7 +31105,8 @@
           "lat": 42.7701,
           "lng": -72.3766,
           "short_name": "St. Stanislaus",
-          "notes": "Latin Mass exclusive; Institute of the Good Shepherd (IBP)"
+          "notes": "Latin Mass exclusive; Institute of the Good Shepherd (IBP)",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
@@ -31461,7 +31533,8 @@
           "lng": -73.0456,
           "short_name": "St. Patrick's",
           "notes": "Latin Mass exclusive; Institute of Christ the King Sovereign Priest (ICKSP)",
-          "mailing": "50 Charles St, Waterbury, CT 06708"
+          "mailing": "50 Charles St, Waterbury, CT 06708",
+          "timezone": "America/New_York"
         }
       ],
       "contact": {
