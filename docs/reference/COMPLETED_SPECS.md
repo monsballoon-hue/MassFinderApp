@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (7 specs implemented, 1 queued)
+**Last updated:** 2026-03-14 (7 specs implemented, 2 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -69,6 +69,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **CD2** = Church Detail Round 2
 - **FGP** = Faith Guides & Prayer
 - **BT3** = Backlog Triage Round 3
+- **CCS** = Color Channel Separation
 
 Future specs should continue this pattern with new prefixes.
 
@@ -158,3 +159,19 @@ Future specs should continue this pattern with new prefixes.
 | BT3-26 | Map Chips to Bottom on Mobile | Queued | P1 |
 | BT3-27 | Detail Links Open in External Browser | Queued | P2 |
 | BT3-28 | PWA Banner Session Guard | Queued | P2 |
+
+### UX_Spec_Color_Channel_Separation.md (CCS series)
+**Created:** 2026-03-14 · **Status:** Queued
+**Backlog items:** New (color system redesign — not from existing backlog)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CCS.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| CCS-01 | New Token Definitions (sacred, service, category) | Queued | P1 |
+| CCS-02 | Sacred Content Channel Migration (~22 rules + 16 rgba) | Queued | P1 |
+| CCS-03 | Service Type Dot Color Separation | Queued | P1 |
+| CCS-04 | Event Category Color Separation | Queued | P1 |
+| CCS-05 | YC Brand Color to Sacred Channel | Queued | P1 |
+| CCS-06 | Remaining Accent Usage Audit | Queued | P2 |
+| CCS-07 | Dark Mode Hardcoded Badge Audit | Queued | P2 |
+| CCS-08 | Saint Card Sacred Channel Migration | Queued | P1 |
+| CCS-09 | Confession Card Verified Color Audit | Queued | P3 |
