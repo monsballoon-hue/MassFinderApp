@@ -4,7 +4,7 @@
     "source": "Diocese of Springfield, MA - Online Directory",
     "extracted_date": "2026-02-19",
     "total_parishes": 98,
-    "total_services": 1692,
+    "total_services": 1690,
     "service_types_found": {
       "sunday_mass": 331,
       "daily_mass": 547,
@@ -19115,7 +19115,7 @@
           "source": "bulletin_2026-03"
         },
         {
-          "id": "parish_065-conf-sat-1500-es",
+          "id": "parish_065-conf-sat-1500",
           "type": "confession",
           "day": "saturday",
           "time": "15:00",
@@ -19132,7 +19132,7 @@
           "source": "bulletin_2026-03"
         },
         {
-          "id": "parish_065-conf-sat-1700-es",
+          "id": "parish_065-conf-sat-1700",
           "type": "confession",
           "day": "saturday",
           "time": "17:00",
@@ -21850,8 +21850,7 @@
         "emails": [
           "stthomassecretary@comcast.net"
         ],
-        "website": "https://www.stthomaswestspringfield.org",
-        "office_hours": "Mon.–Fri. 9:30 a.m. – 4:30 p.m."
+        "website": "https://www.stthomaswestspringfield.org"
       },
       "staff": [
         "pastor",
@@ -21990,7 +21989,7 @@
           "day": "first_friday",
           "time": "08:00",
           "language": "en",
-          "notes": "First Friday Mass (Civil Holidays 9am)",
+          "notes": "First Friday Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22074,28 +22073,12 @@
           "location_id": "st-thomas-the-apostle-church-west-springfield"
         },
         {
-          "id": "parish_076-rosary-sun",
-          "type": "rosary",
-          "day": "sunday",
-          "time": null,
-          "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
-          "seasonal": {
-            "is_seasonal": false,
-            "season": "year_round"
-          },
-          "source": "bulletin_2026-03",
-          "time_is_inferred": true,
-          "location_id": "st-thomas-the-apostle-church-west-springfield",
-          "end_time": null
-        },
-        {
           "id": "parish_076-rosary-mon",
           "type": "rosary",
           "day": "monday",
-          "time": null,
+          "time": "08:45",
           "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "notes": "After 8:00 AM Daily Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22109,9 +22092,9 @@
           "id": "parish_076-rosary-tue",
           "type": "rosary",
           "day": "tuesday",
-          "time": null,
+          "time": "08:45",
           "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "notes": "After 8:00 AM Daily Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22125,9 +22108,9 @@
           "id": "parish_076-rosary-wed",
           "type": "rosary",
           "day": "wednesday",
-          "time": null,
+          "time": "08:45",
           "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "notes": "After 8:00 AM Daily Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22155,9 +22138,9 @@
           "id": "parish_076-rosary-thu",
           "type": "rosary",
           "day": "thursday",
-          "time": null,
+          "time": "08:45",
           "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "notes": "After 8:00 AM Daily Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22171,25 +22154,9 @@
           "id": "parish_076-rosary-fri",
           "type": "rosary",
           "day": "friday",
-          "time": null,
+          "time": "08:45",
           "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
-          "seasonal": {
-            "is_seasonal": false,
-            "season": "year_round"
-          },
-          "source": "bulletin_2026-03",
-          "time_is_inferred": true,
-          "location_id": "st-thomas-the-apostle-church-west-springfield",
-          "end_time": null
-        },
-        {
-          "id": "parish_076-rosary-sat",
-          "type": "rosary",
-          "day": "saturday",
-          "time": null,
-          "language": "en",
-          "notes": "Daily after Morning Mass (~8:45 AM est.)",
+          "notes": "After 8:00 AM Daily Mass",
           "seasonal": {
             "is_seasonal": false,
             "season": "year_round"
@@ -22226,8 +22193,8 @@
           },
           "source": "bulletin_2026-03",
           "location_id": "st-thomas-the-apostle-church-west-springfield",
-          "end_time": null,
-          "notes": "Continuing until Friday, March 27th"
+          "end_time": "19:00",
+          "notes": "Stations of the Cross. Followed by Adoration and Benediction until 8:00 PM. Continuing until Friday, March 27th."
         },
         {
           "id": "parish_076-stcr-2026-04-03",
