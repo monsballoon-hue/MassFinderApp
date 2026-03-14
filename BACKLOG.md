@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-14
-**ID sequence:** IDEA-050 →
-**Total items:** 49
+**ID sequence:** IDEA-053 →
+**Total items:** 52
 
 ---
 
@@ -538,3 +538,33 @@ On mobile, the filter pills on the Map tab need to be moved to the bottom of the
 **Spec ref:** (none)
 
 When swiping left or right on the filter pills at the top of the Find tab, it is very easy to inadvertently trigger a page refresh. The refresh causes unintended re-rendering. Reduce the swipe sensitivity or adjust the gesture handling so horizontal swipes on the pills do not trigger the pull-to-refresh behavior.
+
+## IDEA-050 — Church detail bulletin and website links should open in external browser
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+Clicking on the bulletin or website link on a church detail page opens the URL within the app itself rather than in the user's dedicated mobile browser. These external links should open in the system browser (Safari, Chrome, etc.) so users get full browser functionality and can navigate back to the app cleanly.
+
+## IDEA-051 — Young Catholic event cards on Find tab need subtler design treatment
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+The Young Catholic church cards on the Find tab are styled too differently from the standard church cards. They should match the regular card design but include a subtle flair or indicator that distinguishes them as young adult event cards. The current treatment is over the top — dial it back to something that fits within the existing card system while still being identifiable.
+
+## IDEA-052 — PWA update banner appearing too frequently without actual updates
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** typed
+**Related:** IDEA-001
+**Spec ref:** (none)
+
+The "Update available — Refresh" banner is appearing nearly every time the app is opened, even when no new code has been pushed. The service worker update check is triggering false positives. Ensure the update banner only displays when there is a genuine new deployment, not on routine app opens.
