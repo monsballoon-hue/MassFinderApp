@@ -162,16 +162,16 @@ function renderMore() {
       novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>'
     };
     var ptColors = {
-      rosary: 'var(--color-accent)',
-      examination: '#6B21A8',
-      stations: isLentSeason() ? '#6B21A8' : 'var(--color-text-secondary)',
-      novena: 'var(--color-accent)'
+      rosary: 'var(--color-sacred)',
+      examination: 'var(--color-sacred)',
+      stations: 'var(--color-sacred)',
+      novena: 'var(--color-sacred)'
     };
     var ptBgColors = {
-      rosary: 'var(--color-accent-pale)',
-      examination: 'rgba(107,33,168,0.08)',
-      stations: isLentSeason() ? 'rgba(107,33,168,0.08)' : 'var(--color-surface-hover)',
-      novena: 'var(--color-accent-pale)'
+      rosary: 'var(--color-sacred-pale)',
+      examination: 'var(--color-sacred-pale)',
+      stations: 'var(--color-sacred-pale)',
+      novena: 'var(--color-sacred-pale)'
     };
 
     // EMT-03-B: Contextual "today" highlight
