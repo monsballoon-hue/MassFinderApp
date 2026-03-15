@@ -569,3 +569,19 @@ Future specs should continue this pattern with new prefixes.
 | PLR-03 | Guided Prayers Elevated to Top | Queued | P1 |
 | PLR-04 | Favorites System + Quick Access Strip | Queued | P2 |
 | PLR-05 | Visual Warmth: Spacing + Typography | Queued | P2 |
+
+### Arch_Spec_Immersive_Prayer_API.md (ARC series)
+**Created:** 2026-03-15 · **Status:** Ready for implementation
+**Backlog items:** IDEA-119
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_ARC.md
+| ID | Title | Status |
+|----|-------|--------|
+| ARC-01 | Create `src/prayer-core.js` shared utilities | Queued |
+| ARC-02 | Enhance `reader.registerModule()` with immersive flag | Queued |
+| ARC-03 | Refactor `rosary.js` to use prayer-core | Queued |
+| ARC-04 | Refactor `chaplet.js` to use prayer-core | Queued |
+| ARC-05 | Refactor `stations.js` to use prayer-core | Queued |
+| ARC-06 | Refactor `novena.js` to use prayer-core | Queued |
+| ARC-07 | Refactor `prayerbook.js` to use prayer-core | Queued |
+| ARC-08 | Refactor `examination.js` to use prayer-core | Queued |
+| ARC-09 | Update MODULE_MAP.md | Queued |
