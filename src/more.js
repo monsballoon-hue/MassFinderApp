@@ -262,13 +262,138 @@ function _renderSeasonalMoment(events) {
     }
   }
 
-  // Future: SOT-09 (Monthly Devotion), SOT-10 (O Antiphons) will push candidates here
+  // SOT-09: Monthly Devotion Card (lowest priority — fills empty slots)
+  var MONTHLY_DEVOTIONS = [
+    { month: 0, title: 'January: The Holy Name of Jesus', subtitle: 'Devotion to the Sacred Name', body: '<p>January is dedicated to the Holy Name of Jesus. The feast of the Holy Name (January 3) celebrates the Name above all names, at which \u201cevery knee should bend\u201d (Philippians 2:10). The faithful are encouraged to invoke the Holy Name with reverence throughout this month.</p>' },
+    { month: 1, title: 'February: The Holy Family', subtitle: 'Patron of families and home life', body: '<p>February is dedicated to the Holy Family of Jesus, Mary, and Joseph. The faithful are invited to pray for the sanctification of family life and to look to the Holy Family as a model of love, obedience, and faithfulness in the domestic church.</p>' },
+    { month: 2, title: 'March: Month of St. Joseph', subtitle: 'Patron of the Universal Church', body: '<p>March is dedicated to St. Joseph, foster father of Jesus and patron of the Universal Church. His feast day falls on March 19. The faithful are encouraged to seek his intercession for workers, fathers, and those facing difficult decisions.</p>', action: 'Pray the St. Joseph Novena \u2192', actionFn: 'openNovena()' },
+    { month: 3, title: 'April: Month of the Eucharist', subtitle: 'The source and summit of the Christian life', body: '<p>April is dedicated to devotion to the Blessed Sacrament. The Eucharist is \u201cthe source and summit of the Christian life\u201d (<span class="ccc-ref">CCC 1324</span>). The faithful are encouraged to attend Mass, visit the Blessed Sacrament, and deepen their understanding of this central mystery.</p>' },
+    { month: 4, title: 'May: Month of Mary', subtitle: 'Queen of the Most Holy Rosary', body: '<p>May is dedicated to the Blessed Virgin Mary. The faithful are invited to pray the Rosary daily, participate in May Crowning devotions, and entrust themselves to Our Lady\u2019s intercession.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
+    { month: 5, title: 'June: The Sacred Heart of Jesus', subtitle: 'Devotion to Christ\u2019s infinite love', body: '<p>June is dedicated to the Sacred Heart of Jesus, whose feast falls on the Friday after Corpus Christi. This devotion centers on Christ\u2019s boundless love for humanity, symbolized by His heart aflame. The faithful are encouraged to make acts of reparation and to consecrate themselves to the Sacred Heart.</p>' },
+    { month: 6, title: 'July: The Precious Blood', subtitle: 'The price of our redemption', body: '<p>July is dedicated to the Precious Blood of Jesus, shed for the salvation of the world. The faithful are invited to meditate on the sacrifice of Calvary and to receive the Eucharist with renewed gratitude for the gift of redemption.</p>' },
+    { month: 7, title: 'August: The Immaculate Heart of Mary', subtitle: 'A heart united perfectly to Christ', body: '<p>August is dedicated to the Immaculate Heart of Mary, whose memorial falls on the Saturday after the Sacred Heart. The faithful are invited to entrust their lives to her maternal care and to imitate her perfect union with her Son.</p>' },
+    { month: 8, title: 'September: Our Lady of Sorrows', subtitle: 'The Seven Sorrows of the Blessed Mother', body: '<p>September is dedicated to Our Lady of Sorrows, whose memorial falls on September 15. The faithful are encouraged to meditate on the seven sorrows Mary endured \u2014 from Simeon\u2019s prophecy to the burial of Jesus \u2014 and to unite their own sufferings with hers.</p>' },
+    { month: 9, title: 'October: Month of the Rosary', subtitle: 'The prayer that shaped history', body: '<p>October is dedicated to the Most Holy Rosary. The feast of Our Lady of the Rosary falls on October 7. The faithful are encouraged to pray the Rosary daily, either alone or with family, and to meditate on the mysteries of Christ\u2019s life.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
+    { month: 10, title: 'November: The Holy Souls', subtitle: 'Remembering the faithful departed', body: '<p>November is dedicated to the Holy Souls in Purgatory. The month begins with All Saints\u2019 Day (November 1) and All Souls\u2019 Day (November 2). The faithful are encouraged to pray for the dead, offer Masses for their intentions, and visit cemeteries in a spirit of hope in the resurrection.</p>' },
+    { month: 11, title: 'December: The Immaculate Conception', subtitle: 'Preparing for the coming of Christ', body: '<p>December is dedicated to the Immaculate Conception of the Blessed Virgin Mary, whose solemnity falls on December 8 and is a Holy Day of Obligation. As Advent unfolds, the Church looks to Mary\u2019s \u201cyes\u201d as the model of faith and readiness for the Lord\u2019s coming.</p>' }
+  ];
+  var nowMonth = new Date().getMonth();
+  var md = MONTHLY_DEVOTIONS[nowMonth];
+  if (md) {
+    var mdChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    var mdAction = md.actionFn ? '<div class="seasonal-card-action" onclick="event.stopPropagation();' + md.actionFn + '">' + md.action + '</div>' : '';
+    candidates.push({
+      priority: 4,
+      html: '<details class="seasonal-card">'
+        + '<summary>'
+        + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>'
+        + '<div class="seasonal-card-body">'
+        + '<div class="seasonal-card-title">' + esc(md.title) + '</div>'
+        + '<div class="seasonal-card-subtitle">' + esc(md.subtitle) + '</div>'
+        + '</div>'
+        + mdChev
+        + '</summary>'
+        + '<div class="seasonal-card-expanded">'
+        + md.body
+        + mdAction
+        + '</div>'
+        + '</details>'
+    });
+  }
+
+  // SOT-10: O Antiphons of Advent (December 17-23)
+  var O_ANTIPHONS = {
+    17: { latin: 'O Sapientia', english: 'O Wisdom', text: 'O Wisdom, who came from the mouth of the Most High, reaching from end to end and ordering all things mightily and sweetly: come and teach us the way of prudence.', ref: 'Isaiah 11:2\u20133' },
+    18: { latin: 'O Adonai', english: 'O Lord', text: 'O Lord and Ruler of the house of Israel, who appeared to Moses in the flame of the burning bush and gave him the law on Sinai: come and redeem us with outstretched arm.', ref: 'Exodus 3:2' },
+    19: { latin: 'O Radix Jesse', english: 'O Root of Jesse', text: 'O Root of Jesse, who stand as a sign for the peoples, before whom kings shall shut their mouths, whom the nations shall seek: come and deliver us, and delay not.', ref: 'Isaiah 11:10' },
+    20: { latin: 'O Clavis David', english: 'O Key of David', text: 'O Key of David and Scepter of the house of Israel, who open and no one shuts, who shut and no one opens: come and lead forth the captive from prison, sitting in darkness and the shadow of death.', ref: 'Isaiah 22:22' },
+    21: { latin: 'O Oriens', english: 'O Dayspring', text: 'O Dayspring, Brightness of the Light eternal and Sun of Justice: come and enlighten those who sit in darkness and the shadow of death.', ref: 'Malachi 4:2' },
+    22: { latin: 'O Rex Gentium', english: 'O King of Nations', text: 'O King of Nations and their desired One, the Cornerstone that makes both one: come and save man whom you formed from the dust of the earth.', ref: 'Isaiah 28:16' },
+    23: { latin: 'O Emmanuel', english: 'O God With Us', text: 'O Emmanuel, our King and Lawgiver, the Expected of the nations and their Savior: come and save us, O Lord our God.', ref: 'Isaiah 7:14' }
+  };
+  var nowDate = new Date();
+  if (nowDate.getMonth() === 11 && O_ANTIPHONS[nowDate.getDate()]) {
+    var oa = O_ANTIPHONS[nowDate.getDate()];
+    var oaChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    candidates.push({
+      priority: 1,
+      html: '<details class="seasonal-card">'
+        + '<summary>'
+        + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>'
+        + '<div class="seasonal-card-body">'
+        + '<div class="seasonal-card-title">' + esc(oa.latin) + ' \u2014 ' + esc(oa.english) + '</div>'
+        + '<div class="seasonal-card-subtitle">Dec ' + nowDate.getDate() + ' \u00b7 The O Antiphons of Advent</div>'
+        + '</div>'
+        + oaChev
+        + '</summary>'
+        + '<div class="seasonal-card-expanded">'
+        + '<p style="font-style:italic">' + esc(oa.text) + '</p>'
+        + '<p style="font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:var(--space-2)">' + esc(oa.ref) + '</p>'
+        + '</div>'
+        + '</details>'
+    });
+  }
 
   // Sort by priority (1 = highest), take top 2
   candidates.sort(function(a, b) { return a.priority - b.priority; });
   var top = candidates.slice(0, 2);
 
   el.innerHTML = top.map(function(c) { return c.html; }).join('');
+}
+
+// ── Seasonal CCC Spotlight (SOT-04) ──
+var SEASONAL_CCC = {
+  lent: [540, 1430, 1431, 1434, 1438, 1095, 1168, 1169, 538, 1451, 1452, 1455],
+  easter: [638, 640, 641, 642, 647, 648, 651, 652, 655, 656, 729, 730],
+  advent: [522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 524],
+  christmas: [456, 457, 458, 459, 460, 461, 462, 463, 464, 465, 466, 467],
+  ordinary: [1691, 1692, 1693, 1694, 1695, 1696, 1697, 1698, 1699, 1700, 1701, 1702]
+};
+
+function _renderSeasonalCCC() {
+  var el = document.getElementById('dailyFormation');
+  if (!el) return;
+  var esc = require('./utils.js').esc;
+  var snippet = require('./snippet.js');
+
+  var season = document.documentElement.getAttribute('data-season') || 'ordinary';
+  var paragraphs = SEASONAL_CCC[season] || SEASONAL_CCC.ordinary;
+
+  // Rotate weekly — deterministic based on week of year
+  var now = new Date();
+  var startOfYear = new Date(now.getFullYear(), 0, 1);
+  var weekNum = Math.floor((now - startOfYear) / (7 * 24 * 60 * 60 * 1000));
+  var cccNum = paragraphs[weekNum % paragraphs.length];
+
+  el.style.display = '';
+  el.innerHTML = '<div class="formation-card">'
+    + '<div class="formation-label">Catechism for the Season</div>'
+    + '<span class="ref-tap ref-tap--ccc" role="button" tabindex="0" data-ccc="' + cccNum + '">CCC ' + cccNum + '</span>'
+    + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;margin-top:var(--space-3)">Loading\u2026</div>'
+    + '</div>';
+
+  // Wire the CCC pill
+  var pill = el.querySelector('.ref-tap--ccc');
+  if (pill) {
+    pill.addEventListener('click', function(ev) {
+      ev.stopPropagation();
+      snippet.showSnippet('ccc', String(cccNum), pill);
+    });
+  }
+
+  // Load the CCC paragraph text
+  var cccData = require('./ccc-data.js');
+  cccData.loadCCC().then(function(data) {
+    if (!data) return;
+    var para = data.paragraphs ? data.paragraphs.find(function(p) { return p.number === cccNum; }) : null;
+    if (!para) return;
+    var text = para.text || '';
+    // Show first 2 sentences
+    var sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    var preview = sentences.slice(0, 2).join(' ').trim();
+    var textEl = el.querySelector('[style*="font-prayer"]');
+    if (textEl) textEl.textContent = preview;
+  });
 }
 
 // ── renderMore ──
@@ -371,8 +496,8 @@ function renderMore() {
     }
   })();
 
-  // Daily Formation (MT-02: combined Baltimore Q&A + Summa) — disabled for v1, re-enable when ready
-  // if (typeof window.renderDailyFormation === 'function') window.renderDailyFormation();
+  // SOT-04: Seasonal CCC Spotlight — repurpose dailyFormation slot
+  _renderSeasonalCCC();
 
   // Prayer Tools grid
   var exam = require('./examination.js');
