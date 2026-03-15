@@ -636,3 +636,25 @@ Pattern: same as `initPanelSwipe()` in app.js (line 497).
 | OBW-08 | Desktop & Tablet Adaptation | P2 | 20 min |
 
 **Total estimated implementation time:** ~3 hours
+
+---
+
+## Status Summary
+
+- OBW-01 — Overlay Container & Layout Structure — **done**
+- OBW-02 — Step 1 — Find — **done**
+- OBW-03 — Step 2 — Save — **done**
+- OBW-04 — Step 3 — Pray/Learn/Grow — **done**
+- OBW-05 — Step 4 — Install (conditional) — **done**
+- OBW-06 — Standalone Detection & Step Array — **done**
+- OBW-07 — Dismiss Behavior & Persistence — **done**
+- OBW-08 — Desktop & Tablet Adaptation — **done**
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done (all 8 items)
+- **Files changed:** index.html — added #onboardOverlay div; css/app.css — added ~50 lines of .ob-* styles including dark mode, desktop media query; src/app.js — added OB step data, render/advance/dismiss/show functions, init() gate with returning user protection, dev panel toggle
+- **Approach:** Full-screen modal carousel following the install-guide.js pattern. 3 content steps (Find/Save/Pray) plus conditional 4th install step for browser users. Standalone detection via matchMedia + navigator.standalone. Install step monkey-patches closeInstallGuide to chain dismiss. Swipe gestures on content area. Dev panel toggle clears/sets mf-onboarding-complete.
+- **Deviations from spec:** None
+- **Known issues:** None observed
