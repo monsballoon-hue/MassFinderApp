@@ -1349,24 +1349,25 @@ Add `text_es` fields to prayerbook.json for standalone prayers across 5 categori
 **Dependencies:** IDEA-097 (shared helper), IDEA-098 (standard prayer texts already sourced)
 **Audience fit:** Completes the Spanish prayer experience. Lower urgency than Phases 1-3.
 
-## IDEA-101 — More tab v2: restructure prayer tools and surface Catholic Library
+## IDEA-101 — Prayer tools grid restructure
 **Category:** enhancement
 **Status:** spec-ready
 **Date logged:** 2026-03-15
-**Amended:** 2026-03-15
 **Source:** UX evaluation
-**Related:** IDEA-067, IDEA-068, IDEA-069, IDEA-071
-**Spec ref:** PMV-02 through PMV-07 (PMV-01 dropped)
+**Related:** IDEA-067, IDEA-068, IDEA-069
+**Spec ref:** PMV-02, PMV-03, PMV-04, PMV-07
 
-The More tab's "Prayer & Devotion" zone has outgrown its flat 2x2 grid container. 7 prayer tools, a misleading "coming soon" library teaser, and hidden reference content all compete for attention with no visual hierarchy.
-
-V2 restructure (amended — Explore/Baltimore/Summa deferred, Daily Formation stays put):
-- PMV-02: Fixed 2x2 guided prayer grid (Rosary, Chaplet, Exam, Stations) — position-stable
-- PMV-03: Prayer Book as distinctive full-width gateway card
+Prayer tools grid restructure — Zone 2 only, no Zone 1/3 changes:
+- PMV-02: Fixed 2×2 guided grid (Rosary, Chaplet, Exam, Stations) — position-stable
+- PMV-03: Prayer Book as full-width gateway card below grid
 - PMV-04: Compact "Your Practice" tracker strip (Novenas, First Friday)
-- PMV-05: New visible "Catholic Library" section (CCC + Bible only)
-- PMV-06: Zone seam cleanup, remove library teaser, restructure Faith Guides
-- PMV-07: Simplify contextual promotion to visual emphasis only (no position changes)
+- PMV-07: Simplify contextual promotion to visual-only (no position changes)
+
+Full spec: `docs/plans/UX_Spec_Prayer_More_V2.md`
+Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** None
 
 Full spec: `docs/plans/UX_Spec_Prayer_More_V2.md`
 Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`

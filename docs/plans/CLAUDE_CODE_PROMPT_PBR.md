@@ -1,9 +1,8 @@
-# Claude Code Prompt — PBR (Prayer Book Refinements) — Amended
+# Claude Code Prompt — PBR (Prayer Book Internal Navigation)
 
 **Spec:** `docs/plans/UX_Spec_Prayer_Book_Refinements.md`
-**Scope:** Prayer Book internal UX + sacred pause tuning
-**Priority:** P2 — implement after PMV series
-**Model recommendation:** Sonnet — tight, well-scoped changes
+**Priority:** P2 — implement after PMV
+**Model recommendation:** Sonnet
 
 ---
 
@@ -13,75 +12,51 @@
 git checkout main && git pull
 ```
 
-Read CLAUDE.md. Read the full spec at `docs/plans/UX_Spec_Prayer_Book_Refinements.md`.
+Read CLAUDE.md. Read `docs/plans/UX_Spec_Prayer_Book_Refinements.md`.
 
 ---
 
-## Task
+## Task (5 items, 1 commit)
 
-Implement PBR-01 through PBR-05 as described in the spec.
+### 1. PBR-01: Sacred Pause removal
+`src/reader.js` line ~77: remove `prayerbook` from PRAYER_MODES.
 
-### 1. PBR-01: Remove Sacred Pause from Prayer Book
+### 2. PBR-02: Quick access pills
+In `src/prayerbook.js` `_renderList()`, before search input when `!_searchQuery`, render horizontal pill row. IDs: `sign_of_cross`, `our_father`, `hail_mary`, `glory_be`, `act_of_contrition_traditional`. Each calls `prayerbookToggle()`. Add CSS per spec.
 
-In `src/reader.js` line ~77, remove `prayerbook` from `PRAYER_MODES`:
-```js
-var PRAYER_MODES = { rosary: 1, chaplet: 1, stations: 1, novena: 1 };
-```
+### 3. PBR-03: Guided section divider
+Wrap litanies + lectio in `<div class="prayerbook-guided-section">` (non-search only). Sacred-tinted border-top CSS per spec.
 
-### 2. PBR-02: Quick Access Pills
+### 4. PBR-04: Length indicators
+In `_renderPrayerRow()`, compute word count. Show "brief" (≤40w) or "long" (>100w) before chevron. Hide when expanded. CSS per spec.
 
-In `src/prayerbook.js` `_renderList()`, before the search input (only when `!_searchQuery`), render a horizontal scroll row of 5 pills. **Exact IDs from prayerbook.json:**
-```js
-var quickIds = ['sign_of_cross', 'our_father', 'hail_mary', 'glory_be', 'act_of_contrition_traditional'];
-```
-Each pill calls `prayerbookToggle()` with the prayer ID. Add `.prayerbook-quick` and `.prayerbook-quick-pill` CSS per spec. Dark mode override needed.
+### 5. PBR-05: Recently opened
+Add `_trackRecent(prayerId)` storing last 3 in `mf-prayerbook-recent`. Call from `prayerbookToggle()` on open. Render "Recent" section above categories when not searching. Standard `.prayerbook-row` render.
 
-### 3. PBR-03: Guided Section Divider
-
-In `_renderList()`, wrap the litanies + lectio sections in `<div class="prayerbook-guided-section">`. Only in non-search mode. Add CSS: sacred-tinted border-top, category title color override. Dark mode variant.
-
-### 4. PBR-04: Prayer Length Indicator
-
-In `_renderPrayerRow()`, compute word count from `prayer.text`. Show "brief" for <=40 words, "long" for >100 words, nothing for middle. Add `<span class="prayerbook-length">` before the chevron SVG. **Hide when prayer is expanded** (isOpen check). Minimal CSS per spec.
-
-### 5. PBR-05: Recently Opened Prayers
-
-Add `_trackRecent(prayerId)` — stores last 3 opened prayer IDs in `mf-prayerbook-recent` localStorage. Call from `prayerbookToggle()` when opening (not closing). In `_renderList()`, when not searching and recent prayers exist, render "Recent" section above categories. Recent prayers render as standard `.prayerbook-row` with full expand/collapse behavior.
-
-### Key conventions:
-- CommonJS, `var`, no arrow functions
-- `utils.esc()` for user-facing strings
-- Design tokens only — never hardcode colors
-- Dark mode for every new CSS class
-- Touch targets >= 44pt
-
-### Files to modify:
+### Files:
 - `src/reader.js` — PBR-01 only
 - `src/prayerbook.js` — PBR-02 through PBR-05
-- `css/app.css` — New classes
+- `css/app.css` — new classes + dark mode
 
 ### Test:
 ```
 npm run build
 ```
-- [ ] Prayer Book opens instantly (no sacred pause)
-- [ ] Rosary/Chaplet/Stations/Novena still show sacred pause
-- [ ] Quick access: 5 pills, correct IDs, tapping opens + scrolls
-- [ ] Pills hidden during search
-- [ ] Guided section has sacred-tinted divider
-- [ ] Length: "brief" on Sign of Cross/Glory Be, "long" on Nicene Creed/Angelus
-- [ ] Length labels hidden when prayer expanded
-- [ ] Recent: populates after opening prayers, max 3, most recent first
-- [ ] Recent hidden during search
-- [ ] All elements render in dark mode
+- [ ] Prayer Book: no sacred pause. Rosary/Chaplet/Stations/Novena: still have pause.
+- [ ] 5 quick pills, correct IDs, tap → expand + scroll
+- [ ] Sacred divider above guided content
+- [ ] "brief" on Sign of Cross/Glory Be, "long" on Nicene Creed/Angelus
+- [ ] Labels hidden when expanded
+- [ ] Recent: populates after use, max 3, hidden during search
+- [ ] Dark mode on all new elements
 
 ### Commit:
 ```
-feat: prayer book internal UX refinements (PBR-01-05)
+feat: prayer book navigation refinements (PBR-01-05)
 
-- Remove sacred pause from Prayer Book entry (PBR-01)
+- Remove sacred pause from reference lookups (PBR-01)
 - Quick access pills for 5 essential prayers (PBR-02)
-- Visual divider for guided litanies/lectio section (PBR-03)
-- Prayer length indicators: brief/long (PBR-04)
-- Recently opened prayers with localStorage tracking (PBR-05)
+- Guided section divider for litanies/Lectio (PBR-03)
+- Brief/long length indicators (PBR-04)
+- Recently opened prayers via localStorage (PBR-05)
 ```
