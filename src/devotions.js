@@ -21,7 +21,7 @@ reader.registerModule('confession-guide', {
     bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
       + _wrapScriptureRefs(_wrapTerms(guide.body))
       + '<div style="margin-top:var(--space-5)">'
-      + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=confession]\');if(c)c.click()" '
+      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=confession]\');if(c)c.click()" '
       + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
       + 'Find Confession near you</button>'
       + '</div></div>';
