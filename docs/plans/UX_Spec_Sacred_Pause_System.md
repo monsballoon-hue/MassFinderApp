@@ -1,11 +1,19 @@
 # UX Spec — Sacred Pause System (SLV-07 through SLV-11)
 
 **Created:** 2026-03-15
-**Status:** Queued
+**Status:** Implemented
 **Prefix:** SLV (Soul / Visual Language — addendum to UX_Spec_Soul_Visual_Language.md)
 **Claude Code prompt:** `docs/plans/CLAUDE_CODE_PROMPT_SLV_PAUSE.md`
 **Branch:** `content-additions`
 **Depends on:** SLV-01 (the season transition overlay becomes the first consumer of the shared system)
+
+| ID | Title | Status |
+|----|-------|--------|
+| SLV-07 | Sacred Pause Infrastructure | done |
+| SLV-08 | Prayer Tool Entry Pause | done |
+| SLV-09 | Holy Day & Solemnity Recognition | done |
+| SLV-10 | Readings Liturgical Day Header | done |
+| SLV-11 | Examination Centering Screen Enhancement | done |
 
 ---
 
@@ -956,3 +964,20 @@ SLV-11 (Examination Enhancement)
 4. SLV-09 (solemnity recognition — needs dedup testing with SLV-01)
 5. SLV-10 (readings header — independent, can be done anytime)
 6. SLV-11 (examination enhancement — independent CSS, can be done anytime)
+
+---
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:**
+  - `src/sacred-pause.js` (new) — shared sacred pause overlay system with show(), showAfter(), isActive(), session cap (2), storage guards (session/day/once/value-match)
+  - `src/app.js` — added require for sacred-pause.js
+  - `src/readings.js` — refactored SLV-01 season transition from custom overlay to sacredPause.show(); added checkSolemnityPause() function with major day recognition and HDO support; added liturgical day header prepend in fetchReadings()
+  - `src/reader.js` — added SLV-08 prayer entry pause in readerOpen() isNewOpen block for rosary, chaplet, stations, novena, prayerbook
+  - `src/more.js` — wired readings.checkSolemnityPause(events) into startup chain after setLiturgicalSeason
+  - `css/app.css` — replaced .season-overlay CSS with .sacred-pause CSS (staggered text animations, seasonal backgrounds, dark mode); added .readings-lit-header with color dots and dark mode; enhanced .exam-opening styles (sacred gold icon with glow, larger prayer text, sacred button with glow shadow, dark mode overrides)
+- **Approach:** Created sacred-pause.js as the shared infrastructure, then refactored the existing SLV-01 season transition to use it (removing the old #seasonTransition div and .season-overlay CSS). Injected prayer entry pause non-blockingly at the start of the isNewOpen block in reader.js. Solemnity recognition uses showAfter() for sequencing with season transitions, with dedup for days where season change already covers the solemnity. Readings header resolves litcal data from the cached events array.
+- **Deviations from spec:** None
+- **Known issues:** None observed
