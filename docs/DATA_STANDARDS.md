@@ -74,7 +74,7 @@ The `day` field classifies **when** (monthly occurrence). The `type` field class
 
 `type: "sunday_mass"`, `day: "saturday"`, `notes: "Vigil Mass"`
 
-**Cutoff:** Saturday Mass at 2:00 PM or later = vigil (`sunday_mass`). Before 2:00 PM = `daily_mass`.
+**Cutoff:** Saturday Mass at 4:00 PM or later = vigil (`sunday_mass`). Before 4:00 PM = `daily_mass`.
 
 ### Holy Day of Obligation Masses
 

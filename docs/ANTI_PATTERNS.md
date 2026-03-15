@@ -89,7 +89,7 @@ Both are needed. `overscroll-behavior` handles the physics; `overflow: hidden` i
 
 **The Bug:** A Saturday Mass is tagged as `sunday_mass` when it should be `daily_mass`, or vice versa.
 
-**Rule:** Saturday Mass at 2:00 PM or later → `sunday_mass` (vigil). Before 2:00 PM → `daily_mass`. This is a liturgical rule, not an arbitrary cutoff.
+**Rule:** Saturday Mass at 4:00 PM or later → `sunday_mass` (vigil). Before 4:00 PM → `daily_mass`. This is a liturgical rule, not an arbitrary cutoff.
 
 ---
 
