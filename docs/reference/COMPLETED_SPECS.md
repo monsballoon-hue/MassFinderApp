@@ -492,3 +492,17 @@ Future specs should continue this pattern with new prefixes.
 |----|-------|--------|
 | AGC-01 | `.devot-glance` Visual Pattern (CSS class, light + dark) | Queued |
 | AGC-02 | Reader Overlay `p:first-child` → `p:first-of-type` Fix | Queued |
+
+### Content_Spec_AtAGlance.md (CON-32 through CON-38)
+**Created:** 2026-03-15 · **Status:** Ready for implementation (Catholic Review + UX Design complete)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CON_Glance.md
+**Depends on:** AGC-01 + AGC-02 (must land before or with)
+| ID | Title | Status |
+|----|-------|--------|
+| CON-32 | At a Glance — How to Go to Confession | Queued |
+| CON-33 | At a Glance — What to Expect at a Latin Mass | Queued |
+| CON-34 | At a Glance — The Sunday Obligation | Queued |
+| CON-35 | At a Glance — Divine Mercy Chaplet | Queued |
+| CON-36 | At a Glance — Stations of the Cross | Queued |
+| CON-37 | TLM Guide — Paragraph Restructure | Queued |
+| CON-38 | Visual Pattern Reference (defers to AGC series) | N/A |
