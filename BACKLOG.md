@@ -1549,13 +1549,13 @@ The Prayer Library should distinguish between guided prayer experiences (Divine 
 The Growing Faith section should not have a collapsible feature at the section level. Individual items within should be closed by default, but the ability to collapse the entire section down to just the section header is not useful and looks bad when collapsed. The section should always remain open.
 
 ## IDEA-114 — Add Liturgy of the Hours as a prayer offering
-**Category:** research
-**Status:** done
-**Completed:** 2026-03-15
+**Category:** new-feature
+**Status:** deferred
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-019, IDEA-138, IDEA-139
 **Spec ref:** (none)
+**Deferred reason:** Copyright. Liturgy of the Hours texts are under copyright (ICEL/USCCB). No public domain or freely licensable source exists for the daily rotating Office. Blocked indefinitely.
 
 Research completed. Full LOTH implementation is not viable: every English text component is copyrighted (Grail Psalms by USCCB/Conception Abbey via GIA, antiphons/hymns/prayers by ICEL, Scripture by CCD/USCCB), and the LOTH Second Edition arrives Ash Wednesday 2027 with entirely new translations (Abbey Psalms, new ICEL hymns, Catholic American Bible) — anything built against the First Edition would be immediately obsolete. Dedicated apps (iBreviary free, DivineOffice.org free, Universalis $10-13) represent person-decades of effort. Data volume alone would be 8-15 MB of structured JSON, roughly doubling the app's data footprint. Recommendation: build a lightweight "Gateway to the Hours" (IDEA-138) — a time-aware card showing which Hour is appropriate now with deep links to iBreviary/DivineOffice.org, plus a faith guide on the Divine Office. Revisit full implementation only after LOTH 2nd Ed digital licensing is established (IDEA-139, likely 2027-2028).
 
