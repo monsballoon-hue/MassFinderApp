@@ -92,9 +92,16 @@ function _renderObStep(idx) {
     '<div class="ob-headline">' + step.headline + '</div>' +
     '<div class="ob-subtitle">' + step.subtitle + '</div>';
 
+  // Set step attribute for per-step gradient shift
+  var overlay = document.getElementById('onboardOverlay');
+  if (overlay) overlay.setAttribute('data-ob-step', idx);
+
   var dotsHtml = '';
   for (var i = 0; i < _obSteps.length; i++) {
-    dotsHtml += '<div class="ob-dot' + (i === idx ? ' active' : '') + '" role="tab" aria-selected="' + (i === idx) + '"></div>';
+    var dotClass = 'ob-dot';
+    if (i === idx) dotClass += ' active';
+    else if (i < idx) dotClass += ' done';
+    dotsHtml += '<div class="' + dotClass + '" role="tab" aria-selected="' + (i === idx) + '"></div>';
   }
   dots.innerHTML = dotsHtml;
 
@@ -130,13 +137,7 @@ function _advanceOb() {
   setTimeout(function() {
     _renderObStep(_obStep);
     content.classList.remove('exiting');
-    content.classList.add('entering');
-    requestAnimationFrame(function() {
-      requestAnimationFrame(function() {
-        content.classList.remove('entering');
-      });
-    });
-  }, 200);
+  }, 250);
 }
 
 function _dismissOb() {
@@ -206,14 +207,8 @@ function _showOnboarding() {
           setTimeout(function() {
             _renderObStep(_obStep);
             var c2 = document.getElementById('obContent');
-            if (c2) { c2.classList.remove('exiting'); c2.classList.add('entering'); }
-            requestAnimationFrame(function() {
-              requestAnimationFrame(function() {
-                var c3 = document.getElementById('obContent');
-                if (c3) c3.classList.remove('entering');
-              });
-            });
-          }, 200);
+            if (c2) c2.classList.remove('exiting');
+          }, 250);
         }
       }
     }, { passive: true });
