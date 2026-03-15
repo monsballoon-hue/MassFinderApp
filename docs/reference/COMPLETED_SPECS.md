@@ -445,7 +445,7 @@ Future specs should continue this pattern with new prefixes.
 **Created:** 2026-03-15 · **Status:** Awaiting Catholic Review (ships with CON-30)
 | ID | Title | Status |
 |----|-------|--------|
-| CON-31a | Latin filter hint copy ("Attending Latin Mass? What to expect ›") | Awaiting Review |
+| CON-31a | Latin filter hint copy ("New to Latin Mass? What to expect ›") | Awaiting Review |
 | CON-31b | Reader overlay title | Awaiting Review |
 | CON-31c | CTA button text ("Find Latin Mass near you") | Awaiting Review |
 

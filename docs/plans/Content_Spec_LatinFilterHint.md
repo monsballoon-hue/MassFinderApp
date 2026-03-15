@@ -16,16 +16,16 @@
 **Display location:** Find tab, between filter chips and result cards, when Latin chip is active  
 **Visual format:** Single-line bar — ~36px height, matches confession/adoration hint pattern
 
-### Draft Text
+### Recommended Copy (updated 2026-03-15)
 
-**Hint text:** `Attending Latin Mass?`  
+**Hint text:** `New to Latin Mass?`
 **Link text:** `What to expect ›`
 
 ### Full config entry (for `_hintConfig` map in render.js):
 
 ```javascript
 latin: {
-  text: 'Attending Latin Mass?',
+  text: 'New to Latin Mass?',
   link: 'What to expect \u203A',
   action: 'openLatinMassGuide()',
   storageKey: 'mf-latin-hint-dismissed'
@@ -34,20 +34,26 @@ latin: {
 
 ### Copy rationale
 
-The three existing hints follow a pattern:
+The hints now form a consistent family:
 
-| Filter | Text | Link |
-|--------|------|------|
-| Confession | Not sure what to expect? | How Confession works › |
-| Adoration | New to Adoration? | What to expect › |
-| **Latin** | **Attending Latin Mass?** | **What to expect ›** |
+| Filter | Text | Link | Pattern |
+|--------|------|------|---------|
+| Confession | Not sure what to expect? | How Confession works › | *(original, pre-CLH-01)* |
+| Adoration | New to Adoration? | What to expect › | "New to X?" / "What to expect ›" |
+| **Latin** | **New to Latin Mass?** | **What to expect ›** | "New to X?" / "What to expect ›" |
 
-**Why "Attending Latin Mass?" over alternatives:**
+**Why "New to Latin Mass?" (revised from "Attending Latin Mass?"):**
 
-- *"New to the Latin Mass?"* — Considered. Slightly more aligned with the Adoration hint ("New to Adoration?"). But "Attending" is more action-oriented — it meets the user at the moment of decision rather than labeling them as inexperienced.
-- *"First time at a Latin Mass?"* — Too presumptive. Someone might be returning after years.
-- *"Curious about the Latin Mass?"* — Too soft. The user already tapped the Latin filter — they're past curiosity.
-- *"Attending Latin Mass?"* — Assumes action, offers help, doesn't judge experience level. Mirrors the guide title ("What to Expect at a Latin Mass") so the link feels like a natural continuation.
+The Adoration and Latin hints are the same *kind* of hint — they help someone understand a service type they may not have experienced. Using the identical structure ("New to X?" / "What to expect ›") makes the system feel like a system. Users subconsciously recognize the pattern: *"This little bar tells me about things I haven't tried."*
+
+"New" is warm and non-patronizing. It frames the reader as a curious newcomer, not someone who needs instruction. And the word "New" doesn't presume — a returning Catholic who attended Latin Mass decades ago will still feel "new" to it.
+
+**Alternatives evaluated:**
+
+- ~~*Attending Latin Mass?*~~ — Previous draft. More action-oriented but breaks the "New to X?" pattern. Also slightly formal — "Attending" reads like an RSVP.
+- ~~*First time at Latin Mass?*~~ — Presumptive. Someone returning after 20 years isn't there for the "first time."
+- ~~*Curious about Latin Mass?*~~ — Too soft. The user already tapped the Latin chip — they're past curiosity.
+- ~~*Not sure what to expect?*~~ — Mirrors Confession hint, but better to consolidate around the newer "New to X?" pattern for specialty service filters.
 
 **Why "What to expect ›"** — Identical to the Adoration hint link. Consistency across hints. The phrase reduces anxiety (you'll know what you're walking into) without being didactic.
 
@@ -81,7 +87,7 @@ Follows the established pattern: "Find Confession near you" (confession guide) a
 
 ## Review Notes for Catholic Review
 
-1. **Verify:** "Attending Latin Mass?" — Is this phrasing neutral and appropriate? No implication that the TLM is unusual or niche?
+1. **Verify:** "New to Latin Mass?" — Is this phrasing warm and neutral? Does "New" risk patronizing regular TLM attendees? (Content team believes "New" is fine — Dorothy and Kevin are the target, and regulars will dismiss the hint on first tap.)
 2. **Verify:** "Latin Mass" is the right user-facing term (vs. "Traditional Latin Mass" or "Extraordinary Form"). The TERMINOLOGY.md file uses "Latin Mass" for the filter chip label. The guide title uses "Latin Mass" in the expanded form "What to Expect at a Latin Mass."
 3. **Note:** This is UI-level microcopy only. The full guide text is in CON-30 (Content_Spec_LatinMass.md), reviewed separately.
 
@@ -146,7 +152,7 @@ In the `_hintConfig` map (created by CLH-01), replace the `// CLH-05: Add 'latin
 
 ```javascript
 latin: {
-  text: 'Attending Latin Mass?',
+  text: 'New to Latin Mass?',
   link: 'What to expect \u203A',
   action: 'openLatinMassGuide()',
   storageKey: 'mf-latin-hint-dismissed'
@@ -159,7 +165,7 @@ This requires CLH-01 (generalized hint system) to be implemented first. If CLH-0
 
 ### Test checklist
 
-- [ ] Tap Latin chip on Find tab → "Attending Latin Mass? What to expect ›" appears above results
+- [ ] Tap Latin chip on Find tab → "New to Latin Mass? What to expect ›" appears above results
 - [ ] Tap "What to expect ›" → reader overlay opens with full Latin Mass guide (CON-30 content)
 - [ ] Term tooltips work inside reader (Extraordinary Form, ad orientem)
 - [ ] "Find Latin Mass near you" button → closes reader, activates Latin filter on Find tab
