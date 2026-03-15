@@ -383,11 +383,10 @@ function _renderSeasonalCCC() {
 
   // Load the CCC paragraph text
   var cccData = require('./ccc-data.js');
-  cccData.loadCCC().then(function(data) {
-    if (!data) return;
-    var para = data.paragraphs ? data.paragraphs.find(function(p) { return p.number === cccNum; }) : null;
-    if (!para) return;
-    var text = para.text || '';
+  cccData.load().then(function(data) {
+    if (!data || !data.paragraphs) return;
+    var text = data.paragraphs[String(cccNum)] || '';
+    if (!text) return;
     // Show first 2 sentences
     var sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
     var preview = sentences.slice(0, 2).join(' ').trim();
