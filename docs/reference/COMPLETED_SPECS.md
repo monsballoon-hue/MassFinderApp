@@ -559,17 +559,17 @@ Future specs should continue this pattern with new prefixes.
 | DRT-03 | Reading Body Text Size Increase | Done | P3 |
 
 ### UX_Spec_Prayer_Library_Redesign.md (PLR series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-107, IDEA-105, IDEA-112, IDEA-132, IDEA-135
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PLR.md
-**Depends on:** PZP series
+**Depends on:** PZP series (implemented)
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PLR-01 | Fix Search Bar Z-Index Bug | Queued | P1 |
-| PLR-02 | Category Quick Filter Chips | Queued | P1 |
-| PLR-03 | Guided Prayers Elevated to Top | Queued | P1 |
-| PLR-04 | Favorites System + Quick Access Strip | Queued | P2 |
-| PLR-05 | Visual Warmth: Spacing + Typography | Queued | P2 |
+| PLR-01 | Fix Search Bar Z-Index Bug | Done | P1 |
+| PLR-02 | Category Quick Filter Chips | Done | P1 |
+| PLR-03 | Guided Prayers Elevated to Top | Done | P1 |
+| PLR-04 | Favorites System + Quick Access Strip | Done | P2 |
+| PLR-05 | Visual Warmth: Spacing + Typography | Done | P2 |
 
 ### Arch_Spec_Immersive_Prayer_API.md (ARC series)
 **Created:** 2026-03-15 · **Status:** Ready for implementation

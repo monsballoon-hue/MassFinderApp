@@ -1647,9 +1647,20 @@ html[data-theme="dark"] .practice-card-icon { background:var(--color-surface-hov
 .prayerbook-quick-pill:active { background:var(--color-surface-hover); }
 html[data-theme="dark"] .prayerbook-quick-pill { background:var(--color-surface);border-color:var(--color-border); }
 
-/* PBR-03: Guided section divider */
-.prayerbook-guided-section { margin-top:var(--space-4);padding-top:var(--space-4);border-top:1px solid color-mix(in srgb, var(--color-sacred) 10%, transparent); }
-html[data-theme="dark"] .prayerbook-guided-section { border-top-color:color-mix(in srgb, var(--color-sacred) 8%, transparent); }
+/* PLR-03: Guided section (elevated to top) */
+.prayerbook-guided-section { margin-bottom:var(--space-4);padding-bottom:var(--space-4);border-bottom:1px solid color-mix(in srgb, var(--color-sacred) 10%, transparent); }
+html[data-theme="dark"] .prayerbook-guided-section { border-bottom-color:color-mix(in srgb, var(--color-sacred) 8%, transparent); }
+.prayerbook-guided-card { display:flex;align-items:center;justify-content:space-between;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-left:3px solid var(--color-sacred);border-radius:var(--radius-md);cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:48px;margin-bottom:var(--space-2); }
+.prayerbook-guided-card:active { transform:scale(0.98); }
+.prayerbook-guided-card-sub { font-size:var(--text-xs);color:var(--color-text-tertiary);margin-top:2px; }
+html[data-theme="dark"] .prayerbook-guided-card { background:var(--color-surface);border-color:var(--color-border);border-left-color:var(--color-sacred); }
+/* PLR-02: Active filter chip */
+.prayerbook-quick-pill--active { background:var(--color-sacred-pale);color:var(--color-sacred-text);border-color:var(--color-sacred); }
+html[data-theme="dark"] .prayerbook-quick-pill--active { background:color-mix(in srgb, var(--color-sacred) 15%, transparent);color:var(--color-sacred);border-color:var(--color-sacred); }
+/* PLR-04: Favorite button on prayer rows */
+.prayerbook-fav-btn { background:none;border:none;padding:var(--space-1);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-tap-highlight-color:transparent;flex-shrink:0; }
+.prayerbook-fav-icon { fill:none;stroke:var(--color-text-tertiary);stroke-width:1.5; }
+.prayerbook-fav-icon--active { fill:var(--color-sacred);stroke:var(--color-sacred); }
 
 /* PBR-04: Length indicators */
 .prayerbook-length { font-size:10px;font-weight:var(--weight-medium);color:var(--color-text-tertiary);margin-left:auto;padding:0 var(--space-2);white-space:nowrap; }
@@ -1858,18 +1869,18 @@ html[data-theme="dark"] .chaplet-begin { background:var(--color-sacred); }
 
 /* PMB: Prayer Book styles */
 .prayerbook-list { padding:var(--space-2) 0; }
-.prayerbook-search { position:sticky;top:0;z-index:2;background:var(--color-background);padding:var(--space-2) 0 var(--space-3); }
+.prayerbook-search { position:sticky;top:0;z-index:10;background:var(--color-bg);padding:var(--space-2) 0 var(--space-3);margin:0 calc(-1 * var(--space-5));padding-left:var(--space-5);padding-right:var(--space-5); }
 .prayerbook-search-input { width:100%;padding:var(--space-2) var(--space-3);border:1px solid var(--color-border-light);border-radius:var(--radius-md);font-size:var(--text-sm);font-family:var(--font-body);background:var(--color-surface);color:var(--color-text-primary);outline:none;-webkit-appearance:none; }
 .prayerbook-search-input:focus { border-color:var(--color-sacred);box-shadow:0 0 0 2px color-mix(in srgb, var(--color-sacred) 15%, transparent); }
 .prayerbook-category { margin-bottom:var(--space-4); }
 .prayerbook-category-title { font-family:var(--font-display);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:var(--space-2);padding-left:var(--space-1); }
-.prayerbook-row { border:1px solid var(--color-border-light);border-radius:var(--radius-md);background:var(--color-surface);margin-bottom:var(--space-1);overflow:hidden;transition:box-shadow 0.15s; }
-.prayerbook-row--open { border-color:var(--color-sacred);box-shadow:0 0 0 1px color-mix(in srgb, var(--color-sacred) 20%, transparent); }
+.prayerbook-row { border:1px solid var(--color-border-light);border-radius:var(--radius-md);background:var(--color-surface);margin-bottom:var(--space-2);overflow:hidden;transition:box-shadow 0.15s; }
+.prayerbook-row--open { border-color:var(--color-sacred);border-left:3px solid var(--color-sacred);box-shadow:0 0 0 1px color-mix(in srgb, var(--color-sacred) 20%, transparent); }
 .prayerbook-row-header { display:flex;align-items:center;justify-content:space-between;width:100%;padding:var(--space-3) var(--space-4);background:none;border:none;cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;min-height:44px; }
 .prayerbook-row-title { font-family:var(--font-body);font-size:var(--text-base);font-weight:var(--weight-medium);color:var(--color-text-primary); }
 .prayerbook-chevron { width:18px;height:18px;color:var(--color-text-tertiary);transition:transform 0.2s;flex-shrink:0; }
 .prayerbook-chevron.open { transform:rotate(180deg); }
-.prayerbook-text { padding:0 var(--space-4) var(--space-4);font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-primary);line-height:1.85; }
+.prayerbook-text { padding:var(--space-2) var(--space-4) var(--space-4);font-family:var(--font-prayer);font-size:var(--text-base);color:var(--color-text-primary);line-height:1.85;border-top:1px solid color-mix(in srgb, var(--color-sacred) 8%, transparent); }
 .prayerbook-text p { margin:0 0 var(--space-3); }
 .prayerbook-row--guided { display:flex;align-items:center;justify-content:space-between;width:100%;padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;text-align:left;-webkit-tap-highlight-color:transparent;min-height:44px;margin-bottom:var(--space-1); }
 .prayerbook-row--guided:active { transform:scale(0.98); }

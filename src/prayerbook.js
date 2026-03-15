@@ -11,6 +11,18 @@ var _searchQuery = '';
 var _openPrayerId = null; // currently expanded prayer
 var _wakeLock = null;
 
+// PLR-02: Category filters
+var _activeFilters = [];
+
+// PLR-04: Favorites
+var _favorites = [];
+function _loadFavorites() {
+  try { _favorites = JSON.parse(localStorage.getItem('mf-prayerbook-favs') || '[]'); } catch (e) { _favorites = []; }
+}
+function _saveFavorites() {
+  try { localStorage.setItem('mf-prayerbook-favs', JSON.stringify(_favorites)); } catch (e) {}
+}
+
 // Litany step-through state
 var _litany = null;       // current litany object
 var _litanyStep = 0;      // current invocation index
@@ -110,6 +122,7 @@ function _formatPrayerText(text) {
 function prayerbookSearch(query) {
   _searchQuery = (query || '').toLowerCase().trim();
   _openPrayerId = null;
+  if (_searchQuery) _activeFilters = [];
   _renderList();
   _haptic();
 }
@@ -332,20 +345,22 @@ function _renderList() {
 
   var html = '<div class="prayerbook-list">';
 
-  // CON-18: Prayer book intro line + PBR-02: Quick access pills (non-search only)
+  // PLR-02: Category filter chips (non-search only)
   if (!_searchQuery) {
     html += '<div class="prayerbook-intro">Your companion for daily prayer</div>';
-    var quickIds = ['sign_of_cross', 'our_father', 'hail_mary', 'glory_be', 'act_of_contrition_traditional'];
+    var _chipDefs = [
+      { id: 'essential', label: 'Essential' },
+      { id: 'morning_evening', label: 'Daily' },
+      { id: 'marian', label: 'Marian' },
+      { id: 'saints', label: 'Saints' },
+      { id: 'sacramental', label: 'Sacrament' },
+      { id: 'guided', label: 'Guided' }
+    ];
     html += '<div class="prayerbook-quick">';
-    quickIds.forEach(function(id) {
-      var prayer = null;
-      _data.categories.forEach(function(cat) {
-        cat.prayers.forEach(function(p) { if (p.id === id) prayer = p; });
-      });
-      if (prayer) {
-        html += '<button class="prayerbook-quick-pill" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">'
-          + utils.esc(_t(prayer, 'title')) + '</button>';
-      }
+    _chipDefs.forEach(function(c) {
+      var isActive = _activeFilters.indexOf(c.id) >= 0;
+      html += '<button class="prayerbook-quick-pill' + (isActive ? ' prayerbook-quick-pill--active' : '') + '" onclick="prayerbookToggleFilter(\'' + c.id + '\')">'
+        + c.label + '</button>';
     });
     html += '</div>';
   }
@@ -385,10 +400,59 @@ function _renderList() {
       });
     }
   } else {
-    // PBR-05: Recently opened prayers (skip when a prayer is expanded to avoid duplicate render)
+    var _showAll = _activeFilters.length === 0;
+    var _showGuided = _showAll || _activeFilters.indexOf('guided') >= 0;
+    var _showCat = function(catId) { return _showAll || _activeFilters.indexOf(catId) >= 0; };
+
+    // PLR-04: Favorites strip (above everything when favorites exist)
+    _loadFavorites();
+    if (_favorites.length && !_openPrayerId && _showAll) {
+      var favPrayers = [];
+      _favorites.forEach(function(fid) {
+        _data.categories.forEach(function(cat) {
+          cat.prayers.forEach(function(p) { if (p.id === fid) favPrayers.push(p); });
+        });
+      });
+      if (favPrayers.length) {
+        html += '<div class="prayerbook-category">';
+        html += '<h3 class="prayerbook-category-title">\u2605 Favorites</h3>';
+        favPrayers.forEach(function(p) { html += _renderPrayerRow(p); });
+        html += '</div>';
+      }
+    }
+
+    // PLR-03: Guided section elevated to top
+    var hasGuided = (_data.litanies && _data.litanies.length) || _data.lectio;
+    if (hasGuided && _showGuided) {
+      html += '<div class="prayerbook-guided-section">';
+      html += '<h3 class="prayerbook-category-title">Guided Experiences</h3>';
+      if (_data.litanies && _data.litanies.length) {
+        _data.litanies.forEach(function(lit) {
+          html += '<div class="prayerbook-guided-card" onclick="prayerbookOpenLitany(\'' + utils.esc(lit.id) + '\')">'
+            + '<div class="prayerbook-guided-card-body">'
+            + '<div class="prayerbook-row-title">' + utils.esc(_t(lit, 'title')) + '</div>'
+            + '<div class="prayerbook-guided-card-sub">Guided \u00b7 Swipe through</div>'
+            + '</div>'
+            + '<span class="prayerbook-guided-badge">Guided</span>'
+            + '</div>';
+        });
+      }
+      if (_data.lectio) {
+        html += '<div class="prayerbook-guided-card" onclick="prayerbookOpenLectio()">'
+          + '<div class="prayerbook-guided-card-body">'
+          + '<div class="prayerbook-row-title">' + utils.esc(_data.lectio.title) + '</div>'
+          + '<div class="prayerbook-guided-card-sub">Guided \u00b7 Sacred reading</div>'
+          + '</div>'
+          + '<span class="prayerbook-guided-badge">Guided</span>'
+          + '</div>';
+      }
+      html += '</div>';
+    }
+
+    // PBR-05: Recently opened prayers (skip when a prayer is expanded)
     var recentIds = [];
     try { recentIds = JSON.parse(localStorage.getItem('mf-prayerbook-recent') || '[]'); } catch (e) {}
-    if (recentIds.length && !_openPrayerId) {
+    if (recentIds.length && !_openPrayerId && _showAll) {
       var recentPrayers = [];
       recentIds.forEach(function(rid) {
         _data.categories.forEach(function(cat) {
@@ -403,8 +467,9 @@ function _renderList() {
       }
     }
 
-    // Category view
+    // Category view (respects active filters)
     _data.categories.forEach(function(cat) {
+      if (!_showCat(cat.id)) return;
       html += '<div class="prayerbook-category">';
       html += '<h3 class="prayerbook-category-title">' + utils.esc(_t(cat, 'title')) + '</h3>';
       cat.prayers.forEach(function(p) {
@@ -412,38 +477,6 @@ function _renderList() {
       });
       html += '</div>';
     });
-
-    // PBR-03: Guided section divider
-    var hasGuided = (_data.litanies && _data.litanies.length) || _data.lectio;
-    if (hasGuided) {
-      html += '<div class="prayerbook-guided-section">';
-
-      // Litanies section
-      if (_data.litanies && _data.litanies.length) {
-        html += '<div class="prayerbook-category">';
-        html += '<h3 class="prayerbook-category-title">Guided Litanies</h3>';
-        _data.litanies.forEach(function(lit) {
-          html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLitany(\'' + utils.esc(lit.id) + '\')">'
-            + '<span class="prayerbook-row-title">' + utils.esc(_t(lit, 'title')) + '</span>'
-            + '<span class="prayerbook-guided-badge">Guided</span>'
-            + '</button>';
-        });
-        html += '</div>';
-      }
-
-      // Lectio Divina
-      if (_data.lectio) {
-        html += '<div class="prayerbook-category">';
-        html += '<h3 class="prayerbook-category-title">Contemplative</h3>';
-        html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLectio()">'
-          + '<span class="prayerbook-row-title">' + utils.esc(_data.lectio.title) + '</span>'
-          + '<span class="prayerbook-guided-badge">Guided</span>'
-          + '</button>';
-        html += '</div>';
-      }
-
-      html += '</div>';
-    }
   }
 
   html += '</div>';
@@ -485,6 +518,10 @@ function _renderPrayerRow(prayer) {
   html += '<button class="prayerbook-row-header" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">';
   html += '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>';
   html += lengthLabel;
+  var isFav = _favorites.indexOf(prayer.id) >= 0;
+  html += '<button class="prayerbook-fav-btn" onclick="event.stopPropagation();prayerbookToggleFav(\'' + utils.esc(prayer.id) + '\')" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">'
+    + '<svg class="prayerbook-fav-icon' + (isFav ? ' prayerbook-fav-icon--active' : '') + '" viewBox="0 0 24 24" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+    + '</button>';
   html += '<svg class="prayerbook-chevron' + (isOpen ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   html += '</button>';
 
@@ -615,9 +652,28 @@ function prayerbookLitanyBegin() {
   _render();
 }
 
+// PLR-02: Toggle category filter
+function prayerbookToggleFilter(filterId) {
+  var idx = _activeFilters.indexOf(filterId);
+  if (idx >= 0) _activeFilters.splice(idx, 1);
+  else _activeFilters = [filterId]; // single-select for simplicity
+  _render();
+}
+
+// PLR-04: Toggle favorite
+function prayerbookToggleFav(prayerId) {
+  var idx = _favorites.indexOf(prayerId);
+  if (idx >= 0) _favorites.splice(idx, 1);
+  else { _favorites.unshift(prayerId); if (_favorites.length > 5) _favorites = _favorites.slice(0, 5); }
+  _saveFavorites();
+  _render();
+}
+
 module.exports = {
   openPrayerBook: openPrayerBook,
   prayerbookLitanyBegin: prayerbookLitanyBegin,
+  prayerbookToggleFilter: prayerbookToggleFilter,
+  prayerbookToggleFav: prayerbookToggleFav,
   closePrayerBook: closePrayerBook,
   prayerbookSearch: prayerbookSearch,
   prayerbookToggle: prayerbookToggle,
