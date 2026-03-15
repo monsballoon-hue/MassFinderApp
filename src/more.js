@@ -194,8 +194,75 @@ function _renderSeasonalMoment(events) {
     }
   }
 
-  // Future: SOT-06 (Easter Alleluia), SOT-08 (Pentecost),
-  // SOT-09 (Monthly Devotion), SOT-10 (O Antiphons) will push candidates here
+  // SOT-06: Easter Alleluia + Regina Caeli (Easter Sunday through Pentecost)
+  var currentSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
+  if (currentSeason === 'easter' && events && events.length) {
+    // Don't show during Holy Week (already covered by SOT-05) or on Divine Mercy Sunday (SOT-07)
+    var isHolyWeek = events.some(function(e) { var k = e.event_key || ''; return HOLY_WEEK_GUIDE[k]; });
+    var isDivineMercy = events.some(function(e) { return (e.event_key || '') === 'Easter2'; });
+    if (!isHolyWeek && !isDivineMercy) {
+      var eChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+      candidates.push({
+        priority: 3,
+        html: '<details class="seasonal-card">'
+          + '<summary>'
+          + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg></div>'
+          + '<div class="seasonal-card-body">'
+          + '<div class="seasonal-card-title">Alleluia! \u2014 Easter Season</div>'
+          + '<div class="seasonal-card-subtitle">The Church\u2019s most joyful 50 days</div>'
+          + '</div>'
+          + eChev
+          + '</summary>'
+          + '<div class="seasonal-card-expanded">'
+          + '<p>Every Sunday of Easter is a \u201clittle Easter.\u201d The Alleluia, silent throughout Lent, rings out at every liturgy. The vestments are white and gold. The Church celebrates the Resurrection with overflowing joy for fifty days, from Easter Sunday through Pentecost.</p>'
+          + '<p style="margin-top:var(--space-3);padding:var(--space-3);background:color-mix(in srgb, var(--color-accent) 4%, transparent);border-radius:var(--radius-sm);border-left:2px solid var(--color-accent)">'
+          + '<strong style="font-size:var(--text-xs);text-transform:uppercase;letter-spacing:0.04em;color:var(--color-accent)">Regina Caeli</strong><br>'
+          + '<em>Queen of Heaven, rejoice, alleluia.<br>'
+          + 'For He whom you did merit to bear, alleluia,<br>'
+          + 'Has risen as He said, alleluia.<br>'
+          + 'Pray for us to God, alleluia.</em></p>'
+          + '</div>'
+          + '</details>'
+      });
+    }
+  }
+
+  // SOT-08: Pentecost Novena (Ascension through Pentecost)
+  if (events && events.length) {
+    var isAscension = events.some(function(e) { return (e.event_key || '') === 'Ascension'; });
+    var isPentecost = events.some(function(e) { return (e.event_key || '') === 'Pentecost'; });
+    // Also show during the days between Ascension and Pentecost
+    var isPentecostWindow = currentSeason === 'easter' && !isAscension && !isPentecost;
+    var now3 = new Date();
+    // Rough check: mid-to-late May in Easter season = Pentecost novena window
+    if (isPentecostWindow) isPentecostWindow = now3.getMonth() === 4 && now3.getDate() >= 15;
+
+    if (isAscension || isPentecost || isPentecostWindow) {
+      var pnChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+      var pnPriority = isAscension ? 1 : 2;
+      var pnSubtitle = isAscension ? 'The Apostles\u2019 9-day vigil begins' : isPentecost ? 'Come, Holy Spirit!' : '9 days of prayer \u2014 Ascension to Pentecost';
+      candidates.push({
+        priority: pnPriority,
+        html: '<details class="seasonal-card">'
+          + '<summary>'
+          + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><line x1="12" y1="12" x2="12" y2="20"/></svg></div>'
+          + '<div class="seasonal-card-body">'
+          + '<div class="seasonal-card-title">The Original Novena</div>'
+          + '<div class="seasonal-card-subtitle">' + esc(pnSubtitle) + '</div>'
+          + '</div>'
+          + pnChev
+          + '</summary>'
+          + '<div class="seasonal-card-expanded">'
+          + '<p>After Christ ascended into heaven, the Apostles and the Blessed Virgin Mary gathered in the Upper Room and prayed together for nine days. On the tenth day \u2014 Pentecost \u2014 the Holy Spirit descended upon them in tongues of fire. This was the first novena.</p>'
+          + '<p>The Church invites the faithful to pray the Novena to the Holy Spirit during these nine days, asking for a fresh outpouring of the Spirit\u2019s gifts in our own lives.</p>'
+          + '<div class="seasonal-card-action" onclick="event.stopPropagation();openNovena()">Start the Holy Spirit Novena \u2192</div>'
+          + '</div>'
+          + '</details>'
+      });
+    }
+  }
+
+  // Future: SOT-09 (Monthly Devotion), SOT-10 (O Antiphons) will push candidates here
 
   // Sort by priority (1 = highest), take top 2
   candidates.sort(function(a, b) { return a.priority - b.priority; });
