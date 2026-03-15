@@ -470,3 +470,17 @@ Future specs should continue this pattern with new prefixes.
 | FVX-01 | Onboarding Delay + Blur Backdrop | Done |
 | FVX-02 | Tip Card State-Aware Rendering Rules | Done |
 | FVX-03 | Daily Card Liturgical Enhancement | Done |
+
+### Review_CON_AtAGlance.md (CON-32 through CON-37)
+**Created:** 2026-03-15 · **Status:** Review complete (no fix spec needed)
+**Type:** Catholic fidelity review of Content_Spec_AtAGlance.md draft
+| ID | Title | Verdict |
+|----|-------|---------|
+| CON-32 | Confession: "The priest will help you through it" | ✅ Approved |
+| CON-33 | TLM: "Just show up" | ✅ Approved |
+| CON-34 | Sunday: "Saturday evening" without time qualifier | ⚠️ Concern — retain "(4 PM or later)" |
+| CON-35 | Divine Mercy: "Deeply powerful" | ✅ Approved |
+| CON-36 | Stations: "Fourteen stops" vs. "fourteen stations" | ⚠️ Concern — use "stations" |
+| CON-37 | TLM rewrite: dropped Dialogue Mass/schola, added "at the altar rail" | ✅ Approved |
+
+> **Note:** Two concerns returned to Content & Voice for adjustment before Claude Code handoff. No production code or data changes required.
