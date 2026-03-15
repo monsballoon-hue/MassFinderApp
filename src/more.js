@@ -140,7 +140,8 @@ function _renderFirstFriday(bodyEl) {
       // Description
       + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;margin-bottom:var(--space-4)">'
       + '<p style="margin-bottom:var(--space-3)">Attend Mass and receive Holy Communion on nine consecutive first Fridays of the month, in reparation for offenses against the Sacred Heart of Jesus.</p>'
-      + '<p style="margin-bottom:var(--space-3)">Jesus revealed to St. Margaret Mary Alacoque twelve promises for those who practice this devotion, including: \u201cI will give them all the graces necessary for their state of life\u201d and \u201cI will be their refuge during life and especially at the hour of death.\u201d</p>'
+      + '<p style="margin-bottom:var(--space-3)">Jesus revealed to St. Margaret Mary Alacoque twelve promises for those who practice this devotion.</p>'
+      + '<div style="margin:var(--space-3) 0;padding:var(--space-3) var(--space-4);border-left:2px solid var(--color-sacred);background:color-mix(in srgb, var(--color-sacred) 4%, transparent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--font-prayer);font-style:italic;color:var(--color-text-primary);line-height:1.8">\u201cI will give them all the graces necessary for their state of life.\u201d<br>\u201cI will be their refuge during life and especially at the hour of death.\u201d<div style="font-style:normal;font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-sacred-text);margin-top:var(--space-2)">\u2014 Jesus to St. Margaret Mary Alacoque</div></div>'
       + '<p><strong style="color:var(--color-text-primary)">Requirements:</strong> Attend Mass, receive Communion in a state of grace, and offer reparation to the Sacred Heart on the first Friday of nine consecutive months.</p>'
       + '</div>'
 
@@ -184,7 +185,7 @@ function _renderFirstFriday(bodyEl) {
       // Description
       + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;margin-bottom:var(--space-4)">'
       + '<p style="margin-bottom:var(--space-3)">Our Lady of F\u00e1tima asked that on five consecutive first Saturdays, the faithful make reparation to her Immaculate Heart for the blasphemies and ingratitude of men.</p>'
-      + '<p style="margin-bottom:var(--space-3)">She promised: \u201cI will assist at the hour of death with the graces necessary for salvation all those who, on the first Saturday of five consecutive months, go to Confession, receive Holy Communion, pray five decades of the Rosary, and keep me company for 15 minutes while meditating on the mysteries of the Rosary.\u201d</p>'
+      + '<div style="margin:var(--space-3) 0;padding:var(--space-3) var(--space-4);border-left:2px solid var(--color-sacred);background:color-mix(in srgb, var(--color-sacred) 4%, transparent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-family:var(--font-prayer);font-style:italic;color:var(--color-text-primary);line-height:1.8">\u201cI will assist at the hour of death with the graces necessary for salvation all those who, on the first Saturday of five consecutive months, go to Confession, receive Holy Communion, pray five decades of the Rosary, and keep me company for 15 minutes while meditating on the mysteries of the Rosary.\u201d<div style="font-style:normal;font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-sacred-text);margin-top:var(--space-2)">\u2014 Our Lady of F\u00e1tima</div></div>'
       + '<p><strong style="color:var(--color-text-primary)">Requirements each First Saturday:</strong></p>'
       + '<ol style="padding-left:var(--space-5);margin-top:var(--space-2)">'
       + '<li style="margin-bottom:var(--space-2)">Go to Confession (within 8 days before or after)</li>'
@@ -211,7 +212,7 @@ function _renderFirstFriday(bodyEl) {
       + 'Pray the Rosary (required)</summary>'
       + '<div style="padding:var(--space-4);border:1px solid var(--color-border-light);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);text-align:center">'
       + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">Pray five decades of the Rosary as part of your First Saturday devotion.</div>'
-      + '<button onclick="readerClose();openRosary()" style="padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Open Guided Rosary</button>'
+      + '<button onclick="window._ffOpenRosary()" style="padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Open Guided Rosary</button>'
       + '</div></details>'
 
       // Log button
@@ -280,6 +281,10 @@ window._logFirstSaturday = function() {
     haptics.confirm();
     _renderFirstFriday(document.getElementById('readerBody'));
   }
+};
+
+window._ffOpenRosary = function() {
+  reader.readerOpen('rosary');
 };
 
 window._ffSwitchTab = function(tab) {
