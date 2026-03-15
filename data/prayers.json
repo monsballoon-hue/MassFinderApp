@@ -12,7 +12,10 @@
         "ccc": [
           484,
           486
-        ]
+        ],
+        "title_es": "La Anunciación del Ángel a María",
+        "meditation_es": "El Ángel Gabriel se aparece a María, anunciándole que será la Madre de Dios.",
+        "fruit_es": "Humildad"
       },
       {
         "no": 2,
@@ -23,7 +26,10 @@
         "scripture": "Luke 1:39-56",
         "ccc": [
           2676
-        ]
+        ],
+        "title_es": "La Visitación de María a Santa Isabel",
+        "meditation_es": "Isabel saluda a María: “Bendita tú eres entre las mujeres y bendito es el fruto de tu vientre.”",
+        "fruit_es": "Caridad"
       },
       {
         "no": 3,
@@ -35,7 +41,10 @@
         "ccc": [
           525,
           526
-        ]
+        ],
+        "title_es": "El Nacimiento de Jesús en Belén",
+        "meditation_es": "La Virgen María da a luz al Redentor del mundo. “Y esto os servirá de señal: encontraréis un niño envuelto en pañales y acostado en un pesebre.”",
+        "fruit_es": "Pobreza de espíritu"
       },
       {
         "no": 4,
@@ -46,7 +55,10 @@
         "scripture": "Luke 2:22-40",
         "ccc": [
           529
-        ]
+        ],
+        "title_es": "La Presentación de Jesús en el Templo",
+        "meditation_es": "La Santísima Madre presenta al Niño Jesús en el Templo.",
+        "fruit_es": "Obediencia"
       },
       {
         "no": 5,
@@ -57,7 +69,10 @@
         "scripture": "Luke 2:41-52",
         "ccc": [
           534
-        ]
+        ],
+        "title_es": "El Hallazgo de Jesús en el Templo",
+        "meditation_es": "La Santísima Madre encuentra a Jesús en el Templo.",
+        "fruit_es": "Gozo de encontrar a Jesús"
       }
     ],
     "Sorrowful": [
@@ -70,7 +85,10 @@
         "scripture": "Luke 22:39-46",
         "ccc": [
           612
-        ]
+        ],
+        "title_es": "La Agonía de Jesús en el Huerto",
+        "meditation_es": "En Getsemaní, Jesús ora mientras contempla los pecados del mundo.",
+        "fruit_es": "Contrición"
       },
       {
         "no": 2,
@@ -81,7 +99,10 @@
         "scripture": "Mark 15:15",
         "ccc": [
           572
-        ]
+        ],
+        "title_es": "La Flagelación de Jesús en la Columna",
+        "meditation_es": "Jesús es azotado con látigos.",
+        "fruit_es": "Pureza"
       },
       {
         "no": 3,
@@ -92,7 +113,10 @@
         "scripture": "Mark 15:17-20",
         "ccc": [
           572
-        ]
+        ],
+        "title_es": "La Coronación de Espinas",
+        "meditation_es": "Jesús es burlado y coronado de espinas.",
+        "fruit_es": "Valor moral"
       },
       {
         "no": 4,
@@ -103,7 +127,10 @@
         "scripture": "John 19:17",
         "ccc": [
           612
-        ]
+        ],
+        "title_es": "Jesús con la Cruz a Cuestas",
+        "meditation_es": "Jesús carga la pesada cruz sobre sus hombros hacia el Calvario.",
+        "fruit_es": "Paciencia"
       },
       {
         "no": 5,
@@ -115,7 +142,10 @@
         "ccc": [
           613,
           614
-        ]
+        ],
+        "title_es": "La Crucifixión y Muerte de Jesús",
+        "meditation_es": "Jesús es clavado en la cruz y muere después de horas de agonía.",
+        "fruit_es": "Perseverancia"
       }
     ],
     "Glorious": [
@@ -129,7 +159,10 @@
         "ccc": [
           638,
           640
-        ]
+        ],
+        "title_es": "La Resurrección de Jesucristo",
+        "meditation_es": "Jesús resucita glorioso e inmortal, tres días después de su muerte.",
+        "fruit_es": "Fe"
       },
       {
         "no": 2,
@@ -141,7 +174,10 @@
         "ccc": [
           659,
           664
-        ]
+        ],
+        "title_es": "La Ascensión de Jesús al Cielo",
+        "meditation_es": "Jesús asciende al cielo cuarenta días después de su Resurrección.",
+        "fruit_es": "Esperanza"
       },
       {
         "no": 3,
@@ -153,7 +189,10 @@
         "ccc": [
           731,
           732
-        ]
+        ],
+        "title_es": "La Venida del Espíritu Santo",
+        "meditation_es": "El Espíritu Santo desciende sobre María y los Apóstoles.",
+        "fruit_es": "Dones del Espíritu Santo"
       },
       {
         "no": 4,
@@ -164,7 +203,10 @@
         "scripture": "Rev 12:1",
         "ccc": [
           966
-        ]
+        ],
+        "title_es": "La Asunción de la Santísima Virgen María al Cielo",
+        "meditation_es": "María es unida a su Divino Hijo en el cielo.",
+        "fruit_es": "Gracia de una buena muerte"
       },
       {
         "no": 5,
@@ -175,7 +217,10 @@
         "scripture": "Rev 12:1",
         "ccc": [
           966
-        ]
+        ],
+        "title_es": "La Coronación de la Santísima Virgen María, Reina del Cielo y de la Tierra",
+        "meditation_es": "María es gloriosamente coronada como Reina del cielo y de la tierra.",
+        "fruit_es": "Confianza en la intercesión de María"
       }
     ],
     "Luminous": [
@@ -188,7 +233,10 @@
         "scripture": "Mark 1:9-11",
         "ccc": [
           1223
-        ]
+        ],
+        "title_es": "El Bautismo de Jesús",
+        "meditation_es": "Los cielos se abren y la voz del Padre declara a Jesús su Hijo amado.",
+        "fruit_es": "Apertura al Espíritu Santo"
       },
       {
         "no": 2,
@@ -199,7 +247,10 @@
         "scripture": "John 2:1-11",
         "ccc": [
           1613
-        ]
+        ],
+        "title_es": "Las Bodas de Caná",
+        "meditation_es": "El primero de los milagros: Cristo convierte el agua en vino gracias a la intercesión de María.",
+        "fruit_es": "Fidelidad"
       },
       {
         "no": 3,
@@ -211,7 +262,10 @@
         "ccc": [
           541,
           542
-        ]
+        ],
+        "title_es": "La Proclamación del Reino de Dios",
+        "meditation_es": "Jesús proclama la venida del Reino de Dios.",
+        "fruit_es": "Conversión"
       },
       {
         "no": 4,
@@ -223,7 +277,10 @@
         "ccc": [
           554,
           556
-        ]
+        ],
+        "title_es": "La Transfiguración",
+        "meditation_es": "Jesús se revela en su gloria a Pedro, Santiago y Juan.",
+        "fruit_es": "Deseo de santidad"
       },
       {
         "no": 5,
@@ -235,7 +292,10 @@
         "ccc": [
           1337,
           1340
-        ]
+        ],
+        "title_es": "La Institución de la Eucaristía",
+        "meditation_es": "Cristo ofrece su cuerpo y su sangre como alimento bajo las especies de pan y vino.",
+        "fruit_es": "Adoración eucarística"
       }
     ]
   },
@@ -256,7 +316,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus, after having been scourged and crowned with thorns, was unjustly condemned by Pilate to die on the Cross.",
-      "prayer": "Jesus, it is because of my sins that You are going to die. Through the merits of Your sorrowful journey, help me in my journey to Heaven. I love You, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will."
+      "prayer": "Jesus, it is because of my sins that You are going to die. Through the merits of Your sorrowful journey, help me in my journey to Heaven. I love You, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will.",
+      "title_es": "Jesús es condenado a muerte.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús, después de haber sido azotado y coronado de espinas, fue injustamente condenado por Pilato a morir en la Cruz.",
+      "prayer_es": "Jesús, es por mis pecados que vas a morir. Por los méritos de tu doloroso camino, ayúdame en mi camino al cielo. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "John 19:17",
@@ -265,7 +330,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus, in making this journey with the Cross on His shoulders, thought of us, and offered for us, to His Father, the death that He was about to undergo.",
-      "prayer": "Jesus, I embrace all the suffering that you send to me. Through the merits of your pain in carrying Your Cross, help me to carry my cross with patience and resignation. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, I embrace all the suffering that you send to me. Through the merits of your pain in carrying Your Cross, help me to carry my cross with patience and resignation. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús carga con la Cruz.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús, al hacer este camino con la Cruz sobre sus hombros, pensó en nosotros y ofreció por nosotros al Padre la muerte que estaba a punto de padecer.",
+      "prayer_es": "Jesús, acepto todo el sufrimiento que me envías. Por los méritos de tu dolor al cargar la Cruz, ayúdame a cargar mi cruz con paciencia y resignación. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Luke 23:26",
@@ -274,7 +344,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus fell for the first time under His Cross. He had been scourged and had a crown of thorns on His head, and the soldiers hit Him. He was in so much pain He could barely walk, but He had to carry the heavy Cross.",
-      "prayer": "Jesus, the weight of my sins adds to your suffering and makes it infinitely worse. Through the merits of your first fall, deliver me from falling into mortal sin. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, the weight of my sins adds to your suffering and makes it infinitely worse. Through the merits of your first fall, deliver me from falling into mortal sin. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús cae por primera vez.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús cayó por primera vez bajo la Cruz. Había sido azotado y tenía una corona de espinas en la cabeza, y los soldados le golpeaban. Sufría tanto que apenas podía caminar, pero tenía que cargar la pesada Cruz.",
+      "prayer_es": "Jesús, el peso de mis pecados aumenta tu sufrimiento y lo hace infinitamente peor. Por los méritos de tu primera caída, líbrame de caer en pecado mortal. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "John 19:25-27",
@@ -283,7 +358,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus met His Mother Mary along His journey. They loved each other so deeply.",
-      "prayer": "Jesus, through the sorrow and joy you had in meeting your Mother Mary, help me to be truly devoted to her. Mary, help me to remember in my heart the suffering your Son underwent for me. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, through the sorrow and joy you had in meeting your Mother Mary, help me to be truly devoted to her. Mary, help me to remember in my heart the suffering your Son underwent for me. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús encuentra a su Santísima Madre.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús encontró a su Madre María en el camino. Se amaban tan profundamente.",
+      "prayer_es": "Jesús, por la pena y el gozo que tuviste al encontrar a tu Madre María, ayúdame a ser verdaderamente devoto de ella. María, ayúdame a recordar en mi corazón el sufrimiento que tu Hijo soportó por mí. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Mark 15:21",
@@ -292,7 +372,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "When the Jews saw how weak Jesus was, they feared He might die on the way, before He was crucified, so they forced a man named Simon the Cyrenian to carry the Cross behind our Lord.",
-      "prayer": "Jesus, I accept the cross you give to me, and I accept how you want me to die. I offer all my sufferings and troubles to you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, I accept the cross you give to me, and I accept how you want me to die. I offer all my sufferings and troubles to you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Simón de Cirene ayuda a Jesús a llevar la Cruz.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Cuando los judíos vieron lo débil que estaba Jesús, temieron que muriera en el camino antes de ser crucificado, así que obligaron a un hombre llamado Simón de Cirene a llevar la Cruz detrás de nuestro Señor.",
+      "prayer_es": "Jesús, acepto la cruz que me das y acepto cómo quieres que muera. Te ofrezco todos mis sufrimientos y dificultades. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": null,
@@ -301,7 +386,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "A woman named Veronica, seeing Jesus suffering so much, and sweat and blood dripping down His face, gave Him a towel to wipe His face. By a miracle, He left an image of His face on the towel.",
-      "prayer": "Jesus, your face was once clean and good to look upon, but blood and sweat disfigured it, and Veronica wiped Your face clean. My soul was once clean and beautiful when I was baptized, but sin disfigured it. Through your suffering, wipe my soul clean. I love you, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will."
+      "prayer": "Jesus, your face was once clean and good to look upon, but blood and sweat disfigured it, and Veronica wiped Your face clean. My soul was once clean and beautiful when I was baptized, but sin disfigured it. Through your suffering, wipe my soul clean. I love you, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will.",
+      "title_es": "La Verónica enjuga el rostro de Jesús.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Una mujer llamada Verónica, al ver a Jesús sufriendo tanto, con sudor y sangre corriendo por su rostro, le dio un lienzo para limpiarse la cara. Por un milagro, Él dejó una imagen de su rostro en el lienzo.",
+      "prayer_es": "Jesús, tu rostro estaba antes limpio y hermoso, pero la sangre y el sudor lo desfiguraron, y Verónica limpió tu rostro. Mi alma estaba antes limpia y hermosa cuando fui bautizado, pero el pecado la desfiguró. Por tu sufrimiento, limpia mi alma. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Luke 23:26",
@@ -310,7 +400,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus fell the second time under the Cross. The fall renews all the pain in His body and makes His head throb.",
-      "prayer": "Jesus, so many times you have forgiven me, and so many times I have sinned again. Through the merits of your second fall, help me and preserve me in your grace until I die. Help me to call on you every time I am tempted. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, so many times you have forgiven me, and so many times I have sinned again. Through the merits of your second fall, help me and preserve me in your grace until I die. Help me to call on you every time I am tempted. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús cae por segunda vez.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús cayó por segunda vez bajo la Cruz. La caída renueva todo el dolor en su cuerpo y hace que su cabeza palpite.",
+      "prayer_es": "Jesús, tantas veces me has perdonado, y tantas veces he vuelto a pecar. Por los méritos de tu segunda caída, ayúdame y presérvame en tu gracia hasta que muera. Ayúdame a invocarte cada vez que sea tentado. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Luke 23:27-31",
@@ -319,7 +414,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "These women wept with compassion at seeing Jesus walking to His death. But Jesus said to them, “Weep not for me but for your children.”",
-      "prayer": "Jesus, I am sorry for all my sins, because of the pain and sadness they cause you, who loves me so much. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, I am sorry for all my sins, because of the pain and sadness they cause you, who loves me so much. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús encuentra a las mujeres de Jerusalén.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Estas mujeres lloraban de compasión al ver a Jesús caminando hacia su muerte. Pero Jesús les dijo: “No lloréis por mí, sino por vuestros hijos.”",
+      "prayer_es": "Jesús, siento todos mis pecados, por el dolor y la tristeza que te causan a ti, que me amas tanto. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Luke 23:26",
@@ -328,7 +428,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus fell for the third time. He was so weak and the soldiers pushed Him to walk faster, but He could barely move.",
-      "prayer": "Jesus, by my weakness in temptation, you are going to Calvary. Give me strength to conquer temptation. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, by my weakness in temptation, you are going to Calvary. Give me strength to conquer temptation. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús cae por tercera vez.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús cayó por tercera vez. Estaba tan débil y los soldados le empujaban a caminar más rápido, pero apenas podía moverse.",
+      "prayer_es": "Jesús, por mi debilidad ante la tentación, tú vas al Calvario. Dame fuerza para vencer la tentación. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "John 19:23-24",
@@ -337,7 +442,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "The soldiers snatched Jesus' robe off Him.",
-      "prayer": "Jesus, help me to strip my soul of bad habits so I can give all my love to you, who are so worthy of all my love. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, help me to strip my soul of bad habits so I can give all my love to you, who are so worthy of all my love. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús es despojado de sus vestiduras.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Los soldados arrancaron el manto de Jesús.",
+      "prayer_es": "Jesús, ayúdame a despojar mi alma de los malos hábitos para poder darte todo mi amor a ti, que eres tan digno de todo mi amor. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Luke 23:33-34",
@@ -346,7 +456,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Jesus was thrown down onto the Cross. He stretched out His arms and offered His life to the Father for our salvation. The soldiers nailed Him to the Cross and pushed the Cross to stand up.",
-      "prayer": "Jesus, keep my heart. Keep me always close to you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will."
+      "prayer": "Jesus, keep my heart. Keep me always close to you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love You always and to do Your will.",
+      "title_es": "Jesús es clavado en la Cruz.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Jesús fue arrojado sobre la Cruz. Extendió sus brazos y ofreció su vida al Padre por nuestra salvación. Los soldados lo clavaron en la Cruz y la levantaron.",
+      "prayer_es": "Jesús, guarda mi corazón. Manténme siempre cerca de ti. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "John 19:28-30",
@@ -355,7 +470,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "After suffering for three hours on the Cross, Jesus gave up His life to the Father and died.",
-      "prayer": "Jesus, through my sins, I deserve to be punished, but your death is my hope. Through the merits of your death, give me the grace that when I die, I will die as you want me to. I entrust my soul into your hands. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, through my sins, I deserve to be punished, but your death is my hope. Through the merits of your death, give me the grace that when I die, I will die as you want me to. I entrust my soul into your hands. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús muere en la Cruz.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Después de sufrir durante tres horas en la Cruz, Jesús entregó su vida al Padre y murió.",
+      "prayer_es": "Jesús, por mis pecados merezco ser castigado, pero tu muerte es mi esperanza. Por los méritos de tu muerte, concédeme la gracia de que cuando muera, muera como tú quieres. Encomiendo mi alma en tus manos. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "John 19:38-40",
@@ -364,7 +484,12 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "Two of Jesus' disciples took Jesus down from the Cross and Mary His Mother held Him close to her heart.",
-      "prayer": "Mary, sorrowful Mother, pray to your Son for me. Jesus, you have died because you love me. Help me to love you always. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Mary, sorrowful Mother, pray to your Son for me. Jesus, you have died because you love me. Help me to love you always. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús es bajado de la Cruz.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Dos discípulos de Jesús lo bajaron de la Cruz y María, su Madre, lo estrechaba junto a su corazón.",
+      "prayer_es": "María, Madre dolorosa, ruega a tu Hijo por mí. Jesús, tú has muerto porque me amas. Ayúdame a amarte siempre. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     },
     {
       "scripture": "Matt 27:57-60",
@@ -373,18 +498,47 @@
       "verse": "We adore you, Christ, and we praise you.",
       "response": "Because by your holy Cross, you have redeemed the world.",
       "meditation": "The two disciples and Mary laid Jesus in the tomb.",
-      "prayer": "Jesus, You rose on the third day. Through your Resurrection, make me rise glorious on the last day, to be always with you in Heaven, praising and loving you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will."
+      "prayer": "Jesus, You rose on the third day. Through your Resurrection, make me rise glorious on the last day, to be always with you in Heaven, praising and loving you. I love you, Jesus. I repent of my sins. Help me to never sin again and to love you always and to do your will.",
+      "title_es": "Jesús es puesto en el sepulcro.",
+      "verse_es": "Te adoramos, Cristo, y te bendecimos.",
+      "response_es": "Porque por tu santa Cruz redimiste al mundo.",
+      "meditation_es": "Los dos discípulos y María pusieron a Jesús en el sepulcro.",
+      "prayer_es": "Jesús, tú resucitaste al tercer día. Por tu Resurrección, hazme resucitar glorioso en el último día, para estar siempre contigo en el cielo, alabándote y amándote. Te amo, Jesús. Me arrepiento de mis pecados. Ayúdame a no pecar más y a amarte siempre y a hacer tu voluntad."
     }
   ],
   "prayers": {
-    "our_father": "Our Father, who art in heaven,\nhallowed be thy name;\nthy kingdom come,\nthy will be done\non earth as it is in heaven.\nGive us this day our daily bread,\nand forgive us our trespasses,\nas we forgive those who trespass against us;\nand lead us not into temptation,\nbut deliver us from evil.\n\nAmen.",
-    "hail_mary": "Hail, Mary, full of grace,\nthe Lord is with thee.\nBlessed art thou among women\nand blessed is the fruit of thy womb, Jesus.\nHoly Mary, Mother of God,\npray for us sinners,\nnow and at the hour of our death.\n\nAmen.",
-    "sign_of_cross": "In the name of the Father\nand of the Son\nand of the Holy Spirit. \n\nAmen.",
-    "apostles_creed": "I believe in God,\nthe Father almighty,\nCreator of heaven and earth,\nand in Jesus Christ, his only Son, our Lord,\nwho was conceived by the Holy Spirit,\nborn of the Virgin Mary,\nsuffered under Pontius Pilate,\nwas crucified, died and was buried;\nhe descended into hell;\non the third day he rose again from the dead;\nhe ascended into heaven,\nand is seated at the right hand of God the Father almighty;\nfrom there he will come to judge the living and the dead.\n\nI believe in the Holy Spirit,\nthe holy catholic Church,\nthe communion of saints,\nthe forgiveness of sins,\nthe resurrection of the body,\nand life everlasting.\n\nAmen.",
-    "act_of_contrition": "My God,\nI am sorry for my sins with all my heart.\nIn choosing to do wrong\nand failing to do good,\nI have sinned against you\nwhom I should love above all things.\nI firmly intend, with your help,\nto do penance,\nto sin no more,\nand to avoid whatever leads me to sin.\nOur Savior Jesus Christ\nsuffered and died for us.\nIn his name, my God, have mercy.\n\nAmen.",
-    "glory_be": "Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen.",
-    "hail_holy_queen": "Hail, Holy Queen, Mother of Mercy, our life, our sweetness, and our hope. To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy towards us; and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.",
-    "o_my_jesus": "O my Jesus, forgive us our sins, save us from the fires of hell, and lead all souls to heaven, especially those in most need of thy mercy."
+    "our_father": {
+      "text": "Our Father, who art in heaven,\nhallowed be thy name;\nthy kingdom come,\nthy will be done\non earth as it is in heaven.\nGive us this day our daily bread,\nand forgive us our trespasses,\nas we forgive those who trespass against us;\nand lead us not into temptation,\nbut deliver us from evil.\n\nAmen.",
+      "text_es": "Padre nuestro, que estás en el cielo,\nsantificado sea tu Nombre;\nvenga a nosotros tu reino;\nhágase tu voluntad\nen la tierra como en el cielo.\nDanos hoy nuestro pan de cada día;\nperdona nuestras ofensas,\ncomo también nosotros perdonamos\na los que nos ofenden;\nno nos dejes caer en la tentación,\ny líbranos del mal.\n\nAmén."
+    },
+    "hail_mary": {
+      "text": "Hail, Mary, full of grace,\nthe Lord is with thee.\nBlessed art thou among women\nand blessed is the fruit of thy womb, Jesus.\nHoly Mary, Mother of God,\npray for us sinners,\nnow and at the hour of our death.\n\nAmen.",
+      "text_es": "Dios te salve, María,\nllena eres de gracia;\nel Señor es contigo.\nBendita tú eres entre todas las mujeres,\ny bendito es el fruto de tu vientre, Jesús.\nSanta María, Madre de Dios,\nruega por nosotros, pecadores,\nahora y en la hora de nuestra muerte.\n\nAmén."
+    },
+    "sign_of_cross": {
+      "text": "In the name of the Father\nand of the Son\nand of the Holy Spirit. \n\nAmen.",
+      "text_es": "En el nombre del Padre,\ny del Hijo,\ny del Espíritu Santo.\n\nAmén."
+    },
+    "apostles_creed": {
+      "text": "I believe in God,\nthe Father almighty,\nCreator of heaven and earth,\nand in Jesus Christ, his only Son, our Lord,\nwho was conceived by the Holy Spirit,\nborn of the Virgin Mary,\nsuffered under Pontius Pilate,\nwas crucified, died and was buried;\nhe descended into hell;\non the third day he rose again from the dead;\nhe ascended into heaven,\nand is seated at the right hand of God the Father almighty;\nfrom there he will come to judge the living and the dead.\n\nI believe in the Holy Spirit,\nthe holy catholic Church,\nthe communion of saints,\nthe forgiveness of sins,\nthe resurrection of the body,\nand life everlasting.\n\nAmen.",
+      "text_es": "Creo en Dios, Padre todopoderoso,\nCreador del cielo y de la tierra.\nCreo en Jesucristo, su único Hijo, nuestro Señor,\nque fue concebido por obra y gracia del Espíritu Santo,\nnació de Santa María Virgen,\npadeció bajo el poder de Poncio Pilato,\nfue crucificado, muerto y sepultado,\ndescendió a los infiernos,\nal tercer día resucitó de entre los muertos,\nsubió a los cielos\ny está sentado a la derecha de Dios, Padre todopoderoso.\nDesde allí ha de venir a juzgar a vivos y muertos.\n\nCreo en el Espíritu Santo,\nla santa Iglesia católica,\nla comunión de los santos,\nel perdón de los pecados,\nla resurrección de la carne\ny la vida eterna.\n\nAmén."
+    },
+    "act_of_contrition": {
+      "text": "My God,\nI am sorry for my sins with all my heart.\nIn choosing to do wrong\nand failing to do good,\nI have sinned against you\nwhom I should love above all things.\nI firmly intend, with your help,\nto do penance,\nto sin no more,\nand to avoid whatever leads me to sin.\nOur Savior Jesus Christ\nsuffered and died for us.\nIn his name, my God, have mercy.\n\nAmen.",
+      "text_es": "Dios mío,\nme arrepiento de todo corazón de todos mis pecados.\nAl escoger hacer el mal\ny no hacer el bien,\nhe pecado contra ti,\na quien debo amar sobre todas las cosas.\nPropongo firmemente, con tu ayuda,\nhacer penitencia,\nno volver a pecar\ny evitar todo lo que me lleva al pecado.\nNuestro Salvador Jesucristo\nsufrió y murió por nosotros.\nEn su nombre, Dios mío, ten piedad.\n\nAmén."
+    },
+    "glory_be": {
+      "text": "Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen.",
+      "text_es": "Gloria al Padre, y al Hijo, y al Espíritu Santo. Como era en el principio, ahora y siempre, por los siglos de los siglos. Amén."
+    },
+    "hail_holy_queen": {
+      "text": "Hail, Holy Queen, Mother of Mercy, our life, our sweetness, and our hope. To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy towards us; and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary.",
+      "text_es": "Dios te salve, Reina y Madre de misericordia, vida, dulzura y esperanza nuestra; Dios te salve. A ti llamamos los desterrados hijos de Eva; a ti suspiramos, gimiendo y llorando en este valle de lágrimas. Ea, pues, Señora, abogada nuestra, vuelve a nosotros esos tus ojos misericordiosos; y después de este destierro, muéstranos a Jesús, fruto bendito de tu vientre. Oh clemente, oh piadosa, oh dulce Virgen María."
+    },
+    "o_my_jesus": {
+      "text": "O my Jesus, forgive us our sins, save us from the fires of hell, and lead all souls to heaven, especially those in most need of thy mercy.",
+      "text_es": "Oh Jesús mío, perdona nuestros pecados, líbranos del fuego del infierno, lleva al cielo a todas las almas, especialmente a las más necesitadas de tu misericordia."
+    }
   },
   "novenas": [
     {
@@ -1068,6 +1222,7 @@
     "origin": "Given by Jesus to St. Faustina Kowalska, 1935",
     "quote": {
       "text": "Say unceasingly the chaplet that I have taught you.",
+      "text_es": "Recen incesantemente la coronilla que les he enseñado.",
       "ref": "Diary, 687"
     },
     "opening": [
@@ -1076,10 +1231,23 @@
       "hail_mary",
       "apostles_creed"
     ],
-    "decade_large": "Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.",
-    "decade_small": "For the sake of His sorrowful Passion, have mercy on us and on the whole world.",
-    "closing": "Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.",
+    "decade_large": {
+      "text": "Eternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.",
+      "text_es": "Padre Eterno, te ofrezco el Cuerpo y la Sangre, el Alma y la Divinidad de tu amadísimo Hijo, nuestro Señor Jesucristo, como propiciación por nuestros pecados y los del mundo entero."
+    },
+    "decade_small": {
+      "text": "For the sake of His sorrowful Passion, have mercy on us and on the whole world.",
+      "text_es": "Por su dolorosa Pasión, ten misericordia de nosotros y del mundo entero."
+    },
+    "closing": {
+      "text": "Holy God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.",
+      "text_es": "Santo Dios, Santo Fuerte, Santo Inmortal, ten piedad de nosotros y del mundo entero."
+    },
     "closing_repeats": 3,
-    "optional_closing": "Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen."
+    "optional_closing": {
+      "text": "Eternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen.",
+      "text_es": "Dios Eterno, en quien la misericordia es infinita y el tesoro de compasión inagotable, mira bondadosamente sobre nosotros y aumenta tu misericordia en nosotros, para que en los momentos difíciles no desesperemos ni nos desanimemos, sino que con gran confianza nos sometamos a tu santa voluntad, que es el Amor y la Misericordia misma. Amén."
+    },
+    "origin_es": "Dado por Jesús a Santa Faustina Kowalska, 1935"
   }
 }

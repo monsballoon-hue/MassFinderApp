@@ -74,6 +74,7 @@ function _handleVisibility() {
 // ── Format prayer text ──
 function _fmtPrayer(text) {
   if (!text) return '';
+  if (typeof text === 'object' && text.text) text = _prayerText(text);
   return utils.esc(text).replace(/\r\n/g, '\n').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
 }
 
