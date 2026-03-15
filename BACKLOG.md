@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-081 →
-**Total items:** 80
+**ID sequence:** IDEA-084 →
+**Total items:** 83
 
 ---
 
@@ -1063,3 +1063,40 @@ At [data-text-size="large"], root is 19px. Rosary prayer text computes to ~19px 
 When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental model ("tabs = how I move around") breaks. Consider a subtle continuity cue — either a faint wordmark or a 3px colored line at the bottom edge where the tab bar was. Lowest priority item — may be unnecessary if PHF-02a (bigger close button) resolves the confusion.
 
 **Implemented:** 2026-03-15 via PHF-02d — added 3px primary-colored line at bottom edge of reader overlay
+
+## IDEA-081 — App rebrand: evaluate "Sacristy" as replacement for "MassFinder"
+**Category:** research
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-082, IDEA-083
+**Spec ref:** (none)
+
+"MassFinder" describes ~15% of the app's current functionality and collides with massfinder.app (active competitor), massfinder.org, and the Catholic Mass Times ecosystem (130K+ churches, 20K reviews). Research evaluated three naming strategies: keep MassFinder (rejected — brand collision, scope mismatch), descriptive compound (rejected — forgettable), single evocative word (recommended — matches Hallow/Laudate/Amen pattern). Top candidate: **Sacristy** — "everything you need for the liturgical life, gathered in one place." sacristy.app domain appears available. Full analysis in docs/research/branding-research.md.
+
+## IDEA-082 — Secure sacristy.app domain and configure Vercel custom domain
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-081, IDEA-083
+**Spec ref:** (none)
+
+If rebrand decision is confirmed: purchase sacristy.app (~$12-14/yr), configure DNS, set up Vercel custom domain pointing to existing deployment. Includes SSL provisioning (automatic with .app TLD which requires HTTPS).
+
+**Estimated effort:** 1 hour
+**Dependencies:** IDEA-081 decision
+
+## IDEA-083 — Rebrand string references: manifest, meta tags, header wordmark, OG tags
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-081, IDEA-082
+**Spec ref:** (none)
+
+Update all user-facing "MassFinder" references to new brand name: manifest.json (name, short_name), index.html (title, meta description, OG tags, header wordmark text, header subtitle), service worker, any hardcoded strings in JS modules. Add a temporary "formerly MassFinder" note for 3-6 months to ease transition for existing users. Preserve the cross-and-gold icon and "Western New England" regional subtitle.
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** IDEA-082 (domain must be active first)
