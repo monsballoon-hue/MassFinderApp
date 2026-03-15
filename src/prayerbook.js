@@ -35,6 +35,7 @@ var _lectioGospel = null;  // today's gospel text
 
 // ── Reader module registration ──
 reader.registerModule('prayerbook', {
+  immersive: true,
   getTitle: function() { return 'Prayer Book'; },
   render: function(params, bodyEl, footerEl) {
     bodyEl.innerHTML = '<div class="prayerbook-loading"><div class="rosary-loading-spinner"></div><p>Loading prayers\u2026</p></div>';

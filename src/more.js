@@ -125,6 +125,7 @@ function _getFirstFridaySubtitle() {
 // Register with reader system
 var reader = require('./reader.js');
 reader.registerModule('firstfriday', {
+  immersive: true,
   getTitle: function() { return 'First Friday & Saturday'; },
   render: function(params, bodyEl, footerEl) {
     footerEl.style.display = 'none';

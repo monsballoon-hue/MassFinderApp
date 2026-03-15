@@ -74,8 +74,8 @@ function readerOpen(mode, params) {
   if (isNewOpen) {
     // SLV-08: Prayer tool entry pause (non-blocking)
     var _sacredPause = require('./sacred-pause.js');
-    var PRAYER_MODES = { rosary: 1, chaplet: 1, stations: 1, novena: 1, firstfriday: 1, examination: 1 };
-    if (PRAYER_MODES[mode]) {
+    // ARC-02: Use immersive flag instead of hardcoded list
+    if (mod.immersive) {
       _sacredPause.show({
         title: mod.getTitle ? mod.getTitle(params) : '',
         message: 'In the name of the Father,\nand of the Son,\nand of the Holy Spirit. Amen.',
@@ -202,7 +202,7 @@ function _initBackdropDismiss() {
   if (!overlay) return;
   overlay.addEventListener('click', function(e) {
     if (e.target !== overlay) return;
-    if (_current && ['rosary', 'examination', 'stations', 'novena'].indexOf(_current.mode) >= 0) return;
+    if (_current && _modules[_current.mode] && _modules[_current.mode].immersive) return;
     readerClose();
   });
 }
@@ -225,7 +225,7 @@ function _initSwipeDismiss() {
     var dx = Math.abs(t.clientX - startX);
     if (dy > 80 && dy > dx && body.scrollTop <= 5) {
       // Don't allow swipe-to-dismiss for prayer modules — user must explicitly close
-      if (_current && ['rosary', 'examination', 'stations', 'novena'].indexOf(_current.mode) >= 0) return;
+      if (_current && _modules[_current.mode] && _modules[_current.mode].immersive) return;
       readerClose();
     }
   }

@@ -16,6 +16,7 @@ var _swipeHintShown = false;
 
 // ── Reader module registration ──
 reader.registerModule('stations', {
+  immersive: true,
   getTitle: function() { return 'Stations of the Cross'; },
   render: function(params, bodyEl, footerEl) {
     bodyEl.innerHTML = '<div class="stations-loading"><div class="stations-loading-spinner"></div><p>Preparing the stations\u2026</p></div>';

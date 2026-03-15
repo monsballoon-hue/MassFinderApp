@@ -21,6 +21,7 @@ var _prevBead = -1;
 
 // ── Reader module registration ──
 reader.registerModule('chaplet', {
+  immersive: true,
   getTitle: function() { return 'Divine Mercy Chaplet'; },
   render: function(params, bodyEl, footerEl) {
     bodyEl.innerHTML = '<div class="chaplet-loading"><div class="rosary-loading-spinner"></div><p>Preparing your prayer\u2026</p></div>';

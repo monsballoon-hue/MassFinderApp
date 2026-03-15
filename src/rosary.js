@@ -39,6 +39,7 @@ var SET_QUOTES = {
 
 // ── Reader module registration ──
 reader.registerModule('rosary', {
+  immersive: true,
   getTitle: function() { return 'The Holy Rosary'; },
   render: function(params, bodyEl, footerEl) {
     bodyEl.innerHTML = '<div class="rosary-loading"><div class="rosary-loading-spinner"></div><p>Preparing your rosary\u2026</p></div>';

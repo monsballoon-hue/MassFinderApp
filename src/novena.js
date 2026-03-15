@@ -24,6 +24,7 @@ var _wakeLock = null;
 
 // ── Reader module registration ──
 reader.registerModule('novena', {
+  immersive: true,
   getTitle: function() { return 'Novenas'; },
   render: function(params, bodyEl, footerEl) {
     bodyEl.innerHTML = '<div class="novena-loading"><div class="novena-loading-spinner"></div><p>Loading novenas\u2026</p></div>';

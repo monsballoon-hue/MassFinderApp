@@ -41,6 +41,7 @@ function _pastoralNoteHTML() {
 
 // ── Reader module registration ──
 reader.registerModule('examination', {
+  immersive: true,
   getTitle: function() {
     var lang = '';
     try { lang = localStorage.getItem('mf-prayer-lang') || ''; } catch (e) {}
