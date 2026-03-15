@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-14
-**ID sequence:** IDEA-053 →
-**Total items:** 52
+**ID sequence:** IDEA-067 →
+**Total items:** 66
 
 ---
 
@@ -568,3 +568,199 @@ The Young Catholic church cards on the Find tab are styled too differently from 
 **Spec ref:** (none)
 
 The "Update available — Refresh" banner is appearing nearly every time the app is opened, even when no new code has been pushed. The service worker update check is triggering false positives. Ensure the update banner only displays when there is a genuine new deployment, not on routine app opens.
+
+## IDEA-053 — Monthly Devotion Card: traditional Catholic monthly dedications on More tab
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-060
+**Spec ref:** (none)
+
+A rotating card on the More tab showing the Church's traditional monthly dedication — January (Holy Name of Jesus), February (Holy Family), March (St. Joseph), April (Blessed Sacrament), May (Blessed Virgin Mary), June (Sacred Heart), July (Precious Blood), August (Immaculate Heart), September (Our Lady of Sorrows), October (Holy Rosary), November (Holy Souls in Purgatory), December (Immaculate Conception). Each entry includes a brief explanation (~100 words), 1-2 CCC references wired to the snippet system, and a suggested prayer or action that links to existing app tools where possible (e.g., October → Rosary, March → St. Joseph novena, November → prayers for the dead). Data is 12 static JSON entries, zero API, zero maintenance after build. Rotates automatically by calendar month.
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** None — all infrastructure exists
+**Audience fit:** All three demographics. Older parishioners will recognize these devotions; younger users will discover a tradition they may not know.
+
+## IDEA-054 — O Antiphons: Dec 17-23 daily card for the final days of Advent
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-058
+**Spec ref:** (none)
+
+The seven O Antiphons (O Sapientia, O Adonai, O Radix Jesse, O Clavis David, O Oriens, O Rex Gentium, O Emmanuel) are among the most ancient and beautiful texts in the liturgy, prayed during Vespers on Dec 17-23. A daily card appears on the More tab during these 7 days showing the Latin title, English translation, full antiphon text (2-3 sentences each), and a one-line explanation of the Old Testament reference. Rendered in --font-prayer (Georgia) with Advent purple accent. All texts are pre-medieval and public domain. Only fires for 7 days per year. Would resonate deeply with liturgically-aware Catholics and introduce the tradition to those unfamiliar.
+
+**Estimated effort:** 1.5-2 hours
+**Dependencies:** None — date check against calendar, inline or JSON data
+**Audience fit:** Middle and younger demographics will discover something new; older parishioners will appreciate seeing it surfaced.
+
+## IDEA-055 — Seasonal novena auto-surfacing: promote contextually appropriate novenas
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-028, IDEA-065, IDEA-066
+**Spec ref:** (none)
+
+The app already has 3 novenas (Divine Mercy, Holy Spirit, St. Joseph) but they sit equally in the Novena Tracker year-round. Auto-promote the contextually appropriate novena based on the liturgical calendar: Divine Mercy Novena promoted starting Good Friday (traditional start, 9 days ending Divine Mercy Sunday); Novena to the Holy Spirit promoted from Ascension Thursday through Pentecost (the original novena); Novena to St. Joseph promoted in March leading up to March 19. The promoted novena gets a seasonal badge, moves to the top of the novena list, and if not yet started, shows a gentle CTA: "The traditional time to pray this novena begins [date]." Date-matching logic uses litcal data already cached.
+
+**Estimated effort:** 1.5 hours
+**Dependencies:** Litcal data (exists), novena tracker (exists)
+**Audience fit:** All demographics. Makes the novena tracker feel alive rather than static.
+
+## IDEA-056 — Holy Week day-by-day guide: Palm Sunday through Easter Sunday
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-055, IDEA-061
+**Spec ref:** (none)
+
+During Holy Week (Palm Sunday → Easter Sunday, April 1-5 in 2026), replace or augment the liturgical teaser card on the More tab with a richer daily guide. Each day gets a dedicated card explaining its significance: Palm Sunday (Procession, Passion reading), Monday-Wednesday (Jesus's final teachings, "Spy Wednesday"), Holy Thursday (Mass of the Lord's Supper, foot washing, Eucharist institution, altar stripping, watching hour), Good Friday (Celebration of the Passion, Veneration of the Cross, no Mass today, bare church), Holy Saturday (The Great Silence, Easter Vigil, RCIA), Easter Sunday (He is Risen, Alleluia returns). Include suggested actions ("Find Mass of the Lord's Supper near you" → Find tab with Holy Thursday filter). Static data: ~150 words per day × 8 days = ~1,200 words total. The litcal data already identifies these days by key.
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** Litcal data (exists)
+**Audience fit:** High impact for all demographics. Holy Week is the peak of the liturgical year.
+
+## IDEA-057 — Liturgical color awareness: subtle indicator with explanation
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-002
+**Spec ref:** (none)
+
+A subtle indicator on the More tab (within or near the liturgical teaser) showing today's liturgical color with a brief explanation. The litcal data already includes a `color` field for every day of the year. Display as a small colored circle or bar matching the actual vestment color. Special callouts for unusual colors: Rose (only Gaudete Sunday and Laetare Sunday — "A brief respite in the penitential season"), Red (Martyrs, Pentecost, Palm Sunday, Good Friday — "The blood of the martyrs and the fire of the Holy Spirit"), White/Gold (Feasts of the Lord, Easter, Christmas — "Joy and purity"), Green (Ordinary Time — "Growth and hope"), Purple (Penance and preparation). Expandable one-liner on tap. Very lightweight — just a display map from the existing color field.
+
+**Estimated effort:** 1 hour
+**Dependencies:** Litcal data (exists, includes color field)
+**Audience fit:** Educational for younger users; appreciated by all.
+
+## IDEA-058 — Advent Wreath devotion: interactive candle lighting with weekly prayers
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-054
+**Spec ref:** (none)
+
+An interactive Advent wreath experience on the More tab during Advent. SVG wreath with 3 purple candles, 1 rose candle (third week), and a white center candle (Christmas). Candles illuminate progressively each Sunday of Advent. Tap a lit candle to see the week's theme (Hope, Peace, Joy, Love), a traditional Advent wreath blessing/prayer (~80 words), and during Dec 17-23 the day's O Antiphon (linking to IDEA-054). Dark mode: candles glow warmly against the dark background. The wreath could serve as the "signature" Advent experience — visual, contemplative, and deeply traditional. Many families do this at home but don't have the prayers memorized.
+
+**Estimated effort:** 3-4 hours (SVG wreath design, progressive animation, prayer data, conditional rendering, dark mode)
+**Dependencies:** None — standalone feature with date logic
+**Audience fit:** Strong for families (middle group) and younger adults who may not have grown up with the tradition.
+
+## IDEA-059 — First Friday / First Saturday devotion tracker
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-041
+**Spec ref:** (none)
+
+Two traditional Catholic devotions that span all seasons: Nine First Fridays (Sacred Heart — attend Mass and receive Communion on the first Friday of 9 consecutive months; associated with promises of special graces) and Five First Saturdays (Fatima — Confession, Communion, Rosary, 15-min meditation on the mysteries on 5 consecutive first Saturdays). A tracker in the Prayer Tools section. Tap to mark completion. Counter shows progress (e.g., "5 of 9 First Fridays"). Resets if a month is missed (with a gentle "Start again" rather than a punitive message). Can link to Find tab to locate Mass for the upcoming first Friday/Saturday. The app already tracks confession dates and novena progress — this is the same localStorage pattern. Flows naturally across all 12 months.
+
+**Estimated effort:** 3 hours
+**Dependencies:** None
+**Audience fit:** Older parishioners will recognize these devotions immediately. Younger users may discover them. Privacy-first: localStorage only.
+
+## IDEA-060 — Seasonal CCC Spotlight: catechism paragraph tied to the liturgical season
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-053
+**Spec ref:** (none)
+
+A daily or weekly rotating CCC paragraph thematically tied to the current liturgical season, displayed as a card on the More tab. The full CCC (2,865 paragraphs) is already loaded in catechism.json. Curate ~20-30 paragraph numbers per season: Lent (CCC 1430-1439 interior penance, 1450-1460 confession, 538-540 Jesus in the desert), Easter (CCC 638-658 the Resurrection, 731-741 the Holy Spirit), Advent (CCC 522-524 preparation for Christ, 484-507 Mary), Christmas (CCC 525-534 mysteries of infancy), Ordinary Time (broader rotation). Card shows paragraph number, full text, section context, and a "Read more" link opening the CCC sheet. Data is a curated index of ~100-150 paragraph numbers; the text is already in the app.
+
+**Estimated effort:** 2-3 hours (curation of paragraph index + render logic)
+**Dependencies:** CCC data (exists), CCC sheet (exists)
+**Audience fit:** Deepens faith formation for all demographics. Especially valuable for middle group seeking substance.
+
+## IDEA-061 — Easter Season Alleluia card and Regina Caeli prayer
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-056
+**Spec ref:** (none)
+
+During the 50 days of Easter (Easter Sunday → Pentecost), surface a celebratory card on the More tab. After 40 days of Lenten solemnity, the app should feel different. The card includes: "Alleluia!" announcement, a note that the Easter season lasts 50 days, the Regina Caeli prayer (the traditional prayer that replaces the Angelus during Easter season — only 4 lines, public domain), and optionally a countdown to Pentecost. The accent color already shifts to gold for Easter; this card makes the seasonal shift tangible in content, not just color. The Regina Caeli text is ~60 words. Rendered in --font-prayer.
+
+**Estimated effort:** 1-1.5 hours
+**Dependencies:** Litcal data for Easter date range (exists)
+**Audience fit:** Joyful and welcoming. Older parishioners will know the Regina Caeli; younger users will learn it.
+
+## IDEA-062 — Ember Days awareness: recovering a forgotten Catholic tradition
+**Category:** pie-in-the-sky
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-057
+**Spec ref:** (none)
+
+Ember Days are four sets of three days (Wednesday, Friday, Saturday) occurring near the start of each liturgical season — traditionally days of fasting, abstinence, and prayer for vocations and thanksgiving for the gifts of the season. Most Catholics have never heard of them; they were de-emphasized after Vatican II but never abolished. A subtle card appears on or near Ember Days: "This week includes Ember Days" with a brief explanation (~100 words) and links to the Examen or confession finder. Date logic follows the traditional rules (Ember Days of Advent: after Dec 13, Lent: after Ash Wednesday, Pentecost: after Pentecost, September: after Sept 14). Very low data footprint.
+
+**Estimated effort:** 1.5-2 hours
+**Dependencies:** Date computation logic
+**Audience fit:** Niche but appreciated by depth-seeking users. Educational for all.
+
+## IDEA-063 — Seasonal Scripture Spotlight: weekly thematic passage in --font-prayer
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-060
+**Spec ref:** (none)
+
+A weekly rotating Scripture passage capturing the spiritual essence of the current season. Not the daily readings (which already exist) but a thematic "mood-setting" passage: Lent (Isaiah 58, Joel 2:12-13, Psalm 51), Easter (John 20, Acts 2, Romans 6:9), Advent (Isaiah 9:2, Luke 1:46-55, Isaiah 40:3), Christmas (John 1:1-14, Luke 2:1-20), Ordinary Time (broader Gospel and Psalm rotation). Rendered in --font-prayer (Georgia) with the seasonal accent as a contemplative card on the More tab. The Bible text already exists in the DRB/CPDV data — just needs a curated index of ~50-60 passage references mapped to liturgical weeks, loaded lazily at runtime.
+
+**Estimated effort:** 3-4 hours (passage curation + lazy-load from Bible data + styling)
+**Dependencies:** Bible data (exists — bible-drb/ and bible-cpdv/)
+**Audience fit:** Contemplative, serves all demographics. Older parishioners will appreciate familiar passages surfaced in season.
+
+## IDEA-064 — Marian Consecration countdown and tracker
+**Category:** pie-in-the-sky
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-053, IDEA-059
+**Spec ref:** (none)
+
+Total Consecration to Jesus through Mary (St. Louis de Montfort) is a 33-day preparation that traditionally starts on specific dates to culminate on a Marian feast day. Common start dates: Feb 20 → March 25 (Annunciation), Apr 10 → May 13 (Our Lady of Fatima), Jun 13 → Jul 16 (Our Lady of Mt. Carmel), Jul 20 → Aug 22 (Queenship of Mary), Nov 5 → Dec 8 (Immaculate Conception). A countdown card appears ~1 week before each start date with an explanation. If the user opts in, a daily tracker (similar to novena tracker) marks progress. The awareness card alone is ~2-3 hours; including daily prayer texts (public domain but need sourcing and formatting) would be 6-8 hours.
+
+**Estimated effort:** 2-3 hours (awareness card); 6-8 hours (with daily prayer texts)
+**Dependencies:** None for awareness card; daily texts would require data curation
+**Audience fit:** Popular among younger adult Catholics especially. Multiple opportunities per year.
+
+## IDEA-065 — Pentecost Novena auto-surface: the original novena from Ascension to Pentecost
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-055
+**Spec ref:** (none)
+
+The Novena to the Holy Spirit (already in the app's prayer data) is the original novena — the Apostles prayed for 9 days between Ascension Thursday and Pentecost Sunday. Auto-surface a prominent card on the More tab starting Ascension Thursday (May 15, 2026): "The original novena begins today. Join the Apostles in 9 days of prayer for the Holy Spirit." Direct link to start the Holy Spirit novena in the existing tracker. Daily progress integrated with the existing novena system. The data already exists — this is purely date-matching logic (Ascension key from litcal) and a promotional card.
+
+**Estimated effort:** 1.5 hours
+**Dependencies:** Litcal data (exists), novena data (exists), novena tracker (exists)
+**Audience fit:** Beautiful tie-in of existing content to the liturgical moment. All demographics.
+
+## IDEA-066 — Divine Mercy Sunday experience: dedicated card with chaplet link and indulgence info
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-14
+**Source:** research (seasonal-offerings-research.md)
+**Related:** IDEA-055
+**Spec ref:** (none)
+
+The Second Sunday of Easter is Divine Mercy Sunday (already in litcal data as "Easter2"). Surface a dedicated card on the More tab for that day: brief explanation of the Divine Mercy devotion, conditions for the plenary indulgence (Confession within ~20 days, Communion, prayer for the Pope's intentions, complete detachment from sin), link to the Divine Mercy Chaplet (currently in devotions.js), tie-in with the Divine Mercy Novena which ends that day (IDEA-055), and CCC references on God's mercy (CCC 1846-1848). ~200 words of content. Date from litcal. April 12, 2026.
+
+**Estimated effort:** 1.5 hours
+**Dependencies:** Litcal data (exists), devotions data (exists)
+**Audience fit:** Divine Mercy Sunday has become one of the most popular Catholic observances, especially among younger adults. High resonance.
