@@ -389,6 +389,18 @@ function parseOfficeHours(str) {
   return parts;
 }
 
+// ── Prayer content localization helper ──
+function getPrayerText(item, field) {
+  if (!item) return '';
+  var lang = '';
+  try { lang = localStorage.getItem('mf-prayer-lang') || ''; } catch (e) {}
+  if (lang && lang !== 'en') {
+    var localized = item[field + '_' + lang];
+    if (localized) return localized;
+  }
+  return item[field] || '';
+}
+
 module.exports = {
   displayName: displayName, getNow: getNow, toLocalDateStr: toLocalDateStr,
   isEventActive: isEventActive, getNextEventDate: getNextEventDate,
@@ -401,4 +413,5 @@ module.exports = {
   getEaster: getEaster, getSeasonProgress: getSeasonProgress,
   fmtRelDate: fmtRelDate, fmtMonth: fmtMonth, fmt12bare: fmt12bare,
   parseOfficeHours: parseOfficeHours,
+  getPrayerText: getPrayerText,
 };
