@@ -55,6 +55,18 @@ function toMin(t) {
   return parts[0] * 60 + parts[1];
 }
 
+// CFR2: General liturgical season getter
+function getLiturgicalSeason() {
+  if (window._litcalCache && window._litcalCache.events) {
+    var now = getNow(), m = now.getMonth() + 1, d = now.getDate();
+    var today = window._litcalCache.events.filter(function(e) {
+      return e.month === m && e.day === d;
+    });
+    if (today.length) return (today[0].liturgical_season || '').toUpperCase();
+  }
+  return '';
+}
+
 function isLentSeason() {
   if (window._litcalCache && window._litcalCache.events) {
     var now = getNow(), m = now.getMonth() + 1, d = now.getDate();
@@ -381,7 +393,7 @@ module.exports = {
   displayName: displayName, getNow: getNow, toLocalDateStr: toLocalDateStr,
   isEventActive: isEventActive, getNextEventDate: getNextEventDate,
   getRemainingDates: getRemainingDates, getNextDateForDay: getNextDateForDay,
-  fmt12: fmt12, toMin: toMin, isLentSeason: isLentSeason,
+  fmt12: fmt12, toMin: toMin, isLentSeason: isLentSeason, getLiturgicalSeason: getLiturgicalSeason,
   getNext: getNext, hav: hav, getDist: getDist, fmtDist: fmtDist,
   isVer: isVer, generateICS: generateICS,
   svcKey: svcKey, cleanNote: cleanNote, escRe: escRe, makeRangeLabel: makeRangeLabel,

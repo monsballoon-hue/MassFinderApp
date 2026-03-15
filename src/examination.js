@@ -16,6 +16,14 @@ var _sections = [];         // PTR-03: all sections (commandments + precepts)
 var _currentSection = 0;    // PTR-03: current section index
 var _shownLogHint = false;  // BT3-04: first-check toast flag
 
+// CFR1: Pastoral note HTML for Q31 (suicide)
+function _pastoralNoteHTML() {
+  return '<div class="exam-pastoral-note">'
+    + '<p class="exam-pastoral-support">If you are struggling with thoughts of self-harm, please know that God loves you and that help is available. Call or text <a href="tel:988" class="exam-pastoral-link">988</a> (Suicide &amp; Crisis Lifeline) anytime.</p>'
+    + '<p class="exam-pastoral-quote">\u201CWe should not despair of the eternal salvation of persons who have taken their own lives. By ways known to him alone, God can provide the opportunity for salutary repentance.\u201D<span class="exam-pastoral-cite"> \u2014 CCC \u00A72283</span></p>'
+    + '</div>';
+}
+
 // ── Reader module registration ──
 reader.registerModule('examination', {
   getTitle: function() { return 'Examination of Conscience'; },
@@ -100,6 +108,7 @@ function _renderSection(section, key, isFirst, isLast) {
     html += '<div class="exam-q-text">' + _esc(q.text) + '</div>';
     if (qRef) html += '<div class="exam-q-ref">' + qRef + '</div>';
     html += '</div></label>';
+    if (q.id === 31 && _checked[31]) html += _pastoralNoteHTML();
   });
   html += '</div></div></div>';
   return html;
@@ -339,9 +348,16 @@ function _renderExamination(d) {
           commandment: cb.dataset.cmd
         };
         qEl.classList.add('checked');
+        if (qid === 31 && !qEl.parentElement.querySelector('.exam-pastoral-note')) {
+          qEl.insertAdjacentHTML('afterend', _pastoralNoteHTML());
+        }
       } else {
         delete _checked[qid];
         qEl.classList.remove('checked');
+        if (qid === 31) {
+          var pn = qEl.parentElement && qEl.parentElement.querySelector('.exam-pastoral-note');
+          if (pn) pn.remove();
+        }
       }
       _haptic();
       _updateCheckedUI();
@@ -462,6 +478,7 @@ function _renderCurrentSection() {
     html += '<div class="exam-q-text">' + _esc(q.text) + '</div>';
     if (qRef) { html += '<div class="exam-q-ref">' + qRef + '</div>'; }
     html += '</div></label>';
+    if (q.id === 31 && _checked[31]) html += _pastoralNoteHTML();
   });
   html += '</div>';
 
@@ -494,9 +511,16 @@ function _wireCheckboxes(body) {
         skey: cb.dataset.skey || ''
       };
       qEl.classList.add('checked');
+      if (qid === 31 && !qEl.parentElement.querySelector('.exam-pastoral-note')) {
+        qEl.insertAdjacentHTML('afterend', _pastoralNoteHTML());
+      }
     } else {
       delete _checked[qid];
       qEl.classList.remove('checked');
+      if (qid === 31) {
+        var pn = qEl.parentElement && qEl.parentElement.querySelector('.exam-pastoral-note');
+        if (pn) pn.remove();
+      }
     }
     _haptic();
     _updateCheckedUI();
