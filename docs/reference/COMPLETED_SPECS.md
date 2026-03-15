@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (28 specs implemented, 0 in-progress, 4 queued)
+**Last updated:** 2026-03-15 (30 specs implemented, 0 in-progress, 2 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -486,23 +486,23 @@ Future specs should continue this pattern with new prefixes.
 > **Note:** Two concerns returned to Content & Voice for adjustment before Claude Code handoff. No production code or data changes required.
 
 ### UX_Spec_AtAGlance_Card.md (AGC series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_AGC.md
 | ID | Title | Status |
 |----|-------|--------|
-| AGC-01 | `.devot-glance` Visual Pattern (CSS class, light + dark) | Queued |
-| AGC-02 | Reader Overlay `p:first-child` → `p:first-of-type` Fix | Queued |
+| AGC-01 | `.devot-glance` Visual Pattern (CSS class, light + dark) | Done |
+| AGC-02 | Reader Overlay `p:first-child` → `p:first-of-type` Fix | Done |
 
 ### Content_Spec_AtAGlance.md (CON-32 through CON-38)
-**Created:** 2026-03-15 · **Status:** Ready for implementation (Catholic Review + UX Design complete)
+**Created:** 2026-03-15 · **Status:** Implemented
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_CON_Glance.md
-**Depends on:** AGC-01 + AGC-02 (must land before or with)
+**Depends on:** AGC-01 + AGC-02 (landed with)
 | ID | Title | Status |
 |----|-------|--------|
-| CON-32 | At a Glance — How to Go to Confession | Queued |
-| CON-33 | At a Glance — What to Expect at a Latin Mass | Queued |
-| CON-34 | At a Glance — The Sunday Obligation | Queued |
-| CON-35 | At a Glance — Divine Mercy Chaplet | Queued |
-| CON-36 | At a Glance — Stations of the Cross | Queued |
-| CON-37 | TLM Guide — Paragraph Restructure | Queued |
-| CON-38 | Visual Pattern Reference (defers to AGC series) | N/A |
+| CON-32 | At a Glance — How to Go to Confession | Done |
+| CON-33 | At a Glance — What to Expect at a Latin Mass | Done |
+| CON-34 | At a Glance — The Sunday Obligation | Done |
+| CON-35 | At a Glance — Divine Mercy Chaplet | Done |
+| CON-36 | At a Glance — Stations of the Cross | Done |
+| CON-37 | TLM Guide — Paragraph Restructure | Done |
+| CON-38 | Visual Pattern Reference (defers to AGC series) | Done |
