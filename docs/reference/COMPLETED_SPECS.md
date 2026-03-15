@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (28 specs implemented, 0 in-progress, 3 queued)
+**Last updated:** 2026-03-15 (28 specs implemented, 0 in-progress, 4 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -484,3 +484,11 @@ Future specs should continue this pattern with new prefixes.
 | CON-37 | TLM rewrite: dropped Dialogue Mass/schola, added "at the altar rail" | ✅ Approved |
 
 > **Note:** Two concerns returned to Content & Voice for adjustment before Claude Code handoff. No production code or data changes required.
+
+### UX_Spec_AtAGlance_Card.md (AGC series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_AGC.md
+| ID | Title | Status |
+|----|-------|--------|
+| AGC-01 | `.devot-glance` Visual Pattern (CSS class, light + dark) | Queued |
+| AGC-02 | Reader Overlay `p:first-child` → `p:first-of-type` Fix | Queued |
