@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-084 →
-**Total items:** 83
+**ID sequence:** IDEA-088 →
+**Total items:** 87
 
 ---
 
@@ -1100,3 +1100,55 @@ Update all user-facing "MassFinder" references to new brand name: manifest.json 
 
 **Estimated effort:** 2-3 hours
 **Dependencies:** IDEA-082 (domain must be active first)
+
+## IDEA-084 — Landing page for sacristy.app (non-PWA visitors)
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (sacristy-brand-strategy.md)
+**Related:** IDEA-082, IDEA-083
+**Spec ref:** (none)
+
+Desktop and non-PWA visitors who navigate to sacristy.app need a simple, beautiful landing page that explains what the app is and how to install it. Five content pillars: Find, Prepare, Pray, Study, Live. Include 3-5 app screenshots, the tagline ("Prepare for the Sacred"), install instructions for iOS/Android PWA, and a link to the GitHub repo. Single-page, static HTML, no framework. Should match the app's design language (Playfair Display headings, Source Sans body, seasonal accent, dark mode support).
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** IDEA-082 (domain), IDEA-083 (rebrand strings)
+
+## IDEA-085 — Parish bulletin insert: print-ready copy + QR code for Sacristy
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (sacristy-brand-strategy.md)
+**Related:** IDEA-084
+**Spec ref:** (none)
+
+Draft a one-paragraph bulletin insert with QR code pointing to sacristy.app, suitable for printing in parish bulletins or as a business-card-sized handout. Target audience: parishioners aged 50+ who discover apps through physical media. Copy should emphasize: free, no ads, no tracking, covers their region, helps find Mass/Confession/Adoration + prayer tools + daily readings. Generate a print-ready PDF (business card size and half-page bulletin insert variants).
+
+**Estimated effort:** 1-2 hours
+**Dependencies:** IDEA-082 (domain must be live for QR code)
+
+## IDEA-086 — Web Share API: "Share Sacristy" button for organic growth
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (sacristy-brand-strategy.md)
+**Related:** IDEA-084
+**Spec ref:** (none)
+
+Add a subtle "Share Sacristy" option accessible from Settings or the More tab. Uses the Web Share API (navigator.share) with a clean share message: "Sacristy — a free Catholic app for Western New England. Find Mass, pray the Rosary, study the Catechism, and live the liturgical year. No ads, no tracking. [sacristy.app URL]". Fallback for browsers without Web Share: copy-to-clipboard. This is the lowest-friction way for satisfied users to drive word-of-mouth growth.
+
+**Estimated effort:** 1 hour
+**Dependencies:** IDEA-082 (domain)
+
+## IDEA-087 — Diocese of Springfield outreach: communications office introduction
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (sacristy-brand-strategy.md)
+**Related:** IDEA-085
+**Spec ref:** (none)
+
+Draft and send an introductory email to the Diocese of Springfield communications office. Frame: "Free, open-source, privacy-first Catholic PWA serving the Springfield diocese territory. 93 parishes, 1,690 services, 91 verified. No commercial interest — personal stewardship project. Requesting a mention in the diocesan newsletter or website." Include link to sacristy.app and GitHub repo. Not asking for endorsement or funding — just awareness.
+
+**Estimated effort:** 1 hour (draft + send)
+**Dependencies:** IDEA-082, IDEA-083, IDEA-084 (app must be rebranded and presentable first)
