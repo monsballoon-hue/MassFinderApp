@@ -40,6 +40,180 @@ function _getRosarySubtitle() {
   return mysteries[today] + ' Mysteries today';
 }
 
+// ── First Friday/Saturday Tracker (SOT-12) ──
+function _getFirstFridayState() {
+  try {
+    return JSON.parse(localStorage.getItem('mf-first-friday') || '{}');
+  } catch (e) { return {}; }
+}
+
+function _getNextFirstFriday() {
+  var now = new Date();
+  var d = new Date(now.getFullYear(), now.getMonth(), 1);
+  // Find first Friday of current or next month
+  while (d.getDay() !== 5) d.setDate(d.getDate() + 1);
+  if (d < now) {
+    // Already passed this month, get next month's
+    d = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    while (d.getDay() !== 5) d.setDate(d.getDate() + 1);
+  }
+  return d;
+}
+
+function _getNextFirstSaturday() {
+  var now = new Date();
+  var d = new Date(now.getFullYear(), now.getMonth(), 1);
+  while (d.getDay() !== 6) d.setDate(d.getDate() + 1);
+  if (d < now) {
+    d = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    while (d.getDay() !== 6) d.setDate(d.getDate() + 1);
+  }
+  return d;
+}
+
+function _getFirstFridaySubtitle() {
+  var st = _getFirstFridayState();
+  var friCount = (st.fridays && st.fridays.length) || 0;
+  var satCount = (st.saturdays && st.saturdays.length) || 0;
+  if (friCount >= 9 && satCount >= 5) return { text: 'Both devotions complete', active: false };
+  if (friCount > 0 || satCount > 0) {
+    var parts = [];
+    if (friCount > 0 && friCount < 9) parts.push(friCount + ' of 9 First Fridays');
+    if (friCount >= 9) parts.push('9 First Fridays complete');
+    if (satCount > 0 && satCount < 5) parts.push(satCount + ' of 5 First Saturdays');
+    if (satCount >= 5) parts.push('5 First Saturdays complete');
+    return { text: parts.join(' \u00b7 '), active: true };
+  }
+  // Show next date
+  var nf = _getNextFirstFriday();
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return { text: 'Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate(), active: false };
+}
+
+function openFirstFriday() {
+  var reader = require('./reader.js');
+  var esc = require('./utils.js').esc;
+  var haptics = require('./haptics.js');
+  var st = _getFirstFridayState();
+  var fridays = st.fridays || [];
+  var saturdays = st.saturdays || [];
+
+  var friDots = '';
+  for (var i = 0; i < 9; i++) {
+    var done = i < fridays.length;
+    friDots += '<div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;'
+      + (done ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
+      + '">' + (i + 1) + '</div>';
+  }
+  var satDots = '';
+  for (var j = 0; j < 5; j++) {
+    var sDone = j < saturdays.length;
+    satDots += '<div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;'
+      + (sDone ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
+      + '">' + (j + 1) + '</div>';
+  }
+
+  var nf = _getNextFirstFriday();
+  var ns = _getNextFirstSaturday();
+  var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  var html = '<div style="max-width:540px;margin:0 auto">'
+    + '<div style="text-align:center;margin-bottom:var(--space-5)">'
+    + '<div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2)">First Friday &amp; First Saturday</div>'
+    + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5">Two devotions of reparation to the Sacred Heart of Jesus and the Immaculate Heart of Mary.</div>'
+    + '</div>'
+
+    // First Fridays
+    + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Nine First Fridays</div>'
+    + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">Attend Mass and receive Communion on nine consecutive first Fridays in reparation to the Sacred Heart. Jesus promised St. Margaret Mary: \u201cI will give them all the graces necessary for their state of life.\u201d</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-3)">' + friDots + '</div>'
+    + (fridays.length >= 9
+      ? '<div style="font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold)">Complete \u2714</div>'
+      : '<div style="font-size:var(--text-xs);color:var(--color-text-tertiary)">Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate() + '</div>'
+        + '<button onclick="window._logFirstFriday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Friday \u2714</button>')
+    + '</div>'
+
+    // First Saturdays
+    + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Five First Saturdays</div>'
+    + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">On five consecutive first Saturdays, go to Confession (within 8 days), receive Communion, pray five decades of the Rosary, and meditate for 15 minutes on the mysteries. Our Lady of F\u00e1tima promised special protection at the hour of death.</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-3)">' + satDots + '</div>'
+    + (saturdays.length >= 5
+      ? '<div style="font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold)">Complete \u2714</div>'
+      : '<div style="font-size:var(--text-xs);color:var(--color-text-tertiary)">Next First Saturday: ' + months[ns.getMonth()] + ' ' + ns.getDate() + '</div>'
+        + '<button onclick="window._logFirstSaturday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Saturday \u2714</button>')
+    + '</div>'
+
+    // Reset
+    + '<div style="text-align:center;padding:var(--space-4) 0">'
+    + '<button onclick="window._resetFirstFriday()" style="font-size:var(--text-xs);color:var(--color-text-tertiary);background:none;border:none;cursor:pointer">Reset progress</button>'
+    + '</div>'
+
+    // Find Mass link
+    + '<div style="text-align:center;padding-bottom:var(--space-4)">'
+    + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))" style="padding:var(--space-3) var(--space-5);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">Find Mass near you</button>'
+    + '</div>'
+    + '</div>';
+
+  reader.openReader('First Friday & Saturday', html);
+}
+
+window._logFirstFriday = function() {
+  var haptics = require('./haptics.js');
+  var st = _getFirstFridayState();
+  var fridays = st.fridays || [];
+  var now = new Date();
+  var key = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  if (fridays.indexOf(key) === -1) {
+    // Check consecutive — last entry should be previous month
+    if (fridays.length > 0) {
+      var last = fridays[fridays.length - 1].split('-');
+      var lastDate = new Date(parseInt(last[0]), parseInt(last[1]) - 1, 1);
+      var expected = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      if (lastDate.getTime() !== expected.getTime()) {
+        // Gap — reset gracefully
+        fridays = [];
+      }
+    }
+    fridays.push(key);
+    st.fridays = fridays;
+    localStorage.setItem('mf-first-friday', JSON.stringify(st));
+    haptics.confirm();
+    openFirstFriday(); // Re-render
+  }
+};
+
+window._logFirstSaturday = function() {
+  var haptics = require('./haptics.js');
+  var st = _getFirstFridayState();
+  var saturdays = st.saturdays || [];
+  var now = new Date();
+  var key = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+  if (saturdays.indexOf(key) === -1) {
+    if (saturdays.length > 0) {
+      var last = saturdays[saturdays.length - 1].split('-');
+      var lastDate = new Date(parseInt(last[0]), parseInt(last[1]) - 1, 1);
+      var expected = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+      if (lastDate.getTime() !== expected.getTime()) {
+        saturdays = [];
+      }
+    }
+    saturdays.push(key);
+    st.saturdays = saturdays;
+    localStorage.setItem('mf-first-friday', JSON.stringify(st));
+    haptics.confirm();
+    openFirstFriday();
+  }
+};
+
+window._resetFirstFriday = function() {
+  localStorage.removeItem('mf-first-friday');
+  var haptics = require('./haptics.js');
+  haptics.confirm();
+  openFirstFriday();
+};
+
 // ── Holy Week Guide Data (SOT-05) ──
 var HOLY_WEEK_GUIDE = {
   PalmSun: {
@@ -514,19 +688,23 @@ function renderMore() {
       // Stations: Latin cross — matches existing cross SVG in stations.js
       stations: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
       // Novena: candle flame
-      novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>'
+      novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>',
+      // SOT-12: First Friday/Saturday — two small circles
+      firstfriday: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>'
     };
     var ptColors = {
       rosary: 'var(--color-sacred)',
       examination: 'var(--color-sacred)',
       stations: isLentSeason() ? 'var(--color-accent)' : 'var(--color-sacred)',
-      novena: 'var(--color-sacred)'
+      novena: 'var(--color-sacred)',
+      firstfriday: 'var(--color-sacred)'
     };
     var ptBgColors = {
       rosary: 'var(--color-sacred-pale)',
       examination: 'var(--color-sacred-pale)',
       stations: isLentSeason() ? 'var(--color-accent-pale)' : 'var(--color-sacred-pale)',
-      novena: 'var(--color-sacred-pale)'
+      novena: 'var(--color-sacred-pale)',
+      firstfriday: 'var(--color-sacred-pale)'
     };
 
     // EMT-03-B: Contextual "today" highlight
@@ -597,11 +775,16 @@ function renderMore() {
       ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
     }
 
+    // SOT-12: First Friday/Saturday subtitle
+    var ffSub = _getFirstFridaySubtitle();
+    ptSubtitleClass.firstfriday = ffSub.active ? 'prayer-tool-subtitle--active' : '';
+
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
       { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
       { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
-      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true }
+      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true },
+      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true }
     ];
     ptGrid.innerHTML = ptCards.map(function(c) {
       var isPromoted = c.id === promotedId;
@@ -767,6 +950,7 @@ module.exports = {
   // More tab own exports
   renderMore: renderMore,
   dismissInstallCard: dismissInstallCard,
+  openFirstFriday: openFirstFriday,
   // Re-export devotions for external consumers
   renderGuide: renderGuide,
   DEVOTIONAL_GUIDES: DEVOTIONAL_GUIDES,

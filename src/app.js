@@ -254,6 +254,7 @@ window.stationsNext = stations.stationsNext;
 window.stationsPrev = stations.stationsPrev;
 window.stationsGoTo = stations.stationsGoTo;
 window.openNovena = novena.openNovena;
+window.openFirstFriday = more.openFirstFriday;
 window.closeNovena = novena.closeNovena;
 window.novenaSelect = novena.novenaSelect;
 window.novenaResume = novena.novenaResume;
