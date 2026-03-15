@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-096 →
-**Total items:** 95
+**ID sequence:** IDEA-101 →
+**Total items:** 100
 
 ---
 
@@ -1268,3 +1268,83 @@ Fixed "amoung" → "among" typo in Joyful mysteries Visitation meditation. Remov
 Five related bugs fixed in rapid succession during Sacred Pause / PHF integration: (1) Sacred pause started with fade-in, exposing reader slide-up behind it — changed to full opacity on entry. (2) CSS animation overriding dismiss transition — added animation:none to .dismissing class. (3) Detail panel z-index (1001) blocked reader overlay (1000) — switched to CSS variable at 501. (4) Confession guide readerOpen reference undefined — corrected to reader.readerOpen. (5) Detail panel stayed open behind Find tab when tapping "Find Confession" from guide — added closeAllPanels() call. SLV-10 readings liturgical day header also reverted as redundant with saint card.
 
 **Implemented:** 2026-03-15 via commits b37519b, cc0105b, 48cb802, 06b29b2
+
+## IDEA-096 — Multi-language prayer data model: inline locale fields
+**Category:** research
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike) → PASTORAL_HANDOFF_RESEARCH.md
+**Related:** IDEA-097, IDEA-098, IDEA-099, IDEA-100
+
+Research evaluated three data model options for adding Spanish (and future Polish/Portuguese) translations to prayer content files (examination.json, prayers.json, prayerbook.json):
+
+**Option A — Inline dual-language fields** (`"text"` + `"text_es"` alongside): Recommended. Content co-located prevents maintenance drift. Total bloat ~52KB uncompressed (~15-18KB gzipped) — negligible for a cached PWA. Zero loader changes needed. Scales to 3-5 languages by adding `text_pl`, `text_pt` fields. Simple convention: touch `text`, check `text_es`.
+
+**Option B — Parallel locale files** (`examination-es.json`): Rejected. Every content change requires editing two files — the #1 cause of localization drift in solo-dev projects. Requires fetch logic refactor in every prayer module.
+
+**Option C — Key-value locale bundles** (i18next-style): Rejected. Over-engineered for 3-4 data files. 10+ hours of plumbing before any translation happens.
+
+**Additional findings:**
+- Fallback: silent English fallback via `item.text_es || item.text` — one ternary per render point, shared helper function `getPrayerText(item, field)`
+- Standard prayers (Padre Nuestro, Ave María, etc.): use USCCB-approved liturgical texts, not fresh translations
+- Exam questions (66 strings): need bilingual Catholic reviewer — machine translation not appropriate for sacramental prep content
+- Language picker: add to Settings, persist via localStorage `prayerLang`
+- Future languages: same pattern, no restructuring. Spanish (32 svc) + Polish (28) + Portuguese (10) covers all non-English parish demographics
+- Should implement after OW-04 (build-examination.js) so data pipeline is clean before adding locale fields
+
+## IDEA-097 — Phase 1: Spanish Examination of Conscience
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
+**Related:** IDEA-096, IDEA-098
+**Spec ref:** (none)
+
+Add `text_es` fields to examination.json for all translatable strings: 66 examination questions, 3 prayers (Prayer Before Confession, Act of Contrition, Thanksgiving), 6 how-to-confess steps, 10 commandment titles + precepts header. Total ~80 strings. Source USCCB-approved Acto de Contrición and Oración Antes de la Confesión. Build shared `getPrayerText(item, field)` helper. Update examination.js render paths to use helper. Add prayer language picker to Settings (localStorage `prayerLang`, default `en`). Recruit bilingual Catholic reviewer from Spanish-Mass parish community.
+
+**Estimated effort:** 4-5.5 hours
+**Dependencies:** OW-04 (build-examination.js build script — clean data pipeline first)
+**Audience fit:** Directly serves the 32 Spanish-Mass families. Highest pastoral value per the handoff.
+
+## IDEA-098 — Phase 2: Spanish Rosary core prayers and mysteries
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
+**Related:** IDEA-096, IDEA-097
+**Spec ref:** (none)
+
+Add `text_es` fields to prayers.json for: 7 core prayers (Padre Nuestro, Ave María, Gloria, Credo de los Apóstoles, Salve Reina, Oh Jesús Mío, Señal de la Cruz), 20 mystery titles, 20 mystery meditations, 20 fruit-of-mystery strings. Total ~50 translatable strings + 7 prayers. All core prayers are liturgically standardized — source from USCCB. Update rosary.js render paths to use `getPrayerText()` helper (already built in IDEA-097).
+
+**Estimated effort:** 3-4 hours
+**Dependencies:** IDEA-097 (shared helper and language picker must exist)
+**Audience fit:** The Rosary is the most-used prayer tool. Spanish Rosary prayers are deeply familiar to Hispanic Catholics.
+
+## IDEA-099 — Phase 3: Spanish Stations of the Cross and Chaplet
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
+**Related:** IDEA-096, IDEA-098
+**Spec ref:** (none)
+
+Add `text_es` fields to prayers.json for: 14 stations × (title + verse + response + meditation + prayer) and 5 chaplet prayer strings. Update stations.js and chaplet.js to use `getPrayerText()`. Novenas deferred to a later phase — 9 novenas × 9 days is the largest translation lift and lowest pastoral priority.
+
+**Estimated effort:** 3-4 hours
+**Dependencies:** IDEA-097 (shared helper), IDEA-098 (pattern established)
+**Audience fit:** Stations of the Cross during Lent is a high-traffic prayer tool for all demographics.
+
+## IDEA-100 — Phase 4: Spanish Prayerbook common prayers
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
+**Related:** IDEA-096, IDEA-097
+**Spec ref:** (none)
+
+Add `text_es` fields to prayerbook.json for standalone prayers across 5 categories. Many prayers overlap with Rosary core (already translated in IDEA-098) — prayerbook versions should reference the same approved texts. Litanies and Lectio Divina steps also need translation. Update prayerbook.js to use `getPrayerText()`. Novena translations (9 novenas × 9 days of prayers + meditations) could be folded into this phase or deferred further based on bandwidth.
+
+**Estimated effort:** 3-4 hours (prayerbook), 6-8 hours additional if novenas included
+**Dependencies:** IDEA-097 (shared helper), IDEA-098 (standard prayer texts already sourced)
+**Audience fit:** Completes the Spanish prayer experience. Lower urgency than Phases 1-3.
