@@ -413,6 +413,8 @@ async function _renderBibleContent(refStr) {
   }
   html += '</div>';
 
+  // SLV-02: LORD → small-caps (typographic convention)
+  html = html.replace(/\bLORD\b/g, '<span class="sc">LORD</span>');
   bodyEl.innerHTML = html;
   bodyEl._verseText = verseTexts.join(' ');
 

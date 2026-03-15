@@ -2,18 +2,18 @@
 
 **Date:** 2026-03-14
 **Author:** UX Consultant (Claude Opus)
-**Status:** Queued
+**Status:** Implemented
 **Prerequisite for:** PMB (Prayer Book), PMD (Chaplet & Devotions)
 **Prefix:** PMG
 
 | Item | Title | Status |
 |------|-------|--------|
-| PMG-01 | Always-2-Column Primary Grid | queued |
-| PMG-02 | Secondary Compact Row (3-up) | queued |
-| PMG-03 | Vertical Card Layout for Primary Cards | queued |
-| PMG-04 | Promoted Card Swap Logic | queued |
-| PMG-05 | Library Teaser Repositioning | queued |
-| PMG-06 | Dark Mode Parity | queued |
+| PMG-01 | Always-2-Column Primary Grid | done |
+| PMG-02 | Secondary Compact Row (3-up) | done |
+| PMG-03 | Vertical Card Layout for Primary Cards | done |
+| PMG-04 | Promoted Card Swap Logic | done |
+| PMG-05 | Library Teaser Repositioning | done |
+| PMG-06 | Dark Mode Parity | done |
 
 ---
 
@@ -352,3 +352,19 @@ The existing dark mode rules for `.prayer-tool-card` and `.prayer-tool-card--pro
 - **`index.html`:** One new div (`prayerToolsSecondary`) inserted after `prayerToolsGrid`.
 - **`css/app.css`:** New classes `--primary`, `--secondary`, `.prayer-tools-secondary`. Two `@media` rules removed.
 - **No impact on:** reader.js, rosary.js, examination.js, stations.js, novena.js, or any data files. This is purely a layout spec.
+
+---
+
+## Implementation Notes — All PMG Items
+
+### Implementation Notes
+
+- **Date:** 2026-03-14
+- **Status:** done (all 6 items)
+- **Files changed:**
+  - `css/app.css` — Changed `.prayer-tools-grid` to always `1fr 1fr`, removed two `@media` overrides, added `.prayer-tools-secondary` 3-up grid, added `.prayer-tool-card--primary` (vertical layout) and `.prayer-tool-card--secondary` (compact horizontal) variants, added promoted card override styles
+  - `index.html` — Added `<div class="prayer-tools-secondary" id="prayerToolsSecondary"></div>` between prayer tools grid and library teaser
+  - `src/more.js` — Added `tier` property to all ptCards, added `_resolveCardTiers(cards, promotedId)` swap logic, split rendering into primary/secondary loops with separate card renderers
+- **Approach:** All 6 PMG items implemented as a single atomic change since they're tightly coupled. The grid always renders 2 columns now. Primary cards use vertical layout (icon top, title+subtitle below). Secondary cards use compact horizontal (icon left, title right, no subtitle). `_resolveCardTiers()` handles Stations↔Prayer Book and Novena/FirstFriday↔Chaplet swaps when promotion is active. Dark mode inherits from existing `.prayer-tool-card` dark styles.
+- **Deviations from spec:** None significant. Followed spec exactly for grid layout, card variants, and swap logic.
+- **Known issues:** None observed.

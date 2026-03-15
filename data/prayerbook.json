@@ -1,0 +1,376 @@
+{
+  "version": "1",
+  "categories": [
+    {
+      "id": "essential",
+      "title": "Essential Prayers",
+      "prayers": [
+        {
+          "id": "sign_of_cross",
+          "title": "Sign of the Cross",
+          "type": "static",
+          "tags": ["basic", "daily"],
+          "text": "In the name of the Father,\nand of the Son,\nand of the Holy Spirit.\n\nAmen."
+        },
+        {
+          "id": "our_father",
+          "title": "Our Father",
+          "aka": "The Lord's Prayer, Pater Noster",
+          "type": "static",
+          "tags": ["basic", "daily", "rosary"],
+          "text": "Our Father, who art in heaven,\nhallowed be thy name;\nthy kingdom come,\nthy will be done\non earth as it is in heaven.\nGive us this day our daily bread,\nand forgive us our trespasses,\nas we forgive those who trespass against us;\nand lead us not into temptation,\nbut deliver us from evil.\n\nAmen."
+        },
+        {
+          "id": "hail_mary",
+          "title": "Hail Mary",
+          "aka": "Ave Maria",
+          "type": "static",
+          "tags": ["basic", "daily", "marian", "rosary"],
+          "text": "Hail, Mary, full of grace,\nthe Lord is with thee.\nBlessed art thou among women\nand blessed is the fruit of thy womb, Jesus.\nHoly Mary, Mother of God,\npray for us sinners,\nnow and at the hour of our death.\n\nAmen."
+        },
+        {
+          "id": "glory_be",
+          "title": "Glory Be",
+          "aka": "Gloria Patri, Doxology",
+          "type": "static",
+          "tags": ["basic", "daily", "rosary"],
+          "text": "Glory be to the Father,\nand to the Son,\nand to the Holy Spirit;\nas it was in the beginning,\nis now, and ever shall be,\nworld without end.\n\nAmen."
+        },
+        {
+          "id": "apostles_creed",
+          "title": "Apostles' Creed",
+          "aka": "Credo",
+          "type": "static",
+          "tags": ["basic", "creed", "rosary"],
+          "text": "I believe in God,\nthe Father almighty,\nCreator of heaven and earth,\nand in Jesus Christ, his only Son, our Lord,\nwho was conceived by the Holy Spirit,\nborn of the Virgin Mary,\nsuffered under Pontius Pilate,\nwas crucified, died and was buried;\nhe descended into hell;\non the third day he rose again from the dead;\nhe ascended into heaven,\nand is seated at the right hand of God the Father almighty;\nfrom there he will come to judge the living and the dead.\n\nI believe in the Holy Spirit,\nthe holy catholic Church,\nthe communion of saints,\nthe forgiveness of sins,\nthe resurrection of the body,\nand life everlasting.\n\nAmen."
+        },
+        {
+          "id": "nicene_creed",
+          "title": "Nicene Creed",
+          "type": "static",
+          "tags": ["creed", "mass"],
+          "text": "I believe in one God,\nthe Father almighty,\nmaker of heaven and earth,\nof all things visible and invisible.\n\nI believe in one Lord Jesus Christ,\nthe Only Begotten Son of God,\nborn of the Father before all ages.\nGod from God, Light from Light,\ntrue God from true God,\nbegotten, not made, consubstantial with the Father;\nthrough him all things were made.\nFor us men and for our salvation\nhe came down from heaven,\nand by the Holy Spirit was incarnate\nof the Virgin Mary,\nand became man.\n\nFor our sake he was crucified under Pontius Pilate,\nhe suffered death and was buried,\nand rose again on the third day\nin accordance with the Scriptures.\nHe ascended into heaven\nand is seated at the right hand of the Father.\nHe will come again in glory\nto judge the living and the dead\nand his kingdom will have no end.\n\nI believe in the Holy Spirit, the Lord, the giver of life,\nwho proceeds from the Father and the Son,\nwho with the Father and the Son is adored and glorified,\nwho has spoken through the prophets.\n\nI believe in one, holy, catholic and apostolic Church.\nI confess one Baptism for the forgiveness of sins\nand I look forward to the resurrection of the dead\nand the life of the world to come.\n\nAmen."
+        },
+        {
+          "id": "confiteor",
+          "title": "Confiteor",
+          "aka": "I Confess",
+          "type": "static",
+          "tags": ["mass", "penitential"],
+          "text": "I confess to almighty God\nand to you, my brothers and sisters,\nthat I have greatly sinned,\nin my thoughts and in my words,\nin what I have done and in what I have failed to do,\nthrough my fault, through my fault,\nthrough my most grievous fault;\ntherefore I ask blessed Mary ever-Virgin,\nall the Angels and Saints,\nand you, my brothers and sisters,\nto pray for me to the Lord our God."
+        },
+        {
+          "id": "act_of_contrition_traditional",
+          "title": "Act of Contrition",
+          "aka": "Traditional Act of Contrition",
+          "type": "static",
+          "tags": ["confession", "penitential"],
+          "text": "O my God, I am heartily sorry\nfor having offended Thee,\nand I detest all my sins\nbecause of Thy just punishments,\nbut most of all because they offend Thee, my God,\nwho art all-good and deserving of all my love.\nI firmly resolve, with the help of Thy grace,\nto sin no more and to avoid the near occasions of sin.\n\nAmen."
+        },
+        {
+          "id": "act_of_contrition_modern",
+          "title": "Act of Contrition (Rite of Penance)",
+          "type": "static",
+          "tags": ["confession", "penitential"],
+          "text": "My God,\nI am sorry for my sins with all my heart.\nIn choosing to do wrong\nand failing to do good,\nI have sinned against you\nwhom I should love above all things.\nI firmly intend, with your help,\nto do penance,\nto sin no more,\nand to avoid whatever leads me to sin.\nOur Savior Jesus Christ\nsuffered and died for us.\nIn his name, my God, have mercy.\n\nAmen."
+        },
+        {
+          "id": "hail_holy_queen",
+          "title": "Hail, Holy Queen",
+          "aka": "Salve Regina",
+          "type": "static",
+          "tags": ["marian", "rosary"],
+          "text": "Hail, Holy Queen, Mother of Mercy,\nour life, our sweetness, and our hope.\nTo thee do we cry, poor banished children of Eve;\nto thee do we send up our sighs,\nmourning and weeping in this valley of tears.\nTurn then, most gracious advocate,\nthine eyes of mercy towards us;\nand after this our exile,\nshow unto us the blessed fruit of thy womb, Jesus.\nO clement, O loving, O sweet Virgin Mary.\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ."
+        }
+      ]
+    },
+    {
+      "id": "morning_evening",
+      "title": "Morning & Evening",
+      "prayers": [
+        {
+          "id": "morning_offering",
+          "title": "Morning Offering",
+          "type": "static",
+          "tags": ["morning", "daily"],
+          "text": "O Jesus, through the Immaculate Heart of Mary,\nI offer You my prayers, works, joys,\nand sufferings of this day\nin union with the Holy Sacrifice of the Mass\nthroughout the world.\n\nI offer them for all the intentions\nof Your Sacred Heart:\nthe salvation of souls,\nreparation for sin,\nand the reunion of all Christians.\n\nI offer them for the intentions\nof our bishops and of all Apostles of Prayer,\nand in particular for those\nrecommended by our Holy Father this month.\n\nAmen."
+        },
+        {
+          "id": "guardian_angel",
+          "title": "Guardian Angel Prayer",
+          "aka": "Angel of God",
+          "type": "static",
+          "tags": ["morning", "evening", "children"],
+          "text": "Angel of God, my guardian dear,\nto whom God's love commits me here,\never this day be at my side,\nto light and guard, to rule and guide.\n\nAmen."
+        },
+        {
+          "id": "grace_before_meals",
+          "title": "Grace Before Meals",
+          "type": "static",
+          "tags": ["meals", "daily"],
+          "text": "Bless us, O Lord, and these Thy gifts,\nwhich we are about to receive\nfrom Thy bounty,\nthrough Christ our Lord.\n\nAmen."
+        },
+        {
+          "id": "grace_after_meals",
+          "title": "Grace After Meals",
+          "type": "static",
+          "tags": ["meals", "daily"],
+          "text": "We give Thee thanks, Almighty God,\nfor all Thy benefits,\nwho livest and reignest,\nworld without end.\n\nAnd may the souls of the faithful departed,\nthrough the mercy of God, rest in peace.\n\nAmen."
+        },
+        {
+          "id": "act_of_faith",
+          "title": "Act of Faith",
+          "type": "static",
+          "tags": ["theological_virtue", "daily"],
+          "text": "O my God, I firmly believe\nthat You are one God in three divine Persons,\nFather, Son, and Holy Spirit.\nI believe that Your divine Son became man\nand died for our sins,\nand that He will come to judge the living and the dead.\nI believe these and all the truths\nwhich the holy Catholic Church teaches,\nbecause You have revealed them,\nwho can neither deceive nor be deceived.\n\nAmen."
+        },
+        {
+          "id": "act_of_hope",
+          "title": "Act of Hope",
+          "type": "static",
+          "tags": ["theological_virtue", "daily"],
+          "text": "O my God, relying on Your infinite goodness and promises,\nI hope to obtain pardon of my sins,\nthe help of Your grace,\nand life everlasting,\nthrough the merits of Jesus Christ,\nmy Lord and Redeemer.\n\nAmen."
+        },
+        {
+          "id": "act_of_charity",
+          "title": "Act of Charity",
+          "aka": "Act of Love",
+          "type": "static",
+          "tags": ["theological_virtue", "daily"],
+          "text": "O my God, I love You above all things\nwith my whole heart and soul,\nnot only because You have promised me\nheaven and threatened me with hell,\nbut because You are infinitely good\nand worthy of all my love.\nI love my neighbor as myself for the love of You.\nI forgive all who have injured me\nand ask pardon of all whom I have injured.\n\nAmen."
+        }
+      ]
+    },
+    {
+      "id": "marian",
+      "title": "Marian Prayers",
+      "prayers": [
+        {
+          "id": "memorare",
+          "title": "The Memorare",
+          "type": "static",
+          "tags": ["marian", "petition"],
+          "text": "Remember, O most gracious Virgin Mary,\nthat never was it known\nthat anyone who fled to thy protection,\nimplored thy help,\nor sought thy intercession\nwas left unaided.\n\nInspired with this confidence,\nI fly unto thee, O Virgin of virgins, my Mother;\nto thee do I come,\nbefore thee I stand, sinful and sorrowful.\nO Mother of the Word Incarnate,\ndespise not my petitions,\nbut in thy mercy hear and answer me.\n\nAmen."
+        },
+        {
+          "id": "angelus",
+          "title": "The Angelus",
+          "type": "static",
+          "tags": ["marian", "daily", "morning", "noon", "evening"],
+          "text": "V. The Angel of the Lord declared unto Mary.\nR. And she conceived of the Holy Spirit.\n\nHail Mary, full of grace, the Lord is with thee. Blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nV. Behold the handmaid of the Lord.\nR. Be it done unto me according to thy word.\n\nHail Mary...\n\nV. And the Word was made flesh.\nR. And dwelt among us.\n\nHail Mary...\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLet us pray. Pour forth, we beseech Thee, O Lord, Thy grace into our hearts; that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen."
+        },
+        {
+          "id": "regina_caeli",
+          "title": "Regina Caeli",
+          "aka": "Queen of Heaven",
+          "type": "static",
+          "tags": ["marian", "easter"],
+          "text": "V. Queen of Heaven, rejoice, alleluia.\nR. For He whom you did merit to bear, alleluia.\n\nV. Has risen, as He said, alleluia.\nR. Pray for us to God, alleluia.\n\nV. Rejoice and be glad, O Virgin Mary, alleluia.\nR. For the Lord has truly risen, alleluia.\n\nLet us pray. O God, who gave joy to the world through the resurrection of Thy Son, our Lord Jesus Christ: grant, we beseech Thee, that through His Mother, the Virgin Mary, we may obtain the joys of everlasting life. Through the same Christ our Lord. Amen."
+        },
+        {
+          "id": "sub_tuum",
+          "title": "Sub Tuum Praesidium",
+          "aka": "Under Your Protection",
+          "type": "static",
+          "tags": ["marian", "protection", "ancient"],
+          "text": "We fly to thy patronage,\nO holy Mother of God;\ndespise not our petitions\nin our necessities,\nbut deliver us always from all dangers,\nO glorious and blessed Virgin.\n\nAmen."
+        },
+        {
+          "id": "alma_redemptoris",
+          "title": "Alma Redemptoris Mater",
+          "aka": "Loving Mother of the Redeemer",
+          "type": "static",
+          "tags": ["marian", "advent", "christmas", "antiphon"],
+          "text": "Loving Mother of the Redeemer,\ngate of heaven, star of the sea,\nassist your people who have fallen\nyet strive to rise again.\nTo the wonderment of nature\nyou bore your Creator,\nyet remained a virgin after as before.\nYou who received Gabriel's joyful greeting,\nhave pity on us poor sinners."
+        },
+        {
+          "id": "ave_regina",
+          "title": "Ave Regina Caelorum",
+          "aka": "Hail, Queen of Heaven",
+          "type": "static",
+          "tags": ["marian", "lent", "antiphon"],
+          "text": "Hail, Queen of Heaven, beyond compare,\nto whom the angels homage pay.\nHail, Root of Jesse, Gate of Light,\nthat opened for the world's new day.\n\nRejoice, O Virgin unsurpassed,\nin whom our ransom was begun.\nFor all your loving children pray\nto Christ, our Savior and your Son.\n\nAmen."
+        },
+        {
+          "id": "magnificat",
+          "title": "The Magnificat",
+          "aka": "Canticle of Mary",
+          "type": "static",
+          "tags": ["marian", "evening", "canticle"],
+          "text": "My soul proclaims the greatness of the Lord,\nmy spirit rejoices in God my Savior,\nfor he has looked with favor on his lowly servant.\n\nFrom this day all generations will call me blessed:\nthe Almighty has done great things for me,\nand holy is his Name.\n\nHe has mercy on those who fear him\nin every generation.\nHe has shown the strength of his arm,\nhe has scattered the proud in their conceit.\n\nHe has cast down the mighty from their thrones,\nand has lifted up the lowly.\nHe has filled the hungry with good things,\nand the rich he has sent away empty.\n\nHe has come to the help of his servant Israel\nfor he has remembered his promise of mercy,\nthe promise he made to our fathers,\nto Abraham and his children forever.\n\nGlory be to the Father, and to the Son,\nand to the Holy Spirit;\nas it was in the beginning, is now,\nand ever shall be, world without end. Amen."
+        }
+      ]
+    },
+    {
+      "id": "saints",
+      "title": "Prayers to Saints",
+      "prayers": [
+        {
+          "id": "st_michael",
+          "title": "Prayer to St. Michael",
+          "aka": "St. Michael the Archangel",
+          "type": "static",
+          "tags": ["protection", "spiritual_warfare"],
+          "text": "Saint Michael the Archangel,\ndefend us in battle.\nBe our protection against the wickedness\nand snares of the devil;\nmay God rebuke him, we humbly pray;\nand do thou, O Prince of the heavenly host,\nby the power of God,\nthrust into hell Satan and all evil spirits\nwho prowl about the world\nseeking the ruin of souls.\n\nAmen."
+        },
+        {
+          "id": "prayer_st_francis",
+          "title": "Prayer of St. Francis",
+          "aka": "Peace Prayer",
+          "type": "static",
+          "tags": ["peace", "service"],
+          "text": "Lord, make me an instrument of your peace:\nwhere there is hatred, let me sow love;\nwhere there is injury, pardon;\nwhere there is doubt, faith;\nwhere there is despair, hope;\nwhere there is darkness, light;\nwhere there is sadness, joy.\n\nO divine Master, grant that I may not so much seek\nto be consoled as to console,\nto be understood as to understand,\nto be loved as to love.\nFor it is in giving that we receive,\nit is in pardoning that we are pardoned,\nand it is in dying that we are born to eternal life.\n\nAmen."
+        },
+        {
+          "id": "st_anthony",
+          "title": "Prayer to St. Anthony",
+          "aka": "Lost Things Prayer",
+          "type": "static",
+          "tags": ["lost_things", "petition"],
+          "text": "St. Anthony, St. Anthony,\nplease come around.\nSomething is lost\nand cannot be found.\n\nBlessed be God in His Angels and in His Saints.\n\nAmen.\n\n\nAlternate:\n\nO Holy St. Anthony, gentlest of Saints, your love for God and charity for His creatures made you worthy, when on earth, to possess miraculous powers. Miracles waited on your word, which you were ever ready to speak for those in trouble or anxiety. Encouraged by this thought, I implore of you to obtain for me (state your request). The answer to my prayer may require a miracle; even so, you are the Saint of Miracles. O gentle and loving St. Anthony, whose heart was ever full of human sympathy, whisper my petition into the ears of the Sweet Infant Jesus, who loved to be folded in your arms, and the gratitude of my heart will ever be yours. Amen."
+        },
+        {
+          "id": "anima_christi",
+          "title": "Anima Christi",
+          "aka": "Soul of Christ",
+          "type": "static",
+          "tags": ["eucharistic", "communion"],
+          "text": "Soul of Christ, sanctify me.\nBody of Christ, save me.\nBlood of Christ, inebriate me.\nWater from the side of Christ, wash me.\nPassion of Christ, strengthen me.\nO good Jesus, hear me.\nWithin Thy wounds, hide me.\nSuffer me not to be separated from Thee.\nFrom the malicious enemy, defend me.\nIn the hour of my death, call me\nand bid me come unto Thee,\nthat with Thy saints I may praise Thee\nforever and ever.\n\nAmen."
+        }
+      ]
+    },
+    {
+      "id": "sacramental",
+      "title": "Sacramental Prayers",
+      "prayers": [
+        {
+          "id": "spiritual_communion",
+          "title": "Spiritual Communion",
+          "aka": "Act of Spiritual Communion",
+          "type": "static",
+          "tags": ["eucharistic", "communion"],
+          "text": "My Jesus,\nI believe that You are present\nin the Most Holy Sacrament.\nI love You above all things,\nand I desire to receive You into my soul.\nSince I cannot at this moment\nreceive You sacramentally,\ncome at least spiritually into my heart.\nI embrace You as if You were already there\nand unite myself wholly to You.\nNever permit me to be separated from You.\n\nAmen."
+        },
+        {
+          "id": "before_blessed_sacrament",
+          "title": "Before the Blessed Sacrament",
+          "type": "static",
+          "tags": ["eucharistic", "adoration"],
+          "text": "O Sacrament most holy,\nO Sacrament divine,\nall praise and all thanksgiving\nbe every moment thine.\n\nO Jesus, present in the Sacrament of the altar,\nteach all the nations to serve Thee with willing hearts,\nknowing that to serve God is to reign.\nMay Thy Sacrament, O Jesus,\nbe light to the mind,\nstrength to the will,\njoy to the heart.\nMay it be the support of the weak,\nthe comfort of the suffering,\nthe wayfaring bread of salvation for the dying,\nand for all the pledge of future glory.\n\nAmen."
+        },
+        {
+          "id": "eternal_rest",
+          "title": "Eternal Rest",
+          "aka": "Requiem Aeternam, Prayer for the Dead",
+          "type": "static",
+          "tags": ["deceased", "purgatory"],
+          "text": "Eternal rest grant unto them, O Lord,\nand let perpetual light shine upon them.\nMay the souls of the faithful departed,\nthrough the mercy of God,\nrest in peace.\n\nAmen."
+        }
+      ]
+    }
+  ],
+  "litanies": [
+    {
+      "id": "litany_humility",
+      "title": "Litany of Humility",
+      "type": "litany",
+      "author": "Cardinal Rafael Merry del Val",
+      "tags": ["humility", "virtue"],
+      "opening": "O Jesus, meek and humble of heart, hear me.",
+      "invocations": [
+        { "petition": "From the desire of being esteemed", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being loved", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being extolled", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being honored", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being praised", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being preferred to others", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being consulted", "response": "Deliver me, O Jesus." },
+        { "petition": "From the desire of being approved", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being humiliated", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being despised", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of suffering rebukes", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being calumniated", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being forgotten", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being ridiculed", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being wronged", "response": "Deliver me, O Jesus." },
+        { "petition": "From the fear of being suspected", "response": "Deliver me, O Jesus." },
+        { "petition": "That others may be loved more than I", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That others may be esteemed more than I", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That in the opinion of the world, others may increase and I may decrease", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That others may be chosen and I set aside", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That others may be praised and I go unnoticed", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That others may be preferred to me in everything", "response": "Jesus, grant me the grace to desire it." },
+        { "petition": "That others may become holier than I, provided that I may become as holy as I should", "response": "Jesus, grant me the grace to desire it." }
+      ],
+      "closing": "Amen."
+    },
+    {
+      "id": "litany_trust",
+      "title": "Litany of Trust",
+      "type": "litany",
+      "author": "Sr. Faustina Maria Pia, SV",
+      "tags": ["trust", "surrender", "mercy"],
+      "opening": "From the belief that I have to earn Your love...",
+      "invocations": [
+        { "petition": "From the belief that I have to earn Your love", "response": "Deliver me, Jesus." },
+        { "petition": "From the fear that I am unlovable", "response": "Deliver me, Jesus." },
+        { "petition": "From the false security that I have what it takes", "response": "Deliver me, Jesus." },
+        { "petition": "From the fear that trusting You will leave me more destitute", "response": "Deliver me, Jesus." },
+        { "petition": "From all suspicion of Your words and promises", "response": "Deliver me, Jesus." },
+        { "petition": "From the rebellion against childlike dependency on You", "response": "Deliver me, Jesus." },
+        { "petition": "From refusals and reluctances in accepting Your will", "response": "Deliver me, Jesus." },
+        { "petition": "From anxiety about the future", "response": "Deliver me, Jesus." },
+        { "petition": "From resentment or excessive preoccupation with the past", "response": "Deliver me, Jesus." },
+        { "petition": "From restless self-seeking in the present moment", "response": "Deliver me, Jesus." },
+        { "petition": "From disbelief in Your love and presence", "response": "Deliver me, Jesus." },
+        { "petition": "From the fear of being asked to give more than I have", "response": "Deliver me, Jesus." },
+        { "petition": "From the belief that my life has no meaning or worth", "response": "Deliver me, Jesus." },
+        { "petition": "From the fear of what love demands", "response": "Deliver me, Jesus." },
+        { "petition": "From discouragement", "response": "Deliver me, Jesus." },
+        { "petition": "That You are continually holding me, sustaining me, loving me", "response": "Jesus, I trust in You." },
+        { "petition": "That Your love goes deeper than my sins and failings, and transforms me", "response": "Jesus, I trust in You." },
+        { "petition": "That not knowing what tomorrow brings is an invitation to lean on You", "response": "Jesus, I trust in You." },
+        { "petition": "That You are with me in my suffering", "response": "Jesus, I trust in You." },
+        { "petition": "That my suffering, united to Your own, will bear fruit in this life and the next", "response": "Jesus, I trust in You." },
+        { "petition": "That You will not leave me orphan, that You are present in Your Church", "response": "Jesus, I trust in You." },
+        { "petition": "That Your plan is better than anything else", "response": "Jesus, I trust in You." },
+        { "petition": "That You always hear me and in Your goodness always respond to me", "response": "Jesus, I trust in You." },
+        { "petition": "That You give me the grace to accept forgiveness and to forgive others", "response": "Jesus, I trust in You." },
+        { "petition": "That You give me all the strength I need for what is asked", "response": "Jesus, I trust in You." },
+        { "petition": "That my life is a gift", "response": "Jesus, I trust in You." },
+        { "petition": "That You will teach me to trust You", "response": "Jesus, I trust in You." },
+        { "petition": "That You are my Lord and my God", "response": "Jesus, I trust in You." }
+      ],
+      "closing": "Amen."
+    }
+  ],
+  "lectio": {
+    "id": "lectio_divina",
+    "title": "Lectio Divina",
+    "type": "lectio",
+    "tags": ["contemplative", "scripture", "method"],
+    "description": "An ancient practice of prayerful scripture reading in four movements.",
+    "steps": [
+      {
+        "latin": "Lectio",
+        "english": "Read",
+        "instruction": "Read the passage slowly, attentively. Let the words sink in. If a word or phrase strikes you, pause and read it again."
+      },
+      {
+        "latin": "Meditatio",
+        "english": "Meditate",
+        "instruction": "Reflect on the passage. What is God saying to you through these words? How does it connect to your life right now?"
+      },
+      {
+        "latin": "Oratio",
+        "english": "Pray",
+        "instruction": "Respond to God in prayer. Speak to Him from your heart about what you have read and reflected upon."
+      },
+      {
+        "latin": "Contemplatio",
+        "english": "Rest",
+        "instruction": "Rest in God's presence. Let go of words and thoughts. Simply be with the Lord in silence and love."
+      }
+    ]
+  }
+}

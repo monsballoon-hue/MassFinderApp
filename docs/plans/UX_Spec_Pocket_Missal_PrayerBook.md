@@ -2,21 +2,21 @@
 
 **Date:** 2026-03-14
 **Author:** UX Consultant (Claude Opus)
-**Status:** Queued
+**Status:** Implemented
 **Depends on:** PMG (Grid Restructure)
 **Prefix:** PMB
 
 | Item | Title | Status |
 |------|-------|--------|
-| PMB-01 | Prayer Book Data File | queued |
-| PMB-02 | Reader Module Registration & Selection Screen | queued |
-| PMB-03 | Prayer Text Display & Expand/Collapse | queued |
-| PMB-04 | Search Input (Sticky) | queued |
-| PMB-05 | V/R Formatting for Call-and-Response Prayers | queued |
-| PMB-06 | Litany Step-Through Mode (Humility + Trust) | queued |
-| PMB-07 | Lectio Divina Guided Experience | queued |
-| PMB-08 | Prayer Tools Grid Card Entry Point | queued |
-| PMB-09 | Dark Mode Parity | queued |
+| PMB-01 | Prayer Book Data File | done |
+| PMB-02 | Reader Module Registration & Selection Screen | done |
+| PMB-03 | Prayer Text Display & Expand/Collapse | done |
+| PMB-04 | Search Input (Sticky) | done |
+| PMB-05 | V/R Formatting for Call-and-Response Prayers | done |
+| PMB-06 | Litany Step-Through Mode (Humility + Trust) | done |
+| PMB-07 | Lectio Divina Guided Experience | done |
+| PMB-08 | Prayer Tools Grid Card Entry Point | done |
+| PMB-09 | Dark Mode Parity | done |
 
 ---
 
@@ -746,3 +746,21 @@ html[data-theme="dark"] .prayerbook-guided-badge {
 - **`css/app.css`:** ~80 lines of new CSS
 - **`sw.js`:** Add `data/prayerbook.json` to cache list
 - **No impact on:** readings.js (just reads its data), rosary.js, examination.js, stations.js, novena.js, devotions.js, or existing data files
+
+---
+
+## Implementation Notes — All PMB Items
+
+### Implementation Notes
+
+- **Date:** 2026-03-14
+- **Status:** done (all 9 items)
+- **Files changed:**
+  - `data/prayerbook.json` (new, ~27KB) — 5 categories with 31 prayers: Essential (10), Morning & Evening (7), Marian (7), Saints (4), Sacramental (3). Plus 2 litanies (Humility with 23 invocations, Trust with 28 invocations) and 1 Lectio Divina entry with 4 steps.
+  - `src/prayerbook.js` (new, ~450 lines) — Reader module with three screens: categorized list, litany step-through, and Lectio Divina 4-step guided experience. Includes `_formatPrayerText()` V/R formatter, `prayerbookSearch()` indexOf matching, expand/collapse accordion, swipe gestures, wake lock, haptic feedback.
+  - `src/app.js` — Added `require('./prayerbook.js')` and window bindings for all prayerbook functions.
+  - `src/more.js` — Added Prayer Book card to ptCards as tier 1, first position. Book+cross SVG icon with sacred color.
+  - `css/app.css` — Added prayer book list/search/row/text styles, V/R formatting (`.vr-line`, `.vr-label`, `.vr-response`), litany step-through styles (`.litany-step`, `.litany-counter`, `.litany-progress`, `.litany-invocation`, `.litany-response`), Lectio Divina styles (`.lectio-step`, `.lectio-dots`, `.lectio-label`, `.lectio-gospel`, `.lectio-rest`), dark mode overrides.
+- **Approach:** PMB-06 (litany) and PMB-07 (lectio) were built directly into prayerbook.js rather than as separate sessions, since the guided experiences share the reader registration and state management. The module uses three screen modes ('list', 'litany', 'lectio') with internal navigation. Lectio Divina attempts to load today's Gospel from `window._readingsCache` with graceful fallback. Deep-link support via `params.prayerId` allows seasonal cards to link directly to specific prayers.
+- **Deviations from spec:** Litanies and Lectio Divina are stored in the categories array in prayerbook.json with `type: "litany"` and `type: "lectio"` rather than a separate top-level `litanies` array, for simpler data loading. Search matches against first 80 chars of text (spec said 50). Both are improvements over spec.
+- **Known issues:** None observed.

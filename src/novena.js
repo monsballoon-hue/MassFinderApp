@@ -108,10 +108,11 @@ function _getActiveList() {
   return Object.keys(all).map(function(id) { return { id: id, tracking: all[id] }; });
 }
 
-function _computeCurrentDay(tracking) {
+function _computeCurrentDay(tracking, totalDays) {
   // Current day = next unfinished day (based on completed count, not calendar diff)
   if (!tracking) return 0;
-  return Math.min((tracking.completedDays || []).length, 8);
+  var max = (totalDays || 9) - 1;
+  return Math.min((tracking.completedDays || []).length, max);
 }
 
 function _todayStr() {
@@ -158,18 +159,25 @@ function _renderSelect(title, body, footer) {
     activeList.forEach(function(item) {
       var nov = _novenas.filter(function(n) { return n.id === item.id; })[0];
       if (!nov) return;
-      var dayNum = _computeCurrentDay(item.tracking) + 1;
+      var totalDays = nov.days.length;
+      var dayNum = _computeCurrentDay(item.tracking, totalDays) + 1;
       var completed = (item.tracking.completedDays || []).length;
-      var dotsHtml = '<div class="novena-master-dots">';
-      for (var d = 0; d < 9; d++) {
-        var dotCls = 'novena-master-dot';
-        if ((item.tracking.completedDays || []).indexOf(d + 1) >= 0) dotCls += ' done';
-        dotsHtml += '<div class="' + dotCls + '"></div>';
+      var dotsHtml = '';
+      if (totalDays <= 12) {
+        dotsHtml = '<div class="novena-master-dots">';
+        for (var d = 0; d < totalDays; d++) {
+          var dotCls = 'novena-master-dot';
+          if ((item.tracking.completedDays || []).indexOf(d + 1) >= 0) dotCls += ' done';
+          dotsHtml += '<div class="' + dotCls + '"></div>';
+        }
+        dotsHtml += '</div>';
+      } else {
+        var pct = Math.round((completed / totalDays) * 100);
+        dotsHtml = '<div class="novena-progress-bar"><div class="novena-progress-fill" style="width:' + pct + '%"></div></div>';
       }
-      dotsHtml += '</div>';
       var progressLabel = _alreadyPrayedToday(item.tracking)
         ? 'Day ' + dayNum + ' available tomorrow'
-        : 'Day ' + dayNum + ' of 9 \u00b7 ' + completed + ' completed';
+        : 'Day ' + dayNum + ' of ' + totalDays + ' \u00b7 ' + completed + ' completed';
       html += '<div class="novena-master-row" onclick="novenaSelect(\'' + item.id + '\')">'
         + '<div class="novena-master-info">'
         + '<div class="novena-master-title">' + utils.esc(nov.title) + '</div>'
@@ -195,7 +203,7 @@ function _renderSelect(title, body, footer) {
     html += '<span class="novena-list-chevron">\u203A</span>';
     html += '</button>';
   });
-  html += '<div class="novena-more-note">More novenas are coming soon. <a href="mailto:massfinderapp@gmail.com?subject=Novena%20Request" class="novena-more-link">Request one</a></div>';
+  html += '<div class="novena-more-note">Have a novena suggestion? <a href="mailto:massfinderapp@gmail.com?subject=Novena%20Request" class="novena-more-link">Let us know</a></div>';
   html += '</div>';
   body.innerHTML = html;
 }
@@ -209,29 +217,37 @@ function _renderPrayer(title, body, footer) {
   title.textContent = utils.esc(_active.title);
 
   // Day dots — completed days tappable; next day locked if already prayed today; future days always locked
-  var nextUnlocked = _computeCurrentDay(tracking); // 0-indexed index of next day to pray
+  var totalDays = _active.days.length;
+  var nextUnlocked = _computeCurrentDay(tracking, totalDays); // 0-indexed index of next day to pray
   var alreadyPrayedToday = _alreadyPrayedToday(tracking);
-  var dotsHtml = '<div class="novena-dots">';
-  for (var i = 0; i < 9; i++) {
-    var cls = 'novena-dot';
-    var done = tracking && (tracking.completedDays || []).indexOf(i + 1) >= 0;
-    if (done) cls += ' done';
-    if (i === _currentDay) cls += ' active';
-    if (i > nextUnlocked || (alreadyPrayedToday && i >= nextUnlocked)) {
-      cls += ' locked';
-      dotsHtml += '<span class="' + cls + '" aria-label="Day ' + (i + 1) + ' locked"></span>';
-    } else {
-      dotsHtml += '<button class="' + cls + '" onclick="novenaGoToDay(' + i + ')" aria-label="Day ' + (i + 1) + '"></button>';
+  var dotsHtml = '';
+  if (totalDays <= 12) {
+    dotsHtml = '<div class="novena-dots">';
+    for (var i = 0; i < totalDays; i++) {
+      var cls = 'novena-dot';
+      var done = tracking && (tracking.completedDays || []).indexOf(i + 1) >= 0;
+      if (done) cls += ' done';
+      if (i === _currentDay) cls += ' active';
+      if (i > nextUnlocked || (alreadyPrayedToday && i >= nextUnlocked)) {
+        cls += ' locked';
+        dotsHtml += '<span class="' + cls + '" aria-label="Day ' + (i + 1) + ' locked"></span>';
+      } else {
+        dotsHtml += '<button class="' + cls + '" onclick="novenaGoToDay(' + i + ')" aria-label="Day ' + (i + 1) + '"></button>';
+      }
     }
+    dotsHtml += '</div>';
+  } else {
+    var completed = (tracking && tracking.completedDays) ? tracking.completedDays.length : 0;
+    var pct = Math.round((completed / totalDays) * 100);
+    dotsHtml = '<div class="novena-progress-bar novena-progress-bar--prayer"><div class="novena-progress-fill" style="width:' + pct + '%"></div></div>';
   }
-  dotsHtml += '</div>';
 
   var backBtn = '<button class="novena-back-btn" onclick="novenaBack()">\u2190 All Novenas</button>';
 
   body.innerHTML = '<div class="novena-prayer">'
     + backBtn
     + dotsHtml
-    + '<div class="novena-day-num">Day ' + dayNum + ' of 9</div>'
+    + '<div class="novena-day-num">Day ' + dayNum + ' of ' + totalDays + '</div>'
     + (dayData.title ? '<h3 class="novena-day-title">' + utils.esc(dayData.title) + '</h3>' : '')
     + (dayData.intention ? '<div class="novena-intention"><span class="novena-intention-label">Intention:</span> ' + utils.esc(dayData.intention) + '</div>' : '')
     + (dayData.meditation ? '<div class="novena-day-meditation"><p>' + _fmtPrayer(dayData.meditation) + '</p></div>' : '')
@@ -265,7 +281,7 @@ function _renderComplete(title, body, footer) {
     + '<h3 class="novena-complete-title">Novena Complete</h3>'
     + '<p class="novena-complete-quote">\u201CAsk and it will be given to you; seek and you will find; knock and the door will be opened to you.\u201D</p>'
     + '<p class="novena-complete-ref">\u2014 Matthew 7:7</p>'
-    + '<p class="novena-complete-msg">Your nine days of prayer are complete.<br>May God answer your intentions in His perfect will.</p>'
+    + '<p class="novena-complete-msg">Your days of prayer are complete.<br>May God answer your intentions in His perfect will.</p>'
     + '<button class="novena-complete-new-btn" onclick="novenaStartNew()">Begin Another Novena</button>'
     + '</div>';
 }
@@ -287,8 +303,9 @@ function novenaMarkDay() {
   }
   _haptic.confirm();
 
-  // Check if all 9 complete
-  if (tracking.completedDays.length >= 9) {
+  // Check if all days complete
+  var totalDays = _active.days.length;
+  if (tracking.completedDays.length >= totalDays) {
     try {
       var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
       log.push({ type: 'novena', date: new Date().toISOString().slice(0, 10), novena: _activeId });
@@ -316,7 +333,7 @@ function _selectNovena(id) {
   var tracking = _getTracking(id);
   if (tracking) {
     // If already prayed today, open to last completed day for review, not the next locked day
-    var nextDay = _computeCurrentDay(tracking);
+    var nextDay = _computeCurrentDay(tracking, nov.days.length);
     _currentDay = (_alreadyPrayedToday(tracking) && nextDay > 0) ? nextDay - 1 : nextDay;
   } else {
     var today = new Date().toISOString().slice(0, 10);
@@ -334,7 +351,8 @@ function novenaResume() {
 }
 
 function novenaGoToDay(idx) {
-  if (idx < 0 || idx > 8) return;
+  var maxIdx = _active ? _active.days.length - 1 : 8;
+  if (idx < 0 || idx > maxIdx) return;
   _currentDay = idx;
   _render();
   _haptic();
@@ -354,6 +372,12 @@ function novenaStartNew() {
   _haptic();
 }
 
+function _getTotalDays(novenaId) {
+  if (!_data || !_data.novenas) return 9;
+  var nov = _data.novenas.filter(function(n) { return n.id === novenaId; })[0];
+  return nov ? nov.days.length : 9;
+}
+
 module.exports = {
   openNovena: openNovena,
   closeNovena: closeNovena,
@@ -364,4 +388,5 @@ module.exports = {
   novenaBack: novenaBack,
   novenaStartNew: novenaStartNew,
   _computeCurrentDay: _computeCurrentDay,
+  _getTotalDays: _getTotalDays,
 };

@@ -2,20 +2,20 @@
 
 **Date:** 2026-03-14
 **Author:** UX Consultant (Claude Opus)
-**Status:** Queued
+**Status:** Implemented
 **Depends on:** PMG (Grid Restructure)
 **Prefix:** PMD
 
 | Item | Title | Status |
 |------|-------|--------|
-| PMD-01 | Divine Mercy Chaplet — Reader Module | queued |
-| PMD-02 | Divine Mercy Chaplet — Guided Bead Experience | queued |
-| PMD-03 | Divine Mercy Chaplet — Grid Card & Contextual Promotion | queued |
-| PMD-04 | Novena Data Expansion (6 new novenas) | queued |
-| PMD-05 | Novena Tracker — Variable Day Count Support | queued |
-| PMD-06 | Angelus / Regina Caeli — Seasonal Moment Candidate | queued |
-| PMD-07 | Seasonal Card Cross-Links to New Tools | queued |
-| PMD-08 | Dark Mode Parity | queued |
+| PMD-01 | Divine Mercy Chaplet — Reader Module | done |
+| PMD-02 | Divine Mercy Chaplet — Guided Bead Experience | done |
+| PMD-03 | Divine Mercy Chaplet — Grid Card & Contextual Promotion | done |
+| PMD-04 | Novena Data Expansion (6 new novenas) | done |
+| PMD-05 | Novena Tracker — Variable Day Count Support | done |
+| PMD-06 | Angelus / Regina Caeli — Seasonal Moment Candidate | done |
+| PMD-07 | Seasonal Card Cross-Links to New Tools | done |
+| PMD-08 | Dark Mode Parity | done |
 
 ---
 
@@ -676,3 +676,22 @@ Uses existing `.seasonal-card` dark styles (line 1647 in current CSS). No additi
 - **`css/app.css`:** ~50 lines chaplet CSS, ~10 lines novena progress bar CSS
 - **`sw.js`:** No change needed (`prayers.json` is already cached)
 - **No impact on:** rosary.js, examination.js, stations.js, reader.js, devotions.js, prayerbook.js, or any HTML structure
+
+---
+
+## Implementation Notes — All PMD Items
+
+### Implementation Notes
+
+- **Date:** 2026-03-14
+- **Status:** done (all 8 items)
+- **Files changed:**
+  - `data/prayers.json` — Added 6 new novenas (surrender, sacred_heart, st_jude, miraculous_medal, st_andrew_christmas with 25 days, st_patrick). Added `chaplet` key with Divine Mercy Chaplet data (opening prayer IDs, decade prayers, closing, optional closing prayer).
+  - `src/chaplet.js` (new, ~345 lines) — Divine Mercy Chaplet guided bead experience. State machine: intro → opening (4 prayers) → decade (5×11 beads) → closing (3× Holy God) → final. Bead visualization, swipe navigation, wake lock, haptic feedback, crossfade transitions, prayer log on completion.
+  - `src/novena.js` — Replaced 7+ hardcoded `9` references with `nov.days.length`/`totalDays`. Changed `_computeCurrentDay()` signature to accept `totalDays` parameter. Added progress bar for `totalDays > 12`. Added `_getTotalDays()` export. Changed completion check to `>= totalDays`. Changed "More novenas coming soon" to "Have a novena suggestion?".
+  - `src/more.js` — Added chaplet card (tier 1), `_getChapletSubtitle()` with 2:30-3:30 PM Hour of Mercy logic, 3 PM promotion. Added Angelus/Regina Caeli seasonal moment candidate at priority 3.5 with full V/R prayer text and "See in Prayer Book" cross-link. Added "Pray the Divine Mercy Chaplet" action link to Divine Mercy Sunday card.
+  - `src/app.js` — Added `require('./chaplet.js')` and window bindings.
+  - `css/app.css` — Chaplet styles (intro, prayer, beads, bead states, dark mode), novena progress bar styles.
+- **Approach:** Chaplet follows rosary.js patterns exactly: reader registration, state machine, swipe/haptic/wake lock. Novena variable day count was a targeted find-and-replace of hardcoded `9` with data-driven values. PMD-06 Angelus/Regina Caeli uses `currentSeason === 'easter'` to toggle between the two prayers, with full V/R formatted text inline in the seasonal card. PMD-07 adds chaplet cross-link to existing Divine Mercy Sunday card (SOT-07).
+- **Deviations from spec:** PMD-06 priority set to 3.5 (spec initially said 4, then corrected to 3.5 in the priority behavior section). Used a clock icon for both Angelus and Regina Caeli cards (spec suggested different icons but clock is more thematically appropriate for a prayer tied to specific times of day). Chaplet subtitle uses "Prayed on rosary beads" without the "~10 min" suffix for cleaner grid appearance.
+- **Known issues:** None observed.

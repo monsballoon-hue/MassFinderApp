@@ -25,12 +25,46 @@ function _getNovenaSubtitle() {
     if (active.length === 1) {
       var novena = require('./novena.js');
       var t = all[active[0]];
-      var dayNum = novena._computeCurrentDay(t) + 1;
-      return 'Day ' + dayNum + ' of 9';
+      var totalDays = novena._getTotalDays(active[0]);
+      var dayNum = novena._computeCurrentDay(t, totalDays) + 1;
+      return 'Day ' + dayNum + ' of ' + totalDays;
     }
     if (active.length > 1) return active.length + ' novenas in progress';
   } catch (e) {}
-  return '9-day guided prayer';
+  return 'Guided prayer tracking';
+}
+
+// PMG-04: Resolve tier swaps — when a secondary card is promoted, swap it into primary
+function _resolveCardTiers(cards, promotedId) {
+  var primary = cards.filter(function(c) { return c.tier === 1; });
+  var secondary = cards.filter(function(c) { return c.tier === 2; });
+
+  // If a secondary card is promoted, swap it with the last primary card
+  if (promotedId) {
+    var secIdx = -1;
+    for (var i = 0; i < secondary.length; i++) {
+      if (secondary[i].id === promotedId) { secIdx = i; break; }
+    }
+    if (secIdx >= 0 && primary.length >= 2) {
+      var swapped = secondary.splice(secIdx, 1)[0];
+      var bumped = primary.pop();
+      primary.push(swapped);
+      secondary.unshift(bumped);
+    }
+  }
+
+  return { primary: primary, secondary: secondary };
+}
+
+// PMD-03: Chaplet subtitle with Hour of Mercy logic
+function _getChapletSubtitle() {
+  var now = new Date();
+  var hour = now.getHours();
+  var min = now.getMinutes();
+  if ((hour === 14 && min >= 30) || hour === 15) {
+    return 'The Hour of Mercy';
+  }
+  return 'Prayed on rosary beads';
 }
 
 function _getRosarySubtitle() {
@@ -458,6 +492,7 @@ function _renderSeasonalMoment(events) {
           + dmsNovenaNote
           + '<p>On this day, instituted by St. John Paul II in 2000, the Church celebrates God\u2019s infinite mercy. Jesus told St. Faustina: \u201cI desire that the Feast of Mercy be a refuge and shelter for all souls, and especially for poor sinners.\u201d</p>'
           + '<p>A plenary indulgence is granted to those who, on Divine Mercy Sunday, receive Communion, go to Confession (within about 20 days), pray for the Holy Father\u2019s intentions, and make an act of trust in God\u2019s mercy before the Blessed Sacrament or in prayer.</p>'
+          + '<div class="seasonal-card-action" onclick="event.stopPropagation();openChaplet()">Pray the Divine Mercy Chaplet \u2192</div>'
           + '<div class="seasonal-card-action" onclick="event.stopPropagation();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'Mass\';si.dispatchEvent(new Event(\'input\'))}">Find Mass near you \u2192</div>'
           + '</div>'
           + '</details>'
@@ -531,6 +566,67 @@ function _renderSeasonalMoment(events) {
           + '</details>'
       });
     }
+  }
+
+  // PMD-06: Angelus / Regina Caeli — daily prayer of the Church
+  var angelusChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  if (currentSeason === 'easter') {
+    // Regina Caeli replaces Angelus from Easter Sunday through Pentecost
+    candidates.push({
+      priority: 3.5,
+      html: '<details class="seasonal-card">'
+        + '<summary>'
+        + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg></div>'
+        + '<div class="seasonal-card-body">'
+        + '<div class="seasonal-card-title">Regina Caeli</div>'
+        + '<div class="seasonal-card-subtitle">Queen of Heaven \u2014 Easter prayer</div>'
+        + '</div>'
+        + angelusChev
+        + '</summary>'
+        + '<div class="seasonal-card-expanded">'
+        + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);line-height:1.85">'
+        + '<p><span class="vr-label">V.</span> Queen of Heaven, rejoice, alleluia.<br>'
+        + '<span class="vr-label">R.</span> <strong>For He whom you did merit to bear, alleluia.</strong></p>'
+        + '<p><span class="vr-label">V.</span> Has risen as He said, alleluia.<br>'
+        + '<span class="vr-label">R.</span> <strong>Pray for us to God, alleluia.</strong></p>'
+        + '<p><span class="vr-label">V.</span> Rejoice and be glad, O Virgin Mary, alleluia.<br>'
+        + '<span class="vr-label">R.</span> <strong>For the Lord is truly risen, alleluia.</strong></p>'
+        + '<p style="margin-top:var(--space-3)">Let us pray. O God, who gave joy to the world through the Resurrection of Thy Son, our Lord Jesus Christ; grant, we beseech Thee, that through the intercession of the Virgin Mary, His Mother, we may obtain the joys of everlasting life. Through the same Christ our Lord. Amen.</p>'
+        + '</div>'
+        + '<div class="seasonal-card-action" onclick="event.stopPropagation();openPrayerBook(\'regina_caeli\')">See in Prayer Book \u2192</div>'
+        + '</div>'
+        + '</details>'
+    });
+  } else {
+    // Angelus — prayed year-round except Easter season
+    candidates.push({
+      priority: 3.5,
+      html: '<details class="seasonal-card">'
+        + '<summary>'
+        + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2 2"/></svg></div>'
+        + '<div class="seasonal-card-body">'
+        + '<div class="seasonal-card-title">The Angelus</div>'
+        + '<div class="seasonal-card-subtitle">Morning, noon, and evening prayer</div>'
+        + '</div>'
+        + angelusChev
+        + '</summary>'
+        + '<div class="seasonal-card-expanded">'
+        + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);line-height:1.85">'
+        + '<p><span class="vr-label">V.</span> The Angel of the Lord declared unto Mary,<br>'
+        + '<span class="vr-label">R.</span> <strong>And she conceived of the Holy Spirit.</strong></p>'
+        + '<p style="font-style:italic;color:var(--color-text-secondary)">Hail Mary\u2026</p>'
+        + '<p><span class="vr-label">V.</span> Behold the handmaid of the Lord,<br>'
+        + '<span class="vr-label">R.</span> <strong>Be it done unto me according to Thy word.</strong></p>'
+        + '<p style="font-style:italic;color:var(--color-text-secondary)">Hail Mary\u2026</p>'
+        + '<p><span class="vr-label">V.</span> And the Word was made flesh,<br>'
+        + '<span class="vr-label">R.</span> <strong>And dwelt among us.</strong></p>'
+        + '<p style="font-style:italic;color:var(--color-text-secondary)">Hail Mary\u2026</p>'
+        + '<p style="margin-top:var(--space-3)">Let us pray. Pour forth, we beseech Thee, O Lord, Thy grace into our hearts; that we, to whom the Incarnation of Christ, Thy Son, was made known by the message of an angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen.</p>'
+        + '</div>'
+        + '<div class="seasonal-card-action" onclick="event.stopPropagation();openPrayerBook(\'angelus\')">See in Prayer Book \u2192</div>'
+        + '</div>'
+        + '</details>'
+    });
   }
 
   // SOT-09: Monthly Devotion Card (lowest priority — fills empty slots)
@@ -814,6 +910,8 @@ function renderMore() {
 
     // EMT-03-A: SVG icons for prayer tools
     var ptIcons = {
+      // PMB-08: Prayer Book — book with cross
+      prayerbook: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="14"/><line x1="8" y1="10" x2="16" y2="10"/></svg>',
       // Rosary: circle of beads with cross — simplified rosary silhouette
       rosary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="7"/><circle cx="12" cy="3" r="1.2"/><circle cx="5.5" cy="6.5" r="1.2"/><circle cx="5.5" cy="13.5" r="1.2"/><circle cx="18.5" cy="6.5" r="1.2"/><circle cx="18.5" cy="13.5" r="1.2"/><line x1="12" y1="17" x2="12" y2="20"/><line x1="10" y1="19" x2="14" y2="19"/></svg>',
       // Examination: heart with magnifying glass — self-examination
@@ -823,21 +921,27 @@ function renderMore() {
       // Novena: candle flame
       novena: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><rect x="10" y="12" width="4" height="9" rx="1"/><line x1="10" y1="15" x2="14" y2="15"/></svg>',
       // SOT-12: First Friday/Saturday — two small circles
-      firstfriday: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>'
+      firstfriday: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg>',
+      // PMD-03: Divine Mercy Chaplet — rays radiating from center
+      chaplet: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>'
     };
     var ptColors = {
+      prayerbook: 'var(--color-sacred)',
       rosary: 'var(--color-sacred)',
       examination: 'var(--color-sacred)',
       stations: isLentSeason() ? 'var(--color-accent)' : 'var(--color-sacred)',
       novena: 'var(--color-sacred)',
-      firstfriday: 'var(--color-sacred)'
+      firstfriday: 'var(--color-sacred)',
+      chaplet: 'var(--color-sacred)'
     };
     var ptBgColors = {
+      prayerbook: 'var(--color-sacred-pale)',
       rosary: 'var(--color-sacred-pale)',
       examination: 'var(--color-sacred-pale)',
       stations: isLentSeason() ? 'var(--color-accent-pale)' : 'var(--color-sacred-pale)',
       novena: 'var(--color-sacred-pale)',
-      firstfriday: 'var(--color-sacred-pale)'
+      firstfriday: 'var(--color-sacred-pale)',
+      chaplet: 'var(--color-sacred-pale)'
     };
 
     // EMT-03-B: Contextual "today" highlight
@@ -854,12 +958,23 @@ function renderMore() {
       promotedId = 'examination';
     }
 
+    // PMD-03: 3 PM promotion for chaplet (lower priority than above)
+    if (!promotedId) {
+      var nowH = new Date().getHours();
+      var nowM = new Date().getMinutes();
+      if ((nowH === 14 && nowM >= 30) || nowH === 15) {
+        promotedId = 'chaplet';
+      }
+    }
+
     // EMT-03-C: Active progress subtitle styling
+    var chapletSub = _getChapletSubtitle();
     var ptSubtitleClass = {
       rosary: '',
       examination: confStatus && confStatus.daysAgo <= 7 ? 'prayer-tool-subtitle--active' : (confStatus && confStatus.daysAgo > 30 ? 'prayer-tool-subtitle--nudge' : ''),
       stations: '',
-      novena: ''
+      novena: '',
+      chaplet: chapletSub === 'The Hour of Mercy' ? 'prayer-tool-subtitle--active' : ''
     };
     // Enhance novena subtitle with active styling
     if (novenaActive) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
@@ -929,19 +1044,26 @@ function renderMore() {
     }
 
     var ptCards = [
-      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
-      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
-      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true },
-      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true }
+      { id: 'prayerbook', title: 'Prayer Book', subtitle: '31 essential prayers', action: 'openPrayerBook()', active: true, tier: 1 },
+      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true, tier: 1 },
+      { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: chapletSub, action: 'openChaplet()', active: true, tier: 1 },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true, tier: 1 },
+      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true, tier: 2 },
+      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true, tier: 2 },
+      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true, tier: 2 }
     ];
-    ptGrid.innerHTML = ptCards.map(function(c) {
+
+    // PMG-04: Resolve tier swaps — promoted secondary cards swap into primary
+    var resolved = _resolveCardTiers(ptCards, promotedId);
+
+    // Render primary cards (tier 1) — vertical layout
+    ptGrid.innerHTML = resolved.primary.map(function(c) {
       var isPromoted = c.id === promotedId;
       var iconHtml = ptIcons[c.id]
         ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
         : '';
       var subClass = 'prayer-tool-subtitle' + (ptSubtitleClass[c.id] ? ' ' + ptSubtitleClass[c.id] : '');
-      return '<div class="prayer-tool-card' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
+      return '<div class="prayer-tool-card prayer-tool-card--primary' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
         + ' onclick="' + c.action + '" role="button" tabindex="0"'
         + (isPromoted ? ' style="border-left-color:' + ptColors[c.id] + '"' : '')
         + '>'
@@ -952,6 +1074,28 @@ function renderMore() {
         + '</div>'
         + '</div>';
     }).join('');
+
+    // Render secondary cards (tier 2) — compact horizontal layout
+    var ptSecondary = document.getElementById('prayerToolsSecondary');
+    if (ptSecondary) {
+      ptSecondary.innerHTML = resolved.secondary.map(function(c) {
+        var isPromoted = c.id === promotedId;
+        var iconHtml = ptIcons[c.id]
+          ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
+          : '';
+        var subClass = 'prayer-tool-subtitle' + (ptSubtitleClass[c.id] ? ' ' + ptSubtitleClass[c.id] : '');
+        return '<div class="prayer-tool-card prayer-tool-card--secondary' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
+          + ' onclick="' + c.action + '" role="button" tabindex="0"'
+          + (isPromoted ? ' style="border-left-color:' + ptColors[c.id] + '"' : '')
+          + '>'
+          + iconHtml
+          + '<div class="prayer-tool-body">'
+          + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
+          + '<div class="' + subClass + '">' + esc(c.subtitle) + '</div>'
+          + '</div>'
+          + '</div>';
+      }).join('');
+    }
 
     // EMT-05: Library teaser — standalone card below grid
     var libTeaser = document.getElementById('libraryTeaser');
