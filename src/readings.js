@@ -42,7 +42,8 @@ function setLiturgicalSeason(events) {
     else if (s === 'EASTER' || s === 'EASTER_SEASON') season = 'easter';
     else if (s === 'CHRISTMAS') season = 'christmas';
   }
-  // SLV-01: Season transition interstitial
+  // SLV-07: Season transition via sacred pause system
+  var sacredPause = require('./sacred-pause.js');
   var lastSeason = null;
   try { lastSeason = localStorage.getItem('mf-last-season'); } catch (e) {}
 
@@ -61,39 +62,76 @@ function setLiturgicalSeason(events) {
       easter: 'He is risen. Alleluia!',
       ordinary: 'Growing in grace, day by day.'
     };
-    var overlayEl = document.getElementById('seasonTransition');
-    if (!overlayEl) {
-      overlayEl = document.createElement('div');
-      overlayEl.id = 'seasonTransition';
-      document.body.insertBefore(overlayEl, document.body.firstChild);
-    }
-    overlayEl.className = 'season-overlay';
-    overlayEl.innerHTML = '<div class="season-overlay-content">'
-      + '<div class="season-overlay-label">A NEW SEASON</div>'
-      + '<div class="season-overlay-name">' + (seasonNames[season] || season) + '</div>'
-      + '<div class="season-overlay-message">' + (seasonMessages[season] || '') + '</div>'
-      + '</div>';
-
-    var dismissed = false;
-    var autoTimer;
-    function dismissOverlay() {
-      if (dismissed) return;
-      dismissed = true;
-      clearTimeout(autoTimer);
-      overlayEl.classList.add('dismissing');
-      setTimeout(function() { if (overlayEl.parentNode) overlayEl.parentNode.removeChild(overlayEl); }, 800);
-    }
-    overlayEl.addEventListener('click', dismissOverlay);
-    autoTimer = setTimeout(dismissOverlay, 4000);
+    sacredPause.show({
+      label: 'A NEW SEASON',
+      title: seasonNames[season] || season,
+      message: seasonMessages[season] || '',
+      timeout: 4000,
+      storageKey: 'mf-last-season',
+      storageVal: season
+    });
+  } else {
+    try { localStorage.setItem('mf-last-season', season); } catch (e) {}
   }
   window._devSkipSeasonOverlay = false;
-
-  // Always persist current season
-  try { localStorage.setItem('mf-last-season', season); } catch (e) {}
 
   document.documentElement.setAttribute('data-season', season);
   var morePanel = document.getElementById('panelMore');
   if (morePanel) morePanel.setAttribute('data-season', season);
+}
+
+// SLV-09: Holy day & solemnity recognition
+function checkSolemnityPause(events) {
+  var sacredPause = require('./sacred-pause.js');
+  var now = getNow();
+  var m = now.getMonth() + 1, d = now.getDate();
+  var today = events.filter(function(e) { return e.month === m && e.day === d; });
+  if (!today.length) return;
+  var e = today[0];
+
+  var majorDays = {
+    'Easter':       { msg: 'He is risen. Alleluia, alleluia!' },
+    'Christmas':    { msg: 'For unto us a Child is born, unto us a Son is given.' },
+    'Pentecost':    { msg: 'Come, Holy Spirit, fill the hearts of your faithful.' },
+    'AshWednesday': { msg: 'Remember that you are dust, and to dust you shall return.' },
+    'GoodFri':      { msg: 'By your holy Cross, you have redeemed the world.' },
+    'EasterVigil':  { msg: 'Lumen Christi. The Light of Christ.' },
+    'PalmSun':      { msg: 'Blessed is he who comes in the name of the Lord.' },
+    'AllSaints':    { msg: 'After this I had a vision of a great multitude, which no one could count.' },
+    'Ascension':    { msg: 'He was lifted up, and a cloud took him from their sight.' },
+    'HolyThurs':    { msg: 'Do this in remembrance of Me.' }
+  };
+
+  // Dedup: if season also changed today, the season pause covers these
+  var SEASON_COVERS = { 'Easter': 1, 'Christmas': 1, 'AshWednesday': 1 };
+  var key = e.event_key || '';
+  if (SEASON_COVERS[key] && sacredPause.isActive()) {
+    try { localStorage.setItem('mf-pause-solemn', new Date().toISOString().slice(0, 10)); } catch (ex) {}
+    return;
+  }
+
+  var major = majorDays[key];
+  if (major) {
+    sacredPause.showAfter({
+      title: e.name || key,
+      message: major.msg,
+      timeout: 4000,
+      storageKey: 'mf-pause-solemn',
+      guard: 'day'
+    }, 600);
+    return;
+  }
+
+  if (e.holy_day_of_obligation) {
+    sacredPause.showAfter({
+      label: 'HOLY DAY OF OBLIGATION',
+      title: e.name || '',
+      message: 'The faithful are obliged to attend Mass today.',
+      timeout: 4000,
+      storageKey: 'mf-pause-solemn',
+      guard: 'day'
+    }, 600);
+  }
 }
 
 // ── Holy Day of Obligation Banner ──
@@ -304,6 +342,30 @@ function fetchReadings() {
           + (hasText ? '<div class="reading-text" id="reading-text-' + i + '">' + formatReadingText(s.text, s.heading) + listenHtml + '</div>' : '')
           + '</div>';
       }).join('');
+
+      // SLV-10: Liturgical day header above readings
+      var litDay = '';
+      var litColor = '';
+      try {
+        if (window._litcalCache && window._litcalCache.events) {
+          var now2 = getNow();
+          var m2 = now2.getMonth() + 1, d2 = now2.getDate();
+          var entry = window._litcalCache.events;
+          if (Array.isArray(entry)) {
+            var td = entry.filter(function(ev) { return ev.month === m2 && ev.day === d2; });
+            if (td.length) {
+              litDay = td[0].name || '';
+              litColor = (td[0].color && td[0].color[0]) || '';
+            }
+          }
+        }
+      } catch (ex) {}
+      if (litDay) {
+        html = '<div class="readings-lit-header" data-lit-color="' + esc(litColor) + '">'
+          + '<div class="readings-lit-day">' + esc(litDay) + '</div>'
+          + '</div>' + html;
+      }
+
       el.innerHTML = html;
 
       // Enhance with BibleGet — staggered 2500ms apart to stay under rate limits
@@ -981,6 +1043,7 @@ module.exports = {
   extractConclusionLine: extractConclusionLine,
   exportLitCalICS: exportLitCalICS,
   setLiturgicalSeason: setLiturgicalSeason,
+  checkSolemnityPause: checkSolemnityPause,
   renderHDOBanner: renderHDOBanner,
   updateHDOBadge: updateHDOBadge,
   renderFastingBanner: renderFastingBanner,

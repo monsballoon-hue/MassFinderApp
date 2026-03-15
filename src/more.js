@@ -1204,6 +1204,7 @@ function renderMore() {
   fetchReadings();
   fetchLiturgicalDay().then(function(events) {
     setLiturgicalSeason(events);
+    readings.checkSolemnityPause(events);
     renderHDOBanner(events);
     renderFastingBanner(events);
     updateHDOBadge(events);

@@ -42,6 +42,7 @@ var bible = require('./bible.js');
 var explore = require('./explore.js');
 var settings = require('./settings.js');
 var reader = require('./reader.js');
+var sacredPause = require('./sacred-pause.js');
 
 var state = data.state;
 

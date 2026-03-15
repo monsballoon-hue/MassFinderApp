@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (17 specs implemented, 0 in-progress, 1 queued)
+**Last updated:** 2026-03-15 (18 specs implemented, 0 in-progress, 0 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -315,14 +315,14 @@ Future specs should continue this pattern with new prefixes.
 | PHF-02d | Reader Overlay Continuity Cue | Done | P3 |
 
 ### UX_Spec_Sacred_Pause_System.md (SLV series addendum)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** New (sacred pause pattern — extends SLV visual language)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_SLV_PAUSE.md
 **Depends on:** SLV-01 (season transition becomes first consumer of shared system)
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| SLV-07 | Sacred Pause Infrastructure (reusable overlay system with session cap, storage guards, sequencing) | Queued | P1 |
-| SLV-08 | Prayer Tool Entry Pause (centering moment before rosary, chaplet, stations, novena, prayerbook) | Queued | P1 |
-| SLV-09 | Holy Day & Solemnity Recognition (Easter, Christmas, Pentecost, Good Friday, HDOs) | Queued | P2 |
-| SLV-10 | Readings Liturgical Day Header (day name + color dot above daily readings) | Queued | P3 |
-| SLV-11 | Examination Centering Screen Enhancement (warm gold treatment, sacred glow, larger prayer text) | Queued | P3 |
+| SLV-07 | Sacred Pause Infrastructure (reusable overlay system with session cap, storage guards, sequencing) | Done | P1 |
+| SLV-08 | Prayer Tool Entry Pause (centering moment before rosary, chaplet, stations, novena, prayerbook) | Done | P1 |
+| SLV-09 | Holy Day & Solemnity Recognition (Easter, Christmas, Pentecost, Good Friday, HDOs) | Done | P2 |
+| SLV-10 | Readings Liturgical Day Header (day name + color dot above daily readings) | Done | P3 |
+| SLV-11 | Examination Centering Screen Enhancement (warm gold treatment, sacred glow, larger prayer text) | Done | P3 |
