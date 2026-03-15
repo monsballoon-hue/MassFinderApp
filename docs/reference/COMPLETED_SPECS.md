@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (19 specs implemented, 0 in-progress, 2 queued)
+**Last updated:** 2026-03-15 (19 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -369,3 +369,40 @@ Future specs should continue this pattern with new prefixes.
 | BT4-07 | Growing Faith Section Collapse Removal | Done | P2 |
 | BT4-08 | Sacred Font Token Consistency | Done | P2 |
 | BT4-09 | Text Size x-large (22px) Option | Done | P2 |
+
+### Content_Spec_Audit_v1.md (CON series)
+**Created:** 2026-03-15 · **Status:** Queued (CON-28 blocked pending Catholic Review)
+**Audit source:** Content_Audit_Full_v1.md
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CON.md
+**Depends on:** CON-28 requires Catholic Review sign-off before implementation
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| CON-01 | Sunday Obligation Guide — Warmth-First Rewrite | Queued | P1 |
+| CON-02 | Saved Tab Empty State Rewrite | Queued | P1 |
+| CON-03 | Lent Guide — Collapsible Restructure | Queued | P1 |
+| CON-04 | Easter Guide — Collapsible Restructure | Queued | P2 |
+| CON-05 | Advent Guide — Collapsible Restructure | Queued | P2 |
+| CON-06 | Christmas Guide — Collapsible Restructure | Queued | P2 |
+| CON-07 | "The faithful" → "You" Pass | Queued | P2 |
+| CON-08 | Prayer Book Gateway — Remove Hardcoded Count | Queued | P2 |
+| CON-09 | "No churches found" Empty State | Queued | P2 |
+| CON-10 | Fasting Banner — Add Context | Queued | P2 |
+| CON-11 | Sparse Weekday Message | Queued | P2 |
+| CON-12 | Toast Message Standardization | Queued | P2 |
+| CON-13 | Monthly Devotion Cards — Expand & Add CTAs | Queued | P2 |
+| CON-14 | Footer Identity Line | Queued | P3 |
+| CON-15 | Remove "Coming Soon" Promises | Queued | P3 |
+| CON-16 | About Section — App Identity Copy | Queued | P1 |
+| CON-17 | Ordinary Time Devotional Guide | Queued | P2 |
+| CON-18 | Prayer Book Header Line | Queued | P3 |
+| CON-19 | Novena Newcomer Intro | Queued | P3 |
+| CON-20 | Rosary Mystery Descriptors | Queued | P3 |
+| CON-21 | Stations Duration Line | Queued | P3 |
+| CON-22 | Examination Expectation-Setting | Queued | P3 |
+| CON-23 | Search Placeholder Enhancement | Queued | P3 |
+| CON-24 | Explore Module Source Subtitles | Queued | P3 |
+| CON-25 | Ordinary Time Saved Tab Greeting | Queued | P3 |
+| CON-26 | Chaplet Intro Description | Queued | P3 |
+| CON-27 | "centred" Typo Fix | Queued | P3 |
+| CON-28 | Act of Contrition Alignment | Blocked (Catholic Review) | P1 |
+| CON-29 | Loading Message Polish | Queued | P3 |
