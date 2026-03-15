@@ -4,9 +4,9 @@
 
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
-**Last updated:** 2026-03-14
-**ID sequence:** IDEA-067 →
-**Total items:** 66
+**Last updated:** 2026-03-15
+**ID sequence:** IDEA-074 →
+**Total items:** 73
 
 ---
 
@@ -867,3 +867,73 @@ The Second Sunday of Easter is Divine Mercy Sunday (already in litcal data as "E
 **Estimated effort:** 1.5 hours
 **Dependencies:** Litcal data (exists), devotions data (exists)
 **Audience fit:** Divine Mercy Sunday has become one of the most popular Catholic observances, especially among younger adults. High resonance.
+
+## IDEA-067 — More tab: uniform visual treatment across all content zones
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-011, IDEA-024
+**Spec ref:** MTR-01
+
+The More tab has grown to 20+ interactive elements across 10 content zones (saint card, seasonal moment, readings, prayer tools, devotional guides, etc.) all sharing identical visual DNA — same card background, same border-bottom separators, same section title typography. Users cannot build spatial memory of where things live. The tab needs restructuring into three visually distinct zones: "Today" (daily briefing), "Practice" (prayer tools), and "Go Deeper" (reference library).
+
+## IDEA-068 — More tab section titles all use same typography
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-02
+
+"Today's Readings," "Prayer & Devotion," and "Grow in Faith" all use identical `.more-section-title` styling. No visual hierarchy between daily content, practice tools, and reference material. Each zone should use differentiated typography.
+
+## IDEA-069 — Prayer tools secondary row adds cognitive load for elderly users
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-03
+
+The prayer tools grid shows all 7 interactive items at once (4 primary + 3 secondary). The secondary row (Stations, Novena Tracker, First Friday) is advanced/niche content that adds cognitive load. Should be behind a "More tools" progressive disclosure by default, with bypass when a card is contextually promoted.
+
+## IDEA-070 — Reading entries take too much vertical space inside Today zone
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-04
+
+Each reading entry takes ~52px vertical. With 4-5 entries, readings consume ~250px before expansion. Inside the warm "Today" container, tighter spacing would better serve the briefing intent.
+
+## IDEA-071 — Library teaser positioned as a prayer tool instead of a reference bridge
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-05
+
+The "Catholic Library — coming soon" teaser sits inside the prayer tools section, feeling like another prayer tool. It's actually a future Zone 3 (reference) asset. Repositioning it between the Practice and Go Deeper zones would better telegraph what's coming.
+
+## IDEA-072 — More tab Today zone needs internal spacing without border-bottom lines
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-06
+
+Inside the "Today" zone, the saint card, seasonal moment, and readings need breathing room. Pure spacing plus a faint sacred-tinted separator (not the generic border-light) should replace the current border-bottom treatment.
+
+## IDEA-073 — Collapsed Grow in Faith section gives no signal of what's inside
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067, IDEA-011
+**Spec ref:** MTR-07
+
+When the "Go Deeper" section is collapsed (MTR-01), users see only "Grow in Faith" and a chevron with no indication of content depth. A count badge ("4 guides") would signal what's available without requiring expansion.

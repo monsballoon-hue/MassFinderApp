@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (15 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-15 (15 specs implemented, 0 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -78,6 +78,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 
 - **PMD** = Pocket Missal — Devotions Expansion
 - **SLV** = Soul / Visual Language
+- **MTR** = More Tab Restructure
 
 Future specs should continue this pattern with new prefixes.
 
@@ -280,3 +281,18 @@ Future specs should continue this pattern with new prefixes.
 | SLV-04 | Season as Emotional Temperature (timing token shifts per season) | Done | P2 |
 | SLV-05 | Warm Sacred Surfaces (targeted surface warmth on sacred cards) | Done | P2 |
 | SLV-06 | Intentional Asymmetry (saint card padding) | Done | P3 |
+
+### UX_Spec_More_Tab_Restructure.md (MTR series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** New (content architecture — not from existing backlog)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_MTR.md
+**Depends on:** SOT, PMG, PMB, PMD (all implemented)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| MTR-01 | Zone Container Architecture | Queued | P1 |
+| MTR-02 | Section Title Typography Differentiation | Queued | P2 |
+| MTR-03 | Secondary Prayer Tools Progressive Disclosure | Queued | P2 |
+| MTR-04 | Reading Entries Compact Mode | Queued | P3 |
+| MTR-05 | Library Teaser Repositioned | Queued | P3 |
+| MTR-06 | Zone 1 Internal Spacing Refinement | Queued | P2 |
+| MTR-07 | Devotional Guide Count When Collapsed | Queued | P3 |
