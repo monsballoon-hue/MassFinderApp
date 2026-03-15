@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -461,3 +461,12 @@ Future specs should continue this pattern with new prefixes.
 | CON-31c | CTA button text ("Find Latin Mass near you") | Done |
 
 > **Note:** CON-30 + CON-31 shipped as part of CLH-05 implementation.
+
+### UX_Spec_First_Visit_Experience.md (FVX series)
+**Created:** 2026-03-15 · **Status:** Queued  
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_FVX.md
+| ID | Title | Status |
+|----|-------|--------|
+| FVX-01 | Onboarding Delay + Blur Backdrop | Queued |
+| FVX-02 | Tip Card State-Aware Rendering Rules | Queued |
+| FVX-03 | Daily Card Liturgical Enhancement | Queued |

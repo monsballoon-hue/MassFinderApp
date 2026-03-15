@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-120 →
-**Total items:** 119
+**ID sequence:** IDEA-126 →
+**Total items:** 125
 
 ---
 
@@ -1643,3 +1643,55 @@ When the Adoration chip is active on Find tab, there is no context for someone w
 **Spec ref:** CLH-05
 
 When the Latin chip is active, results show parishes with Latin Mass but no context for what to expect. Unlike Adoration and Confession, there is no Latin Mass guide content — only a glossary tooltip. Needs a "What to expect at a Latin Mass" guide written first (→ Content & Voice), then reader module registration and hint config entry. Infrastructure is ready via CLH-01.
+
+## IDEA-123 — Onboarding overlay should delay and render over a blurred Find tab, not replace the screen
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-076
+**Spec ref:** (none)
+
+The onboarding overlay currently fires at `src/app.js:902` during init, before parish data loads. The overlay uses `position:fixed;inset:0;z-index:9999;background:var(--color-bg)` (`css/app.css:2038`), completely replacing the screen with a solid background. The user has zero confirmation they're on the right site before the onboarding takes over.
+
+**Desired behavior:** Load the Find tab normally. Let cards render. After a brief delay (~800ms–1s), fade in a `backdrop-filter: blur()` over the Find tab content, then fade in the onboarding prompt card over it — both animations in unison. The user sees "oh, this is a church finder" before the onboarding asks them to engage. The blur communicates "content is here, just answer this first." On dismiss, blur fades out revealing the already-loaded Find tab.
+
+**Implementation notes:** Overlay needs `backdrop-filter: blur()` instead of solid `background:var(--color-bg)`. Trigger must move to *after* initial render completes (after parish data loads and `renderCards()` runs). Add a short `setTimeout` or `requestAnimationFrame` delay. Fade-in of blur + prompt should be a single coordinated CSS transition. The overlay background should transition from `transparent` to the blurred state, not snap in.
+
+## IDEA-124 — Heart tip card ("tap ♡ to favorite") rendering logic is too simplistic
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-001
+**Spec ref:** (none)
+
+The tip card at `src/render.js:299` renders if `!localStorage.getItem('mf-welcome-dismissed')` and `cards.length >= 2`. That's the only gate. This breaks for users who had favorites, removed them all, and are now re-browsing — they already learned the mechanic but the tip reappears if they never explicitly dismissed it (or cleared storage). The logic doesn't account for onboarding completion, prior favorite history, or session count.
+
+**Desired rules:**
+1. If onboarding just completed this session → don't render (onboarding already taught this)
+2. If user previously had favorites (ever) → don't render (they know the mechanic)
+3. If this is session 2+ OR user navigated away from Find and returned AND onboarding was completed → render (gentle reminder for someone who completed onboarding but hasn't favorited yet)
+4. If onboarding was skipped → render (they need the hint since they skipped the tutorial)
+
+**Implementation notes:** Needs a new localStorage key like `mf-had-favorites-ever` set to `'1'` any time a favorite is added (never cleared on unfavorite). Needs session awareness — either `sessionStorage` flag or a `mf-session-count` in localStorage. The `mf-welcome-dismissed` key alone is insufficient. The onboarding completion flag (`mf-onboarding-complete`) should suppress the tip for the remainder of that session via a `sessionStorage` guard.
+
+→ Hand off to Engineering for state logic architecture before speccing.
+
+## IDEA-125 — Liturgical calendar daily card needs more visual draw than bare name + chevron
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** (none)
+**Spec ref:** (none)
+
+The daily card at `src/app.js:713` renders the feast name (`.daily-card-name` in `--font-display`) and a 16×16 chevron arrow (`.daily-card-arrow`). The card has a subtle `border-left:3px solid var(--color-accent)` and sacred surface background, but nothing communicates what kind of day it is or why you'd want to tap. The liturgical color data is already fetched (`pick.color`) and a `colorHex` is computed (`app.js:695`) but never used in the rendered HTML.
+
+**What's missing:**
+- No liturgical color indicator — the `colorHex` is computed but discarded. A small color dot or swatch would immediately communicate the day's character (purple for penance, red for martyrs, white for feasts, green for ordinary time).
+- No rank/grade context — solemnities, feasts, and memorials all look identical. A subtle label like "Solemnity" or "Memorial" would signal importance to both Dorothy (who knows what these mean) and Paul (who'd learn by exposure).
+- No teaser text — nothing tells the user what they'd find if they tapped. Even a short line like "Readings & reflections →" would give purpose to the interaction.
+- The chevron is the only tap affordance — 16×16px, tertiary color, easy to miss. Sarah scrolling one-handed won't register it as interactive.
+
+**Implementation notes:** The data is already available in `_renderDailyStrip()`: `pick.grade` for rank, `pick.color` for liturgical color, `colorHex` for the mapped hex value. This is purely a rendering enhancement — no new data fetching needed. Consider: liturgical color dot (inline, 8px circle with `background: ${colorHex}`), grade label for high-ranking days (grade >= 5?), and a secondary line with a call-to-action teaser.
