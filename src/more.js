@@ -605,6 +605,42 @@ function _renderSeasonalMoment(events) {
     });
   }
 
+  // SOT-12: First Friday/Saturday reminder card (day before and day of)
+  var ffSt = _getFirstFridayState();
+  var ffHasActive = (ffSt.fridays && ffSt.fridays.length > 0) || (ffSt.saturdays && ffSt.saturdays.length > 0);
+  var nowD = new Date();
+  var nextFri = _getNextFirstFriday();
+  var nextSat = _getNextFirstSaturday();
+  var dToFri = Math.ceil((nextFri - nowD) / (24 * 60 * 60 * 1000));
+  var dToSat = Math.ceil((nextSat - nowD) / (24 * 60 * 60 * 1000));
+  if ((dToFri <= 1 || dToSat <= 1) && ffHasActive) {
+    var ffCardTitle = dToFri <= 1 ? 'First Friday' : 'First Saturday';
+    var ffCardWhen = (dToFri === 0 || dToSat === 0) ? 'today' : 'tomorrow';
+    var ffCardDevotion = dToFri <= 1 ? 'Sacred Heart devotion' : 'Immaculate Heart devotion';
+    var ffChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+    candidates.push({
+      priority: 1,
+      html: '<details class="seasonal-card">'
+        + '<summary>'
+        + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5"/></svg></div>'
+        + '<div class="seasonal-card-body">'
+        + '<div class="seasonal-card-title">' + esc(ffCardTitle) + ' is ' + ffCardWhen + '</div>'
+        + '<div class="seasonal-card-subtitle">' + esc(ffCardDevotion) + ' \u2014 attend Mass</div>'
+        + '</div>'
+        + ffChev
+        + '</summary>'
+        + '<div class="seasonal-card-expanded">'
+        + '<p>' + (dToFri <= 1
+          ? 'Continue your Nine First Fridays devotion by attending Mass and receiving Holy Communion in reparation to the Sacred Heart of Jesus.'
+          : 'Continue your Five First Saturdays devotion by going to Confession, receiving Communion, praying the Rosary, and meditating on the mysteries.')
+        + '</p>'
+        + '<div class="seasonal-card-action" onclick="event.stopPropagation();openFirstFriday()">Open tracker \u2192</div>'
+        + '<div class="seasonal-card-action" onclick="event.stopPropagation();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Find Mass near you \u2192</div>'
+        + '</div>'
+        + '</details>'
+    });
+  }
+
   // Sort by priority (1 = highest), take top 2
   candidates.sort(function(a, b) { return a.priority - b.priority; });
   var top = candidates.slice(0, 2);
@@ -872,9 +908,25 @@ function renderMore() {
       ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
     }
 
-    // SOT-12: First Friday/Saturday subtitle
+    // SOT-12: First Friday/Saturday subtitle + near-date promotion
     var ffSub = _getFirstFridaySubtitle();
     ptSubtitleClass.firstfriday = ffSub.active ? 'prayer-tool-subtitle--active' : '';
+    var ffState = _getFirstFridayState();
+    var ffHasStreak = (ffState.fridays && ffState.fridays.length > 0) || (ffState.saturdays && ffState.saturdays.length > 0);
+    var nowFF = new Date();
+    var nfDate = _getNextFirstFriday();
+    var nsDate = _getNextFirstSaturday();
+    var daysToFri = Math.ceil((nfDate - nowFF) / (24 * 60 * 60 * 1000));
+    var daysToSat = Math.ceil((nsDate - nowFF) / (24 * 60 * 60 * 1000));
+    var ffIsNear = daysToFri <= 1 || daysToSat <= 1;
+    if (ffIsNear && ffHasStreak && !promotedId) {
+      promotedId = 'firstfriday';
+      if (daysToFri === 0) ffSub = { text: 'First Friday is today \u2014 attend Mass', active: true };
+      else if (daysToFri === 1) ffSub = { text: 'First Friday is tomorrow', active: true };
+      else if (daysToSat === 0) ffSub = { text: 'First Saturday is today', active: true };
+      else if (daysToSat === 1) ffSub = { text: 'First Saturday is tomorrow', active: true };
+      ptSubtitleClass.firstfriday = 'prayer-tool-subtitle--active';
+    }
 
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
