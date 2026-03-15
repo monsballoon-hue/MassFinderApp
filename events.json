@@ -1029,30 +1029,32 @@
     {
       "id": "parish_077-retreat-mar18",
       "category": "community",
-      "title": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Speaker: Fr. Brad Milunski",
+      "title": "Lenten Retreat",
       "parish_id": "parish_077",
       "date": "2026-03-18",
-      "time": null,
+      "time": "17:00",
       "notes": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Speaker: Fr. Brad Milunski",
       "seasonal": {
         "is_seasonal": true,
         "season": "lent"
       },
-      "description": "Features confession, Mass, and guided reflection with Fr. Brad Milunski as speaker."
+      "description": "Features confession, Mass, and guided reflection with Fr. Brad Milunski as speaker.",
+      "end_time": "20:00"
     },
     {
       "id": "parish_077-retreat-mar19",
       "category": "community",
-      "title": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Speaker: Fr. Stanislaus Achu",
+      "title": "Lenten Retreat",
       "parish_id": "parish_077",
       "date": "2026-03-19",
-      "time": null,
+      "time": "17:00",
       "notes": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Speaker: Fr. Stanislaus Achu",
       "seasonal": {
         "is_seasonal": true,
         "season": "lent"
       },
-      "description": "Attendees will participate in confession, celebrate Mass, and engage in guided reflection with Fr. Stanislaus Achu."
+      "description": "Attendees will participate in confession, celebrate Mass, and engage in guided reflection with Fr. Stanislaus Achu.",
+      "end_time": "20:00"
     },
     {
       "id": "parish_078-lenten-feb25",
@@ -1109,34 +1111,37 @@
     {
       "id": "parish_080-retreat-mar16",
       "category": "community",
-      "title": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Fr. Paul with Deacon Kevin.",
+      "title": "Lenten Retreat",
       "parish_id": "parish_080",
       "date": "2026-03-16",
-      "time": null,
+      "time": "17:00",
       "notes": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Fr. Paul with Deacon Kevin.",
       "seasonal": {
         "is_seasonal": true,
         "season": "lent"
-      }
+      },
+      "description": "5pm Confession, 6pm Mass, reflection until 8pm. Lenten Retreat: 5pm Confession, 6pm Mass, reflection until 8pm. Fr. Paul with Deacon Kevin.",
+      "end_time": "20:00"
     },
     {
       "id": "parish_080-retreat-mar17",
       "category": "community",
-      "title": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection with Deacon Paul Briere until 8pm.",
+      "title": "Lenten Retreat",
       "parish_id": "parish_080",
       "date": "2026-03-17",
-      "time": null,
+      "time": "17:00",
       "notes": "Lenten Retreat: 5pm Confession, 6pm Mass, reflection with Deacon Paul Briere until 8pm.",
       "seasonal": {
         "is_seasonal": true,
         "season": "lent"
       },
-      "description": "Attendees participate in confession, celebrate Mass together, and engage in guided spiritual reflection led by Deacon Paul Briere."
+      "description": "Attendees participate in confession, celebrate Mass together, and engage in guided spiritual reflection led by Deacon Paul Briere.",
+      "end_time": "20:00"
     },
     {
       "id": "shrine_001-evt-relics",
       "category": "community",
-      "title": "Veneration of 9 unique and rarely seen relics of the Passion of Our Lord — St. Faustina Center",
+      "title": "Veneration of Relics of the Passion",
       "parish_id": "shrine_001",
       "date": "2026-02-28",
       "time": "10:30",
@@ -1469,7 +1474,7 @@
     {
       "id": "parish_080-evt-movie-night-at-sp&c-",
       "category": "social",
-      "title": "Movie Night at SP&C Social Center. Light meal provided. Contact Maryanne 896-1950.",
+      "title": "Movie Night",
       "parish_id": "parish_080",
       "day": "thursday",
       "time": "18:00",
@@ -1478,7 +1483,8 @@
       "location_id": "st-peter-and-st-casimir-church-westfield",
       "end_date": "2026-03-31",
       "contact_name": "Maryanne",
-      "contact_phone": "896-1950"
+      "contact_phone": "896-1950",
+      "description": "SP&C Social Center. Light meal provided."
     },
     {
       "id": "parish_006-mens-wed-1930",
@@ -1505,7 +1511,7 @@
     {
       "id": "parish_078-mens-sat-0830",
       "category": "community",
-      "title": "That Man Is You men's group. Starting again March 7. Contact Deacon Andrew Hogan 413-297-5000.",
+      "title": "That Man Is You",
       "parish_id": "parish_078",
       "day": "saturday",
       "time": "08:30",
@@ -1513,7 +1519,8 @@
       "notes": "That Man Is You men's group. Starting again March 7. Contact Deacon Andrew Hogan 413-297-5000.",
       "source": "bulletin_2026-02",
       "contact_name": "Deacon Andrew Hogan",
-      "contact_phone": "413-297-5000"
+      "contact_phone": "413-297-5000",
+      "description": "Men's fellowship group. Starting again March 7."
     },
     {
       "id": "parish_019-bible-wed-0900-lent-sacred",
@@ -2245,7 +2252,7 @@
     {
       "id": "parish_077-evt-lenten-retreat-2026-03-16",
       "category": "liturgical",
-      "title": "Lenten Retreat: Walking Together in the Desert with Jesus (Day 1)",
+      "title": "Lenten Retreat",
       "parish_id": "parish_080",
       "date": "2026-03-16",
       "time": "17:00",
@@ -2259,7 +2266,7 @@
     {
       "id": "parish_077-evt-lenten-retreat-2026-03-17",
       "category": "liturgical",
-      "title": "Lenten Retreat: Walking Together in the Desert with Jesus (Day 2)",
+      "title": "Lenten Retreat",
       "parish_id": "parish_080",
       "date": "2026-03-17",
       "time": "17:00",
@@ -2267,12 +2274,13 @@
       "notes": "5pm Confession, 6pm Mass, reflection with Deacon Paul Briere.",
       "venue_name": "St. Peter & St. Casimir Church",
       "venue_address": "32 State Street, Westfield, MA 01085",
-      "source": "bulletin_2026-03"
+      "source": "bulletin_2026-03",
+      "description": "Walking Together in the Desert with Jesus (Day 2)."
     },
     {
       "id": "parish_077-evt-lenten-retreat-2026-03-18",
       "category": "liturgical",
-      "title": "Lenten Retreat: Walking Together in the Desert with Jesus (Day 3)",
+      "title": "Lenten Retreat",
       "parish_id": "parish_077",
       "date": "2026-03-18",
       "time": "17:00",
@@ -2280,12 +2288,13 @@
       "notes": "5pm Confession, 6pm Mass, reflection with Fr. Brad Milunski from Basilica of Saint Stanislaus.",
       "venue_name": "Holy Trinity Church",
       "venue_address": "335 Elm Street, Westfield, MA 01085",
-      "source": "bulletin_2026-03"
+      "source": "bulletin_2026-03",
+      "description": "Walking Together in the Desert with Jesus (Day 3)."
     },
     {
       "id": "parish_077-evt-lenten-retreat-2026-03-19",
       "category": "liturgical",
-      "title": "Lenten Retreat: Walking Together in the Desert with Jesus (Day 4)",
+      "title": "Lenten Retreat",
       "parish_id": "parish_077",
       "date": "2026-03-19",
       "time": "17:00",
@@ -2391,7 +2400,7 @@
     {
       "id": "parish_078-evt-that-man-is-you",
       "category": "educational",
-      "title": "That Man Is You! Men's Group",
+      "title": "That Man Is You",
       "parish_id": "parish_078",
       "day": "saturday",
       "time": "08:30",

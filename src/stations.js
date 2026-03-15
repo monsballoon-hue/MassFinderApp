@@ -3,6 +3,7 @@ var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
 var snippet = require('./snippet.js');
+function _t(item, field) { return utils.getPrayerText(item, field); }
 
 // ── State ──
 var _data = null;
@@ -218,17 +219,17 @@ function _renderStation(title, body, footer) {
   body.innerHTML = _dotsHtml(_station)
     + '<div class="stations-prayer">'
     + '<div class="stations-num">Station ' + s.id + '</div>'
-    + '<h3 class="stations-station-title">' + utils.esc(s.title) + '</h3>'
+    + '<h3 class="stations-station-title">' + utils.esc(_t(s, 'title')) + '</h3>'
     + scriptureHtml
-    + '<p class="stations-versicle"><span class="stations-vr-label">V.</span> ' + utils.esc(s.verse) + '</p>'
-    + '<p class="stations-response"><span class="stations-vr-label stations-vr-label--response">R.</span> ' + utils.esc(s.response) + '</p>'
+    + '<p class="stations-versicle"><span class="stations-vr-label">V.</span> ' + utils.esc(_t(s, 'verse')) + '</p>'
+    + '<p class="stations-response"><span class="stations-vr-label stations-vr-label--response">R.</span> ' + utils.esc(_t(s, 'response')) + '</p>'
     + '<div class="stations-meditation">'
     + '<div class="stations-meditation-label">Meditation</div>'
-    + '<div class="stations-meditation-text"><p>' + _fmtPrayer(s.meditation) + '</p></div>'
+    + '<div class="stations-meditation-text"><p>' + _fmtPrayer(_t(s, 'meditation')) + '</p></div>'
     + '</div>'
     + '<div class="stations-prayer-block">'
     + '<div class="stations-prayer-label">Prayer</div>'
-    + '<div class="stations-prayer-text"><p>' + _fmtPrayer(s.prayer) + '</p></div>'
+    + '<div class="stations-prayer-text"><p>' + _fmtPrayer(_t(s, 'prayer')) + '</p></div>'
     + '</div>'
     + '</div>';
 
@@ -297,10 +298,11 @@ function _dotsHtml(active) {
   return html + '</div>';
 }
 
+function _prayerText(p) { return (typeof p === 'object' && p) ? _t(p, 'text') : (p || ''); }
 function _prayerBlock(name, text) {
   return '<div class="stations-closing-block">'
     + '<div class="stations-closing-name">' + name + '</div>'
-    + '<div class="stations-closing-text"><p>' + _fmtPrayer(text) + '</p></div>'
+    + '<div class="stations-closing-text"><p>' + _fmtPrayer(_prayerText(text)) + '</p></div>'
     + '</div>';
 }
 

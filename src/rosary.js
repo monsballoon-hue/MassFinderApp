@@ -4,6 +4,9 @@ var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
 var snippet = require('./snippet.js');
 
+// I18N: localization shorthand
+function _t(item, field) { return utils.getPrayerText(item, field); }
+
 // ── State ──
 var _data = null;
 var _set = null;         // 'Joyful' | 'Sorrowful' | 'Glorious' | 'Luminous'
@@ -428,9 +431,9 @@ function _renderDecade(title, body, footer) {
     // Mystery card (RC-06: compact layout)
     + '<div class="rosary-mystery" style="--set-color:' + (meta.color || '#666') + '">'
     + '<div class="rosary-mystery-num">' + _ordinal(_decade + 1) + ' ' + _set + ' Mystery'
-    + '<span class="rosary-mystery-fruit-inline"> \u00b7 ' + utils.esc(m.fruit) + '</span></div>'
-    + '<h3 class="rosary-mystery-title">' + utils.esc(m.title) + '</h3>'
-    + '<p class="rosary-mystery-meditation">' + utils.esc(m.meditation) + '</p>'
+    + '<span class="rosary-mystery-fruit-inline"> \u00b7 ' + utils.esc(_t(m, 'fruit')) + '</span></div>'
+    + '<h3 class="rosary-mystery-title">' + utils.esc(_t(m, 'title')) + '</h3>'
+    + '<p class="rosary-mystery-meditation">' + utils.esc(_t(m, 'meditation')) + '</p>'
     + '<div class="rosary-mystery-meta">'
     + '<span class="rosary-mystery-scripture" onclick="event.stopPropagation();window._refTap(\'bible\',\'' + utils.esc(m.scripture) + '\',this)">'
     + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> '
@@ -513,11 +516,12 @@ function _renderClosing(title, body, footer) {
 }
 
 // ── HTML helpers ──
+function _prayerText(p) { return (typeof p === 'object' && p) ? _t(p, 'text') : (p || ''); }
 function _prayerBlock(name, text, subtitle) {
   return '<div class="rosary-prayer-block">'
     + '<div class="rosary-prayer-name">' + name + '</div>'
     + (subtitle ? '<div class="rosary-prayer-sub">' + subtitle + '</div>' : '')
-    + '<div class="rosary-prayer-text"><p>' + _fmtPrayer(text) + '</p></div>'
+    + '<div class="rosary-prayer-text"><p>' + _fmtPrayer(_prayerText(text)) + '</p></div>'
     + '</div>';
 }
 
@@ -528,7 +532,7 @@ function _prayerBlockCollapsible(name, text, subtitle, isOpen) {
     + '<svg class="rosary-prayer-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>'
     + '</summary>'
     + (subtitle ? '<div class="rosary-prayer-sub">' + subtitle + '</div>' : '')
-    + '<div class="rosary-prayer-text"><p>' + _fmtPrayer(text) + '</p></div>'
+    + '<div class="rosary-prayer-text"><p>' + _fmtPrayer(_prayerText(text)) + '</p></div>'
     + '</details>';
 }
 
