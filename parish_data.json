@@ -1047,7 +1047,7 @@
         },
         {
           "id": "parish_004-smass-sat-0900-acad",
-          "type": "sunday_mass",
+          "type": "daily_mass",
           "day": "saturday",
           "time": "09:00",
           "end_time": null,

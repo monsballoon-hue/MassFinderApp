@@ -47,8 +47,8 @@ These are the EXACT strings rendered in the UI. Use `SVC_LABELS` in `src/config.
 - The app marks Communion Services with a "Not a Mass" indicator per USCCB guidelines.
 
 ### Vigil Mass
-- A Saturday evening Mass (2:00 PM or later) fulfills the Sunday obligation → `type: "sunday_mass"`, `day: "saturday"`.
-- A Saturday morning Mass (before 2:00 PM) does NOT fulfill Sunday obligation → `type: "daily_mass"`, `day: "saturday"`.
+- A Saturday evening Mass (4:00 PM or later) fulfills the Sunday obligation → `type: "sunday_mass"`, `day: "saturday"`.
+- A Saturday morning Mass (before 4:00 PM) does NOT fulfill Sunday obligation → `type: "daily_mass"`, `day: "saturday"`.
 - The display note is "Vigil Mass". Never say "Saturday evening Mass" or "Anticipated Mass."
 
 ### First Friday / First Saturday
