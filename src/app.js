@@ -47,6 +47,181 @@ window._sacredPause = sacredPause;
 
 var state = data.state;
 
+// ── OBW: First-Launch Onboarding Walkthrough ──
+var OB_CONTENT_STEPS = [
+  {
+    icon: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    headline: 'Find Mass, Confession, and Adoration near you',
+    subtitle: 'Search by name, filter by service type, and see what\u2019s happening today.'
+  },
+  {
+    icon: '<svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+    headline: 'Save your parishes',
+    subtitle: 'Tap the heart on any church to build your personal dashboard.'
+  },
+  {
+    icon: '<svg viewBox="0 0 24 24"><rect x="6.5" y="1" width="3" height="14" rx="1"/><rect x="1" y="5.5" width="14" height="3" rx="1"/><path d="M17 4h4v4M21 4l-6 6" stroke-width="1.5"/></svg>',
+    headline: 'Pray, learn, and grow',
+    subtitle: 'Guided Rosary, daily readings, the Catechism, and more\u2009\u2014\u2009all in your pocket.'
+  }
+];
+
+var OB_INSTALL_STEP = {
+  icon: '<svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5"/><path d="M9 2v1.5a1 1 0 001 1h4a1 1 0 001-1V2"/></svg>',
+  headline: 'Add MassFinder to your home screen',
+  subtitle: 'Opens instantly, works offline, and feels like a native app. No app store needed.',
+  installStep: true
+};
+
+var _obSteps = [];
+var _obStep = 0;
+
+function _renderObStep(idx) {
+  var step = _obSteps[idx];
+  if (!step) return;
+  var content = document.getElementById('obContent');
+  var dots = document.getElementById('obDots');
+  var btn = document.getElementById('obNext');
+  var ghost = document.getElementById('obSecondary');
+  var skip = document.getElementById('obSkip');
+  if (!content || !dots || !btn) return;
+
+  var illClass = step.installStep ? 'ob-illustration ob-install' : 'ob-illustration';
+  content.innerHTML =
+    '<div class="' + illClass + '">' + step.icon + '</div>' +
+    '<div class="ob-headline">' + step.headline + '</div>' +
+    '<div class="ob-subtitle">' + step.subtitle + '</div>';
+
+  var dotsHtml = '';
+  for (var i = 0; i < _obSteps.length; i++) {
+    dotsHtml += '<div class="ob-dot' + (i === idx ? ' active' : '') + '" role="tab" aria-selected="' + (i === idx) + '"></div>';
+  }
+  dots.innerHTML = dotsHtml;
+
+  var isLast = idx === _obSteps.length - 1;
+  var isInstall = !!step.installStep;
+
+  if (isInstall) {
+    btn.textContent = 'Show Me How';
+    btn.classList.add('ob-btn-accent');
+    btn.onclick = _obShowInstallGuide;
+    if (ghost) { ghost.style.display = ''; ghost.onclick = _dismissOb; }
+  } else if (isLast) {
+    btn.textContent = 'Get Started';
+    btn.classList.add('ob-btn-accent');
+    btn.onclick = _dismissOb;
+    if (ghost) ghost.style.display = 'none';
+  } else {
+    btn.textContent = 'Next';
+    btn.classList.remove('ob-btn-accent');
+    btn.onclick = _advanceOb;
+    if (ghost) ghost.style.display = 'none';
+  }
+
+  if (skip) skip.style.display = (isLast || isInstall) ? 'none' : '';
+}
+
+function _advanceOb() {
+  _obStep++;
+  if (_obStep >= _obSteps.length) { _dismissOb(); return; }
+  var content = document.getElementById('obContent');
+  if (!content) return;
+  content.classList.add('exiting');
+  setTimeout(function() {
+    _renderObStep(_obStep);
+    content.classList.remove('exiting');
+    content.classList.add('entering');
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        content.classList.remove('entering');
+      });
+    });
+  }, 200);
+}
+
+function _dismissOb() {
+  var overlay = document.getElementById('onboardOverlay');
+  if (!overlay) return;
+  try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+  if (typeof haptics !== 'undefined' && haptics.light) haptics.light();
+  overlay.classList.remove('open');
+  overlay.classList.add('dismissing');
+  setTimeout(function() {
+    overlay.style.display = 'none';
+    overlay.classList.remove('dismissing');
+    var searchInput = document.getElementById('searchInput');
+    if (searchInput) searchInput.focus();
+  }, 500);
+}
+
+function _obShowInstallGuide() {
+  var _origClose = window.closeInstallGuide;
+  window.closeInstallGuide = function() {
+    _origClose();
+    window.closeInstallGuide = _origClose;
+    _dismissOb();
+  };
+  openInstallGuide();
+}
+
+function _showOnboarding() {
+  var overlay = document.getElementById('onboardOverlay');
+  if (!overlay) return;
+
+  var isStandalone = window.matchMedia('(display-mode: standalone)').matches
+    || window.navigator.standalone === true;
+  _obSteps = isStandalone
+    ? OB_CONTENT_STEPS.slice()
+    : OB_CONTENT_STEPS.concat([OB_INSTALL_STEP]);
+  _obStep = 0;
+
+  overlay.style.display = '';
+  _renderObStep(0);
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      overlay.classList.add('open');
+    });
+  });
+
+  var skip = document.getElementById('obSkip');
+  if (skip) skip.onclick = _dismissOb;
+
+  var startX = 0, startY = 0;
+  var contentEl = document.getElementById('obContent');
+  if (contentEl) {
+    contentEl.addEventListener('touchstart', function(e) {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    }, { passive: true });
+    contentEl.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - startX;
+      var dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dy) < 30) {
+        if (dx < 0) {
+          _advanceOb();
+        } else if (_obStep > 0) {
+          _obStep--;
+          var c = document.getElementById('obContent');
+          if (c) c.classList.add('exiting');
+          setTimeout(function() {
+            _renderObStep(_obStep);
+            var c2 = document.getElementById('obContent');
+            if (c2) { c2.classList.remove('exiting'); c2.classList.add('entering'); }
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                var c3 = document.getElementById('obContent');
+                if (c3) c3.classList.remove('entering');
+              });
+            });
+          }, 200);
+        }
+      }
+    }, { passive: true });
+  }
+}
+
+window._showOnboarding = _showOnboarding;
+
 // ── Daily Micro-Prompts (Layer 1 — inline, no API) ──
 var DAILY_PROMPTS = {
   lent: [
@@ -719,6 +894,20 @@ async function init() {
 
   data.loadFav();
   data.migrateFavorites();
+
+  // OBW: Show onboarding for genuinely new users only
+  var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
+  if (_isNewUser) {
+    var _hasExistingData = localStorage.getItem('mf-favorites') ||
+      localStorage.getItem('mf-theme') ||
+      state._lastVisit;
+    if (_hasExistingData) {
+      try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+    } else {
+      _showOnboarding();
+    }
+  }
+
   try {
     // Load parish data from static JSON
     var controller = new AbortController();
@@ -869,7 +1058,8 @@ var _devState = {
   season: null,
   fastingMode: null,
   hdoBanner: false,
-  qaOffset: 0
+  qaOffset: 0,
+  onboarding: false
 };
 
 function _toggleDevPanel() {
@@ -892,6 +1082,7 @@ function _toggleDevPanel() {
     { key: 'confession', label: 'Confession Prompt', active: _devState.confession },
     { key: 'moreBadge', label: 'More Tab Badge', active: _devState.moreBadge },
     { key: 'hdoBanner', label: 'HDO Banner (fake)', active: _devState.hdoBanner },
+    { key: 'onboarding', label: 'Onboarding', active: _devState.onboarding },
   ];
 
   var seasons = ['lent', 'easter', 'advent', 'christmas', 'ordinary'];
@@ -1070,6 +1261,15 @@ window._devToggle = function(key, checked) {
       } else {
         hb.innerHTML = '';
       }
+    }
+  }
+
+  if (key === 'onboarding') {
+    if (checked) {
+      localStorage.removeItem('mf-onboarding-complete');
+      _showOnboarding();
+    } else {
+      localStorage.setItem('mf-onboarding-complete', '1');
     }
   }
 };

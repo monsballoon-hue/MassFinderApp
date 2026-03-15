@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (20 specs implemented, 0 in-progress, 5 queued)
+**Last updated:** 2026-03-15 (21 specs implemented, 0 in-progress, 4 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -408,20 +408,20 @@ Future specs should continue this pattern with new prefixes.
 | CON-29 | Loading Message Polish | Done | P3 |
 
 ### UX_Spec_Onboarding_Walkthrough.md (OBW series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Source:** Content_Audit_Full_v1.md (D-01), Content & Voice requirements
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_OBW.md
 **Depends on:** install-guide.js (existing, no changes needed)
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| OBW-01 | Overlay Container & Layout Structure | Queued | P1 |
-| OBW-02 | Step 1 — Find | Queued | P1 |
-| OBW-03 | Step 2 — Save | Queued | P1 |
-| OBW-04 | Step 3 — Pray/Learn/Grow | Queued | P1 |
-| OBW-05 | Step 4 — Install (conditional) | Queued | P1 |
-| OBW-06 | Standalone Detection & Step Array | Queued | P1 |
-| OBW-07 | Dismiss Behavior & Persistence | Queued | P1 |
-| OBW-08 | Desktop & Tablet Adaptation | Queued | P2 |
+| OBW-01 | Overlay Container & Layout Structure | Done | P1 |
+| OBW-02 | Step 1 — Find | Done | P1 |
+| OBW-03 | Step 2 — Save | Done | P1 |
+| OBW-04 | Step 3 — Pray/Learn/Grow | Done | P1 |
+| OBW-05 | Step 4 — Install (conditional) | Done | P1 |
+| OBW-06 | Standalone Detection & Step Array | Done | P1 |
+| OBW-07 | Dismiss Behavior & Persistence | Done | P1 |
+| OBW-08 | Desktop & Tablet Adaptation | Done | P2 |
 
 ### UX_Spec_Contextual_Filter_Hints.md (CLH series)
 **Created:** 2026-03-15 · **Status:** Queued
