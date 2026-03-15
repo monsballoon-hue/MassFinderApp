@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-084 →
-**Total items:** 83
+**ID sequence:** IDEA-087 →
+**Total items:** 86
 
 ---
 
@@ -1094,3 +1094,40 @@ Q31 ("Have I contemplated or attempted suicide?") needs a compassionate pastoral
 **Spec ref:** (none)
 
 RVM §38 notes Sunday mystery may vary by liturgical season (Joyful during Advent/Christmas, Sorrowful during Lent). Default Glorious is now correct (shipped in content-additions branch). Season-aware logic would be a future enhancement using the existing litcal data. Requires src/rosary.js changes.
+
+## IDEA-084 — App rebrand: evaluate "Sacristy" as replacement for "MassFinder"
+**Category:** research
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-085, IDEA-086
+**Spec ref:** (none)
+
+"MassFinder" describes ~15% of the app's current functionality and collides with massfinder.app (active competitor), massfinder.org, and the Catholic Mass Times ecosystem (130K+ churches, 20K reviews). Research evaluated three naming strategies: keep MassFinder (rejected — brand collision, scope mismatch), descriptive compound (rejected — forgettable), single evocative word (recommended — matches Hallow/Laudate/Amen pattern). Top candidate: **Sacristy** — "everything you need for the liturgical life, gathered in one place." sacristy.app domain appears available. Full analysis in docs/research/branding-research.md.
+
+## IDEA-085 — Secure sacristy.app domain and configure Vercel custom domain
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-084, IDEA-086
+**Spec ref:** (none)
+
+If rebrand decision is confirmed: purchase sacristy.app (~$12-14/yr), configure DNS, set up Vercel custom domain pointing to existing deployment. Includes SSL provisioning (automatic with .app TLD which requires HTTPS).
+
+**Estimated effort:** 1 hour
+**Dependencies:** IDEA-084 decision
+
+## IDEA-086 — Rebrand string references: manifest, meta tags, header wordmark, OG tags
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (branding-research.md)
+**Related:** IDEA-084, IDEA-085
+**Spec ref:** (none)
+
+Update all user-facing "MassFinder" references to new brand name: manifest.json (name, short_name), index.html (title, meta description, OG tags, header wordmark text, header subtitle), service worker, any hardcoded strings in JS modules. Add a temporary "formerly MassFinder" note for 3-6 months to ease transition for existing users. Preserve the cross-and-gold icon and "Western New England" regional subtitle.
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** IDEA-085 (domain must be active first)
