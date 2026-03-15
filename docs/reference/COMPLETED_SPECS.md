@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (11 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-14 (11 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -72,6 +72,9 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **CCS** = Color Channel Separation
 - **CSO** = Color System Overhaul
 - **SOT** = Seasonal Offerings Triage
+- **PMG** = Pocket Missal — Grid Restructure
+- **PMB** = Pocket Missal — Prayer Book
+- **PMD** = Pocket Missal — Devotions Expansion
 
 Future specs should continue this pattern with new prefixes.
 
@@ -214,3 +217,49 @@ Future specs should continue this pattern with new prefixes.
 | SOT-13 | Seasonal Scripture Spotlight (IDEA-063) | Deferred Phase 3 | P3 |
 | SOT-14 | Marian Consecration Countdown (IDEA-064) | Deferred Phase 4 | P3 |
 | SOT-15 | Ember Days Awareness (IDEA-062) | Deferred Phase 3 | P3 |
+
+### UX_Spec_Pocket_Missal_Grid.md (PMG series)
+**Created:** 2026-03-14 · **Status:** Queued
+**Backlog items:** New (Pocket Missal initiative — prerequisite for PMB/PMD)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PMG.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PMG-01 | Always-2-Column Primary Grid | Queued | P1 |
+| PMG-02 | Secondary Compact Row (3-up) | Queued | P1 |
+| PMG-03 | Vertical Card Layout for Primary Cards | Queued | P1 |
+| PMG-04 | Promoted Card Swap Logic | Queued | P2 |
+| PMG-05 | Library Teaser Repositioning | Queued | P3 |
+| PMG-06 | Dark Mode Parity | Queued | P1 |
+
+### UX_Spec_Pocket_Missal_PrayerBook.md (PMB series)
+**Created:** 2026-03-14 · **Status:** Queued
+**Backlog items:** New (Pocket Missal initiative — biggest content gap)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PMB.md
+**Depends on:** PMG
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PMB-01 | Prayer Book Data File | Queued | P1 |
+| PMB-02 | Reader Module Registration & Selection Screen | Queued | P1 |
+| PMB-03 | Prayer Text Display & Expand/Collapse | Queued | P1 |
+| PMB-04 | Search Input (Sticky) | Queued | P2 |
+| PMB-05 | V/R Formatting for Call-and-Response Prayers | Queued | P2 |
+| PMB-06 | Litany Step-Through Mode (Humility + Trust) | Queued | P2 |
+| PMB-07 | Lectio Divina Guided Experience | Queued | P3 |
+| PMB-08 | Prayer Tools Grid Card Entry Point | Queued | P1 |
+| PMB-09 | Dark Mode Parity | Queued | P1 |
+
+### UX_Spec_Pocket_Missal_Devotions.md (PMD series)
+**Created:** 2026-03-14 · **Status:** Queued
+**Backlog items:** New (Pocket Missal initiative — chaplet, novenas, seasonal)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PMD.md
+**Depends on:** PMG
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PMD-01 | Divine Mercy Chaplet — Reader Module | Queued | P1 |
+| PMD-02 | Divine Mercy Chaplet — Guided Bead Experience | Queued | P1 |
+| PMD-03 | Divine Mercy Chaplet — Grid Card & Contextual Promotion | Queued | P1 |
+| PMD-04 | Novena Data Expansion (6 new novenas) | Queued | P2 |
+| PMD-05 | Novena Tracker — Variable Day Count Support | Queued | P2 |
+| PMD-06 | Angelus / Regina Caeli — Seasonal Moment Candidate | Queued | P3 |
+| PMD-07 | Seasonal Card Cross-Links to New Tools | Queued | P3 |
+| PMD-08 | Dark Mode Parity | Queued | P1 |
