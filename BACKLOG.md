@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-074 →
-**Total items:** 73
+**ID sequence:** IDEA-081 →
+**Total items:** 80
 
 ---
 
@@ -965,3 +965,73 @@ Inside the "Today" zone, the saint card, seasonal moment, and readings need brea
 When the "Go Deeper" section is collapsed (MTR-01), users see only "Grow in Faith" and a chevron with no indication of content depth. A count badge ("4 guides") would signal what's available without requiring expansion.
 
 **Implemented:** 2026-03-15 via MTR-07 — count badge shows guide count after seasonal filtering
+
+## IDEA-074 — Confession guide not discoverable from confession times
+**Category:** enhancement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-011
+**Spec ref:** PHF-01
+
+The "How to Go to Confession" guide lives exclusively on the More tab's Grow in Faith section. Kevin (42, returning after 15 years) finds confession times via the Confession chip → church detail → Sacraments accordion, but there is zero path to the guide that would give him confidence. Register the confession guide as a reader module so it can be opened from anywhere.
+
+## IDEA-075 — Detail panel Sacraments accordion has no link to confession guide
+**Category:** enhancement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-074
+**Spec ref:** PHF-01a
+
+When a user opens the Sacraments accordion on a church detail card showing confession times, there is no contextual link to the confession guide. Add a gentle nudge: "First time in a while? What to expect ›" below the confession schedule. Non-intrusive — a lifelong Catholic ignores it, a returning Catholic taps it.
+
+## IDEA-076 — Find tab confession filter shows no help for returning Catholics
+**Category:** enhancement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-074, IDEA-075
+**Spec ref:** PHF-01b
+
+When the Confession filter chip is active on the Find tab, results show churches with times but no indication that a guide exists. Add a dismissible one-line hint: "Not sure what to expect? How Confession works ›". Session-scoped dismissal via sessionStorage.
+
+## IDEA-077 — Reader close button below 44pt minimum touch target
+**Category:** bug
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-029
+**Spec ref:** PHF-02a
+
+The .reader-close-btn is 30×30px with a 16×16px SVG icon. This is the only way to exit any prayer tool. Apple HIG minimum is 44×44pt. Dorothy (78, daily Mass) cannot reliably hit a 30px target. She is trapped in the overlay. Increase to 44×44px.
+
+## IDEA-078 — Rosary swipe hint disappears after first interaction
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-019, IDEA-030
+**Spec ref:** PHF-02b
+
+The rosary swipe hint shows once and vanishes permanently after the first interaction. If Dorothy accidentally swipes past a decade, she has no reminder that swiping right goes back. Replace the temporary hint with a persistent subtle cue ("← swipe to navigate →") in the footer below the Previous/Next buttons.
+
+## IDEA-079 — Prayer text too small at "large" setting for arm's-length reading
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-023, IDEA-026
+**Spec ref:** PHF-02c
+
+At [data-text-size="large"], root is 19px. Rosary prayer text computes to ~19px Georgia. For a 78-year-old reading at arm's length on a 6.1" iPhone, this may not be sufficient. Add a +2px reader-specific boost when large text is active, giving ~21px prayer text inside the reader overlay without affecting the rest of the app.
+
+## IDEA-080 — Reader overlay has no continuity cue when tab bar disappears
+**Category:** refinement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-029
+**Spec ref:** PHF-02d
+
+When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental model ("tabs = how I move around") breaks. Consider a subtle continuity cue — either a faint wordmark or a 3px colored line at the bottom edge where the tab bar was. Lowest priority item — may be unnecessary if PHF-02a (bigger close button) resolves the confusion.

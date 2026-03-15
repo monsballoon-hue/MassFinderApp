@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (16 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-15 (16 specs implemented, 0 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -79,6 +79,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **PMD** = Pocket Missal — Devotions Expansion
 - **SLV** = Soul / Visual Language
 - **MTR** = More Tab Restructure
+- **PHF** = Pastoral Handoff
 
 Future specs should continue this pattern with new prefixes.
 
@@ -296,3 +297,19 @@ Future specs should continue this pattern with new prefixes.
 | MTR-05 | Library Teaser Repositioned | Done | P3 |
 | MTR-06 | Zone 1 Internal Spacing Refinement | Done | P2 |
 | MTR-07 | Devotional Guide Count When Collapsed | Done | P3 |
+
+### UX_Spec_Pastoral_Handoff.md (PHF series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Source:** Pastoral Advisor (Fr. Mike) handoff
+**Backlog items:** IDEA-074 through IDEA-080
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PHF.md
+**Depends on:** Reader system (implemented), Devotional guides (implemented)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PHF-01 | Confession Guide — Reader Module Registration | Queued | P1 |
+| PHF-01a | Confession Guide Nudge in Detail Panel | Queued | P1 |
+| PHF-01b | Confession Guide Hint on Find Tab Filter | Queued | P2 |
+| PHF-02a | Reader Close Button — 44pt Touch Target | Queued | P1 |
+| PHF-02b | Persistent Swipe Hint in Rosary Footer | Queued | P2 |
+| PHF-02c | Prayer Text Size Boost at Large Setting | Queued | P2 |
+| PHF-02d | Reader Overlay Continuity Cue | Queued | P3 |
