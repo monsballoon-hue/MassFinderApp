@@ -385,11 +385,11 @@ function _renderOpening(title, body, footer) {
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
     + (_condensedMode
       ? '<div class="rosary-condensed-summary">Sign of the Cross \u00b7 Apostles\' Creed \u00b7 Our Father \u00b7 3 Hail Marys \u00b7 Glory Be</div>'
-      : _prayerBlock('Sign of the Cross', p.sign_of_cross)
-        + _prayerBlock('Apostles\' Creed', p.apostles_creed)
-        + _prayerBlock('Our Father', p.our_father)
-        + _prayerBlock('Three Hail Marys', p.hail_mary, 'For an increase of Faith, Hope, and Charity')
-        + _prayerBlock('Glory Be', p.glory_be))
+      : _prayerBlockCollapsible('Sign of the Cross', p.sign_of_cross)
+        + _prayerBlockCollapsible('Apostles\' Creed', p.apostles_creed)
+        + _prayerBlockCollapsible('Our Father', p.our_father)
+        + _prayerBlockCollapsible('Three Hail Marys', p.hail_mary, 'For an increase of Faith, Hope, and Charity')
+        + _prayerBlockCollapsible('Glory Be', p.glory_be))
     + '</div>';
   footer.style.display = '';
   footer.innerHTML = _navHtml('Back', 'Begin First Decade \u2192');

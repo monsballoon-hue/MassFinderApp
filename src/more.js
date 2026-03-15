@@ -531,7 +531,11 @@ function renderMore() {
 
     // EMT-03-B: Contextual "today" highlight
     var promotedId = '';
-    if (isLentSeason()) {
+    var novSub = _getNovenaSubtitle();
+    var novenaActive = novSub.indexOf('Day') === 0 || novSub.indexOf('in progress') !== -1;
+    if (novenaActive) {
+      promotedId = 'novena';
+    } else if (isLentSeason()) {
       promotedId = 'stations';
     } else if (new Date().getDay() === 5) {
       promotedId = 'rosary';
@@ -546,9 +550,8 @@ function renderMore() {
       stations: '',
       novena: ''
     };
-    // Enhance novena subtitle with day fractions
-    var novSub = _getNovenaSubtitle();
-    if (novSub.indexOf('in progress') !== -1) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
+    // Enhance novena subtitle with active styling
+    if (novenaActive) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
 
     // SOT-03: Seasonal novena auto-surfacing
     var seasonalNovenaLabel = '';
