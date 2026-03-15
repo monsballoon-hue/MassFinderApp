@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (9 specs implemented, 1 in-progress, 2 queued)
+**Last updated:** 2026-03-14 (10 specs implemented, 1 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -194,21 +194,21 @@ Future specs should continue this pattern with new prefixes.
 | CSO-08 | Verification Counts | Done | P3 |
 
 ### UX_Spec_Seasonal_Offerings_Triage.md (SOT series)
-**Created:** 2026-03-14 · **Status:** Queued
+**Created:** 2026-03-14 · **Status:** Phase 1 Implemented (10/15 done, 5 deferred)
 **Backlog items:** IDEA-053, IDEA-054, IDEA-055, IDEA-056, IDEA-057, IDEA-058, IDEA-059, IDEA-060, IDEA-061, IDEA-062, IDEA-063, IDEA-064, IDEA-065, IDEA-066
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_SOT.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| SOT-01 | Seasonal Moment Container (max 2-card zone) | Queued | P1 |
-| SOT-02 | Liturgical Color Indicator in Saint Card (IDEA-057) | Queued | P1 |
-| SOT-03 | Novena Auto-Surfacing in Prayer Tools Grid (IDEA-055) | Queued | P1 |
-| SOT-04 | Seasonal CCC Spotlight in dailyFormation Slot (IDEA-060) | Queued | P2 |
-| SOT-05 | Holy Week Day-by-Day Guide (IDEA-056) | Queued | P1 |
-| SOT-06 | Easter Alleluia + Regina Caeli (IDEA-061) | Queued | P1 |
-| SOT-07 | Divine Mercy Sunday Experience (IDEA-066) | Queued | P1 |
-| SOT-08 | Pentecost Novena Countdown (IDEA-065) | Queued | P1 |
-| SOT-09 | Monthly Devotion Card (IDEA-053) | Queued | P2 |
-| SOT-10 | O Antiphons — Dec 17-23 (IDEA-054) | Queued | P2 |
+| SOT-01 | Seasonal Moment Container (max 2-card zone) | Done | P1 |
+| SOT-02 | Liturgical Color Indicator in Saint Card (IDEA-057) | Done | P1 |
+| SOT-03 | Novena Auto-Surfacing in Prayer Tools Grid (IDEA-055) | Done | P1 |
+| SOT-04 | Seasonal CCC Spotlight in dailyFormation Slot (IDEA-060) | Done | P2 |
+| SOT-05 | Holy Week Day-by-Day Guide (IDEA-056) | Done | P1 |
+| SOT-06 | Easter Alleluia + Regina Caeli (IDEA-061) | Done | P1 |
+| SOT-07 | Divine Mercy Sunday Experience (IDEA-066) | Done | P1 |
+| SOT-08 | Pentecost Novena Countdown (IDEA-065) | Done | P1 |
+| SOT-09 | Monthly Devotion Card (IDEA-053) | Done | P2 |
+| SOT-10 | O Antiphons — Dec 17-23 (IDEA-054) | Done | P2 |
 | SOT-11 | Advent Wreath Devotion (IDEA-058) | Deferred Phase 2 | P3 |
 | SOT-12 | First Friday/Saturday Tracker (IDEA-059) | Deferred Phase 3 | P3 |
 | SOT-13 | Seasonal Scripture Spotlight (IDEA-063) | Deferred Phase 3 | P3 |

@@ -2,7 +2,7 @@
 
 **Spec prefix:** SOT (Seasonal Offerings Triage)
 **Created:** 2026-03-14
-**Status:** Draft — awaiting review
+**Status:** Phase 1 Implemented (SOT-01 through SOT-10 done, SOT-11 through SOT-15 deferred)
 **Source:** seasonal-offerings-research.pdf (IDEA-053 → IDEA-066)
 **Scope:** UX triage of 14 proposed seasonal features; structural framework for the More tab; implementation-ready specs for Phase 1
 
