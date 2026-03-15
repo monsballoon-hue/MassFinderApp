@@ -90,10 +90,18 @@ function _getFirstFridaySubtitle() {
   return { text: 'Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate(), active: false };
 }
 
-function openFirstFriday() {
-  var reader = require('./reader.js');
-  var esc = require('./utils.js').esc;
-  var haptics = require('./haptics.js');
+// Register with reader system
+var reader = require('./reader.js');
+reader.registerModule('firstfriday', {
+  getTitle: function() { return 'First Friday & Saturday'; },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    _renderFirstFriday(bodyEl);
+  },
+  onClose: function() {}
+});
+
+function _renderFirstFriday(bodyEl) {
   var st = _getFirstFridayState();
   var fridays = st.fridays || [];
   var saturdays = st.saturdays || [];
@@ -117,13 +125,12 @@ function openFirstFriday() {
   var ns = _getNextFirstSaturday();
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
-  var html = '<div style="max-width:540px;margin:0 auto">'
+  bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto">'
     + '<div style="text-align:center;margin-bottom:var(--space-5)">'
     + '<div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2)">First Friday &amp; First Saturday</div>'
     + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5">Two devotions of reparation to the Sacred Heart of Jesus and the Immaculate Heart of Mary.</div>'
     + '</div>'
 
-    // First Fridays
     + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
     + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Nine First Fridays</div>'
     + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">Attend Mass and receive Communion on nine consecutive first Fridays in reparation to the Sacred Heart. Jesus promised St. Margaret Mary: \u201cI will give them all the graces necessary for their state of life.\u201d</div>'
@@ -134,7 +141,6 @@ function openFirstFriday() {
         + '<button onclick="window._logFirstFriday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Friday \u2714</button>')
     + '</div>'
 
-    // First Saturdays
     + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
     + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Five First Saturdays</div>'
     + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">On five consecutive first Saturdays, go to Confession (within 8 days), receive Communion, pray five decades of the Rosary, and meditate for 15 minutes on the mysteries. Our Lady of F\u00e1tima promised special protection at the hour of death.</div>'
@@ -145,18 +151,18 @@ function openFirstFriday() {
         + '<button onclick="window._logFirstSaturday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Saturday \u2714</button>')
     + '</div>'
 
-    // Reset
     + '<div style="text-align:center;padding:var(--space-4) 0">'
     + '<button onclick="window._resetFirstFriday()" style="font-size:var(--text-xs);color:var(--color-text-tertiary);background:none;border:none;cursor:pointer">Reset progress</button>'
     + '</div>'
 
-    // Find Mass link
     + '<div style="text-align:center;padding-bottom:var(--space-4)">'
     + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))" style="padding:var(--space-3) var(--space-5);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">Find Mass near you</button>'
     + '</div>'
     + '</div>';
+}
 
-  reader.openReader('First Friday & Saturday', html);
+function openFirstFriday() {
+  reader.readerOpen('firstfriday');
 }
 
 window._logFirstFriday = function() {
@@ -180,7 +186,7 @@ window._logFirstFriday = function() {
     st.fridays = fridays;
     localStorage.setItem('mf-first-friday', JSON.stringify(st));
     haptics.confirm();
-    openFirstFriday(); // Re-render
+    _renderFirstFriday(document.getElementById('readerBody'));
   }
 };
 
@@ -203,7 +209,7 @@ window._logFirstSaturday = function() {
     st.saturdays = saturdays;
     localStorage.setItem('mf-first-friday', JSON.stringify(st));
     haptics.confirm();
-    openFirstFriday();
+    _renderFirstFriday(document.getElementById('readerBody'));
   }
 };
 
@@ -211,7 +217,7 @@ window._resetFirstFriday = function() {
   localStorage.removeItem('mf-first-friday');
   var haptics = require('./haptics.js');
   haptics.confirm();
-  openFirstFriday();
+  _renderFirstFriday(document.getElementById('readerBody'));
 };
 
 // ── Holy Week Guide Data (SOT-05) ──
