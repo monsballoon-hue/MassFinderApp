@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-117 →
-**Total items:** 116
+**ID sequence:** IDEA-120 →
+**Total items:** 119
 
 ---
 
@@ -1538,3 +1538,33 @@ Anywhere in the app where snippets of prayers are rendered, the text should use 
 **Spec ref:** (none)
 
 Rather than pinning in-progress novenas to the top of the list (which may be redundant given the progress tracker above that links directly into the novena), consider dynamically sorting based on liturgical calendar relevance. For example, around St. Patrick's Day, the St. Patrick novena should surface at the top with styling indicating it is contextually relevant to the current moment in the liturgical year. This makes the list feel alive and seasonally aware.
+
+## IDEA-117 — Text size increase/decrease options insufficient: only 3 steps available
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-079
+**Spec ref:** (none)
+
+The text size controls currently offer only 3 levels, which is not granular enough. More steps are needed to accommodate a wider range of user needs. Must also evaluate the interaction with existing accessibility work — at the largest text size, additional accessibility scaling is applied. Adding more size options needs to preserve that behavior and ensure the a11y boost still fires correctly at whichever level becomes the new "largest."
+
+## IDEA-118 — Examen first page prayer text cuts off and is not scrollable
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-034, IDEA-038
+**Spec ref:** (none)
+
+The opening prayer on the first page of the Examination of Conscience is being cut off — the text overflows its container without a scrollbar or scroll behavior. This needs to be scrollable so the full prayer is accessible at all text size settings, especially at larger sizes where the overflow is more pronounced.
+
+## IDEA-119 — All prayer tools must offer full-screen immersive render mode
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-019, IDEA-020
+**Spec ref:** (none)
+
+The Rosary and Divine Mercy Chaplet currently offer a full-screen immersive render experience. Every other prayer tool should also have this option — no exceptions. The full-screen mode creates an immersive, distraction-free prayer environment and should be a universal feature across all prayer tools (Stations of the Cross, Examen, Novenas, Prayerbook prayers, Lectio Divina, Litanies, etc.).
