@@ -1613,11 +1613,11 @@ The opening prayer on the first page of the Examination of Conscience is being c
 
 ## IDEA-119 — All prayer tools must offer full-screen immersive render mode
 **Category:** enhancement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-019, IDEA-020
-**Spec ref:** (none)
+**Spec ref:** ARC-01→09 (infrastructure), IPV-01→07 (visual design)
 
 The Rosary and Divine Mercy Chaplet currently offer a full-screen immersive render experience. Every other prayer tool should also have this option — no exceptions. The full-screen mode creates an immersive, distraction-free prayer environment and should be a universal feature across all prayer tools (Stations of the Cross, Examen, Novenas, Prayerbook prayers, Lectio Divina, Litanies, etc.).
 
