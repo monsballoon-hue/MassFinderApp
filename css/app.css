@@ -1490,8 +1490,8 @@ html[data-theme="dark"] .evt-yc-row { background:color-mix(in srgb, var(--color-
 .yc-list-title { font-family:var(--font-display);font-size:var(--text-xl);font-weight:var(--weight-semibold);color:var(--color-text-primary); }
 
 /* MORE TAB */
-.more-content { max-width: var(--max-width); margin: 0 auto; padding: var(--space-4) var(--space-4) var(--space-12); }
-.more-section { padding: var(--space-4) 0; border-bottom: 1px solid var(--color-border-light); }
+.more-content { max-width: var(--max-width); margin: 0 auto; padding: var(--space-3) var(--space-4) var(--space-12); }
+.more-section { padding: var(--space-4) 0; border-bottom: none; }
 .more-section--tight { padding: var(--space-2) 0; border-bottom:none; }
 .more-section--tight + .more-section--tight { padding-top:var(--space-3); }
 .more-section:last-child { border-bottom: none; }
@@ -1502,6 +1502,64 @@ details.more-section[open] > .more-section-collapsible svg { transform:rotate(18
 details.more-section:not([open]) > .more-section-collapsible { margin-bottom:0; }
 .more-section p { font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.6; margin-bottom: var(--space-3); }
 .more-section p:last-child { margin-bottom: 0; }
+.more-section--zone-inner { padding: var(--space-3) 0 0; }
+
+/* ── Zone containers (MTR-01) ── */
+.more-zone { margin-bottom: 0; }
+.more-zone--today { background: var(--color-surface-sacred); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-4) var(--space-5); box-shadow: var(--shadow-card); }
+.more-zone--today .more-section { border-bottom: none; padding: var(--space-2) 0; }
+.more-zone--today .more-section--zone-inner { padding: var(--space-3) 0 0; }
+.more-zone--practice { padding: var(--space-2) 0; }
+.more-zone--practice .more-section { border-bottom: none; }
+.more-zone--practice .more-section--zone-inner { padding: var(--space-2) 0; }
+
+/* Zone seam — breathing room with micro-ornament */
+.more-zone-seam { display: flex; align-items: center; justify-content: center; padding: var(--space-5) 0; }
+.more-zone-seam::after { content: ''; width: 40px; height: 0; border-top: 1px solid var(--color-border-light); opacity: 0.5; }
+
+/* Zone 3: Go Deeper — collapsible reference */
+.more-zone--deeper { background: transparent; border-radius: var(--radius-md); overflow: hidden; }
+.more-zone-deeper-toggle { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) 0; cursor: pointer; list-style: none; -webkit-tap-highlight-color: transparent; min-height: 48px; }
+.more-zone-deeper-toggle::-webkit-details-marker { display: none; }
+.more-zone-deeper-toggle .more-section-title { margin-bottom: 0; flex: 1; }
+.more-zone-deeper-count { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-text-tertiary); background: var(--color-surface-hover); padding: 2px var(--space-2); border-radius: var(--radius-full); }
+.more-zone-deeper-chevron { width: 18px; height: 18px; color: var(--color-text-tertiary); flex-shrink: 0; transition: transform 0.2s var(--ease-out); }
+.more-zone--deeper[open] .more-zone-deeper-chevron { transform: rotate(180deg); }
+.more-zone-deeper-body { padding: var(--space-2) 0 var(--space-4); }
+
+/* Zone dark mode */
+html[data-theme="dark"] .more-zone--today { background: var(--color-surface-sacred); box-shadow: var(--shadow-card); }
+html[data-theme="dark"] .more-zone-seam::after { opacity: 0.3; }
+html[data-theme="dark"] .more-zone-deeper-count { background: var(--color-surface); }
+
+/* Library teaser between zones */
+#libraryTeaser { padding: 0 0 var(--space-2); }
+#libraryTeaser .library-teaser { margin-top: 0; }
+
+/* ── Zone 1 internal spacing (MTR-06) ── */
+.more-zone--today #saintSection { padding-bottom: var(--space-3); }
+.more-zone--today #seasonalMoment:not(:empty) { padding: var(--space-2) 0 var(--space-3); }
+.more-zone--today #readingsSection { padding-top: var(--space-3); border-top: 1px solid color-mix(in srgb, var(--color-sacred) 10%, transparent); }
+html[data-theme="dark"] .more-zone--today #readingsSection { border-top-color: color-mix(in srgb, var(--color-sacred) 8%, transparent); }
+
+/* ── Section title typography (MTR-02) ── */
+.more-section-title--today { color: var(--color-sacred-text); font-size: var(--text-sm); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: 0.06em; }
+.more-section-title--practice { font-family: var(--font-body); font-weight: var(--weight-semibold); color: var(--color-text-primary); font-size: var(--text-base); letter-spacing: 0; }
+.more-section-title--deeper { color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: 0.01em; }
+
+/* ── Reading entries compact in Today zone (MTR-04) ── */
+.more-zone--today .reading-entry { padding: var(--space-2) 0; }
+.more-zone--today .reading-heading { font-size: 11px; letter-spacing: 0.08em; }
+.more-zone--today .reading-ref { font-size: var(--text-sm); }
+
+/* ── Secondary tools disclosure (MTR-03) ── */
+.prayer-tools-more { margin-top: var(--space-3); }
+.prayer-tools-more-toggle { display: flex; align-items: center; justify-content: center; gap: var(--space-1); padding: var(--space-2); cursor: pointer; list-style: none; font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-text-tertiary); -webkit-tap-highlight-color: transparent; min-height: 36px; }
+.prayer-tools-more-toggle::-webkit-details-marker { display: none; }
+.prayer-tools-more-chevron { transition: transform 0.2s var(--ease-out); color: var(--color-text-tertiary); }
+.prayer-tools-more[open] .prayer-tools-more-chevron { transform: rotate(180deg); }
+.prayer-tools-more-toggle:active { opacity: 0.7; }
+
 .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-3); margin-bottom: var(--space-3); }
 .stat-card { background: var(--color-surface); border-radius: var(--radius-md); padding: var(--space-4); text-align: center; box-shadow: var(--shadow-card); }
 .stat-value { font-size: var(--text-3xl); font-weight: var(--weight-semibold); color: var(--color-primary); line-height: 1.2; }

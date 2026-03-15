@@ -1,10 +1,20 @@
 # UX Spec: More Tab Content Restructure (MTR series)
 
 **Created:** 2026-03-15
-**Status:** Queued
+**Status:** Implemented
 **Backlog items:** New (content architecture — not from existing backlog)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_MTR.md
 **Depends on:** SOT, PMG, PMB, PMD (all implemented)
+
+| ID | Title | Status |
+|----|-------|--------|
+| MTR-01 | Zone Container Architecture | done |
+| MTR-02 | Section Title Typography Differentiation | done |
+| MTR-03 | Secondary Prayer Tools Progressive Disclosure | done |
+| MTR-04 | Reading Entries Compact Mode | done |
+| MTR-05 | Library Teaser Repositioned | done |
+| MTR-06 | Zone 1 Internal Spacing Refinement | done |
+| MTR-07 | Devotional Guide Count When Collapsed | done |
 
 ---
 
@@ -594,3 +604,17 @@ Items 1–3 should be done as a group. Items 4–7 can be cherry-picked.
 | MTR-05 | Library Teaser Repositioned | P3 | index.html, css/app.css |
 | MTR-06 | Zone 1 Internal Spacing Refinement | P2 | css/app.css |
 | MTR-07 | Devotional Guide Count When Collapsed | P3 | src/more.js |
+
+---
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:**
+  - `index.html` — restructured More tab into three zone containers (Today, Practice, Go Deeper), moved libraryTeaser between zones, replaced prayerToolsSecondary with prayerToolsSecondaryWrap, wrapped Grow in Faith in collapsible `<details>` with count badge
+  - `css/app.css` — added zone container styles (.more-zone--today, --practice, --deeper), zone seam micro-ornament, Zone 3 collapsible toggle/chevron/count badge, Zone 1 internal spacing (MTR-06), section title typography modifiers (MTR-02), reading compact mode (MTR-04), secondary tools disclosure styles (MTR-03), library teaser spacing, dark mode overrides; removed border-bottom from .more-section; reduced .more-content top padding
+  - `src/more.js` — replaced prayerToolsSecondary rendering with progressive disclosure wrapper (shows "More tools" toggle unless a promoted card is in secondary tier or only 1 card); added Zone 3 open/close localStorage memory (mf-deeper-open); added guide count badge rendering
+- **Approach:** Followed the spec's three-zone architecture exactly. Zone 1 (Today) gets a warm sacred surface with subtle sacred-tinted internal separator. Zone 2 (Practice) is neutral with secondary tools behind a `<details>` disclosure. Zone 3 (Go Deeper) is a collapsible `<details>` element with localStorage memory and count badge. Zone seams use a 40px micro-ornament line. All seven MTR items implemented in recommended order.
+- **Deviations from spec:** None
+- **Known issues:** None observed

@@ -1075,10 +1075,12 @@ function renderMore() {
         + '</div>';
     }).join('');
 
-    // Render secondary cards (tier 2) — compact horizontal layout
-    var ptSecondary = document.getElementById('prayerToolsSecondary');
-    if (ptSecondary) {
-      ptSecondary.innerHTML = resolved.secondary.map(function(c) {
+    // MTR-03: Secondary tools progressive disclosure
+    var ptSecWrap = document.getElementById('prayerToolsSecondaryWrap');
+    if (ptSecWrap && resolved.secondary.length > 0) {
+      var hasPromotedInSec = resolved.secondary.some(function(c) { return c.id === promotedId; });
+
+      var secHtml = resolved.secondary.map(function(c) {
         var isPromoted = c.id === promotedId;
         var iconHtml = ptIcons[c.id]
           ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
@@ -1095,6 +1097,18 @@ function renderMore() {
           + '</div>'
           + '</div>';
       }).join('');
+
+      if (hasPromotedInSec || resolved.secondary.length <= 1) {
+        ptSecWrap.innerHTML = '<div class="prayer-tools-secondary">' + secHtml + '</div>';
+      } else {
+        ptSecWrap.innerHTML = '<details class="prayer-tools-more" id="ptMoreTools">'
+          + '<summary class="prayer-tools-more-toggle">'
+          + '<span>More tools</span>'
+          + '<svg class="prayer-tools-more-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>'
+          + '</summary>'
+          + '<div class="prayer-tools-secondary" style="margin-top:var(--space-2)">' + secHtml + '</div>'
+          + '</details>';
+      }
     }
 
     // EMT-05: Library teaser — standalone card below grid
@@ -1184,6 +1198,26 @@ function renderMore() {
       });
       el.parentNode.replaceChild(span, el);
     });
+  }
+
+  // MTR-01: Zone 3 open/close memory + count badge
+  var deeperZone = document.getElementById('deeperZone');
+  if (deeperZone) {
+    var deeperPref = localStorage.getItem('mf-deeper-open');
+    if (deeperPref === 'false') {
+      deeperZone.removeAttribute('open');
+    } else {
+      deeperZone.setAttribute('open', '');
+    }
+    deeperZone.addEventListener('toggle', function() {
+      localStorage.setItem('mf-deeper-open', deeperZone.open ? 'true' : 'false');
+    });
+    // MTR-07: Count badge
+    var countEl = document.getElementById('deeperCount');
+    if (countEl && devotEl) {
+      var guideCount = devotEl.querySelectorAll('.devot-card:not(.devot-sub)').length;
+      countEl.textContent = guideCount + ' guides';
+    }
   }
 
   // Footer — simple link rows + version

@@ -870,70 +870,98 @@ The Second Sunday of Easter is Divine Mercy Sunday (already in litcal data as "E
 
 ## IDEA-067 — More tab: uniform visual treatment across all content zones
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-011, IDEA-024
 **Spec ref:** MTR-01
+**Impl ref:** MTR-01
 
 The More tab has grown to 20+ interactive elements across 10 content zones (saint card, seasonal moment, readings, prayer tools, devotional guides, etc.) all sharing identical visual DNA — same card background, same border-bottom separators, same section title typography. Users cannot build spatial memory of where things live. The tab needs restructuring into three visually distinct zones: "Today" (daily briefing), "Practice" (prayer tools), and "Go Deeper" (reference library).
 
+**Implemented:** 2026-03-15 via MTR-01 — restructured More tab into three visually distinct zone containers with zone seams and collapsible Go Deeper section
+
 ## IDEA-068 — More tab section titles all use same typography
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067
 **Spec ref:** MTR-02
+**Impl ref:** MTR-02
 
 "Today's Readings," "Prayer & Devotion," and "Grow in Faith" all use identical `.more-section-title` styling. No visual hierarchy between daily content, practice tools, and reference material. Each zone should use differentiated typography.
 
+**Implemented:** 2026-03-15 via MTR-02 — added three title modifier classes with sacred, UI, and muted treatments
+
 ## IDEA-069 — Prayer tools secondary row adds cognitive load for elderly users
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067
 **Spec ref:** MTR-03
+**Impl ref:** MTR-03
 
 The prayer tools grid shows all 7 interactive items at once (4 primary + 3 secondary). The secondary row (Stations, Novena Tracker, First Friday) is advanced/niche content that adds cognitive load. Should be behind a "More tools" progressive disclosure by default, with bypass when a card is contextually promoted.
 
+**Implemented:** 2026-03-15 via MTR-03 — secondary tools wrapped in disclosure toggle, promoted cards bypass
+
 ## IDEA-070 — Reading entries take too much vertical space inside Today zone
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067
 **Spec ref:** MTR-04
+**Impl ref:** MTR-04
 
 Each reading entry takes ~52px vertical. With 4-5 entries, readings consume ~250px before expansion. Inside the warm "Today" container, tighter spacing would better serve the briefing intent.
 
+**Implemented:** 2026-03-15 via MTR-04 — tighter padding and smaller headings for reading entries inside Today zone
+
 ## IDEA-071 — Library teaser positioned as a prayer tool instead of a reference bridge
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067
 **Spec ref:** MTR-05
+**Impl ref:** MTR-05
 
 The "Catholic Library — coming soon" teaser sits inside the prayer tools section, feeling like another prayer tool. It's actually a future Zone 3 (reference) asset. Repositioning it between the Practice and Go Deeper zones would better telegraph what's coming.
 
+**Implemented:** 2026-03-15 via MTR-05 — moved libraryTeaser between Zone 2 and Zone 3
+
 ## IDEA-072 — More tab Today zone needs internal spacing without border-bottom lines
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067
 **Spec ref:** MTR-06
+**Impl ref:** MTR-06
 
 Inside the "Today" zone, the saint card, seasonal moment, and readings need breathing room. Pure spacing plus a faint sacred-tinted separator (not the generic border-light) should replace the current border-bottom treatment.
 
+**Implemented:** 2026-03-15 via MTR-06 — added scoped spacing and sacred-tinted border-top for readings section
+
 ## IDEA-073 — Collapsed Grow in Faith section gives no signal of what's inside
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** UX audit
 **Related:** IDEA-067, IDEA-011
 **Spec ref:** MTR-07
+**Impl ref:** MTR-07
 
 When the "Go Deeper" section is collapsed (MTR-01), users see only "Grow in Faith" and a chevron with no indication of content depth. A count badge ("4 guides") would signal what's available without requiring expansion.
+
+**Implemented:** 2026-03-15 via MTR-07 — count badge shows guide count after seasonal filtering
