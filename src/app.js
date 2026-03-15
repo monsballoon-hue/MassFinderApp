@@ -60,7 +60,7 @@ var OB_CONTENT_STEPS = [
     subtitle: 'Tap the heart on any church to build your personal dashboard.'
   },
   {
-    icon: '<svg viewBox="0 0 24 24"><rect x="6.5" y="1" width="3" height="14" rx="1"/><rect x="1" y="5.5" width="14" height="3" rx="1"/><path d="M17 4h4v4M21 4l-6 6" stroke-width="1.5"/></svg>',
+    icon: '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="14"/><line x1="8" y1="10" x2="16" y2="10"/></svg>',
     headline: 'Pray, learn, and grow',
     subtitle: 'Guided Rosary, daily readings, the Catechism, and more\u2009\u2014\u2009all in your pocket.'
   }
