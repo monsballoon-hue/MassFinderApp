@@ -1440,11 +1440,11 @@ All prayers inside the Prayer Library need Spanish language support. Currently S
 
 ## IDEA-105 — Prayer Book search bar should be sticky with category-based quick filters
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-102
-**Spec ref:** (none)
+**Spec ref:** PLR-02
 
 Inside the Prayer Book, the search bar persists as you scroll but content scrolls underneath it. It should be sticky to the top of the view. Additionally, quick filters should be added alongside the search bar that are category-based (e.g., Marian, Penitential, Devotional) rather than individual prayer-based.
 
@@ -1460,11 +1460,11 @@ For all prayer tools that support alternative languages (currently Spanish, with
 
 ## IDEA-107 — Prayer Library UI/UX overhaul: design is too basic and uninspiring
 **Category:** enhancement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-102, IDEA-105
-**Spec ref:** (none)
+**Spec ref:** PLR-05, PLR-02, PLR-03
 
 The internal presentation of the Prayer Library is functional but visually basic and uninspiring. Prayers are categorized but the rendering is plain. Needs a more dynamic, beautiful design treatment — improved search (fuzzy search), quick filters for language switching, and an overall UI/UX uplift that feels inspiring rather than purely utilitarian.
 
@@ -1526,11 +1526,11 @@ After the splash screen, the page listing all novenas with progress at the top i
 
 ## IDEA-112 — Prayer Library: guided prayers should be visually elevated above static text prayers
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-102, IDEA-107
-**Spec ref:** (none)
+**Spec ref:** PLR-03
 
 The Prayer Library should distinguish between guided prayer experiences (Divine Mercy Chaplet, Rosary, Stations, etc.) and static text prayers. Guided prayers offer a fundamentally different experience and should bubble to the top of the list or be presented with a visually pronounced treatment compared to plain text prayers.
 
@@ -1574,11 +1574,11 @@ Anywhere in the app where snippets of prayers are rendered, the text should use 
 
 ## IDEA-116 — Novena list: dynamic sorting by liturgical calendar relevance instead of pinning in-progress
 **Category:** enhancement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-055, IDEA-111
-**Spec ref:** (none)
+**Spec ref:** NPT-02
 
 Rather than pinning in-progress novenas to the top of the list (which may be redundant given the progress tracker above that links directly into the novena), consider dynamically sorting based on liturgical calendar relevance. For example, around St. Patrick's Day, the St. Patrick novena should surface at the top with styling indicating it is contextually relevant to the current moment in the liturgical year. This makes the list feel alive and seasonally aware.
 
@@ -1730,95 +1730,95 @@ The daily card at `src/app.js:713` renders the feast name (`.daily-card-name` in
 
 Headers across the More tab are not uniform — different font sizes, weights, or font families are applied to section headers that should share a consistent treatment. Audit all More tab headers and apply a single uniform typographic style.
 
-## IDEA-127 — Rename "Examination of Conscience" label to "Daily Examen" for space saving
+## IDEA-127 — Rename "Examination of Conscience" label for space saving
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-033
-**Spec ref:** (none)
+**Spec ref:** PZP-01
 
-Consider renaming the Examination of Conscience module label to "Daily Examen" to save horizontal space on the prayer tools grid. May need a Content & Voice review to confirm the label shift is appropriate — "Examen" and "Examination of Conscience" are related but not identical devotions.
+Consider renaming the Examination of Conscience module label to "Examine Your Conscience" — shorter, active voice, doctrinally accurate. Saves horizontal space on the prayer tools grid where the current label wraps to 3 lines.
 
-→ Hand off to Content & Voice: "Open Content & Voice: Should the Examination of Conscience module be relabeled 'Daily Examen'? Evaluate terminology accuracy and space constraints on the prayer tools grid. See IDEA-127."
+**Decision:** "Examine Your Conscience" approved. "Daily Examen" rejected (not the same devotion). Content & Voice handoff no longer needed.
 
 ## IDEA-128 — Excessive vertical spacing after Daily Readings and guided prayer section headers
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-070
-**Spec ref:** (none)
+**Spec ref:** PZP-02
 
 There appears to be too much whitespace between the Daily Readings section header and its content, and similarly after the guided prayer header. Tighten the margin/padding below these headers to reduce wasted vertical space on the More tab.
 
 ## IDEA-129 — "Your Practice" header label is unclear and confusing
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-069, IDEA-101
-**Spec ref:** (none)
+**Spec ref:** PZP-03
 
 The "Your Practice" section header on the More tab does not communicate what the section contains. The label is vague — a user seeing it for the first time would not understand what "Your Practice" refers to. Needs a clearer label or contextual subtitle explaining this is the tracker area for ongoing devotions (novenas, First Friday/Saturday).
 
 ## IDEA-130 — Disable Catholic Library and show "Coming Soon" placeholder
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-071
-**Spec ref:** (none)
+**Spec ref:** PZP-04
 
 The Catholic Library feature is not ready for use. Disable the interactive element and replace it with a "Coming Soon" placeholder message so users know the feature exists but is not yet available. Prevent any tap/click behavior that might lead to an empty or broken view.
 
 ## IDEA-131 — Novena and First Fri/Sat trackers should show next upcoming date and next liturgical novena
 **Category:** enhancement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-055, IDEA-059, IDEA-116
-**Spec ref:** (none)
+**Spec ref:** NPT-03
 
 The Novena tracker and First Friday/Saturday tracker cards should display "Next: [date]" (e.g., "Next: April 3rd & 4th") showing the upcoming First Friday and First Saturday dates. Additionally, the novena section should indicate the next liturgically relevant novena coming up on the calendar. This makes both trackers feel time-aware and actionable.
 
 ## IDEA-132 — Replace Angelus card with a pinned favorites/bookmark bar
 **Category:** enhancement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-019
-**Spec ref:** (none)
+**Spec ref:** PLR-04
 
 The Angelus card occupies prime real estate on the More tab. That space should instead be a user-configurable bookmark bar — either 1-3 pinned prayers or a favorites drawer. The Angelus can live in the Prayer Book; this slot should serve as quick-access to whichever prayers the user prays most. Two options to evaluate: fixed pin slots (1-3 items) or an expandable favorites drawer.
 
 ## IDEA-133 — Tapping "Pray the St. Joseph Novena" should open the novena directly, not the index
 **Category:** bug
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-111
-**Spec ref:** (none)
+**Spec ref:** NPT-01
 
 When a user taps a contextual CTA like "Pray the St. Joseph Novena" (e.g., from a seasonal card or promotion), it navigates to the novena index/list page instead of opening the St. Joseph novena directly. The user should see the animated splash screen and enter the novena immediately — not be dropped at the list and forced to find it manually.
 
 ## IDEA-134 — Daily Readings formatting overhaul: remove line numbers, add proper typographic treatment
 **Category:** refinement
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-004, IDEA-005
-**Spec ref:** (none)
+**Spec ref:** DRT-01, DRT-02, DRT-03
 
 Daily Readings text currently includes line numbers, which were originally intended for reference but are unnecessary for devotional reading. After reading from a missal in church, the priority should be clean typographic formatting: proper italics for rubrics, appropriate paragraph spacing, and a layout that mirrors the readability of a printed missal. Remove line numbers entirely and focus on beautiful, readable formatting.
 
 ## IDEA-135 — Prayer Library search bar z-index bug and full structural/layout/function revamp needed
 **Category:** bug
-**Status:** new
+**Status:** queued
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-102, IDEA-105, IDEA-107
-**Spec ref:** (none)
+**Spec ref:** PLR-01
 
 The Prayer Library has a z-index bug where the search bar overlaps or underlaps other elements incorrectly during scroll. Beyond the z-index fix, the Prayer Library needs a total revamp of its structure, layout, and functionality. Desired additions include bookmarks/favorites, recent prayers, and a more intentional information architecture. This is a broader redesign effort encompassing IDEA-102, IDEA-105, and IDEA-107.
 

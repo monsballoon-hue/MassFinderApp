@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (30 specs implemented, 0 in-progress, 3 queued)
+**Last updated:** 2026-03-15 (30 specs implemented, 0 in-progress, 4 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -82,6 +82,10 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **MTR** = More Tab Restructure
 - **PHF** = Pastoral Handoff
 - **IGM** = Install Guide Mockups
+- **PZP** = Prayer Zone Polish
+- **NPT** = Novena & Practice Tracker
+- **DRT** = Daily Readings Typography
+- **PLR** = Prayer Library Redesign
 
 Future specs should continue this pattern with new prefixes.
 
@@ -521,3 +525,47 @@ Future specs should continue this pattern with new prefixes.
 | IGM-05 | Chrome 4-Step Flow (was 3) | Done | P1 |
 | IGM-06 | Caption Text Fidelity | Done | P2 |
 | IGM-07 | Share Sheet Header App Icon + Title | Done | P2 |
+
+### UX_Spec_Prayer_Zone_Polish.md (PZP series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-127, IDEA-128, IDEA-129, IDEA-130
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PZP.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PZP-01 | Rename to "Examine Your Conscience" | Queued | P1 |
+| PZP-02 | Tighten "Guided Prayer" Header Spacing | Queued | P2 |
+| PZP-03 | "Your Practice" → "Ongoing Devotions" | Queued | P1 |
+| PZP-04 | Catholic Library Coming Soon Placeholder | Queued | P2 |
+
+### UX_Spec_Novena_Practice_Tracker.md (NPT series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-133, IDEA-116, IDEA-131
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_NPT.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| NPT-01 | Novena CTAs Deep-Link with ID | Queued | P1 |
+| NPT-02 | Liturgical Calendar Sorting for Novena List | Queued | P2 |
+| NPT-03 | Practice Tracker Next-Date Subtitles | Queued | P2 |
+
+### UX_Spec_Daily_Readings_Typography.md (DRT series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-134
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_DRT.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| DRT-01 | Remove Verse Numbers from Readings | Queued | P1 |
+| DRT-02 | Enhance Rubric/Conclusion Formatting | Queued | P2 |
+| DRT-03 | Reading Body Text Size Increase | Queued | P3 |
+
+### UX_Spec_Prayer_Library_Redesign.md (PLR series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-107, IDEA-105, IDEA-112, IDEA-132, IDEA-135
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PLR.md
+**Depends on:** PZP series
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PLR-01 | Fix Search Bar Z-Index Bug | Queued | P1 |
+| PLR-02 | Category Quick Filter Chips | Queued | P1 |
+| PLR-03 | Guided Prayers Elevated to Top | Queued | P1 |
+| PLR-04 | Favorites System + Quick Access Strip | Queued | P2 |
+| PLR-05 | Visual Warmth: Spacing + Typography | Queued | P2 |
