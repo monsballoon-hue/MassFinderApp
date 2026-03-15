@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-102 →
-**Total items:** 101
+**ID sequence:** IDEA-103 →
+**Total items:** 102
 
 ---
 
@@ -1374,3 +1374,26 @@ Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`
 **Estimated effort:** 3-4 hours
 **Dependencies:** None — all reference modules already exist and are entry-point-agnostic
 **Audience fit:** All three demographics. Dorothy gets readable tracker cards. Marcus discovers the Catholic Library. Sarah gets a clear "pray now" vs "look something up" distinction.
+
+## IDEA-102 — Prayer Book internal UX: quick access, guided distinction, recents
+**Category:** enhancement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX evaluation
+**Related:** IDEA-101, IDEA-019
+**Spec ref:** PBR-01 through PBR-05
+
+The Prayer Book (31 prayers, 2 litanies, Lectio Divina) treats all content identically — flat accordion rows under uppercase headers. Five specific refinements:
+
+- PBR-01: Remove Sacred Pause from Prayer Book (it's a reference tool, not a meditation)
+- PBR-02: Quick-access pills for 5 most-used prayers above the search bar
+- PBR-03: Visual divider distinguishing guided litanies/Lectio from static prayer text
+- PBR-04: Length indicators ("brief" / "long") on prayer rows
+- PBR-05: Recently Opened section (localStorage, last 3 prayers)
+
+Full spec: `docs/plans/UX_Spec_Prayer_Book_Refinements.md`
+Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PBR.md`
+
+**Estimated effort:** 1.5-2 hours
+**Dependencies:** Implement after PMV (IDEA-101)
+**Audience fit:** Dorothy gets recents and quick access. Marcus gets length cues. Sarah skips the sacred pause for quick lookups.

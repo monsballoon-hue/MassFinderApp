@@ -341,3 +341,16 @@ Future specs should continue this pattern with new prefixes.
 | PMV-05 | Catholic Library: Surface Reference Tools | Queued | P1 |
 | PMV-06 | Zone Seam and Visual Rhythm Cleanup | Queued | P2 |
 | PMV-07 | Contextual Promotion Simplification | Queued | P2 |
+
+### UX_Spec_Prayer_Book_Refinements.md (PBR series)
+**Created:** 2026-03-15 · **Status:** Spec ready
+**Backlog items:** IDEA-102 (Prayer Book internal UX)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PBR.md
+**Depends on:** PMV series (implement after PMV)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PBR-01 | Remove Sacred Pause from Prayer Book | Queued | P1 |
+| PBR-02 | Quick Access Pills for Essential Prayers | Queued | P1 |
+| PBR-03 | Guided Content Visual Distinction | Queued | P2 |
+| PBR-04 | Prayer Length Indicators | Queued | P3 |
+| PBR-05 | Recently Opened Prayers | Queued | P2 |
