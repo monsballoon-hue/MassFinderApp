@@ -294,6 +294,7 @@ window.setSettingTheme = settings.setSettingTheme;
 window.setSettingSize = settings.setSettingSize;
 window.toggleSettingNotif = settings.toggleSettingNotif;
 window.setSettingRosary = settings.setSettingRosary;
+window.setSettingPrayerLang = settings.setSettingPrayerLang;
 window.toggleSettingConf = settings.toggleSettingConf;
 window.settingsClearPrayer = settings.settingsClearPrayer;
 window.settingsClearSaved = settings.settingsClearSaved;

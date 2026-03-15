@@ -3,51 +3,61 @@
     {
       "number": 1,
       "title": "I am the Lord your God; you shall not have strange gods before Me.",
+      "title_es": "Yo soy el Señor tu Dios; no tendrás otros dioses fuera de Mí.",
       "ccc": "2084-2141",
       "questions": [
         {
           "id": 1,
           "text": "Have I doubted or denied the teachings of the Catholic Church?",
+          "text_es": "¿He dudado o negado las enseñanzas de la Iglesia Católica?",
           "ccc": "2087-2089"
         },
         {
           "id": 2,
           "text": "Have I practiced any religion besides Catholicism, or taken part in non-Christian worship?",
+          "text_es": "¿He participado en prácticas ocultas, como astrología, quiromancia, tabla ouija, brujería o superstición?",
           "ccc": "2110-2117"
         },
         {
           "id": 3,
           "text": "Have I presumed on God's mercy, assuming I can sin freely because God will always forgive?",
+          "text_es": "¿He recibido la Sagrada Comunión en estado de pecado mortal?",
           "ccc": "2092"
         },
         {
           "id": 4,
           "text": "Have I neglected my prayer life? Do I need to pray more often?",
+          "text_es": "¿He mentido o retenido intencionalmente un pecado grave en la confesión?",
           "ccc": "2098"
         },
         {
           "id": 5,
           "text": "Have I failed to stand up for my Catholic faith when it was challenged or mocked?",
+          "text_es": "¿He descuidado la oración durante un período prolongado?",
           "ccc": "2471, 2088"
         },
         {
           "id": 6,
           "text": "Have I participated in occult practices, such as fortune-telling, astrology, or superstition?",
+          "text_es": "¿He puesto confianza excesiva en el dinero, el estatus, el poder u otras personas, tratándolos como si fueran más importantes que Dios?",
           "ccc": "2115-2117"
         },
         {
           "id": 7,
           "text": "Have I failed to make God a priority in my life, putting other things before Him?",
+          "text_es": "¿He tomado el nombre de Dios en vano?",
           "ccc": "2113"
         },
         {
           "id": 8,
           "text": "Have I despaired of God's mercy, believing my sins are too great to be forgiven?",
+          "text_es": "¿He maldecido o usado lenguaje profano?",
           "ccc": "2091"
         },
         {
           "id": 58,
           "text": "Have I been slothful in my work, studies, or responsibilities?",
+          "text_es": "¿He sido perezoso en mi vida espiritual, descuidando la oración, los sacramentos o el crecimiento en la fe?",
           "ccc": "2094"
         }
       ]
@@ -55,26 +65,31 @@
     {
       "number": 2,
       "title": "You shall not take the name of the Lord your God in vain.",
+      "title_es": "No tomarás el nombre del Señor tu Dios en vano.",
       "ccc": "2142-2167",
       "questions": [
         {
           "id": 9,
           "text": "Have I used God's name without love or respect?",
+          "text_es": "¿He faltado al respeto a personas, lugares o cosas sagradas?",
           "ccc": "2146"
         },
         {
           "id": 10,
           "text": "Have I used foul or vulgar language?",
+          "text_es": "¿He hecho un juramento falso o roto una promesa hecha a Dios?",
           "ccc": "2148-2149"
         },
         {
           "id": 11,
           "text": "Have I insulted God or spoken of sacred things irreverently?",
+          "text_es": "¿He faltado a Misa los domingos o los días de precepto sin razón grave?",
           "ccc": "2148"
         },
         {
           "id": 12,
           "text": "Have I broken a promise or oath made before God?",
+          "text_es": "¿He llegado tarde a Misa o me he ido antes de tiempo sin motivo justificado?",
           "ccc": "2150-2155"
         }
       ]
@@ -82,31 +97,37 @@
     {
       "number": 3,
       "title": "Remember to keep holy the Lord's Day.",
+      "title_es": "Santificarás las fiestas.",
       "ccc": "2168-2195",
       "questions": [
         {
           "id": 13,
           "text": "Have I missed Mass on Sunday through my own fault?",
+          "text_es": "¿He dejado de observar los días de ayuno y abstinencia designados por la Iglesia?",
           "ccc": "2180-2183"
         },
         {
           "id": 14,
           "text": "Have I missed Mass on a Holy Day of Obligation?",
+          "text_es": "¿He hecho trabajo innecesario o compras los domingos cuando debería dedicar tiempo al descanso y a la familia?",
           "ccc": "2180"
         },
         {
           "id": 15,
           "text": "Have I arrived at Mass late or left early without a serious reason?",
+          "text_es": "¿He desobedecido o faltado al respeto a mis padres o personas en autoridad legítima?",
           "ccc": "2181"
         },
         {
           "id": 16,
           "text": "Have I been inattentive or disrespectful during Mass?",
+          "text_es": "¿He descuidado mis deberes hacia mi cónyuge, hijos o familia?",
           "ccc": "2178"
         },
         {
           "id": 17,
           "text": "Have I been too busy to rest and spend time with my family on Sunday?",
+          "text_es": "¿He dejado de dar buen ejemplo a quienes están a mi cargo?",
           "ccc": "2184-2188"
         }
       ]
@@ -114,36 +135,43 @@
     {
       "number": 4,
       "title": "Honor your father and your mother.",
+      "title_es": "Honrarás a tu padre y a tu madre.",
       "ccc": "2196-2257",
       "questions": [
         {
           "id": 18,
           "text": "Have I disobeyed or shown disrespect to my parents?",
+          "text_es": "¿He dejado de cuidar el bienestar espiritual de mi familia?",
           "ccc": "2214-2220"
         },
         {
           "id": 19,
           "text": "Have I neglected to care for my elderly relatives?",
+          "text_es": "¿He causado daño físico intencionalmente a otra persona?",
           "ccc": "2218"
         },
         {
           "id": 20,
           "text": "Have I neglected my family or failed to give them the time and attention they need?",
+          "text_es": "¿He procurado, aconsejado o apoyado el aborto?",
           "ccc": "2206-2213"
         },
         {
           "id": 21,
           "text": "Have I failed to raise my children in the Catholic faith?",
+          "text_es": "¿He guardado odio o rencor contra alguien?",
           "ccc": "2221-2231"
         },
         {
           "id": 22,
           "text": "Have I disobeyed any legitimate authority?",
+          "text_es": "¿He sido cruel con los animales o descuidado la creación de Dios?",
           "ccc": "2234-2243"
         },
         {
           "id": 23,
           "text": "Have I failed to teach my children about human dignity and sexuality according to Catholic teaching?",
+          "text_es": "¿He abusado del alcohol, las drogas o el tabaco?",
           "ccc": "2221"
         }
       ]
@@ -151,56 +179,67 @@
     {
       "number": 5,
       "title": "You shall not kill.",
+      "title_es": "No matarás.",
       "ccc": "2258-2330",
       "questions": [
         {
           "id": 24,
           "text": "Have I physically hurt anyone or wished harm upon them?",
+          "text_es": "¿He contribuido al pecado de otra persona por mal ejemplo o negligencia?",
           "ccc": "2302-2306"
         },
         {
           "id": 25,
           "text": "Have I had an abortion, or helped someone else obtain an abortion?",
+          "text_es": "¿He dado escándalo con mis palabras o acciones, llevando a otros al pecado?",
           "ccc": "2270-2275"
         },
         {
           "id": 26,
           "text": "Have I used artificial contraception?",
+          "text_es": "¿He participado en actividad sexual fuera del matrimonio?",
           "ccc": "2370"
         },
         {
           "id": 27,
           "text": "Have I abused drugs or alcohol?",
+          "text_es": "¿He usado anticonceptivos artificiales?",
           "ccc": "2290-2291"
         },
         {
           "id": 28,
           "text": "Have I allowed myself to be controlled by anger, hatred, or a desire for revenge?",
+          "text_es": "¿He visto pornografía o entretenimiento sexualmente explícito?",
           "ccc": "2302-2303"
         },
         {
           "id": 29,
           "text": "Have I given scandal — that is, knowingly led others into sin?",
+          "text_es": "¿He consentido deliberadamente pensamientos o deseos impuros?",
           "ccc": "2284-2287"
         },
         {
           "id": 30,
           "text": "Have I broken a just law?",
+          "text_es": "¿He participado en actividad sexual contraria a la ley moral?",
           "ccc": "2242"
         },
         {
           "id": 31,
           "text": "Have I contemplated or attempted suicide?",
+          "text_es": "¿He contemplado o intentado el suicidio?",
           "ccc": "2280-2283"
         },
         {
           "id": 32,
           "text": "Have I participated in or supported euthanasia?",
+          "text_es": "¿He robado o tomado algo que no me pertenece?",
           "ccc": "2276-2279"
         },
         {
           "id": 59,
           "text": "Have I committed the sin of gluttony — eating or drinking to excess?",
+          "text_es": "¿He comido o bebido en exceso, faltando a la templanza?",
           "ccc": "2290"
         }
       ]
@@ -208,41 +247,49 @@
     {
       "number": 6,
       "title": "You shall not commit adultery.",
+      "title_es": "No cometerás actos impuros.",
       "ccc": "2331-2400",
       "questions": [
         {
           "id": 33,
           "text": "Have I engaged in sexual activity outside of marriage?",
+          "text_es": "¿He hecho trampa en mis impuestos o negocios?",
           "ccc": "2353"
         },
         {
           "id": 34,
           "text": "Have I given in to lustful thoughts or desires?",
+          "text_es": "¿He dañado o destruido la propiedad de otro intencionalmente?",
           "ccc": "2351"
         },
         {
           "id": 35,
           "text": "Have I viewed pornography or other impure material?",
+          "text_es": "¿He dejado de pagar mis deudas o cumplir mis obligaciones financieras?",
           "ccc": "2354"
         },
         {
           "id": 36,
           "text": "Have I read erotic literature or sought out impure entertainment?",
+          "text_es": "¿He pagado salarios injustos o explotado a los trabajadores?",
           "ccc": "2354"
         },
         {
           "id": 37,
           "text": "Have I engaged in impure or immoral acts?",
+          "text_es": "¿He descuidado contribuir a las necesidades de la Iglesia según mis posibilidades?",
           "ccc": "2352"
         },
         {
           "id": 38,
           "text": "Have I failed to honor and respect my husband or wife in our marriage?",
+          "text_es": "¿He mentido?",
           "ccc": "2360-2363"
         },
         {
           "id": 39,
           "text": "Have I engaged in sexual activity contrary to God's plan for human sexuality as taught by the Church?",
+          "text_es": "¿He chismeado o revelado faltas ajenas sin motivo justificado?",
           "ccc": "2331-2400"
         }
       ]
@@ -250,36 +297,43 @@
     {
       "number": 7,
       "title": "You shall not steal.",
+      "title_es": "No robarás.",
       "ccc": "2401-2463",
       "questions": [
         {
           "id": 40,
           "text": "Have I stolen anything, or kept something that does not belong to me?",
+          "text_es": "¿He calumniado a alguien o dañado su reputación con afirmaciones falsas?",
           "ccc": "2408-2413"
         },
         {
           "id": 41,
           "text": "Have I pirated movies, music, or software?",
+          "text_es": "¿He cometido perjurio o dado falso testimonio?",
           "ccc": "2408-2409"
         },
         {
           "id": 42,
           "text": "Have I been greedy, or failed to give generously to my church and to the poor?",
+          "text_es": "¿He juzgado a otros precipitadamente sin conocer los hechos?",
           "ccc": "2443-2449"
         },
         {
           "id": 43,
           "text": "Have I cheated on taxes, at work, or at school?",
+          "text_es": "¿He dejado de defender a alguien que estaba siendo tratado injustamente?",
           "ccc": "2409"
         },
         {
           "id": 44,
           "text": "Have I been wasteful or careless with what God has given me?",
+          "text_es": "¿He consentido deliberadamente pensamientos impuros sobre otra persona?",
           "ccc": "2415-2418"
         },
         {
           "id": 45,
           "text": "Have I acted selfishly, refusing to share with those in need?",
+          "text_es": "¿He dejado de guardar la modestia en el vestir y el comportamiento?",
           "ccc": "2443-2449"
         }
       ]
@@ -287,31 +341,37 @@
     {
       "number": 8,
       "title": "You shall not bear false witness against your neighbor.",
+      "title_es": "No dirás falso testimonio ni mentirás.",
       "ccc": "2464-2513",
       "questions": [
         {
           "id": 46,
           "text": "Have I lied?",
+          "text_es": "¿He buscado intencionalmente ocasiones de tentación?",
           "ccc": "2482-2486"
         },
         {
           "id": 47,
           "text": "Have I gossiped about others or damaged their reputation?",
+          "text_es": "¿He permitido que la lujuria o la fantasía controlen mis pensamientos?",
           "ccc": "2477-2479"
         },
         {
           "id": 48,
           "text": "Have I been insincere or two-faced in my dealings with others?",
+          "text_es": "¿He envidiado las posesiones, el éxito o las cualidades de los demás?",
           "ccc": "2468"
         },
         {
           "id": 49,
           "text": "Have I revealed information that should have been kept confidential?",
+          "text_es": "¿He sido avaricioso o codicioso?",
           "ccc": "2489-2492"
         },
         {
           "id": 50,
           "text": "Have I failed to speak up when someone's character was being unjustly attacked?",
+          "text_es": "¿He dejado de ser generoso con los necesitados cuando podía ayudar?",
           "ccc": "2476"
         }
       ]
@@ -319,21 +379,25 @@
     {
       "number": 9,
       "title": "You shall not covet your neighbor's wife.",
+      "title_es": "No consentirás pensamientos ni deseos impuros.",
       "ccc": "2514-2533",
       "questions": [
         {
           "id": 51,
           "text": "Have I been jealous of someone else's spouse or relationship?",
+          "text_es": "¿He puesto las posesiones materiales por encima de Dios o de las personas?",
           "ccc": "2517"
         },
         {
           "id": 52,
           "text": "Have I entertained impure thoughts or fantasies about someone other than my spouse?",
+          "text_es": "¿He faltado a Misa los domingos y días de precepto?",
           "ccc": "2520-2527"
         },
         {
           "id": 53,
           "text": "Have I consumed media — movies, TV, music, social media — that leads me toward impure thoughts?",
+          "text_es": "¿He dejado de confesarme al menos una vez al año?",
           "ccc": "2525"
         }
       ]
@@ -341,26 +405,31 @@
     {
       "number": 10,
       "title": "You shall not covet your neighbor's goods.",
+      "title_es": "No codiciarás los bienes ajenos.",
       "ccc": "2534-2557",
       "questions": [
         {
           "id": 54,
           "text": "Have I been jealous of what someone else has?",
+          "text_es": "¿He dejado de recibir la Sagrada Comunión durante el tiempo de Pascua?",
           "ccc": "2538-2540"
         },
         {
           "id": 55,
           "text": "Have I been envious of others' talents, success, or blessings?",
+          "text_es": "¿He dejado de observar los días de ayuno y abstinencia?",
           "ccc": "2539"
         },
         {
           "id": 56,
           "text": "Have I let material desires control my heart rather than desiring God above all things?",
+          "text_es": "¿He dejado de contribuir a las necesidades de la Iglesia?",
           "ccc": "2544-2547"
         },
         {
           "id": 57,
           "text": "Have I been prideful or vain?",
+          "text_es": "¿He dejado de observar las leyes de la Iglesia sobre el matrimonio?",
           "ccc": "2540"
         }
       ]
@@ -368,11 +437,13 @@
   ],
   "precepts": {
     "title": "Precepts of the Church",
+    "title_es": "Preceptos de la Iglesia",
     "ccc": "2041-2043",
     "questions": [
       {
         "id": 60,
         "text": "Have I failed to fast on Ash Wednesday and Good Friday?",
+        "text_es": "¿He participado en la vida de mi parroquia y contribuido a su misión?",
         "ccc": "2043"
       },
       {
@@ -410,26 +481,51 @@
   "prayers": {
     "prayer_before": {
       "title": "Prayer Before Confession",
-      "text": "Come, Holy Spirit, into my soul. Enlighten my mind that I may know the sins I ought to confess, and grant me the grace to confess them fully, humbly, and with a contrite heart. Help me to firmly resolve not to commit them again.\n\nO Blessed Virgin, Mother of my Redeemer, mirror of innocence and sanctity, and refuge of penitent sinners, intercede for me through the Passion of your Son, that I may obtain the grace to make a good confession.\n\nAll you blessed angels and saints of God, pray for me, a most miserable sinner, that I may repent from my evil ways, that my heart may henceforth be forever united with yours in eternal love. Amen."
+      "title_es": "Oración Antes de la Confesión",
+      "text": "Come, Holy Spirit, into my soul. Enlighten my mind that I may know the sins I ought to confess, and grant me the grace to confess them fully, humbly, and with a contrite heart. Help me to firmly resolve not to commit them again.\n\nO Blessed Virgin, Mother of my Redeemer, mirror of innocence and sanctity, and refuge of penitent sinners, intercede for me through the Passion of your Son, that I may obtain the grace to make a good confession.\n\nAll you blessed angels and saints of God, pray for me, a most miserable sinner, that I may repent from my evil ways, that my heart may henceforth be forever united with yours in eternal love. Amen.",
+      "text_es": "Ven, Espíritu Santo, a mi alma. Ilumina mi mente para que conozca los pecados que debo confesar, y concédeme la gracia de confesarlos plenamente, con humildad y con un corazón contrito. Ayúdame a proponer firmemente no volver a cometerlos.\n\nOh Bienaventurada Virgen, Madre de mi Redentor, espejo de inocencia y santidad, y refugio de los pecadores arrepentidos, intercede por mí por la Pasión de tu Hijo, para que obtenga la gracia de hacer una buena confesión.\n\nTodos ustedes, ángeles y santos benditos de Dios, rueguen por mí, pecador miserable, para que me arrepienta de mis malos caminos, y mi corazón esté por siempre unido al de ustedes en el amor eterno. Amén."
     },
     "act_of_contrition": {
       "title": "Act of Contrition",
-      "text": "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because I dread the loss of heaven and the pains of hell; but most of all because they offend Thee, my God, who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to confess my sins, to do penance, and to amend my life. Amen."
+      "title_es": "Acto de Contrición",
+      "text": "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because I dread the loss of heaven and the pains of hell; but most of all because they offend Thee, my God, who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to confess my sins, to do penance, and to amend my life. Amen.",
+      "text_es": "Dios mío, me arrepiento de todo corazón de haberte ofendido, y detesto todos mis pecados, porque temo perder el cielo y sufrir las penas del infierno; pero más que nada porque te ofendí a Ti, Dios mío, que eres todo bondad y mereces todo mi amor. Propongo firmemente, con la ayuda de Tu gracia, confesar mis pecados, hacer penitencia y enmendar mi vida. Amén."
     },
     "thanksgiving": {
       "title": "Thanksgiving After Confession",
-      "text": "Almighty and merciful God, I thank You for the grace of this Sacrament. I thank You for Your forgiveness and the restoration of Your friendship. Help me, Lord, to avoid the sins I have confessed and strengthen me to live faithfully according to Your will. May the Blessed Virgin Mary and all the saints intercede for me. Through Christ our Lord. Amen."
+      "title_es": "Acción de Gracias Después de la Confesión",
+      "text": "Almighty and merciful God, I thank You for the grace of this Sacrament. I thank You for Your forgiveness and the restoration of Your friendship. Help me, Lord, to avoid the sins I have confessed and strengthen me to live faithfully according to Your will. May the Blessed Virgin Mary and all the saints intercede for me. Through Christ our Lord. Amen.",
+      "text_es": "Dios todopoderoso y misericordioso, te doy gracias por la gracia de este Sacramento. Te agradezco tu perdón y la restauración de tu amistad. Ayúdame, Señor, a evitar los pecados que he confesado y fortaléceme para vivir fielmente según tu voluntad. Que la Santísima Virgen María y todos los santos intercedan por mí. Por Cristo nuestro Señor. Amén."
     }
   },
   "how_to_confess": {
     "title": "How to Go to Confession",
+    "title_es": "Cómo Ir a Confesarse",
     "steps": [
-      "Examine your conscience using the questions in each section of this module.",
-      "Enter the confessional and make the Sign of the Cross. Say: \"Bless me, Father, for I have sinned. It has been [time] since my last Confession.\"",
-      "Confess your sins to the priest. Be honest and complete, especially regarding serious (mortal) sins.",
-      "Listen to the priest's counsel and accept your penance.",
-      "Pray the Act of Contrition when the priest asks you to.",
-      "After receiving absolution, leave the confessional and complete your penance."
+      {
+        "text": "Examine your conscience using the questions in each section of this module.",
+        "text_es": "Examina tu conciencia usando las preguntas en cada sección de este módulo."
+      },
+      {
+        "text": "Enter the confessional and make the Sign of the Cross. Say: \"Bless me, Father, for I have sinned. It has been [time] since my last Confession.\"",
+        "text_es": "Entra al confesionario y haz la Señal de la Cruz. Di: \"Bendígame, Padre, porque he pecado. Han pasado [semanas, meses o años] desde mi última confesión.\""
+      },
+      {
+        "text": "Confess your sins to the priest. Be honest and complete, especially regarding serious (mortal) sins.",
+        "text_es": "Confiesa tus pecados al sacerdote. Sé honesto y completo, especialmente con los pecados graves (mortales)."
+      },
+      {
+        "text": "Listen to the priest's counsel and accept your penance.",
+        "text_es": "Escucha el consejo del sacerdote y acepta tu penitencia."
+      },
+      {
+        "text": "Pray the Act of Contrition when the priest asks you to.",
+        "text_es": "Reza el Acto de Contrición cuando el sacerdote te lo pida."
+      },
+      {
+        "text": "After receiving absolution, leave the confessional and complete your penance.",
+        "text_es": "Después de recibir la absolución, sal del confesionario y cumple tu penitencia."
+      }
     ]
   }
 }

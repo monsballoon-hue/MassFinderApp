@@ -33,6 +33,7 @@ function _render() {
   var notifSupported = 'Notification' in window;
   var rosaryPref = localStorage.getItem('mf-pref-rosary-mystery') || 'auto';
   var confTracking = localStorage.getItem('mf-pref-conf-tracking') !== 'off';
+  var prayerLang = localStorage.getItem('mf-prayer-lang') || 'en';
 
   var html = '';
 
@@ -59,6 +60,12 @@ function _render() {
   // ── Prayer ──
   html += '<div class="settings-group">'
     + '<div class="settings-group-title">Prayer</div>'
+    + '<div class="settings-row">'
+    + '<span class="settings-label">Prayer Language</span>'
+    + '<div class="settings-seg">'
+    + '<button class="settings-seg-btn' + (prayerLang === 'en' ? ' active' : '') + '" onclick="setSettingPrayerLang(\'en\')">English</button>'
+    + '<button class="settings-seg-btn' + (prayerLang === 'es' ? ' active' : '') + '" onclick="setSettingPrayerLang(\'es\')">Español</button>'
+    + '</div></div>'
     + '<div class="settings-row">'
     + '<span class="settings-label">Rosary Mystery</span>'
     + '<div class="settings-seg">'
@@ -156,6 +163,11 @@ function setSettingRosary(mode) {
   _render();
 }
 
+function setSettingPrayerLang(lang) {
+  localStorage.setItem('mf-prayer-lang', lang);
+  _render();
+}
+
 function toggleSettingConf() {
   var cur = localStorage.getItem('mf-pref-conf-tracking') !== 'off';
   localStorage.setItem('mf-pref-conf-tracking', cur ? 'off' : 'on');
@@ -201,6 +213,7 @@ module.exports = {
   setSettingSize: setSettingSize,
   toggleSettingNotif: toggleSettingNotif,
   setSettingRosary: setSettingRosary,
+  setSettingPrayerLang: setSettingPrayerLang,
   toggleSettingConf: toggleSettingConf,
   settingsClearPrayer: settingsClearPrayer,
   settingsClearSaved: settingsClearSaved,
