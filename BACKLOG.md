@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-101 →
-**Total items:** 100
+**ID sequence:** IDEA-102 →
+**Total items:** 101
 
 ---
 
@@ -1348,3 +1348,29 @@ Add `text_es` fields to prayerbook.json for standalone prayers across 5 categori
 **Estimated effort:** 3-4 hours (prayerbook), 6-8 hours additional if novenas included
 **Dependencies:** IDEA-097 (shared helper), IDEA-098 (standard prayer texts already sourced)
 **Audience fit:** Completes the Spanish prayer experience. Lower urgency than Phases 1-3.
+
+## IDEA-101 — More tab v2: restructure prayer tools and surface Catholic Library
+**Category:** enhancement
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** UX evaluation
+**Related:** IDEA-067, IDEA-068, IDEA-069, IDEA-071
+**Spec ref:** PMV-01 through PMV-07
+
+The More tab's "Prayer & Devotion" zone has outgrown its flat 2×2 grid container. 7 prayer tools, a library teaser, and hidden reference content all compete for attention with no visual hierarchy. Content has evolved into four distinct types (guided prayer, quick reference, tracking, and study) but all receive identical card treatment.
+
+V2 restructure:
+- PMV-01: Move Daily Formation (Baltimore Q&A + Summa) into Today zone
+- PMV-02: Fixed 2×2 guided prayer grid (Rosary, Chaplet, Exam, Stations)
+- PMV-03: Prayer Book as distinctive full-width gateway card
+- PMV-04: Compact "Your Practice" tracker strip (Novenas, First Friday)
+- PMV-05: New visible "Catholic Library" section (Explore, CCC, Bible, Baltimore)
+- PMV-06: Zone seam cleanup, remove library teaser, restructure Faith Guides
+- PMV-07: Simplify contextual promotion to visual emphasis only
+
+Full spec: `docs/plans/UX_Spec_Prayer_More_V2.md`
+Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`
+
+**Estimated effort:** 3-4 hours
+**Dependencies:** None — all reference modules already exist and are entry-point-agnostic
+**Audience fit:** All three demographics. Dorothy gets readable tracker cards. Marcus discovers the Catholic Library. Sarah gets a clear "pray now" vs "look something up" distinction.

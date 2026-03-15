@@ -326,3 +326,18 @@ Future specs should continue this pattern with new prefixes.
 | SLV-09 | Holy Day & Solemnity Recognition (Easter, Christmas, Pentecost, Good Friday, HDOs) | Done | P2 |
 | SLV-10 | Readings Liturgical Day Header (day name + color dot above daily readings) | Done | P3 |
 | SLV-11 | Examination Centering Screen Enhancement (warm gold treatment, sacred glow, larger prayer text) | Done | P3 |
+
+### UX_Spec_Prayer_More_V2.md (PMV series)
+**Created:** 2026-03-15 · **Status:** Spec ready
+**Backlog items:** IDEA-101 (restructure More tab prayer/study zones)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PMV.md
+**Depends on:** None — all reference modules are entry-point-agnostic
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PMV-01 | Daily Formation: Relocate to Today Zone | Queued | P1 |
+| PMV-02 | Guided Prayer Grid: Fixed 2×2 Immersive Experiences | Queued | P1 |
+| PMV-03 | Prayer Book Gateway Card: Distinctive Collection Treatment | Queued | P1 |
+| PMV-04 | Your Practice Strip: Compact Tracker Row | Queued | P1 |
+| PMV-05 | Catholic Library: Surface Reference Tools | Queued | P1 |
+| PMV-06 | Zone Seam and Visual Rhythm Cleanup | Queued | P2 |
+| PMV-07 | Contextual Promotion Simplification | Queued | P2 |
