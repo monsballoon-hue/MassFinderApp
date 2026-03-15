@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-081 →
-**Total items:** 80
+**ID sequence:** IDEA-084 →
+**Total items:** 83
 
 ---
 
@@ -1063,3 +1063,34 @@ At [data-text-size="large"], root is 19px. Rosary prayer text computes to ~19px 
 When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental model ("tabs = how I move around") breaks. Consider a subtle continuity cue — either a faint wordmark or a 3px colored line at the bottom edge where the tab bar was. Lowest priority item — may be unnecessary if PHF-02a (bigger close button) resolves the confusion.
 
 **Implemented:** 2026-03-15 via PHF-02d — added 3px primary-colored line at bottom edge of reader overlay
+
+## IDEA-081 — Pastoral note for Q31 (suicide) in examination of conscience
+**Category:** enhancement
+**Status:** spec-needed
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item C1
+**Related:** (none)
+**Spec ref:** (none)
+
+Q31 ("Have I contemplated or attempted suicide?") needs a compassionate pastoral note displayed when tapped or flagged. Must include 988 Suicide & Crisis Lifeline and CCC §2283 on God's mercy. UX must determine format: inline note, tap-to-reveal, or overlay. This is a pastoral safety concern — someone in crisis who encounters this question without the §2283 framing may experience it as condemnation. See `docs/reviews/CATHOLIC_FIDELITY_REVIEW_2026-03-15.md` item C1 for full rationale and suggested text. Requires src/examination.js changes + UX decision.
+
+## IDEA-082 — Rephrase Q39 ("disordered sexual desires")
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item C2
+**Related:** (none)
+**Spec ref:** (none)
+
+"Have I acted on disordered sexual desires?" (CCC §2357–2359) uses clinical moral-theological language without context an app cannot provide. Review recommends rephrasing to "Have I engaged in sexual activity contrary to God's plan for human sexuality as taught by the Church?" (CCC §2331–2400), or removing entirely since Q33–Q38 cover the same moral ground. See full review item C2 for doctrinal analysis. Requires owner decision on approach.
+
+## IDEA-083 — Seasonal Rosary mystery for Sunday
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item R3 follow-up
+**Related:** (none)
+**Spec ref:** (none)
+
+RVM §38 notes Sunday mystery may vary by liturgical season (Joyful during Advent/Christmas, Sorrowful during Lent). Default Glorious is now correct (shipped in content-additions branch). Season-aware logic would be a future enhancement using the existing litcal data. Requires src/rosary.js changes.
