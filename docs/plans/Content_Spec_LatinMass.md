@@ -2,7 +2,7 @@
 
 **Spec series:** CON-01 through CON-01  
 **Author:** Content & Voice  
-**Status:** Draft → Catholic Review  
+**Status:** Catholic Review APPROVED (CRX-01–04 applied 2026-03-15)  
 **Date:** 2026-03-15  
 **Target location:** `src/devotions.js` → `DEVOTIONAL_GUIDES` array, inside the Devotions group (children of the `isGroup:true` "Devotions" entry)  
 **Position:** After "Gorzkie Żale", before "Stations of the Cross" (or at end of Devotions group — implementer's discretion)  
@@ -21,11 +21,11 @@
 
 **Paragraph 1 — What it is:**
 
-> The Traditional Latin Mass — also called the Extraordinary Form — is the form of the Mass celebrated in the Catholic Church for centuries before the liturgical reforms of the 1960s. The prayers are in Latin. The priest faces the altar, in the same direction as the people, a posture called *ad orientem*. The overall feel is quieter, more formal, and deeply reverent.
+> The Traditional Latin Mass — also called the Extraordinary Form, or the Mass according to the 1962 Roman Missal — is the older form of the Mass celebrated in the Catholic Church for centuries before the liturgical reforms following Vatican II. The prayers are in Latin. The priest faces the altar, in the same direction as the people, a posture called *ad orientem*. The overall feel is quieter, more formal, and deeply reverent.
 
 **Paragraph 2 — What you'll experience:**
 
-> If you're used to the regular Sunday Mass (the Ordinary Form), a few things will feel different. There are no spoken responses from the congregation during most of the Mass. Much of the priest's prayer is said softly or silently. A choir or schola may sing in Latin or Gregorian chant. Communion is received kneeling, on the tongue. A hand missal — a booklet with the Latin text and English translation side by side — is your best companion. Most parishes that offer this Mass provide them in the pews.
+> If you're used to the regular Sunday Mass (the Ordinary Form), a few things will feel different. At a Low Mass (the most common weekday form), you may hear no spoken responses from the congregation — only the altar server responds to the priest. At a Dialogue Mass or Sung Mass, however, the congregation joins in the responses and may sing parts of the liturgy in Latin. Much of the priest's prayer is said softly or silently. A choir or schola may sing in Latin or Gregorian chant. Communion is received kneeling, on the tongue. A hand missal — a booklet with the Latin text and English translation side by side — is your best companion. Most parishes that offer this Mass provide them in the pews.
 
 **Paragraph 3 — Reassurance:**
 
@@ -35,7 +35,7 @@
 
 > - **Dress:** Many regular attendees dress more formally — men in collared shirts, women in dresses or skirts, sometimes with a chapel veil. This isn't a rule. Come as you are. You won't be turned away for wearing jeans.
 > - **Missal:** Look for a red booklet in the pew — often a *1962 Missal* or a parish guide. It will have Latin on one side and English on the other. If you can't find one, ask someone nearby. People are usually happy to help.
-> - **Posture:** Stand, kneel, and sit when others do. Communion is received kneeling at the altar rail, on the tongue — the priest will place the host on your tongue. If you're not receiving Communion, remain in your pew or approach with arms crossed over your chest.
+> - **Posture:** Stand, kneel, and sit when others do. Communion is received kneeling at the altar rail, on the tongue — the priest will place the host on your tongue. If you're not receiving Communion, simply remain in your pew — there's no expectation to approach the altar rail.
 > - **Length:** A Low Mass (spoken, no singing) runs about 45 minutes to an hour. A High Mass or Solemn High Mass (sung, with incense and more ceremony) can run 75–90 minutes.
 > - **If you get lost:** Close the missal. Look up. Listen. The Mass is still the Mass — the same sacrifice of Calvary, the same Real Presence, the same Lord. You belong here.
 
@@ -47,7 +47,7 @@
 |-------|--------|
 | Extraordinary Form / 1962 Missal | *Summorum Pontificum* (Benedict XVI, 2007); CCC 1345–1355 (general Mass structure) |
 | Ad orientem posture | GIRM (historical), Ratzinger *Spirit of the Liturgy* ch. 3 |
-| Communion on the tongue, kneeling | 1962 Missale Romanum rubrics; *Redemptionis Sacramentum* §92 (tongue as norm for EF) |
+| Communion on the tongue, kneeling | 1962 Missale Romanum, *Ritus servandus* X (*De Communione*); cf. USCCB Committee on Divine Worship (May 2020) confirming tongue-only for EF |
 | No congregational spoken responses (Low Mass) | 1962 rubrics — *Missa Lecta* norms |
 | Chapel veils as custom, not requirement | 1983 Code of Canon Law dropped the 1917 CIC can. 1262 requirement; now voluntary tradition |
 

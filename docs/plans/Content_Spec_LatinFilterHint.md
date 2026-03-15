@@ -2,7 +2,7 @@
 
 **Spec series:** CON-31  
 **Author:** Content & Voice  
-**Status:** Draft → Catholic Review (ships with CON-30)  
+**Status:** Approved by Catholic Review (2026-03-15) — ships with CON-30  
 **Date:** 2026-03-15  
 **Dependency:** CON-30 (Latin Mass guide content) must be approved first  
 **Engineering dependency:** CLH-01 (generalized hint system) must be implemented first  

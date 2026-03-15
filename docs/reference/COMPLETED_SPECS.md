@@ -436,17 +436,28 @@ Future specs should continue this pattern with new prefixes.
 | CLH-05 | Latin Filter Hint (Placeholder — Needs Content) | Content Ready (CON-31) | P3 |
 
 ### Content_Spec_LatinMass.md (CON-30)
-**Created:** 2026-03-15 · **Status:** Awaiting Catholic Review
+**Created:** 2026-03-15 · **Status:** Approved with corrections (CRX series applied)
 | ID | Title | Status |
 |----|-------|--------|
-| CON-30 | What to Expect at a Latin Mass — devotional guide | Awaiting Review |
+| CON-30 | What to Expect at a Latin Mass — devotional guide | Approved w/ corrections |
+
+### Review_Fix_LatinMass.md (CRX series)
+**Created:** 2026-03-15 · **Status:** Applied to CON-30 spec text
+**Parent spec:** Content_Spec_LatinMass.md (CON-30)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CRX.md
+| ID | Title | Status |
+|----|-------|--------|
+| CRX-01 | Terminology — add "1962 Roman Missal" alongside "Extraordinary Form" | Applied |
+| CRX-02 | Congregational responses — qualify for Dialogue Mass and Sung Mass | Applied |
+| CRX-03 | Source citation — correct RS §92 to 1962 Missale Romanum rubrics | Applied |
+| CRX-04 | Arms crossed for blessing — remove, advise remaining in pew | Applied |
 
 ### Content_Spec_LatinFilterHint.md (CON-31)
-**Created:** 2026-03-15 · **Status:** Awaiting Catholic Review (ships with CON-30)
+**Created:** 2026-03-15 · **Status:** Approved by Catholic Review
 | ID | Title | Status |
 |----|-------|--------|
-| CON-31a | Latin filter hint copy ("New to Latin Mass? What to expect ›") | Awaiting Review |
-| CON-31b | Reader overlay title | Awaiting Review |
-| CON-31c | CTA button text ("Find Latin Mass near you") | Awaiting Review |
+| CON-31a | Latin filter hint copy ("New to Latin Mass? What to expect ›") | Approved |
+| CON-31b | Reader overlay title | Approved |
+| CON-31c | CTA button text ("Find Latin Mass near you") | Approved |
 
 > **Note:** CON-30 + CON-31 together complete the content needed for CLH-05 (Latin Filter Hint). Engineering implementation requires CLH-01 (generalized hint system) first.
