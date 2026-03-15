@@ -528,35 +528,35 @@ Future specs should continue this pattern with new prefixes.
 | IGM-07 | Share Sheet Header App Icon + Title | Done | P2 |
 
 ### UX_Spec_Prayer_Zone_Polish.md (PZP series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-127, IDEA-128, IDEA-129, IDEA-130
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PZP.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PZP-01 | Rename to "Examine Your Conscience" | Queued | P1 |
-| PZP-02 | Tighten "Guided Prayer" Header Spacing | Queued | P2 |
-| PZP-03 | "Your Practice" → "Ongoing Devotions" | Queued | P1 |
-| PZP-04 | Catholic Library Coming Soon Placeholder | Queued | P2 |
+| PZP-01 | Rename to "Examine Your Conscience" | Done | P1 |
+| PZP-02 | Tighten "Guided Prayer" Header Spacing | Done | P2 |
+| PZP-03 | "Your Practice" → "Ongoing Devotions" | Done | P1 |
+| PZP-04 | Catholic Library Coming Soon Placeholder | Done | P2 |
 
 ### UX_Spec_Novena_Practice_Tracker.md (NPT series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-133, IDEA-116, IDEA-131
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_NPT.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| NPT-01 | Novena CTAs Deep-Link with ID | Queued | P1 |
-| NPT-02 | Liturgical Calendar Sorting for Novena List | Queued | P2 |
-| NPT-03 | Practice Tracker Next-Date Subtitles | Queued | P2 |
+| NPT-01 | Novena CTAs Deep-Link with ID | Done | P1 |
+| NPT-02 | Liturgical Calendar Sorting for Novena List | Done | P2 |
+| NPT-03 | Practice Tracker Next-Date Subtitles | Done | P2 |
 
 ### UX_Spec_Daily_Readings_Typography.md (DRT series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-134
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_DRT.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| DRT-01 | Remove Verse Numbers from Readings | Queued | P1 |
-| DRT-02 | Enhance Rubric/Conclusion Formatting | Queued | P2 |
-| DRT-03 | Reading Body Text Size Increase | Queued | P3 |
+| DRT-01 | Remove Verse Numbers from Readings | Done | P1 |
+| DRT-02 | Enhance Rubric/Conclusion Formatting | Done | P2 |
+| DRT-03 | Reading Body Text Size Increase | Done | P3 |
 
 ### UX_Spec_Prayer_Library_Redesign.md (PLR series)
 **Created:** 2026-03-15 · **Status:** Queued

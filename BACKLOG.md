@@ -1575,7 +1575,9 @@ Anywhere in the app where snippets of prayers are rendered, the text should use 
 
 ## IDEA-116 — Novena list: dynamic sorting by liturgical calendar relevance instead of pinning in-progress
 **Category:** enhancement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
+**Implemented:** 2026-03-15 via NPT-02 — Liturgical calendar sorting with Suggested Now section
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-055, IDEA-111
@@ -1736,7 +1738,8 @@ Headers across the More tab are not uniform — different font sizes, weights, o
 
 ## IDEA-127 — Rename "Examination of Conscience" label for space saving
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-033
@@ -1748,7 +1751,8 @@ Consider renaming the Examination of Conscience module label to "Examine Your Co
 
 ## IDEA-128 — Excessive vertical spacing after Daily Readings and guided prayer section headers
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-070
@@ -1758,7 +1762,8 @@ There appears to be too much whitespace between the Daily Readings section heade
 
 ## IDEA-129 — "Your Practice" header label is unclear and confusing
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-069, IDEA-101
@@ -1768,7 +1773,8 @@ The "Your Practice" section header on the More tab does not communicate what the
 
 ## IDEA-130 — Disable Catholic Library and show "Coming Soon" placeholder
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-071
@@ -1778,7 +1784,8 @@ The Catholic Library feature is not ready for use. Disable the interactive eleme
 
 ## IDEA-131 — Novena and First Fri/Sat trackers should show next upcoming date and next liturgical novena
 **Category:** enhancement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-055, IDEA-059, IDEA-116
@@ -1798,7 +1805,8 @@ The Angelus card occupies prime real estate on the More tab. That space should i
 
 ## IDEA-133 — Tapping "Pray the St. Joseph Novena" should open the novena directly, not the index
 **Category:** bug
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-111
@@ -1808,7 +1816,8 @@ When a user taps a contextual CTA like "Pray the St. Joseph Novena" (e.g., from 
 
 ## IDEA-134 — Daily Readings formatting overhaul: remove line numbers, add proper typographic treatment
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-004, IDEA-005

@@ -891,9 +891,9 @@ function formatReading(raw) {
       if (/^(Praise to you|Thanks be to God)[\.,]?\s*/i.test(line))
         return '<span class="reading-conclusion">' + esc(line) + '</span>';
       var vm = line.match(/^(\d{1,3})\s+(.+)$/);
-      if (vm) return '<span class="verse-num">' + vm[1] + '</span>' + esc(vm[2]);
+      if (vm) return esc(vm[2]);
       var processed = esc(line);
-      processed = processed.replace(/(\.\s+)(\d{1,3})\s+/g, '$1<span class="verse-num">$2</span> ');
+      processed = processed.replace(/(\.\s+)\d{1,3}\s+/g, '$1');
       return processed;
     });
     return '<p class="reading-para">' + formatted.join('<br>') + '</p>';

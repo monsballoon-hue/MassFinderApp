@@ -115,10 +115,11 @@ function _getFirstFridaySubtitle() {
     if (satCount >= 5) parts.push('5 First Saturdays complete');
     return { text: parts.join(' \u00b7 '), active: true };
   }
-  // Show next date
+  // Show next dates
   var nf = _getNextFirstFriday();
+  var ns = _getNextFirstSaturday();
   var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return { text: 'Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate(), active: false };
+  return { text: 'Next: ' + months[nf.getMonth()] + ' ' + nf.getDate() + ' & ' + months[ns.getMonth()] + ' ' + ns.getDate(), active: false };
 }
 
 // Register with reader system
@@ -558,7 +559,7 @@ function _renderSeasonalMoment(events) {
           + '<div class="seasonal-card-expanded">'
           + '<p>After Christ ascended into heaven, the Apostles and the Blessed Virgin Mary gathered in the Upper Room and prayed together for nine days. On the tenth day \u2014 Pentecost \u2014 the Holy Spirit descended upon them in tongues of fire. This was the first novena.</p>'
           + '<p>The Church invites you to pray the Novena to the Holy Spirit during these nine days, asking for a fresh outpouring of the Spirit\u2019s gifts in our own lives.</p>'
-          + '<div class="seasonal-card-action" onclick="event.stopPropagation();openNovena()">Start the Holy Spirit Novena \u2192</div>'
+          + '<div class="seasonal-card-action" onclick="event.stopPropagation();openNovena(\'holy_spirit\')">Start the Holy Spirit Novena \u2192</div>'
           + '</div>'
           + '</details>'
       });
@@ -630,7 +631,7 @@ function _renderSeasonalMoment(events) {
   var MONTHLY_DEVOTIONS = [
     { month: 0, title: 'January: The Holy Name of Jesus', subtitle: 'Devotion to the Sacred Name', body: '<p>January is dedicated to the Holy Name of Jesus. The feast of the Holy Name (January 3) celebrates the Name above all names, at which \u201cevery knee should bend\u201d (Philippians 2:10). You are encouraged to invoke the Holy Name with reverence throughout this month.</p>', action: 'Find Mass near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"))' },
     { month: 1, title: 'February: The Holy Family', subtitle: 'Patron of families and home life', body: '<p>February is dedicated to the Holy Family of Jesus, Mary, and Joseph. You are invited to pray for the sanctification of family life and to look to the Holy Family as a model of love, obedience, and faithfulness in the domestic church.</p><p>The Holy Family feast (the Sunday after Christmas) is the anchor of this devotion. Pray for your own family \u2014 for patience, forgiveness, and the grace to love as Jesus, Mary, and Joseph loved.</p>' },
-    { month: 2, title: 'March: Month of St. Joseph', subtitle: 'Patron of the Universal Church', body: '<p>March is dedicated to St. Joseph, foster father of Jesus and patron of the Universal Church. His feast day falls on March 19. You are encouraged to seek his intercession for workers, fathers, and those facing difficult decisions.</p>', action: 'Pray the St. Joseph Novena \u2192', actionFn: 'openNovena()' },
+    { month: 2, title: 'March: Month of St. Joseph', subtitle: 'Patron of the Universal Church', body: '<p>March is dedicated to St. Joseph, foster father of Jesus and patron of the Universal Church. His feast day falls on March 19. You are encouraged to seek his intercession for workers, fathers, and those facing difficult decisions.</p>', action: 'Pray the St. Joseph Novena \u2192', actionFn: 'openNovena(\'st_joseph\')' },
     { month: 3, title: 'April: Month of the Eucharist', subtitle: 'The source and summit of the Christian life', body: '<p>April is dedicated to devotion to the Blessed Sacrament. The Eucharist is \u201cthe source and summit of the Christian life\u201d (<span class="ccc-ref">CCC 1324</span>). You are encouraged to attend Mass, visit the Blessed Sacrament, and deepen your understanding of this central mystery.</p>', action: 'Find Adoration near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"));document.querySelector("[data-filter=adoration]")&&document.querySelector("[data-filter=adoration]").click()' },
     { month: 4, title: 'May: Month of Mary', subtitle: 'Queen of the Most Holy Rosary', body: '<p>May is dedicated to the Blessed Virgin Mary. You are invited to pray the Rosary daily, participate in May Crowning devotions, and entrust themselves to Our Lady\u2019s intercession.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
     { month: 5, title: 'June: The Sacred Heart of Jesus', subtitle: 'Devotion to Christ\u2019s infinite love', body: '<p>June is dedicated to the Sacred Heart of Jesus, whose feast falls on the Friday after Corpus Christi. This devotion centers on Christ\u2019s boundless love for humanity, symbolized by His heart aflame. You are encouraged to make acts of reparation and to consecrate yourself to the Sacred Heart.</p>', action: 'First Friday Tracker \u2192', actionFn: 'openFirstFriday()' },
@@ -897,7 +898,7 @@ function renderMore() {
     var guidedCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()' },
       { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: ctx.chapletHourOfMercy ? 'The Hour of Mercy' : chapletSub, action: 'openChaplet()' },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()' },
+      { id: 'examination', title: 'Examine Your Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()' },
       { id: 'stations', title: 'Stations of the Cross', subtitle: ctx.stationsLent ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()' }
     ];
 
@@ -956,7 +957,7 @@ function renderMore() {
       var novenaActiveClass = ctx.novenaActive ? ' practice-card--active' : '';
       var ffActiveClass = ctx.ffActive ? ' practice-card--active' : '';
 
-      practiceStrip.innerHTML = '<div class="practice-strip-label">Your Practice</div>'
+      practiceStrip.innerHTML = '<div class="practice-strip-label">Ongoing Devotions</div>'
         + '<div class="practice-strip">'
         + '<div class="practice-card' + novenaActiveClass + '" onclick="openNovena()" role="button" tabindex="0">'
         + '<div class="practice-card-icon">' + ptIcons.novena + '</div>'
@@ -976,13 +977,13 @@ function renderMore() {
     // EMT-05: Library teaser — standalone card below grid
     var libTeaser = document.getElementById('libraryTeaser');
     if (libTeaser) {
-      libTeaser.innerHTML = '<div class="library-teaser" onclick="openExplore()" role="button" tabindex="0">'
-        + '<div class="prayer-tool-icon" style="background:var(--color-surface-hover);color:var(--color-text-secondary)">'
+      libTeaser.innerHTML = '<div class="library-teaser coming-soon">'
+        + '<div class="prayer-tool-icon" style="background:var(--color-surface-hover);color:var(--color-text-tertiary)">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>'
         + '</div>'
         + '<div class="prayer-tool-body">'
-        + '<div class="prayer-tool-title">Catholic Library</div>'
-        + '<div class="prayer-tool-subtitle">Bible, Catechism, Baltimore Catechism & Summa</div>'
+        + '<div class="prayer-tool-title" style="color:var(--color-text-tertiary)">Catholic Library</div>'
+        + '<div class="prayer-tool-subtitle">Coming soon</div>'
         + '</div>'
         + '</div>';
     }

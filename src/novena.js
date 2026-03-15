@@ -3,6 +3,16 @@ var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
 
+// NPT-02: Liturgical season → novena suggestions
+var NOVENA_SEASONS = [
+  { id: 'st_joseph', startMonth: 2, startDay: 10, endMonth: 2, endDay: 19, reason: 'His feast is March 19' },
+  { id: 'st_patrick', startMonth: 2, startDay: 8, endMonth: 2, endDay: 17, reason: 'His feast is March 17' },
+  { id: 'divine_mercy', litcalKey: 'GoodFri', daysAfter: 0, duration: 9, reason: 'Begins Good Friday' },
+  { id: 'holy_spirit', litcalKey: 'Ascension', daysAfter: 0, duration: 9, reason: 'Ascension to Pentecost' },
+  { id: 'sacred_heart', startMonth: 5, startDay: 3, endMonth: 5, endDay: 12, reason: 'His feast is in June' },
+  { id: 'st_andrew_christmas', startMonth: 10, startDay: 21, endMonth: 11, endDay: 24, reason: 'Preparing for Christmas' }
+];
+
 // ── State ──
 var _data = null;
 var _novenas = null;      // all novena definitions
@@ -199,9 +209,47 @@ function _renderSelect(title, body, footer) {
     if (aActive !== bActive) return aActive ? -1 : 1;
     return a.title.localeCompare(b.title);
   });
+  // NPT-02: Suggested Now section based on liturgical calendar
+  var now = new Date();
+  var nowM = now.getMonth(); // 0-indexed
+  var nowD = now.getDate();
+  var suggestedIds = {};
+  var litEvents = (window._litcalCache && window._litcalCache.events) || [];
+  NOVENA_SEASONS.forEach(function(s) {
+    if (allTracking[s.id]) return; // already in progress
+    if (s.litcalKey) {
+      var match = litEvents.filter(function(e) { return e.event_key === s.litcalKey; })[0];
+      if (match) {
+        var keyDate = new Date(now.getFullYear(), match.month - 1, match.day);
+        var diff = Math.floor((now - keyDate) / 86400000);
+        if (diff >= s.daysAfter && diff < s.daysAfter + s.duration) suggestedIds[s.id] = s.reason;
+      }
+    } else if (nowM === s.startMonth && nowD >= s.startDay && nowD <= s.endDay) {
+      suggestedIds[s.id] = s.reason;
+    } else if (s.startMonth !== s.endMonth && nowM === s.endMonth && nowD <= s.endDay) {
+      suggestedIds[s.id] = s.reason;
+    }
+  });
+  var suggestedKeys = Object.keys(suggestedIds);
+  if (suggestedKeys.length) {
+    html += '<div class="novena-list-label">Suggested Now</div>';
+    suggestedKeys.forEach(function(sid) {
+      var nov = _novenas.filter(function(n) { return n.id === sid; })[0];
+      if (!nov) return;
+      html += '<button class="novena-list-item novena-item--suggested" onclick="novenaSelect(\'' + sid + '\')">';
+      html += '<div class="novena-list-item-body">';
+      html += '<div class="novena-list-title">' + utils.esc(nov.title) + '</div>';
+      html += '<div class="novena-list-desc">' + utils.esc(suggestedIds[sid]) + '</div>';
+      html += '</div>';
+      html += '<span class="novena-list-chevron">\u203A</span>';
+      html += '</button>';
+    });
+  }
+
   var shownContinue = false;
   var shownAvailable = false;
   sorted.forEach(function(n) {
+    if (suggestedIds[n.id]) return; // already shown in Suggested Now
     var isActive = !!allTracking[n.id];
     if (isActive && !shownContinue) {
       html += '<div class="novena-list-label">Continue Praying</div>';

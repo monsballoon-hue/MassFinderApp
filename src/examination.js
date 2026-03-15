@@ -44,7 +44,7 @@ reader.registerModule('examination', {
   getTitle: function() {
     var lang = '';
     try { lang = localStorage.getItem('mf-prayer-lang') || ''; } catch (e) {}
-    return (lang === 'es') ? 'Examen de Conciencia' : 'Examination of Conscience';
+    return (lang === 'es') ? 'Examen de Conciencia' : 'Examine Your Conscience';
   },
   render: function(params, bodyEl, footerEl) {
     _expanded = {};

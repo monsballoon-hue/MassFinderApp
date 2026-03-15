@@ -1589,7 +1589,7 @@ html[data-theme="dark"] .more-zone--today #readingsSection { border-top-color: c
 /* ── Section title typography (MTR-02) ── */
 .more-section-title--today { color: var(--color-sacred-text); font-size: var(--text-sm); font-weight: var(--weight-semibold); text-transform: uppercase; letter-spacing: 0.06em; }
 .more-section-title--practice { font-family: var(--font-body); font-weight: var(--weight-semibold); color: var(--color-text-primary); font-size: var(--text-base); letter-spacing: 0; }
-.more-section-title--pray { font-family: var(--font-body); font-weight: var(--weight-semibold); color: var(--color-text-primary); font-size: var(--text-base); letter-spacing: 0; }
+.more-section-title--pray { font-family: var(--font-body); font-weight: var(--weight-semibold); color: var(--color-text-primary); font-size: var(--text-base); letter-spacing: 0; margin-bottom: var(--space-2); }
 .more-section-title--deeper { color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--weight-semibold); letter-spacing: 0.01em; }
 
 /* ── Reading entries compact in Today zone (MTR-04) ── */
@@ -1745,8 +1745,8 @@ html[data-theme="dark"] .prayerbook-guided-section { border-top-color:color-mix(
 .reading-entry-header { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
 .reading-expand-icon { flex-shrink: 0; color: var(--color-text-tertiary); transition: transform 0.2s ease; }
 .reading-entry.expanded .reading-expand-icon { transform: rotate(180deg); }
-.reading-text { display: none; font-family:var(--font-prayer); font-size: var(--text-sm); color: var(--color-text-secondary); line-height: 1.7; margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border-light); }
-.reading-text .reading-para { margin: 0 0 var(--space-3) 0; }
+.reading-text { display: none; font-family:var(--font-prayer); font-size: var(--text-base); color: var(--color-text-secondary); line-height: 1.7; margin-top: var(--space-3); padding-top: var(--space-3); border-top: 1px solid var(--color-border-light); }
+.reading-text .reading-para { margin: 0 0 var(--space-4) 0; }
 .reading-text .reading-para:last-child { margin-bottom: 0; }
 .reading-entry.expanded .reading-text { display: block; }
 .reading-listen-btn { display:inline-flex;align-items:center;gap:var(--space-1);padding:var(--space-1) var(--space-3);background:transparent;border:1px solid var(--color-border-light);border-radius:var(--radius-full);font-size:var(--text-xs);color:var(--color-text-tertiary);cursor:pointer;margin-top:var(--space-2);min-height:28px;transition:all 0.15s;-webkit-tap-highlight-color:transparent; }
@@ -1810,6 +1810,7 @@ html[data-theme="dark"] .mf-update-banner { background:var(--color-surface);bord
 .library-teaser { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px dashed var(--color-border);border-radius:var(--radius-md);opacity:0.6;margin-top:var(--space-3); }
 .library-teaser .prayer-tool-title { font-size:var(--text-base);color:var(--color-text-secondary); }
 .library-teaser .prayer-tool-subtitle { font-size:var(--text-sm);color:var(--color-text-tertiary); }
+.library-teaser.coming-soon { opacity:0.5;cursor:default;pointer-events:none; }
 html[data-theme="dark"] .prayer-tool-card--promoted { background:linear-gradient(135deg, var(--color-surface) 60%, color-mix(in srgb, var(--color-sacred) 6%, transparent) 100%); }
 html[data-theme="dark"] .library-teaser { border-color:var(--color-border); }
 
@@ -2442,8 +2443,8 @@ html[data-theme="dark"] .saint-verse { background:color-mix(in srgb, var(--color
 .reading-text .psalm-refrain { display: block; font-style: italic; font-weight: var(--weight-semibold); color: var(--color-primary); margin: var(--space-3) 0; padding-left: var(--space-4); border-left: 2px solid var(--color-sacred); line-height: 1.6; }
 .reading-text .psalm-verse { display: block; margin: var(--space-2) 0 var(--space-2) var(--space-4); line-height: 1.7; }
 .reading-text .psalm-verse-line { display: block; padding-left: var(--space-3); text-indent: calc(-1 * var(--space-3)); }
-.reading-text .reading-intro { display: block; font-style: italic; color: var(--color-text-tertiary); margin-bottom: var(--space-3); }
-.reading-text .reading-conclusion { display: block; font-weight: var(--weight-semibold); color: var(--color-text-primary); margin-top: var(--space-4); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.04em; }
+.reading-text .reading-intro { display: block; font-style: italic; color: var(--color-text-tertiary); margin-bottom: var(--space-3); font-size: var(--text-xs); letter-spacing: 0.02em; }
+.reading-text .reading-conclusion { display: block; font-weight: var(--weight-semibold); color: var(--color-text-primary); margin-top: var(--space-5); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em; }
 .reading-text .reading-verse { margin: var(--space-2) 0; line-height: 1.7; }
 .reading-text .psalm-r-marker { display: block; font-style: italic; font-weight: var(--weight-semibold); color: var(--color-sacred-text); margin: var(--space-2) 0 var(--space-2) var(--space-4); font-size: var(--text-sm); }
 .reading-text .psalm-indent { padding-left: var(--space-5); }
@@ -2771,6 +2772,8 @@ html[data-theme="dark"] .novena-progress-bar { background:var(--color-border); }
 .novena-list-item-body { flex:1;min-width:0; }
 .novena-list-title { font-family:var(--font-display);font-size:var(--text-base);font-weight:var(--weight-semibold);color:var(--color-heading);margin-bottom:2px; }
 .novena-list-desc { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden; }
+.novena-item--suggested { border-left:3px solid var(--color-sacred);background:var(--color-sacred-pale); }
+html[data-theme="dark"] .novena-item--suggested { background:color-mix(in srgb, var(--color-sacred) 6%, transparent); }
 .novena-list-chevron { color:var(--color-text-tertiary);font-size:var(--text-xl);flex-shrink:0; }
 .novena-more-note { font-size:var(--text-sm);color:var(--color-text-tertiary);text-align:center;padding:var(--space-5) var(--space-4) var(--space-3);font-style:italic; }
 .novena-more-link { color:var(--color-primary);text-decoration:none;font-weight:var(--weight-medium); }
