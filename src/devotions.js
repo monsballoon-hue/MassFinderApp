@@ -18,13 +18,12 @@ reader.registerModule('confession-guide', {
       if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
     }
 
-    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+    bodyEl.innerHTML = '<div class="reader-guide"><div class="reader-guide-body">'
       + _wrapScriptureRefs(_wrapTerms(guide.body))
-      + '<div style="margin-top:var(--space-5)">'
-      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=confession]\');if(c)c.click()" '
-      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + '</div>'
+      + '<button class="reader-guide-cta" onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=confession]\');if(c)c.click()">'
       + 'Find Confession near you</button>'
-      + '</div></div>';
+      + '</div>';
 
     _initTermClicks(bodyEl);
     refs.initRefTaps(bodyEl);
@@ -65,13 +64,12 @@ reader.registerModule('adoration-guide', {
     }
     if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
 
-    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+    bodyEl.innerHTML = '<div class="reader-guide"><div class="reader-guide-body">'
       + _wrapScriptureRefs(_wrapTerms(guide.body))
-      + '<div style="margin-top:var(--space-5)">'
-      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=adoration]\');if(c)c.click()" '
-      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + '</div>'
+      + '<button class="reader-guide-cta" onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=adoration]\');if(c)c.click()">'
       + 'Find Adoration near you</button>'
-      + '</div></div>';
+      + '</div>';
 
     _initTermClicks(bodyEl);
     refs.initRefTaps(bodyEl);
@@ -99,13 +97,12 @@ reader.registerModule('latin-mass-guide', {
     }
     if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
 
-    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+    bodyEl.innerHTML = '<div class="reader-guide"><div class="reader-guide-body">'
       + _wrapScriptureRefs(_wrapTerms(guide.body))
-      + '<div style="margin-top:var(--space-5)">'
-      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=latin]\');if(c)c.click()" '
-      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + '</div>'
+      + '<button class="reader-guide-cta" onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=latin]\');if(c)c.click()">'
       + 'Find Latin Mass near you</button>'
-      + '</div></div>';
+      + '</div>';
 
     _initTermClicks(bodyEl);
     refs.initRefTaps(bodyEl);

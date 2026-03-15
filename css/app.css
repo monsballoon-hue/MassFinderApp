@@ -1905,6 +1905,27 @@ html[data-theme="dark"] .devot-card--seasonal { background:linear-gradient(135de
 .devot-body ul { padding-left: var(--space-5); margin-bottom: var(--space-3); }
 .devot-body ul li { margin-bottom: var(--space-2); }
 .devot-body blockquote { font-family:var(--font-prayer);font-style:italic;line-height:1.8; }
+/* Reader guide overlay — used by confession/adoration/latin guides when opened from filter hints */
+.reader-guide { max-width:540px;margin:0 auto;padding:var(--space-2) var(--space-4) var(--space-6); }
+.reader-guide-body { font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75; }
+.reader-guide-body p { margin-bottom:var(--space-3); }
+.reader-guide-body p:last-child { margin-bottom:0; }
+.reader-guide-body p:first-child { font-size:var(--text-base);color:var(--color-text-primary);line-height:1.65; }
+.reader-guide-body strong { color:var(--color-text-primary);font-weight:var(--weight-semibold); }
+.reader-guide-body ul,.reader-guide-body ol { padding-left:var(--space-5);margin-bottom:var(--space-3); }
+.reader-guide-body ul li,.reader-guide-body ol li { margin-bottom:var(--space-2); }
+.reader-guide-body blockquote { font-family:var(--font-prayer);font-style:italic;line-height:1.8;margin:var(--space-4) 0;padding-left:var(--space-4);border-left:3px solid var(--color-sacred);color:var(--color-text-secondary); }
+.reader-guide-body em { color:var(--color-text-primary); }
+.reader-guide-body details { margin:var(--space-4) 0;border:1px solid var(--color-border-light);border-radius:var(--radius-md);overflow:hidden; }
+.reader-guide-body details summary { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);font-weight:var(--weight-semibold);color:var(--color-text-primary);font-size:var(--text-sm);cursor:pointer;list-style:none;-webkit-tap-highlight-color:transparent;min-height:48px; }
+.reader-guide-body details summary::-webkit-details-marker { display:none; }
+.reader-guide-body details[open] summary { border-bottom:1px solid var(--color-border-light); }
+.reader-guide-body details .devot-expand,.reader-guide-body details .conf-exam-body,.reader-guide-body details > p { padding:var(--space-3) var(--space-4); }
+.reader-guide-cta { display:block;width:100%;padding:var(--space-3) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-family:var(--font-body);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;margin-top:var(--space-6);transition:background var(--transition-fast), transform 0.1s ease;-webkit-tap-highlight-color:transparent; }
+.reader-guide-cta:active { transform:scale(0.98); }
+html[data-theme="dark"] .reader-guide-body p:first-child { color:var(--color-text-primary); }
+html[data-theme="dark"] .reader-guide-body details { border-color:var(--color-border); }
+html[data-theme="dark"] .reader-guide-body details[open] summary { border-bottom-color:var(--color-border); }
 .devot-find-link { display: inline-flex; align-items: center; gap: var(--space-2); margin-top: var(--space-3); color: var(--color-info); font-weight: var(--weight-semibold); cursor: pointer; font-size: var(--text-sm); }
 .devot-group-body { padding: var(--space-3) var(--space-4) var(--space-4); background: var(--color-bg); border-top: 1px solid var(--color-border-light); }
 .devot-sub { margin-bottom: var(--space-2); border: 1px solid var(--color-border-light); border-radius: var(--radius-md); overflow: hidden; }
