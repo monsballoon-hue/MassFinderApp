@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-138 →
-**Total items:** 135
+**ID sequence:** IDEA-140 →
+**Total items:** 137
 
 ---
 
@@ -1549,14 +1549,15 @@ The Prayer Library should distinguish between guided prayer experiences (Divine 
 The Growing Faith section should not have a collapsible feature at the section level. Individual items within should be closed by default, but the ability to collapse the entire section down to just the section header is not useful and looks bad when collapsed. The section should always remain open.
 
 ## IDEA-114 — Add Liturgy of the Hours as a prayer offering
-**Category:** new-feature
-**Status:** new
+**Category:** research
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-15
 **Source:** voice
-**Related:** IDEA-019
+**Related:** IDEA-019, IDEA-138, IDEA-139
 **Spec ref:** (none)
 
-Explore including the Liturgy of the Hours (Divine Office) as a prayer offering within the app. Multiple devout and faithful users have expressed interest in praying the Hours regularly. This would be a significant content addition requiring research into data sources, licensing, and the daily rotating structure of the Office.
+Research completed. Full LOTH implementation is not viable: every English text component is copyrighted (Grail Psalms by USCCB/Conception Abbey via GIA, antiphons/hymns/prayers by ICEL, Scripture by CCD/USCCB), and the LOTH Second Edition arrives Ash Wednesday 2027 with entirely new translations (Abbey Psalms, new ICEL hymns, Catholic American Bible) — anything built against the First Edition would be immediately obsolete. Dedicated apps (iBreviary free, DivineOffice.org free, Universalis $10-13) represent person-decades of effort. Data volume alone would be 8-15 MB of structured JSON, roughly doubling the app's data footprint. Recommendation: build a lightweight "Gateway to the Hours" (IDEA-138) — a time-aware card showing which Hour is appropriate now with deep links to iBreviary/DivineOffice.org, plus a faith guide on the Divine Office. Revisit full implementation only after LOTH 2nd Ed digital licensing is established (IDEA-139, likely 2027-2028).
 
 ## IDEA-115 — Sacred text font should be applied to all prayer snippets throughout the app
 **Category:** refinement
@@ -1850,3 +1851,29 @@ Safari onboarding screenshot (IMG_0517) shows 4 pagination dots. Chrome onboardi
 
 **Estimated effort:** 30 min investigation
 **Dependencies:** none
+
+## IDEA-138 — "Gateway to the Hours" — time-aware LOTH awareness card with deep links
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (IDEA-114)
+**Related:** IDEA-114, IDEA-139
+**Spec ref:** (none)
+
+Add a lightweight card to the More tab (or Saved dashboard) that is time-aware and shows which Hour of the Divine Office is traditionally prayed at the current time of day. Include a one-tap deep link to iBreviary's web interface or DivineOffice.org for that specific Hour. Pair with a "What is the Liturgy of the Hours?" faith guide explaining the structure (Office of Readings, Lauds, Terce, Sext, None, Vespers, Compline), why laypeople should consider it, which Hours are most accessible for beginners (Lauds, Vespers, Compline), and how to start. Time windows: Lauds (~6-9am), Terce (~9am), Sext (~noon), None (~3pm), Vespers (~5-7pm), Compline (~9pm-midnight), Office of Readings (flexible). Uses existing litcal data for seasonal context. All content is original or public domain — no copyright issues. Handoffs: Content & Voice for faith guide text, UX & Design for card layout and time-awareness UX.
+
+**Estimated effort:** 4-6 hours
+**Dependencies:** none
+
+## IDEA-139 — Monitor LOTH Second Edition digital licensing for future full implementation
+**Category:** research
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** research (IDEA-114)
+**Related:** IDEA-114, IDEA-138
+**Spec ref:** (none)
+
+The LOTH Second Edition (new Abbey Psalms, new ICEL hymns, Catholic American Bible) begins with Volume II (Lent/Easter) on Ash Wednesday February 10, 2027. Ascension Press and Word on Fire are the selected publishers. Mandatory use date is First Sunday of Advent December 3, 2028. Monitor whether Ascension or Word on Fire offer digital licensing, an API, or app-integration terms for the new texts. If digital licensing becomes available at reasonable non-commercial terms, revisit feasibility of a full or partial LOTH module in MassFinder. Trigger: check after Vol. II publication (Feb 2027) and again after all four volumes are available. Zero effort until then.
+
+**Estimated effort:** 0 hours (monitoring only)
+**Dependencies:** LOTH 2nd Ed publication (Feb 2027+)
