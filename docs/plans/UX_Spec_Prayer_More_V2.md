@@ -1,136 +1,140 @@
-# UX Spec: Prayer & More Tab V2 Restructure
+# UX Spec: Prayer & More Tab V2 Restructure (Amended)
 
 **Prefix:** PMV (Prayer/More V2)
-**Created:** 2026-03-15
+**Created:** 2026-03-15 · **Amended:** 2026-03-15
 **Status:** Ready for implementation
-**Scope:** More tab Zones 2–3 restructure — prayer content hierarchy, library surfacing, progressive disclosure
-**Files affected:** `src/more.js`, `css/app.css`, `index.html`, potentially `src/app.js` (Daily Formation move)
+**Scope:** More tab Zone 2 restructure + Zone 3 surfacing
+**Files affected:** `src/more.js`, `css/app.css`, `index.html`
 
 ---
 
-## Problem Statement
+## Amendment Notes
 
-The More tab's "Prayer & Devotion" zone has grown from 3 prayer tools to a comprehensive Catholic spiritual life platform:
-
-| Content type | Items | Engagement model |
-|---|---|---|
-| Guided prayer experiences | 5 (Rosary, Chaplet, Stations, Examination, Lectio Divina) | 5–30 min immersive, wake lock, sacred pause |
-| Quick-reference prayers | 31 prayers + 2 litanies | Look up → read → close |
-| Tracking & practice | 2 (Novena tracker, First Friday/Saturday) | Accountability, streaks, progress |
-| Study & reference | 5 (CCC, Bible, Explore, Baltimore, Summa) | Deep reading, cross-referencing |
-| Faith guides | 6+ devotional guides | Seasonal reference |
-
-All of this is presented through a flat 2×2 grid + "More tools" accordion + dashed library teaser + hidden `<details>` toggle. **The container has not evolved with the content.**
-
-### Impact by demographic
-
-**Dorothy, 72, bifocals:** The 3-column secondary grid uses `--text-xs` (13px) titles with 28px icons and no subtitles. She cannot read them. She doesn't know Stations of the Cross exist in the app. The Prayer Book — where she'd find the Hail Mary text — looks identical to the Examination of Conscience, a complex multi-screen guided flow.
-
-**Marcus, 25, phone-native:** No visual hierarchy signals "these are the big immersive experiences" vs "these are quick utilities." The Explore module (the app's most powerful feature for cross-referencing CCC/Bible/Baltimore) is completely invisible from the More tab. The "Grow in Faith" behind a `<details>` toggle feels like an afterthought. He bounces — nothing signals depth.
-
-**Sarah, 45, one-handed with kids:** She wants "pray the Rosary right now" but has to scan a 2×2 grid of 4 identically-styled cards. No clear entry hierarchy between the Rosary (20-min meditation) and the Prayer Book (reference lookup). The Daily Formation card sits in the Practice zone rather than the Today zone where she'd expect daily content.
+- **PMV-01 DROPPED.** Daily Formation (Baltimore Q&A + Summa) stays in its current position. Baltimore and Summa content is deferred to a future spec.
+- **PMV-05 REVISED.** Catholic Library is CCC + Bible only. Explore module is deferred — not ready to surface. Baltimore Catechism and Summa are deferred content.
+- **Persona walkthroughs expanded** per review feedback — every spec item traces the full journey for all three demographics.
 
 ---
 
-## Core Insight
+## Content Inventory (In-Scope)
 
-MassFinder's prayer content has evolved into **four distinct content types** that need different visual treatments:
+| Content | Type | Engagement model | Time |
+|---|---|---|---|
+| Guided Rosary | Immersive prayer | Step-through, wake lock, bead tracker | 15-25 min |
+| Divine Mercy Chaplet | Immersive prayer | Step-through, wake lock, bead tracker | 8-12 min |
+| Stations of the Cross | Immersive prayer | 14 stations, step-through | 15-20 min |
+| Examination of Conscience | Guided preparation | Section flow, confessional summary | 10-15 min |
+| Prayer Book | Reference collection | Browse/search, expand, read, close | 10 sec-3 min |
+| Novena Tracker | Accountability | Daily check-in, 9 active trackers | 30 sec |
+| First Friday & Saturday | Accountability | Monthly check-in, streak tracking | 30 sec |
+| Catechism (CCC) | Deep study | 2,865 paragraphs, cross-refs, search | 2-30 min |
+| Sacred Scripture (Bible) | Deep study | DRB + CPDV, 73 books, per-book lazy load | 2-30 min |
+| Faith Guides | Seasonal reference | 6+ expandable guides | 1-5 min |
 
-1. **Guided Experiences** — immersive, time-investment → "I want to pray for 5–30 minutes"
-2. **Quick Reference** — look up, read, close → "I need the words to this prayer"
-3. **Tracking & Practice** — accountability, streaks → "Am I keeping up?"
-4. **Study & Learn** — deep reading, cross-refs → "I want to understand my faith"
+---
 
-The current grid treats all four identically.
+## Persona Journeys: Current State Problems
+
+### Dorothy, 72 — Daily Mass attendee, bifocals, arthritic fingers
+
+**Goal:** Pray the Rosary before bed.
+
+**Current journey:**
+1. Taps More tab. Sees the warm Today zone (saint card, readings). Good.
+2. Scrolls past Today zone, past the zone seam.
+3. Sees "Prayer & Devotion" header with a 2x2 grid of four cards below it.
+4. Each card has a 36x36px icon, a title at --text-sm (15px), and a subtitle at --text-xs (13px). With bifocals, the subtitles are marginally legible.
+5. Rosary is in the top-right of the 2x2 grid. She taps it. This works.
+6. But tomorrow she wants the Stations of the Cross. She scrolls down and sees "More tools" — a 36px-tall toggle in --text-xs (13px) with a tiny chevron. She does not notice it. She thinks the app only has 4 prayer tools. Stations, Novena Tracker, and First Friday are invisible to her.
+7. She has never seen the CCC or Bible because they are behind a collapsed "Grow in Faith" details toggle with a generic label and no preview of content.
+
+**Key failures:** (a) Secondary tools invisible at her text size. (b) "More tools" toggle is 13px text, below her reading threshold. (c) CCC and Bible completely hidden. (d) All 4 primary cards look identical — no signal that Rosary is a 20-minute meditation while Prayer Book is a reference lookup.
+
+### Marcus, 25 — Returned to faith 6 months ago, iPhone native, expects polish
+
+**Goal:** Discover what the app offers beyond finding Mass times.
+
+**Current journey:**
+1. Taps More tab for the first time after a week of using Find/Saved.
+2. Saint card, readings — nice. Scrolls past them quickly.
+3. Sees "Prayer & Devotion" with 4 cards. Thinks: "OK, four prayer things."
+4. Notices "More tools" toggle, expands it. Sees 3 tiny cards in a 3-column grid at 13px text. The layout feels like overflow.
+5. Below that, a dashed-border card says "Catholic Library — Bible, Catechism & Catholic classics — coming soon." He thinks: "They don't have a Bible or Catechism yet." This is wrong — both are fully built. The teaser actively misleads him.
+6. "Grow in Faith" is collapsed. He might tap it, might not.
+7. He never discovers that the app contains a full searchable Catechism (2,865 paragraphs) or a complete Bible (DRB + CPDV).
+
+**Key failures:** (a) Library teaser says "coming soon" for features that exist. (b) CCC and Bible have zero entry points from the More tab. (c) The 3-column secondary grid reads as "junk drawer." (d) No progressive disclosure signal for the app's depth.
+
+### Sarah, 45 — One-handed use, needs a specific answer fast
+
+**Goal 1:** Pray the Rosary during her lunch break (20 minutes).
+**Goal 2:** Look up what the Memorare says (her daughter is doing a project).
+
+**Journey for Goal 1:** Taps More, scans 2x2 grid, spots Rosary, taps. 3 seconds. Acceptable.
+
+**Journey for Goal 2:** Taps More, scans 2x2 grid. Sees "Prayer Book" in top-left. Also sees "Guided Rosary," "Examination of Conscience," and "Divine Mercy Chaplet." All look identical. She taps Prayer Book, waits through 2.5-second sacred pause, then searches "Memorare." Total time: 10 seconds. Could be 5 without the sacred pause and with a clearer "this is the reference tool" signal.
+
+**Journey for a CCC reference from a podcast:** She heard "CCC 1324." Opens More tab. There is no CCC entry point visible. She closes the app and Googles it.
+
+**Key failures:** (a) No cognitive shortcut between "reference lookup" and "immersive prayer." (b) CCC has no visible entry point. (c) Sacred pause on Prayer Book adds friction to utility lookups.
 
 ---
 
 ## V2 Zone Architecture
 
-### Current structure
+### Current
 ```
 Zone 1: TODAY (saint, seasonal, readings)
 Zone 2: PRAYER & DEVOTION
-  └─ 2×2 grid: Prayer Book | Rosary | Examination | [dynamic]
-  └─ "More tools" accordion: Stations | Novena | First Friday
-  └─ Library teaser (dashed, placeholder)
-Zone 3: GROW IN FAITH (behind <details>)
-  └─ Devotional guides
+  - 2x2 grid: Prayer Book | Rosary | Examination | [dynamic 4th]
+  - "More tools" accordion: Stations | Novena | First Friday
+  - Daily Formation
+Zone 3: GROW IN FAITH (hidden behind details)
+  - Devotional guides
+Library teaser (dashed "coming soon" placeholder)
 ```
 
-### V2 structure
+### V2
 ```
-Zone 1: TODAY (unchanged — saint, seasonal, readings, daily formation MOVED HERE)
-  ─── zone seam ───
-Zone 2: PRAY (restructured)
-  ├─ Section A: Guided Prayer (2×2 grid — the immersive experiences)
-  │   └─ Rosary | Chaplet | Stations | Examination
-  ├─ Section B: Prayer Book (distinctive gateway card — wide, single-column)
-  │   └─ "31 prayers · 2 guided litanies · Lectio Divina"
-  └─ Section C: Your Practice (compact tracker strip)
-      └─ Novena progress | First Friday streak
-  ─── zone seam ───
-Zone 3: STUDY (promoted from hidden — replaces library teaser + Grow in Faith)
-  ├─ Section A: Catholic Library (2×2 grid of reference tools)
-  │   └─ Explore | Catechism | Bible | Baltimore
-  └─ Section B: Faith Guides (devotional guides — disclosure accordion)
+Zone 1: TODAY (unchanged)
+  --- zone seam ---
+Zone 2: PRAY
+  - Guided Prayer (2x2 grid): Rosary | Chaplet | Stations | Examination
+  - Prayer Book (full-width gateway card)
+  - Your Practice (compact strip): Novena | First Friday
+  - Daily Formation (stays as-is)
+  --- zone seam ---
+Zone 3: STUDY (replaces hidden "Grow in Faith")
+  - Catholic Library (2 cards): Catechism | Sacred Scripture
+  - Faith Guides (disclosure accordion)
 ```
 
 ---
 
 ## Spec Items
 
-### PMV-01 — Daily Formation: Relocate to Today Zone
+### PMV-02 — Guided Prayer Grid: The "I Want to Pray" Experience
 
-**What:** Move the Daily Formation card (Baltimore Q&A + Summa "Go Deeper") from Zone 2 into Zone 1 (Today), below Today's Readings.
+**What:** The primary 2x2 grid contains exactly four immersive guided prayer experiences: Rosary, Divine Mercy Chaplet, Examination of Conscience, and Stations of the Cross. Fixed composition — no dynamic slot rotation.
 
-**Why:** The Daily Formation is daily-rotating content — it belongs in the "daily briefing" zone, not the "practice tools" zone. Sarah checks the More tab once a day for the briefing — she expects all daily content in one place. Currently the formation card renders inside `#dailyFormation` which is a child of `.more-zone--practice`. It needs to move inside `.more-zone--today`.
+**Section title:** Change "Prayer & Devotion" to "Guided Prayer"
 
-**Before:** `#dailyFormation` is a direct child of `.more-zone--practice` in `index.html` line ~142.
+**Dorothy:** Scrolls past Today zone. Sees "Guided Prayer" — clear heading. Below it, four cards in a 2x2 grid. The grid is always the same four cards in the same positions — she builds spatial memory. Rosary is always top-left. She taps it without reading after 3 visits.
 
-**After:** `#dailyFormation` moves to inside `.more-zone--today`, after `#readingsSection`:
-```html
-<!-- Inside .more-zone--today, after readingsSection -->
-<div id="dailyFormation" class="more-section more-section--tight" style="display:none"></div>
+**Marcus:** Sees 4 guided experiences. The title "Guided Prayer" tells him these are interactive, not just text. Subtitles tell him what is happening today: "Sorrowful Mysteries today" (Rosary), "The Hour of Mercy" at 3 PM (Chaplet), "Lenten devotion" (Stations during Lent). He taps the Chaplet because the subtitle caught his eye. He discovers a beautiful step-through experience with bead tracking.
+
+**Sarah:** She needs to pray the Rosary in 20 minutes. She sees 4 cards, spots Rosary, taps. 3 seconds from tab switch to prayer start. She is not choosing between a Rosary and looking up the Hail Mary — those are different activities served by different sections.
+
+**JS changes in more.js:**
+
+Replace STICKY_IDS with:
+```js
+var GUIDED_IDS = { rosary: true, chaplet: true, examination: true, stations: true };
 ```
 
-**CSS:** Add sacred-tinted top border matching the readings section treatment:
-```css
-.more-zone--today #dailyFormation:not(:empty) {
-  padding-top: var(--space-3);
-  margin-top: var(--space-2);
-  border-top: 1px solid color-mix(in srgb, var(--color-sacred) 10%, transparent);
-}
-html[data-theme="dark"] .more-zone--today #dailyFormation:not(:empty) {
-  border-top-color: color-mix(in srgb, var(--color-sacred) 8%, transparent);
-}
-```
+Grid order is fixed: row 1 = Rosary, Chaplet; row 2 = Examination, Stations.
 
-**JS impact:** `_renderDailyFormation()` in `src/app.js` targets `#dailyFormation` by ID — no JS changes needed. The element just moves in the DOM.
-
-**Dark mode:** Inherits Today zone dark treatment. Formation card already has dark mode styles.
-
-**Test checklist:**
-- [ ] Formation card renders inside Today zone below readings
-- [ ] Sacred top border visible in light and dark mode
-- [ ] "Go Deeper" toggle still expands Summa content
-- [ ] CCC §link in Baltimore cite still opens CCC reader
-- [ ] Empty state (failed fetch) doesn't leave visible gap
-
----
-
-### PMV-02 — Guided Prayer Grid: Visual Hierarchy for Immersive Experiences
-
-**What:** Restructure the primary prayer tools grid into a "Guided Prayer" section containing only the four immersive guided experiences: Rosary, Chaplet, Stations, and Examination.
-
-**Why:** These four tools share a common interaction model: they open the full-screen reader overlay, acquire wake lock, trigger sacred pause, and involve multi-step guided flows. They are the "I want to pray right now" tools. The Prayer Book, Novena Tracker, and First Friday are fundamentally different content types and need separate visual treatment (PMV-03, PMV-04).
-
-**Before:** `STICKY_IDS` = `{ prayerbook: true, rosary: true, examination: true }` — 3 sticky + 1 dynamic in a 2×2 grid.
-
-**After:** The 2×2 grid contains exactly Rosary, Chaplet, Examination, Stations. No dynamic slot — all four are always visible. During contextual promotion (Lent → Stations gets accent, 3 PM → Chaplet gets Hour of Mercy badge, etc.), the promoted card gets the existing `prayer-tool-card--promoted` treatment but stays in the same grid position.
-
-**Section title:** Change from "Prayer & Devotion" to "Guided Prayer"
-
+**CSS:**
 ```css
 .more-section-title--pray {
   font-family: var(--font-body);
@@ -139,136 +143,75 @@ html[data-theme="dark"] .more-zone--today #dailyFormation:not(:empty) {
   font-size: var(--text-base);
   letter-spacing: 0;
 }
+.prayer-tool-card--primary { min-height: 88px; }
 ```
 
-**Card grid:** Stays 2×2, but with slightly taller min-height to accommodate subtitle:
-```css
-.prayer-tools-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-}
-.prayer-tool-card--primary {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  min-height: 88px; /* was 80px — gives subtitle room */
-}
-```
-
-**JS changes in `more.js`:**
-
-New sticky IDs:
-```js
-var GUIDED_IDS = { rosary: true, chaplet: true, examination: true, stations: true };
-```
-
-The `ptCards` array stays the same, but `_resolveCardTiers()` is replaced with a simpler split:
-- Guided: filter by `GUIDED_IDS` → always rendered in `#prayerToolsGrid`
-- Prayer Book: rendered separately (PMV-03)
-- Trackers (novena, firstfriday): rendered separately (PMV-04)
-
-**Contextual promotion logic remains** — during Lent, Stations gets accent color. During Hour of Mercy, Chaplet gets active subtitle. Active novena or First Friday streak doesn't affect this grid — it affects the tracker strip (PMV-04).
+**Promotion rules (visual only, no position changes):**
+- Lent: Stations card gets --color-accent icon treatment
+- 3 PM: Chaplet subtitle turns green ("The Hour of Mercy")
+- Active confession < 7 days: Examination subtitle turns green
+- All promotions are color changes, never position changes
 
 **Test checklist:**
-- [ ] 2×2 grid shows exactly: Rosary, Chaplet, Examination, Stations
+- [ ] 2x2 grid: Rosary (top-left), Chaplet (top-right), Examination (bottom-left), Stations (bottom-right)
 - [ ] Section title reads "Guided Prayer"
-- [ ] Promoted card styling works (Lent → Stations accent, 3 PM → Chaplet active)
-- [ ] Each card opens correct reader module
-- [ ] Touch targets ≥ 44×44pt on all four cards
+- [ ] Grid order never changes regardless of promotions
+- [ ] Lent: Stations icon uses --color-accent / --color-accent-pale
+- [ ] 3 PM: Chaplet subtitle shows "The Hour of Mercy" with active styling
+- [ ] Each card opens correct reader module with sacred pause
+- [ ] Touch targets >= 44x44pt on all four cards (min-height 88px)
 - [ ] Dark mode renders correctly
-- [ ] Grid doesn't overflow on 320px viewport
+- [ ] Grid does not overflow on 320px (iPhone SE) viewport
 
 ---
 
-### PMV-03 — Prayer Book Gateway Card: Distinctive Collection Treatment
+### PMV-03 — Prayer Book Gateway: The "I Need the Words" Card
 
-**What:** Replace the Prayer Book's position in the 2×2 grid with a distinctive full-width "gateway card" below the guided prayer grid. This card signals "collection of content" rather than "single tool."
+**What:** Below the guided grid, a full-width card provides the entry point to the Prayer Book. Its distinct shape (wide instead of square) and descriptive subtitle signal "collection of content you browse" rather than "one tool you open."
 
-**Why:** The Prayer Book is a *reference library* of 31 prayers organized by 5 categories, plus 2 guided litanies and Lectio Divina. It's fundamentally different from the immersive guided prayer tools. Dorothy opens the Prayer Book to find the Hail Mary text. Marcus opens the Rosary for a guided meditation. These are different use cases that deserve different visual treatment.
+**Dorothy:** Scrolls past the guided grid. Sees a wider card with a book icon, "Prayer Book" in bold, and "31 prayers - Guided litanies - Lectio Divina" as a subtitle. A chevron tells her it opens something. She taps it. The Prayer Book list opens — no sacred pause (PBR-01). She finds the Guardian Angel Prayer in 5 seconds. The card looks different from the grid above — different shape = different purpose. The subtitle tells her this has 31 things inside.
 
-Currently the Prayer Book is one of 4 identical-looking grid cards. A 72-year-old can't distinguish "I want to look up a prayer" from "I want a guided 20-minute meditation."
+**Marcus:** Reads "31 prayers - Guided litanies - Lectio Divina." He thinks: "Wait, there are litanies? And Lectio Divina?" He taps it, discovers a searchable prayer collection and the Lectio Divina step-through tied to today's Gospel. The subtitle sold it — three phrases cover three discovery hooks.
 
-**HTML:** New element after `#prayerToolsGrid`:
+**Sarah:** Needs the Grace Before Meals text. The wide card below the guided grid reads as "the reference section" — different shape from the prayer tools above. She taps it, types "grace" in search, and has the 22-word prayer in 4 seconds. No confusion with the meditation tools.
+
+**CSS:**
+```css
+.prayerbook-gateway {
+  display: flex; align-items: center; gap: var(--space-3);
+  padding: var(--space-3) var(--space-4); margin-top: var(--space-3);
+  background: var(--color-surface); border: 1px solid var(--color-border-light);
+  border-left: 3px solid var(--color-sacred); border-radius: var(--radius-md);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  min-height: 56px; transition: box-shadow 0.15s, transform 0.15s;
+}
+.prayerbook-gateway:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-1px); }
+.prayerbook-gateway:active { transform: scale(0.98); }
+.prayerbook-gateway-icon {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--color-sacred-pale); color: var(--color-sacred);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.prayerbook-gateway-icon svg { width: 22px; height: 22px; }
+.prayerbook-gateway-body { flex: 1; min-width: 0; }
+.prayerbook-gateway-title {
+  font-size: var(--text-base); font-weight: var(--weight-semibold);
+  color: var(--color-text-primary); line-height: 1.3;
+}
+.prayerbook-gateway-subtitle {
+  font-size: var(--text-sm); color: var(--color-text-secondary);
+  margin-top: 2px; line-height: 1.3;
+}
+.prayerbook-gateway-chevron { width: 16px; height: 16px; color: var(--color-text-tertiary); flex-shrink: 0; }
+html[data-theme="dark"] .prayerbook-gateway { border-left-color: var(--color-sacred); background: var(--color-surface); }
+```
+
+**HTML:** Add after #prayerToolsGrid:
 ```html
 <div id="prayerBookGateway"></div>
 ```
 
-**Visual design:** Full-width card with horizontal layout — icon on left, text block on right, subtle chevron on far right. Visually distinct from the 2×2 grid above it through:
-- Full-width (not 50% column)
-- Slightly different background: `var(--color-surface)` with a subtle left-border accent
-- Descriptive subtitle showing content breadth
-
-```css
-.prayerbook-gateway {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  margin-top: var(--space-2);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  border-left: 3px solid var(--color-sacred);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 56px;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-.prayerbook-gateway:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
-}
-.prayerbook-gateway:active {
-  transform: scale(0.98);
-}
-.prayerbook-gateway-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-sacred-pale);
-  color: var(--color-sacred);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.prayerbook-gateway-icon svg {
-  width: 22px;
-  height: 22px;
-}
-.prayerbook-gateway-body {
-  flex: 1;
-  min-width: 0;
-}
-.prayerbook-gateway-title {
-  font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
-  line-height: 1.3;
-}
-.prayerbook-gateway-subtitle {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  margin-top: 2px;
-  line-height: 1.3;
-}
-.prayerbook-gateway-chevron {
-  width: 16px;
-  height: 16px;
-  color: var(--color-text-tertiary);
-  flex-shrink: 0;
-}
-
-/* Dark mode */
-html[data-theme="dark"] .prayerbook-gateway {
-  border-left-color: var(--color-sacred);
-  background: var(--color-surface);
-}
-```
-
-**JS rendering:** In `renderMore()`, after the guided prayer grid:
+**JS rendering:**
 ```js
 var pbGateway = document.getElementById('prayerBookGateway');
 if (pbGateway) {
@@ -276,7 +219,7 @@ if (pbGateway) {
     + '<div class="prayerbook-gateway-icon">' + ptIcons.prayerbook + '</div>'
     + '<div class="prayerbook-gateway-body">'
     + '<div class="prayerbook-gateway-title">Prayer Book</div>'
-    + '<div class="prayerbook-gateway-subtitle">31 prayers · 2 guided litanies · Lectio Divina</div>'
+    + '<div class="prayerbook-gateway-subtitle">31 prayers &#183; Guided litanies &#183; Lectio Divina</div>'
     + '</div>'
     + '<svg class="prayerbook-gateway-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
     + '</div>';
@@ -284,232 +227,91 @@ if (pbGateway) {
 ```
 
 **Test checklist:**
-- [ ] Full-width card renders below the 2×2 guided grid
-- [ ] Visually distinct from grid cards (left border accent, wider)
-- [ ] Subtitle reads "31 prayers · 2 guided litanies · Lectio Divina"
-- [ ] Opens Prayer Book reader on tap
-- [ ] Touch target ≥ 44×44pt
-- [ ] Hover state on desktop
+- [ ] Full-width card renders below the 2x2 guided grid
+- [ ] Visually distinct from grid cards — full width, left border accent, chevron
+- [ ] Subtitle: "31 prayers - Guided litanies - Lectio Divina"
+- [ ] Opens Prayer Book reader on tap (no sacred pause — PBR-01)
+- [ ] Touch target >= 44pt (min-height 56px)
 - [ ] Dark mode renders correctly
-- [ ] Chevron signals "opens a list" not "expands inline"
+- [ ] Desktop: hover shadow + lift
 
 ---
 
-### PMV-04 — Your Practice Strip: Compact Tracker Row
+### PMV-04 — Your Practice: The Tracking Companions
 
-**What:** Replace the secondary tools accordion ("More tools" toggle) with a visually lighter "Your Practice" strip showing the two tracking/accountability tools: Novena Tracker and First Friday & Saturday.
+**What:** Below the Prayer Book gateway, a compact "Your Practice" strip shows the two accountability tools: Novena Tracker and First Friday & Saturday.
 
-**Why:** These tools aren't prayer experiences — they're accountability companions. A novena tracker shows "Day 5 of 9." A First Friday tracker shows "7 of 9 First Fridays." They need a lighter visual weight than the guided prayer cards but should still be accessible. The current 3-column secondary grid at `--text-xs` is unreadable for Dorothy and invisible for Marcus.
+**Dorothy:** Has been praying the Surrender Novena for 5 days. Scrolls past the guided grid and Prayer Book card. Sees "Your Practice" label with two compact cards. Left card says "Novenas" with "Day 5 of 9" in green text. She taps it. The active green color drew her eye — she did not have to hunt for it. When nothing is active, the strip recedes with muted colors.
 
-**Design:** Horizontal strip with 2 compact cards. Not a grid — a flex row with equal halves. Lighter visual treatment than the guided prayer cards:
-- No colored icon circles (icon is inline, smaller)
-- Subtitle always visible (unlike current `--secondary` which hides subtitles)
-- Slightly recessed surface color
+**Marcus:** Does not use novenas yet. Sees "Novenas — Guided prayer tracking" and "First Fri & Sat — Track devotion." The labels tell him what these are. He taps Novenas, discovers 9 available, and starts the Surrender Novena. Next visit, the strip shows "Day 1 of 9" in green — he remembers to continue.
 
+**Sarah:** Has no active novena and no First Friday streak. The practice strip is muted — neutral colors. She scrolls past in half a second. It does not demand attention or add cognitive load. When she eventually starts a novena after Easter, the active state surfaces naturally.
+
+**CSS:**
 ```css
-.practice-strip {
-  display: flex;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
-}
 .practice-strip-label {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: var(--space-2);
+  font-size: var(--text-xs); font-weight: var(--weight-medium);
+  color: var(--color-text-tertiary); text-transform: uppercase;
+  letter-spacing: 0.06em; margin-bottom: var(--space-2); margin-top: var(--space-4);
 }
+.practice-strip { display: flex; gap: var(--space-2); }
 .practice-card {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--color-surface-hover);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 48px;
-  transition: background 0.15s;
+  flex: 1; display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-2) var(--space-3); background: var(--color-surface-hover);
+  border-radius: var(--radius-md); cursor: pointer;
+  -webkit-tap-highlight-color: transparent; min-height: 48px; transition: background 0.15s;
 }
-.practice-card:active {
-  background: var(--color-border-light);
-}
+.practice-card:active { background: var(--color-border-light); }
 .practice-card-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--color-surface);
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--color-surface); color: var(--color-text-secondary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
-.practice-card-icon svg {
-  width: 14px;
-  height: 14px;
-}
-.practice-card--active .practice-card-icon {
-  background: var(--color-sacred-pale);
-  color: var(--color-sacred);
-}
-.practice-card-body {
-  flex: 1;
-  min-width: 0;
-}
-.practice-card-title {
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-primary);
-  line-height: 1.2;
-}
-.practice-card-subtitle {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-  line-height: 1.3;
-  margin-top: 1px;
-}
-.practice-card--active .practice-card-subtitle {
-  color: var(--color-verified);
-  font-weight: var(--weight-medium);
-}
-
-/* Dark mode */
-html[data-theme="dark"] .practice-card {
-  background: var(--color-surface);
-}
-html[data-theme="dark"] .practice-card:active {
-  background: var(--color-surface-hover);
-}
-html[data-theme="dark"] .practice-card-icon {
-  background: var(--color-surface-hover);
-}
+.practice-card-icon svg { width: 14px; height: 14px; }
+.practice-card--active .practice-card-icon { background: var(--color-sacred-pale); color: var(--color-sacred); }
+.practice-card-body { flex: 1; min-width: 0; }
+.practice-card-title { font-size: var(--text-sm); font-weight: var(--weight-medium); color: var(--color-text-primary); line-height: 1.2; }
+.practice-card-subtitle { font-size: var(--text-xs); color: var(--color-text-secondary); line-height: 1.3; margin-top: 1px; }
+.practice-card--active .practice-card-subtitle { color: var(--color-verified); font-weight: var(--weight-medium); }
+html[data-theme="dark"] .practice-card { background: var(--color-surface); }
+html[data-theme="dark"] .practice-card:active { background: var(--color-surface-hover); }
+html[data-theme="dark"] .practice-card-icon { background: var(--color-surface-hover); }
 ```
 
-**HTML:** Replace `#prayerToolsSecondaryWrap` with:
+**HTML:** Replace #prayerToolsSecondaryWrap with:
 ```html
 <div id="practiceStrip"></div>
 ```
 
-**JS rendering:**
-```js
-var practiceStrip = document.getElementById('practiceStrip');
-if (practiceStrip) {
-  var novIsActive = novenaActive || !!seasonalNovenaLabel;
-  var ffIsActive = ffSub.active;
-
-  practiceStrip.innerHTML = '<div class="practice-strip-label">Your Practice</div>'
-    + '<div class="practice-strip">'
-    + '<div class="practice-card' + (novIsActive ? ' practice-card--active' : '') + '" onclick="openNovena()" role="button" tabindex="0">'
-    + '<div class="practice-card-icon">' + ptIcons.novena + '</div>'
-    + '<div class="practice-card-body">'
-    + '<div class="practice-card-title">Novenas</div>'
-    + '<div class="practice-card-subtitle">' + esc(novSub) + '</div>'
-    + '</div></div>'
-    + '<div class="practice-card' + (ffIsActive ? ' practice-card--active' : '') + '" onclick="openFirstFriday()" role="button" tabindex="0">'
-    + '<div class="practice-card-icon">' + ptIcons.firstfriday + '</div>'
-    + '<div class="practice-card-body">'
-    + '<div class="practice-card-title">First Fri & Sat</div>'
-    + '<div class="practice-card-subtitle">' + esc(ffSub.text) + '</div>'
-    + '</div></div>'
-    + '</div>';
-}
-```
-
 **Test checklist:**
-- [ ] Two compact cards side by side: Novenas and First Friday
-- [ ] "Your Practice" label above strip
-- [ ] Active state (green subtitle, sacred icon) when novena in progress or FF streak active
-- [ ] Subtitles always visible (not hidden like current secondary cards)
-- [ ] Touch targets ≥ 44×44pt (min-height 48px)
+- [ ] Two cards side by side: Novenas and First Friday
+- [ ] "Your Practice" uppercase label above strip
+- [ ] Active novena: green subtitle, sacred icon
+- [ ] Active FF streak: green subtitle, sacred icon
+- [ ] Inactive: muted text, neutral icon
+- [ ] Subtitles always visible and readable at --text-xs
+- [ ] Touch targets >= 44pt (min-height 48px)
 - [ ] Dark mode renders correctly
-- [ ] Text readable at `--text-sm` / `--text-xs` for all demographics
+- [ ] Both cards open correct reader modules
 
 ---
 
-### PMV-05 — Catholic Library: Surface Reference Tools
+### PMV-05 — Catholic Library: Surfacing CCC and Bible
 
-**What:** Replace the dashed-border library teaser and the hidden "Grow in Faith" `<details>` wrapper with a visible "Catholic Library" section containing card entry points for the app's reference tools.
+**What:** Replace the dashed "coming soon" library teaser and the hidden "Grow in Faith" details wrapper with a visible "Catholic Library" section. Two cards side by side: Catechism (CCC) and Sacred Scripture (Bible).
 
-**Why:** MassFinder has *five* deep reference tools — Explore (cross-reference engine), CCC (2,865 paragraphs), Bible (DRB + CPDV), Baltimore Catechism, and Summa Theologica — but none are discoverable from the More tab. Users only encounter them through cross-reference links or the daily formation card. Marcus, the 25-year-old, has no idea the app contains a full Catechism and Bible. The library teaser with its dashed border and "coming soon" text actively *discourages* exploration of content that already exists.
+**Why this matters:** The app contains a fully searchable Catechism (2,865 paragraphs with cross-references, section context, accent blockquotes, crossfade navigation) and a complete Bible (DRB + CPDV, per-book lazy loading, 73 books). These features transform MassFinder from "Mass finder + prayer tools" into "comprehensive Catholic spiritual companion." But right now there is no way to access them from the More tab. The library teaser says "coming soon" — which is false.
 
-**Design:** A 2×2 grid of "library cards" — similar to the guided prayer grid but with a distinct visual treatment that signals "reference content" rather than "prayer tool."
+**Dorothy:** Her priest quotes CCC 1324 in his homily. She opens the More tab, scrolls past the prayer tools, sees "Catholic Library" with two cards: Catechism and Sacred Scripture. She taps Catechism. The CCC reader opens. She navigates to 1324 and reads it. The card says "Catechism" with "2,865 paragraphs of Catholic teaching" as context. She knows exactly what she is getting.
 
-```css
-.library-section {
-  padding: var(--space-2) 0;
-}
-.library-section-title {
-  font-family: var(--font-body);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
-  font-size: var(--text-base);
-  letter-spacing: 0;
-  margin-bottom: var(--space-3);
-}
-.library-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-2);
-}
-.library-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 80px;
-  transition: box-shadow 0.15s, transform 0.15s;
-}
-.library-card:hover {
-  box-shadow: var(--shadow-card-hover);
-  transform: translateY(-1px);
-}
-.library-card:active {
-  transform: scale(0.98);
-}
-.library-card-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-hover);
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.library-card-icon svg {
-  width: 20px;
-  height: 20px;
-}
-.library-card-title {
-  font-size: var(--text-sm);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-primary);
-  line-height: 1.3;
-}
-.library-card-desc {
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-  line-height: 1.3;
-}
+**Marcus:** Scrolls past the prayer zone. Sees "Catholic Library" — two cards with subtle book-themed icons (not the prayer-sacred color scheme). He taps "Sacred Scripture" and discovers the app has a full DRB + CPDV Bible. Then he taps "Catechism" and finds paragraph 1 with a search function. He tells his RCIA group: "This app has everything."
 
-/* Dark mode */
-html[data-theme="dark"] .library-card-icon {
-  background: var(--color-surface);
-}
-```
+**Sarah:** Heard a CCC reference on a podcast (1324). Opens the app, scrolls past prayer tools, sees "Catholic Library," taps "Catechism," searches 1324. Found. 10 seconds. Previously impossible.
 
-**HTML:** Replace `#libraryTeaser` and restructure `#deeperZone`:
+**Visual distinction from prayer tools:** Library cards use border-radius: var(--radius-sm) (square-ish) icons with --color-surface-hover / --color-text-secondary coloring. Prayer tools use border-radius: 50% (circular) icons with --color-sacred-pale / --color-sacred coloring. This subtle shape+color difference signals "study mode" vs "prayer mode" without explanation.
+
+**HTML:** Replace #libraryTeaser and #deeperZone with:
 ```html
-<!-- Replace libraryTeaser + deeperZone with: -->
 <div class="more-zone more-zone--study" id="studyZone">
   <div class="library-section">
     <h2 class="library-section-title">Catholic Library</h2>
@@ -528,254 +330,208 @@ html[data-theme="dark"] .library-card-icon {
 </div>
 ```
 
-**Library card content:**
-
-| Card | Title | Description | Action | Icon |
-|------|-------|-------------|--------|------|
-| Explore | Explore | Cross-reference CCC, Bible & more | `openExplore({type:'landing'})` | Connected nodes SVG |
-| Catechism | Catechism | 2,865 paragraphs of Catholic teaching | `openCCC('1')` | Book with cross |
-| Bible | Sacred Scripture | Douay-Rheims & CPDV | `openBible()` | Open book |
-| Baltimore | Baltimore Catechism | Q&A format for the essentials | `openExplore({type:'landing'})` | Question mark in book |
-
-**SVG icons for library cards:**
+**Library card SVG icons:**
 ```js
 var libIcons = {
-  explore: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="7" r="2"/><circle cx="19" cy="7" r="2"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><line x1="7" y1="7" x2="9.5" y2="10.5"/><line x1="17" y1="7" x2="14.5" y2="10.5"/><line x1="7" y1="17" x2="9.5" y2="13.5"/><line x1="17" y1="17" x2="14.5" y2="13.5"/></svg>',
   catechism: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="14"/><line x1="8" y1="10" x2="16" y2="10"/></svg>',
-  bible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
-  baltimore: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><circle cx="12" cy="9" r="2.5"/><path d="M10 14h4"/></svg>'
+  bible: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'
 };
 ```
 
-**Study zone CSS:**
+**CSS:**
 ```css
-.more-zone--study {
-  padding: var(--space-2) 0;
+.more-zone--study { padding: var(--space-2) 0; }
+.library-section { margin-bottom: var(--space-2); }
+.library-section-title {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  color: var(--color-text-primary); font-size: var(--text-base);
+  letter-spacing: 0; margin-bottom: var(--space-3);
 }
-.faith-guides-disclosure {
-  margin-top: var(--space-4);
+.library-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.library-card {
+  display: flex; flex-direction: column; gap: var(--space-2);
+  padding: var(--space-3); background: var(--color-surface);
+  border: 1px solid var(--color-border-light); border-radius: var(--radius-md);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  min-height: 80px; transition: box-shadow 0.15s, transform 0.15s;
 }
+.library-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-1px); }
+.library-card:active { transform: scale(0.98); }
+.library-card-icon {
+  width: 36px; height: 36px; border-radius: var(--radius-sm);
+  background: var(--color-surface-hover); color: var(--color-text-secondary);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.library-card-icon svg { width: 20px; height: 20px; }
+.library-card-title { font-size: var(--text-sm); font-weight: var(--weight-semibold); color: var(--color-text-primary); line-height: 1.3; }
+.library-card-desc { font-size: var(--text-xs); color: var(--color-text-tertiary); line-height: 1.3; }
+html[data-theme="dark"] .library-card-icon { background: var(--color-surface); }
+
+.faith-guides-disclosure { margin-top: var(--space-4); }
 .faith-guides-summary {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) 0;
-  cursor: pointer;
-  list-style: none;
-  -webkit-tap-highlight-color: transparent;
-  min-height: 48px;
+  display: flex; align-items: center; gap: var(--space-2);
+  padding: var(--space-3) 0; cursor: pointer; list-style: none;
+  -webkit-tap-highlight-color: transparent; min-height: 48px;
 }
 .faith-guides-summary::-webkit-details-marker { display: none; }
-.faith-guides-label {
-  font-family: var(--font-body);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text-secondary);
-  font-size: var(--text-sm);
-  flex: 1;
-}
-.faith-guides-count {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-tertiary);
-  background: var(--color-surface-hover);
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-full);
-}
-.faith-guides-chevron {
-  width: 18px;
-  height: 18px;
-  color: var(--color-text-tertiary);
-  flex-shrink: 0;
-  transition: transform 0.2s var(--ease-out);
-}
-.faith-guides-disclosure[open] .faith-guides-chevron {
-  transform: rotate(180deg);
-}
-.faith-guides-body {
-  padding: var(--space-2) 0 var(--space-4);
-}
-html[data-theme="dark"] .faith-guides-count {
-  background: var(--color-surface);
-}
+.faith-guides-label { font-family: var(--font-body); font-weight: var(--weight-semibold); color: var(--color-text-secondary); font-size: var(--text-sm); flex: 1; }
+.faith-guides-count { font-size: var(--text-xs); font-weight: var(--weight-medium); color: var(--color-text-tertiary); background: var(--color-surface-hover); padding: 2px var(--space-2); border-radius: var(--radius-full); }
+.faith-guides-chevron { width: 18px; height: 18px; color: var(--color-text-tertiary); flex-shrink: 0; transition: transform 0.2s var(--ease-out); }
+.faith-guides-disclosure[open] .faith-guides-chevron { transform: rotate(180deg); }
+.faith-guides-body { padding: var(--space-2) 0 var(--space-4); }
+html[data-theme="dark"] .faith-guides-count { background: var(--color-surface); }
 ```
 
 **Test checklist:**
-- [ ] 2×2 library grid renders with 4 cards: Explore, Catechism, Bible, Baltimore
-- [ ] Section title "Catholic Library" visible without disclosure toggle
-- [ ] Each card opens correct reader module
-- [ ] Faith Guides moved below library grid, behind disclosure
+- [ ] 2 library cards side by side: Catechism and Sacred Scripture
+- [ ] Section title "Catholic Library" visible without any disclosure toggle
+- [ ] Library card icons are SQUARE radius with NEUTRAL colors (distinct from prayer tools)
+- [ ] Catechism card opens CCC reader via openCCC('1')
+- [ ] Bible card opens Bible reader via openBible()
+- [ ] "Coming soon" library teaser completely removed
+- [ ] Faith Guides below library, behind disclosure toggle
 - [ ] Guide count badge shows correct number
-- [ ] Cards have distinct visual treatment from prayer tools (square icon, not round)
-- [ ] Touch targets ≥ 44×44pt on all cards
+- [ ] Touch targets >= 44pt (min-height 80px)
 - [ ] Dark mode renders correctly
-- [ ] Library teaser (dashed placeholder) completely removed
 
 ---
 
-### PMV-06 — Zone Seam and Visual Rhythm
+### PMV-06 — Zone Seam and Visual Rhythm Cleanup
 
-**What:** Ensure zone seams between Today → Pray → Study provide clear visual separation, and remove the orphaned library teaser element.
+**What:** Clean zone seams between Today, Pray, and Study. Remove orphaned elements.
 
-**Before:** Zone seam between Practice and Go Deeper has a library teaser wedged between them. The `#libraryTeaser` div contains a dashed-border placeholder card.
+**Dorothy's full-scroll journey:** She sees three visual blocks separated by thin seams. Today zone (warm background): "today's briefing." Pray zone (neutral): "my prayer life." Study zone (neutral): "learning resources." Three zones, three purposes, found by scrolling to the right third of the page.
 
-**After:** Clean zone seam between Pray and Study. No more library teaser. The existing `.more-zone-seam` pattern continues.
+**Marcus's full-scroll journey:** He processes the page in 2 seconds on first visit. Three visual zones separated by seams. Daily stuff, prayer stuff, reference stuff. Matches Apple Health (Summary, Trends, Browse) mental model.
 
-**HTML cleanup in `index.html`:**
-```
-Remove: <div id="libraryTeaser"></div>
-Remove: The entire <details class="more-zone more-zone--deeper" id="deeperZone"> ... </details>
-Replace with: The new #studyZone structure from PMV-05
-```
+**Sarah's full-scroll journey:** One question: "Where is X?" Three zones = three places to look. Daily content at top. Prayer tools in middle. Reference at bottom. She finds anything in one scroll gesture.
 
-**JS cleanup in `more.js`:**
-- Remove the `#libraryTeaser` rendering block (~lines 1083-1097)
-- Remove the `#deeperZone` open/close memory logic (~lines 1174-1186)
-- Replace `#deeperCount` badge logic with `#guidesCount` targeting
+**HTML cleanup:**
+- Remove `<div id="libraryTeaser"></div>` entirely
+- Remove the entire `<details class="more-zone more-zone--deeper" id="deeperZone">...</details>`
+- Add zone seam before study zone
+- Add #studyZone structure from PMV-05
+
+**JS cleanup in more.js:**
+- Remove #libraryTeaser rendering block
+- Remove #deeperZone open/close memory logic + #deeperCount badge logic
+- Replace with #faithGuidesToggle open/close memory + #guidesCount targeting
+- Devotional guide rendering continues to target #devotionalCards (now inside #faithGuidesToggle)
 
 **Test checklist:**
-- [ ] No dashed library teaser visible
+- [ ] No dashed "coming soon" library teaser anywhere
 - [ ] Clean zone seam between Pray and Study
-- [ ] No console errors for missing DOM elements
-- [ ] Scroll length is reasonable (not too long)
+- [ ] Devotional guides render inside faith guides disclosure
+- [ ] Faith guides toggle remembers open/closed state via localStorage
+- [ ] No console errors from missing DOM elements
+- [ ] Total scroll length on iPhone SE is reasonable
 
 ---
 
 ### PMV-07 — Contextual Promotion Simplification
 
-**What:** Simplify the contextual promotion system. Currently it manages a "4th primary slot" dynamic, which is no longer needed since the guided grid is fixed at 4 cards. Contextual promotion now only affects visual emphasis (accent colors, active subtitles) rather than card placement.
+**What:** Replace _resolveCardTiers() with a simpler contextual state reader. Promotions are visual emphasis only — they never change card positions or composition.
 
-**Before:** `_resolveCardTiers()` manages sticky vs dynamic vs secondary with a promoted 4th slot.
+**Why position stability matters for all three personas:** Dorothy taps the top-left card for the Rosary every night. If one day the Chaplet swaps into that position because it is 3 PM, she is confused. Marcus expects the grid to look the same each visit. Sarah wants the Rosary to be where it was yesterday. No card ever moves, appears, or disappears based on context.
 
-**After:** Replace `_resolveCardTiers()` with a simpler `_getContextualState()` that returns promotion flags:
 ```js
 function _getContextualState() {
-  var state = {
-    stationsAccent: isLentSeason(),
-    chapletActive: _getChapletSubtitle() === 'The Hour of Mercy',
-    novenaActive: false,
-    novenaLabel: _getNovenaSubtitle(),
-    ffActive: false,
-    ffLabel: ''
-  };
-
-  // Novena detection
-  var novSub = state.novenaLabel;
-  state.novenaActive = novSub.indexOf('Day') === 0 || novSub.indexOf('in progress') !== -1;
-
-  // Seasonal novena override
-  // [existing seasonal novena detection logic]
-
-  // First Friday/Saturday
+  var ctx = {};
+  ctx.stationsLent = isLentSeason();
+  ctx.chapletHourOfMercy = false;
+  var nowH = new Date().getHours();
+  var nowM = new Date().getMinutes();
+  if ((nowH === 14 && nowM >= 30) || nowH === 15) ctx.chapletHourOfMercy = true;
+  var confStatus = require('./examination.js').getConfessionStatus();
+  ctx.examRecent = confStatus && confStatus.daysAgo <= 7;
+  ctx.examNudge = confStatus && confStatus.daysAgo > 30;
+  ctx.novenaLabel = _getNovenaSubtitle();
+  ctx.novenaActive = ctx.novenaLabel.indexOf('Day') === 0 || ctx.novenaLabel.indexOf('in progress') !== -1;
+  // Seasonal novena override logic stays here
   var ffSub = _getFirstFridaySubtitle();
-  state.ffActive = ffSub.active;
-  state.ffLabel = ffSub.text;
-
-  return state;
+  ctx.ffLabel = ffSub.text;
+  ctx.ffActive = ffSub.active;
+  return ctx;
 }
 ```
 
-This simplifies the rendering code significantly — each section (guided grid, prayer book, practice strip) reads from the context state independently.
-
 **Test checklist:**
-- [ ] Lent: Stations card gets accent color treatment
-- [ ] 3 PM: Chaplet subtitle shows "The Hour of Mercy" in green
-- [ ] Active novena: Novenas practice card shows active state
-- [ ] Near First Friday: FF practice card shows active state
-- [ ] Seasonal novena: Novenas practice card shows seasonal label
-- [ ] No "4th slot" behavior — all 4 guided cards always visible
+- [ ] Grid always: Rosary (top-left), Chaplet (top-right), Exam (bottom-left), Stations (bottom-right)
+- [ ] Lent: Stations icon accent color. No position change.
+- [ ] 3 PM: Chaplet subtitle green. No position change.
+- [ ] Recent confession: Exam subtitle green. No position change.
+- [ ] Active novena: Novenas practice card green. No grid change.
+- [ ] Seasonal novena label overrides default subtitle.
+- [ ] Near First Friday: FF practice card green. No grid change.
 
 ---
 
 ## Implementation Sequence
 
-**Recommended order (minimize merge conflicts):**
-
-1. **PMV-01** (Daily Formation move) — HTML-only, no cascading risk
-2. **PMV-06** (Cleanup library teaser + deeper zone) — removes old structure
-3. **PMV-05** (Catholic Library section) — builds new Study zone
-4. **PMV-02** (Guided Prayer grid) — restructures Zone 2 grid
-5. **PMV-03** (Prayer Book gateway) — adds new card format
-6. **PMV-04** (Practice strip) — replaces secondary tools
-7. **PMV-07** (Promotion simplification) — refactors JS, cleanest last
-
-Items 2–5 can be batched into one commit if the implementer prefers.
+1. PMV-06 — Remove library teaser + deeper zone. Add study zone HTML.
+2. PMV-05 — Build library grid (CCC + Bible) and faith guides disclosure.
+3. PMV-02 — Restructure prayer grid to fixed 4-card guided set.
+4. PMV-03 — Add Prayer Book gateway card.
+5. PMV-04 — Replace secondary tools accordion with practice strip.
+6. PMV-07 — Replace _resolveCardTiers() with _getContextualState().
 
 ---
 
-## Cascading Impact Analysis
+## CSS Classes to Retire (mark, do not delete)
 
-| Module | Impact | Notes |
-|--------|--------|-------|
-| `src/more.js` | **Heavy** | Restructured rendering for all 3 sections; `_resolveCardTiers()` replaced |
-| `css/app.css` | **Heavy** | New CSS classes for gateway, practice strip, library grid. Some existing `.prayer-tool-*` classes can be retired |
-| `index.html` | **Medium** | DOM restructure: move dailyFormation, remove libraryTeaser, replace deeperZone with studyZone |
-| `src/app.js` | **Light** | `_renderDailyFormation()` targets element by ID — DOM move is transparent. Verify render timing. |
-| `src/devotions.js` | **None** | Still renders into `#devotionalCards`, which moves inside the new Study zone |
-| `src/prayerbook.js` | **None** | Opens via `openPrayerBook()` — entry point is the same |
-| `src/novena.js` | **None** | Opens via `openNovena()` — entry point is the same |
-| All prayer modules | **None** | All use `reader.readerOpen()` — agnostic to More tab layout |
-
----
-
-## CSS Classes to Retire After Implementation
-
-After PMV is fully implemented, these classes are dead:
-- `.prayer-tool-card--secondary` (replaced by `.practice-card`)
-- `.prayer-tools-secondary` (replaced by `.practice-strip`)
-- `.prayer-tools-more` / `.prayer-tools-more-toggle` / `.prayer-tools-more-chevron` (removed — no more "More tools" accordion)
-- `.library-teaser` (replaced by `.library-grid` / `.library-card`)
-- `.more-zone--deeper` / `.more-zone-deeper-toggle` / `.more-zone-deeper-count` / `.more-zone-deeper-chevron` / `.more-zone-deeper-body` (replaced by `.more-zone--study` / `.faith-guides-*`)
-
-Do NOT remove these during implementation — mark them with `/* PMV: retire after v2 stable */` and clean up in a follow-up dead CSS pass.
+Mark with `/* PMV: retire after v2 stable */`:
+- .prayer-tool-card--secondary
+- .prayer-tools-secondary
+- .prayer-tools-more / .prayer-tools-more-toggle / .prayer-tools-more-chevron
+- .library-teaser
+- .more-zone--deeper / .more-zone-deeper-toggle / .more-zone-deeper-count / .more-zone-deeper-chevron / .more-zone-deeper-body
 
 ---
 
 ## Visual Summary
 
 ```
-┌─────────────────────────────────────┐
-│ ▣ TODAY                             │
-│   Saint of the Day                  │
-│   Seasonal Moment                   │
-│   Today's Readings                  │
-│   Daily Formation (Q&A + Summa)  ← NEW POSITION
-│                                     │
-├─── zone seam ───────────────────────┤
-│                                     │
-│ GUIDED PRAYER                       │
-│ ┌──────────┐ ┌──────────┐          │
-│ │ ◎ Rosary │ │ ✦ Chaplet│          │
-│ │ Glorious │ │ On beads │          │
-│ └──────────┘ └──────────┘          │
-│ ┌──────────┐ ┌──────────┐          │
-│ │ ♡ Exam   │ │ ✝ Stat.  │          │
-│ │ Prepare  │ │ 14 stns  │          │
-│ └──────────┘ └──────────┘          │
-│                                     │
-│ ┌───────────────────────────────┐   │
-│ │ 📖 Prayer Book            ›  │   │  ← GATEWAY CARD
-│ │    31 prayers · 2 litanies    │   │
-│ └───────────────────────────────┘   │
-│                                     │
-│ YOUR PRACTICE                       │
-│ ┌──────────────┐┌──────────────┐   │  ← COMPACT STRIP
-│ │ 🕯 Novenas   ││ ○○ First Fri ││  │
-│ │ Day 5 of 9   ││ 7 of 9       ││  │
-│ └──────────────┘└──────────────┘   │
-│                                     │
-├─── zone seam ───────────────────────┤
-│                                     │
-│ CATHOLIC LIBRARY                    │
-│ ┌──────────┐ ┌──────────┐          │
-│ │ ⊕ Explore│ │ ✚ CCC    │          │  ← NEW VISIBLE SECTION
-│ │ Cross-ref│ │ 2,865 §§ │          │
-│ └──────────┘ └──────────┘          │
-│ ┌──────────┐ ┌──────────┐          │
-│ │ 📖 Bible │ │ ? Baltim.│          │
-│ │ DRB+CPDV │ │ Q&A      │          │
-│ └──────────┘ └──────────┘          │
-│                                     │
-│ ▸ Faith Guides (6 guides)       ▾  │  ← DISCLOSURE
-│                                     │
-└─────────────────────────────────────┘
++-------------------------------------+
+| TODAY (warm sacred background)       |
+|   Saint of the Day                   |
+|   Seasonal Moment                    |
+|   Today's Readings                   |
++--- zone seam -----------------------+
+|                                      |
+| GUIDED PRAYER                        |
+| +----------+ +----------+           |
+| | (o) Rosa | | (*) Chap |           |
+| | Glorious | | On beads |           |
+| +----------+ +----------+           |
+| +----------+ +----------+           |
+| | (<3) Exam| | (+) Stat |           |
+| | Prepare  | | Lenten   |           |
+| +----------+ +----------+           |
+|                                      |
+| +-------------------------------+    |
+| | [book] Prayer Book         >  |    |
+| |   31 prayers - Litanies - LD  |    |
+| +-------------------------------+    |
+|                                      |
+| YOUR PRACTICE                        |
+| +--------------++--------------+     |
+| | Novenas      || First Fri    |     |
+| | Day 5 of 9   || 7 of 9      |     |
+| +--------------++--------------+     |
+|                                      |
+| [Daily Formation stays as-is]        |
++--- zone seam -----------------------+
+|                                      |
+| CATHOLIC LIBRARY                     |
+| +----------+ +----------+           |
+| | [=] CCC  | | [=] Bible|           |
+| | 2,865 pp | | DRB+CPDV |           |
+| +----------+ +----------+           |
+|                                      |
+| > Faith Guides (6 guides)        v  |
++-------------------------------------+
+
+Icon shape key:
+  (o) (<3) (*) (+) = ROUND, sacred colors (prayer)
+  [=] [=] = SQUARE-RADIUS, neutral colors (library)
 ```

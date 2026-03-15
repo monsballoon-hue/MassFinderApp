@@ -327,26 +327,28 @@ Future specs should continue this pattern with new prefixes.
 | SLV-10 | Readings Liturgical Day Header (day name + color dot above daily readings) | Done | P3 |
 | SLV-11 | Examination Centering Screen Enhancement (warm gold treatment, sacred glow, larger prayer text) | Done | P3 |
 
-### UX_Spec_Prayer_More_V2.md (PMV series)
-**Created:** 2026-03-15 · **Status:** Spec ready
+### UX_Spec_Prayer_More_V2.md (PMV series) — Amended
+**Created:** 2026-03-15 · **Amended:** 2026-03-15 · **Status:** Spec ready
 **Backlog items:** IDEA-101 (restructure More tab prayer/study zones)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PMV.md
 **Depends on:** None — all reference modules are entry-point-agnostic
+**Amendment:** PMV-01 dropped (Daily Formation stays put). PMV-05 revised to CCC + Bible only (Explore, Baltimore, Summa deferred). Persona walkthroughs expanded.
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PMV-01 | Daily Formation: Relocate to Today Zone | Queued | P1 |
+| ~~PMV-01~~ | ~~Daily Formation: Relocate to Today Zone~~ | Dropped | — |
 | PMV-02 | Guided Prayer Grid: Fixed 2×2 Immersive Experiences | Queued | P1 |
 | PMV-03 | Prayer Book Gateway Card: Distinctive Collection Treatment | Queued | P1 |
 | PMV-04 | Your Practice Strip: Compact Tracker Row | Queued | P1 |
-| PMV-05 | Catholic Library: Surface Reference Tools | Queued | P1 |
+| PMV-05 | Catholic Library: CCC + Bible (2 cards) | Queued | P1 |
 | PMV-06 | Zone Seam and Visual Rhythm Cleanup | Queued | P2 |
 | PMV-07 | Contextual Promotion Simplification | Queued | P2 |
 
-### UX_Spec_Prayer_Book_Refinements.md (PBR series)
-**Created:** 2026-03-15 · **Status:** Spec ready
+### UX_Spec_Prayer_Book_Refinements.md (PBR series) — Amended
+**Created:** 2026-03-15 · **Amended:** 2026-03-15 · **Status:** Spec ready
 **Backlog items:** IDEA-102 (Prayer Book internal UX)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PBR.md
 **Depends on:** PMV series (implement after PMV)
+**Amendment:** Prayer IDs corrected to match prayerbook.json (underscores not hyphens). Persona walkthroughs expanded.
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
 | PBR-01 | Remove Sacred Pause from Prayer Book | Queued | P1 |

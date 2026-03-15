@@ -1353,20 +1353,20 @@ Add `text_es` fields to prayerbook.json for standalone prayers across 5 categori
 **Category:** enhancement
 **Status:** spec-ready
 **Date logged:** 2026-03-15
+**Amended:** 2026-03-15
 **Source:** UX evaluation
 **Related:** IDEA-067, IDEA-068, IDEA-069, IDEA-071
-**Spec ref:** PMV-01 through PMV-07
+**Spec ref:** PMV-02 through PMV-07 (PMV-01 dropped)
 
-The More tab's "Prayer & Devotion" zone has outgrown its flat 2×2 grid container. 7 prayer tools, a library teaser, and hidden reference content all compete for attention with no visual hierarchy. Content has evolved into four distinct types (guided prayer, quick reference, tracking, and study) but all receive identical card treatment.
+The More tab's "Prayer & Devotion" zone has outgrown its flat 2x2 grid container. 7 prayer tools, a misleading "coming soon" library teaser, and hidden reference content all compete for attention with no visual hierarchy.
 
-V2 restructure:
-- PMV-01: Move Daily Formation (Baltimore Q&A + Summa) into Today zone
-- PMV-02: Fixed 2×2 guided prayer grid (Rosary, Chaplet, Exam, Stations)
+V2 restructure (amended — Explore/Baltimore/Summa deferred, Daily Formation stays put):
+- PMV-02: Fixed 2x2 guided prayer grid (Rosary, Chaplet, Exam, Stations) — position-stable
 - PMV-03: Prayer Book as distinctive full-width gateway card
 - PMV-04: Compact "Your Practice" tracker strip (Novenas, First Friday)
-- PMV-05: New visible "Catholic Library" section (Explore, CCC, Bible, Baltimore)
+- PMV-05: New visible "Catholic Library" section (CCC + Bible only)
 - PMV-06: Zone seam cleanup, remove library teaser, restructure Faith Guides
-- PMV-07: Simplify contextual promotion to visual emphasis only
+- PMV-07: Simplify contextual promotion to visual emphasis only (no position changes)
 
 Full spec: `docs/plans/UX_Spec_Prayer_More_V2.md`
 Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`
