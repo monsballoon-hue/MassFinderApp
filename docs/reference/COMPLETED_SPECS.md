@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (10 specs implemented, 1 in-progress, 1 queued)
+**Last updated:** 2026-03-14 (11 specs implemented, 0 in-progress, 0 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -128,7 +128,7 @@ Future specs should continue this pattern with new prefixes.
 | FGP-04 | Rosary: "Mysteries Only" Condensed Mode | Done | P3 |
 
 ### UX_Spec_Backlog_Triage_Round3.md (BT3 series)
-**Created:** 2026-03-14 · **Status:** In progress (24/28 done, 4 Phase 3 remaining)
+**Created:** 2026-03-14 · **Status:** Implemented
 **Backlog items:** IDEA-023, IDEA-024, IDEA-025, IDEA-026, IDEA-027, IDEA-028, IDEA-029, IDEA-030, IDEA-031, IDEA-033, IDEA-034, IDEA-035, IDEA-036, IDEA-037, IDEA-038, IDEA-039, IDEA-040, IDEA-041, IDEA-042, IDEA-043, IDEA-044, IDEA-045, IDEA-046, IDEA-048, IDEA-049, IDEA-050, IDEA-051, IDEA-052
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT3.md
 | ID | Title | Status | Priority |
@@ -145,17 +145,17 @@ Future specs should continue this pattern with new prefixes.
 | BT3-10 | Exam: Full-Screen Modal (ref BT3-03) | Done | P2 |
 | BT3-11 | Remove Fasting Banner from More Tab | Done | P2 |
 | BT3-12 | Remove Gospel Special Formatting | Done | P2 |
-| BT3-13 | Novena Card Elevation When Active | Queued | P3 |
+| BT3-13 | Novena Card Elevation When Active | Done | P3 |
 | BT3-14 | Faith Guides: Remove Toggle and TLM | Done | P2 |
-| BT3-15 | Remove Holy Days Dispensation Footnote | Queued | P3 |
+| BT3-15 | Remove Holy Days Dispensation Footnote | Done | P3 |
 | BT3-16 | Faith Guides Dark Mode Readability | Done | P1 |
 | BT3-17 | Find Tab Sort Text Too Small | Done | P1 |
 | BT3-18 | Saved Tab Schedule Font Too Small | Done | P1 |
-| BT3-19 | Saved Tab Alternating Row Colors | Queued | P3 |
+| BT3-19 | Saved Tab Alternating Row Colors | Done | P3 |
 | BT3-20 | Chip Bar Swipe Triggers Refresh | Done | P1 |
 | BT3-21 | YC Cards Subtler Design | Done | P2 |
 | BT3-22 | Bottom Nav Bar Fixed Position Defense | Done | P1 |
-| BT3-23 | Rosary Opening Prayers Collapsible | Queued | P2 |
+| BT3-23 | Rosary Opening Prayers Collapsible | Done | P2 |
 | BT3-24 | CCC Pills Not Rendering in Faith Guides | Done | P1 |
 | BT3-25 | Remove About Section from Settings | Done | P2 |
 | BT3-26 | Map Chips to Bottom on Mobile | Done | P1 |
@@ -194,7 +194,7 @@ Future specs should continue this pattern with new prefixes.
 | CSO-08 | Verification Counts | Done | P3 |
 
 ### UX_Spec_Seasonal_Offerings_Triage.md (SOT series)
-**Created:** 2026-03-14 · **Status:** Phase 1 Implemented (10/15 done, 5 deferred)
+**Created:** 2026-03-14 · **Status:** Phase 1 Implemented (11/15 done, 4 deferred)
 **Backlog items:** IDEA-053, IDEA-054, IDEA-055, IDEA-056, IDEA-057, IDEA-058, IDEA-059, IDEA-060, IDEA-061, IDEA-062, IDEA-063, IDEA-064, IDEA-065, IDEA-066
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_SOT.md
 | ID | Title | Status | Priority |
@@ -210,7 +210,7 @@ Future specs should continue this pattern with new prefixes.
 | SOT-09 | Monthly Devotion Card (IDEA-053) | Done | P2 |
 | SOT-10 | O Antiphons — Dec 17-23 (IDEA-054) | Done | P2 |
 | SOT-11 | Advent Wreath Devotion (IDEA-058) | Deferred Phase 2 | P3 |
-| SOT-12 | First Friday/Saturday Tracker (IDEA-059) | Deferred Phase 3 | P3 |
+| SOT-12 | First Friday/Saturday Tracker (IDEA-059) | Done | P3 |
 | SOT-13 | Seasonal Scripture Spotlight (IDEA-063) | Deferred Phase 3 | P3 |
 | SOT-14 | Marian Consecration Countdown (IDEA-064) | Deferred Phase 4 | P3 |
 | SOT-15 | Ember Days Awareness (IDEA-062) | Deferred Phase 3 | P3 |
