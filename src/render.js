@@ -125,35 +125,55 @@ function renderCards() {
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
   document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml && _countText ? ' ' : '') + _clearHtml;
 
-  // PHF-01b: Confession guide hint when confession filter active
-  var confHint = document.getElementById('confessionHint');
-  if (confHint) {
-    if (state.currentFilter === 'confession' && !sessionStorage.getItem('mf-conf-hint-dismissed')) {
-      confHint.style.display = '';
-      confHint.innerHTML = '<div class="confession-hint-inner">'
-        + '<span>Not sure what to expect?</span>'
-        + '<span class="confession-hint-link" onclick="openConfessionGuide()">How Confession works \u203A</span>'
-        + '<button class="confession-hint-dismiss" onclick="this.parentElement.parentElement.style.display=\'none\';sessionStorage.setItem(\'mf-conf-hint-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
-        + '</div>';
-    } else {
-      confHint.style.display = 'none';
-    }
-  }
+  // CLH-01: Data-driven contextual filter hints
+  var filterHintEl = document.getElementById('filterHint');
+  if (filterHintEl) {
+    var _hintConfig = {
+      confession: {
+        text: 'Not sure what to expect?',
+        link: 'How Confession works \u203A',
+        action: 'openConfessionGuide()',
+        storageKey: 'mf-conf-hint-dismissed'
+      },
+      adoration: {
+        text: 'New to Adoration?',
+        link: 'What to expect \u203A',
+        action: 'openAdorationGuide()',
+        storageKey: 'mf-ador-hint-dismissed'
+      },
+      latin: {
+        text: 'New to Latin Mass?',
+        link: 'What to expect \u203A',
+        action: 'openLatinMassGuide()',
+        storageKey: 'mf-latin-hint-dismissed'
+      },
+      spanish: {
+        text: 'Prayers available in Spanish',
+        link: 'Set prayer language \u203A',
+        action: 'openSettings()',
+        storageKey: 'mf-spanish-hint-dismissed',
+        condition: function() {
+          return localStorage.getItem('mf-prayer-lang') !== 'es';
+        }
+      }
+    };
 
-  // I18N: Spanish prayer language hint when Spanish filter active
-  var spanishHint = document.getElementById('spanishHint');
-  if (spanishHint) {
-    var isSpanishFilter = state.currentFilter === 'spanish';
-    var alreadySpanish = localStorage.getItem('mf-prayer-lang') === 'es';
-    if (isSpanishFilter && !alreadySpanish && !sessionStorage.getItem('mf-spanish-hint-dismissed')) {
-      spanishHint.style.display = '';
-      spanishHint.innerHTML = '<div class="confession-hint-inner">'
-        + '<span>Prayers available in Spanish</span>'
-        + '<span class="confession-hint-link" onclick="openSettings()">Set prayer language \u203A</span>'
-        + '<button class="confession-hint-dismiss" onclick="this.parentElement.parentElement.style.display=\'none\';sessionStorage.setItem(\'mf-spanish-hint-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+    var _hint = _hintConfig[state.currentFilter];
+    var _showHint = _hint
+      && !sessionStorage.getItem(_hint.storageKey)
+      && (!_hint.condition || _hint.condition());
+
+    if (_showHint) {
+      filterHintEl.style.display = '';
+      filterHintEl.innerHTML = '<div class="filter-hint-inner">'
+        + '<span>' + _hint.text + '</span>'
+        + '<span class="filter-hint-link" onclick="' + _hint.action + '">' + _hint.link + '</span>'
+        + '<button class="filter-hint-dismiss" onclick="this.closest(\'.filter-hint\').style.display=\'none\';sessionStorage.setItem(\'' + _hint.storageKey + '\',\'1\')" aria-label="Dismiss hint">'
+        + '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'
+        + '</button>'
         + '</div>';
     } else {
-      spanishHint.style.display = 'none';
+      filterHintEl.style.display = 'none';
     }
   }
 

@@ -2180,12 +2180,12 @@ html[data-theme="dark"] .reader-footer { border-top-color:var(--color-border); }
 .conf-guide-nudge-link { color:var(--color-info);font-weight:var(--weight-semibold); }
 html[data-theme="dark"] .conf-guide-nudge { background:color-mix(in srgb, var(--color-info) 6%, transparent);border-color:color-mix(in srgb, var(--color-info) 10%, transparent); }
 
-/* PHF-01b: Confession guide hint on Find tab */
-.confession-hint { padding:0 var(--space-4);max-width:var(--max-width);margin:0 auto; }
-.confession-hint-inner { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);background:color-mix(in srgb, var(--color-info) 4%, transparent);border-radius:var(--radius-sm);font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:var(--space-2); }
-.confession-hint-link { color:var(--color-info);font-weight:var(--weight-semibold);cursor:pointer;white-space:nowrap; }
-.confession-hint-dismiss { margin-left:auto;background:none;border:none;color:var(--color-text-tertiary);font-size:var(--text-xs);cursor:pointer;padding:var(--space-1);min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent; }
-html[data-theme="dark"] .confession-hint-inner { background:color-mix(in srgb, var(--color-info) 5%, transparent); }
+/* CLH-01: Contextual filter hints (generalized from PHF-01b) */
+.filter-hint { padding:0 var(--space-4);max-width:var(--max-width);margin:0 auto; }
+.filter-hint-inner { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);background:color-mix(in srgb, var(--color-info) 4%, transparent);border-radius:var(--radius-sm);font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:var(--space-2); }
+.filter-hint-link { color:var(--color-info);font-weight:var(--weight-semibold);cursor:pointer;white-space:nowrap; }
+.filter-hint-dismiss { margin-left:auto;background:none;border:none;color:var(--color-text-tertiary);cursor:pointer;padding:var(--space-2);min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent; }
+html[data-theme="dark"] .filter-hint-inner { background:color-mix(in srgb, var(--color-info) 5%, transparent); }
 
 /* PHF-02b: Persistent swipe cue in rosary footer */
 .rosary-nav-swipe-cue { text-align:center;font-size:var(--text-xs);color:var(--color-text-tertiary);padding-top:var(--space-2);opacity:0.5;letter-spacing:0.02em; }

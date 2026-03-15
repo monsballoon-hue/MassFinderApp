@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (21 specs implemented, 0 in-progress, 6 queued)
+**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 0 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -329,29 +329,29 @@ Future specs should continue this pattern with new prefixes.
 | SLV-11 | Examination Centering Screen Enhancement (warm gold treatment, sacred glow, larger prayer text) | Done | P3 |
 
 ### UX_Spec_Prayer_More_V2.md (PMV series) — Final
-**Created:** 2026-03-15 · **Status:** Spec ready
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-101 (prayer tools grid restructure)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PMV.md
 **Scope:** Zone 2 only. Zone 1, Zone 3, library teaser, CCC/Bible surfacing untouched.
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PMV-02 | Fixed 2×2 Guided Prayer Grid | Queued | P1 |
-| PMV-03 | Prayer Book Full-Width Gateway Card | Queued | P1 |
-| PMV-04 | Your Practice Compact Tracker Strip | Queued | P1 |
-| PMV-07 | Contextual Promotion Simplification | Queued | P1 |
+| PMV-02 | Fixed 2×2 Guided Prayer Grid | Done | P1 |
+| PMV-03 | Prayer Book Full-Width Gateway Card | Done | P1 |
+| PMV-04 | Your Practice Compact Tracker Strip | Done | P1 |
+| PMV-07 | Contextual Promotion Simplification | Done | P1 |
 
 ### UX_Spec_Prayer_Book_Refinements.md (PBR series) — Final
-**Created:** 2026-03-15 · **Status:** Spec ready
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-102 (Prayer Book internal navigation)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PBR.md
-**Depends on:** PMV series (implement after PMV)
+**Depends on:** PMV series (implemented)
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PBR-01 | Remove Sacred Pause from Prayer Book | Queued | P1 |
-| PBR-02 | Quick Access Pills for Essential Prayers | Queued | P1 |
-| PBR-03 | Guided Content Visual Distinction | Queued | P2 |
-| PBR-04 | Prayer Length Indicators | Queued | P3 |
-| PBR-05 | Recently Opened Prayers | Queued | P2 |
+| PBR-01 | Remove Sacred Pause from Prayer Book | Done | P1 |
+| PBR-02 | Quick Access Pills for Essential Prayers | Done | P1 |
+| PBR-03 | Guided Content Visual Distinction | Done | P2 |
+| PBR-04 | Prayer Length Indicators | Done | P3 |
+| PBR-05 | Recently Opened Prayers | Done | P2 |
 
 ### UX_Spec_Backlog_Triage_Round_4.md (BT4 series)
 **Created:** 2026-03-15 · **Status:** Implemented
@@ -424,40 +424,40 @@ Future specs should continue this pattern with new prefixes.
 | OBW-08 | Desktop & Tablet Adaptation | Done | P2 |
 
 ### UX_Spec_Contextual_Filter_Hints.md (CLH series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-120, IDEA-121, IDEA-122
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_CLH.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| CLH-01 | Generalize Filter Hints to Data-Driven System | Queued | P1 |
-| CLH-02 | Register Adoration Guide as Reader Module | Queued | P1 |
-| CLH-03 | Adoration Filter Hint | Queued | P2 |
-| CLH-04 | Fix Dismiss Button Touch Target (44pt) | Queued | P1 |
-| CLH-05 | Latin Filter Hint (Placeholder — Needs Content) | Content Ready (CON-31) | P3 |
+| CLH-01 | Generalize Filter Hints to Data-Driven System | Done | P1 |
+| CLH-02 | Register Adoration Guide as Reader Module | Done | P1 |
+| CLH-03 | Adoration Filter Hint | Done | P2 |
+| CLH-04 | Fix Dismiss Button Touch Target (44pt) | Done | P1 |
+| CLH-05 | Latin Filter Hint | Done | P3 |
 
 ### Content_Spec_LatinMass.md (CON-30)
-**Created:** 2026-03-15 · **Status:** Approved with corrections (CRX series applied)
+**Created:** 2026-03-15 · **Status:** Implemented (with CRX corrections)
 | ID | Title | Status |
 |----|-------|--------|
-| CON-30 | What to Expect at a Latin Mass — devotional guide | Approved w/ corrections |
+| CON-30 | What to Expect at a Latin Mass — devotional guide | Done |
 
 ### Review_Fix_LatinMass.md (CRX series)
-**Created:** 2026-03-15 · **Status:** Applied to CON-30 spec text
+**Created:** 2026-03-15 · **Status:** Implemented (applied to CON-30 code)
 **Parent spec:** Content_Spec_LatinMass.md (CON-30)
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_CRX.md
 | ID | Title | Status |
 |----|-------|--------|
-| CRX-01 | Terminology — add "1962 Roman Missal" alongside "Extraordinary Form" | Applied |
-| CRX-02 | Congregational responses — qualify for Dialogue Mass and Sung Mass | Applied |
-| CRX-03 | Source citation — correct RS §92 to 1962 Missale Romanum rubrics | Applied |
-| CRX-04 | Arms crossed for blessing — remove, advise remaining in pew | Applied |
+| CRX-01 | Terminology — add "1962 Roman Missal" alongside "Extraordinary Form" | Done |
+| CRX-02 | Congregational responses — qualify for Dialogue Mass and Sung Mass | Done |
+| CRX-03 | Source citation — correct RS §92 to 1962 Missale Romanum rubrics | Done |
+| CRX-04 | Arms crossed for blessing — remove, advise remaining in pew | Done |
 
 ### Content_Spec_LatinFilterHint.md (CON-31)
-**Created:** 2026-03-15 · **Status:** Approved by Catholic Review
+**Created:** 2026-03-15 · **Status:** Implemented
 | ID | Title | Status |
 |----|-------|--------|
-| CON-31a | Latin filter hint copy ("New to Latin Mass? What to expect ›") | Approved |
-| CON-31b | Reader overlay title | Approved |
-| CON-31c | CTA button text ("Find Latin Mass near you") | Approved |
+| CON-31a | Latin filter hint copy ("New to Latin Mass? What to expect ›") | Done |
+| CON-31b | Reader overlay title | Done |
+| CON-31c | CTA button text ("Find Latin Mass near you") | Done |
 
-> **Note:** CON-30 + CON-31 together complete the content needed for CLH-05 (Latin Filter Hint). Engineering implementation requires CLH-01 (generalized hint system) first.
+> **Note:** CON-30 + CON-31 shipped as part of CLH-05 implementation.

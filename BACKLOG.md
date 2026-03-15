@@ -1607,7 +1607,10 @@ The Rosary and Divine Mercy Chaplet currently offer a full-screen immersive rend
 
 ## IDEA-120 — Generalize filter hint system and fix dismiss touch target
 **Category:** refinement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** CLH-01, CLH-04
+**Implemented:** 2026-03-15 via CLH-01/04 — Replaced hardcoded confession/spanish hint divs with data-driven filterHint system; dismiss touch target 28→44px
 **Date logged:** 2026-03-15
 **Source:** UX & Design evaluation
 **Related:** IDEA-076 (confession hint, done)
@@ -1617,7 +1620,10 @@ The Find tab has two hardcoded hint divs (confessionHint, spanishHint) with para
 
 ## IDEA-121 — Adoration filter hint with reader module deep link
 **Category:** enhancement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** CLH-02, CLH-03
+**Implemented:** 2026-03-15 via CLH-02/03 — Registered Adoration guide as reader module; added filter hint "New to Adoration? What to expect"
 **Date logged:** 2026-03-15
 **Source:** UX & Design evaluation
 **Related:** IDEA-120, IDEA-076
@@ -1627,7 +1633,10 @@ When the Adoration chip is active on Find tab, there is no context for someone w
 
 ## IDEA-122 — Latin Mass filter hint (needs content first)
 **Category:** new-feature
-**Status:** blocked
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** CLH-05, CON-30, CON-31
+**Implemented:** 2026-03-15 via CLH-05 + CON-30/31 — Latin Mass devotional guide added; reader module registered; filter hint "New to Latin Mass? What to expect" live
 **Date logged:** 2026-03-15
 **Source:** UX & Design evaluation
 **Related:** IDEA-120, IDEA-121

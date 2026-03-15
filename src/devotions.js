@@ -45,6 +45,74 @@ reader.registerModule('confession-guide', {
   onClose: function() {}
 });
 
+// CLH-02: Adoration Guide reader module — accessible from any tab
+reader.registerModule('adoration-guide', {
+  getTitle: function() { return 'Eucharistic Adoration'; },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    var guide = null;
+    for (var i = 0; i < DEVOTIONAL_GUIDES.length; i++) {
+      var g = DEVOTIONAL_GUIDES[i];
+      if (g.isGroup && g.children) {
+        for (var j = 0; j < g.children.length; j++) {
+          if (g.children[j].title === 'Eucharistic Adoration') {
+            guide = g.children[j];
+            break;
+          }
+        }
+      }
+      if (guide) break;
+    }
+    if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
+
+    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+      + _wrapScriptureRefs(_wrapTerms(guide.body))
+      + '<div style="margin-top:var(--space-5)">'
+      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=adoration]\');if(c)c.click()" '
+      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + 'Find Adoration near you</button>'
+      + '</div></div>';
+
+    _initTermClicks(bodyEl);
+    refs.initRefTaps(bodyEl);
+  },
+  onClose: function() {}
+});
+
+// CLH-05 / CON-31: Latin Mass Guide reader module — accessible from any tab
+reader.registerModule('latin-mass-guide', {
+  getTitle: function() { return 'What to Expect at a Latin Mass'; },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    var guide = null;
+    for (var i = 0; i < DEVOTIONAL_GUIDES.length; i++) {
+      var g = DEVOTIONAL_GUIDES[i];
+      if (g.isGroup && g.children) {
+        for (var j = 0; j < g.children.length; j++) {
+          if (g.children[j].title === 'What to Expect at a Latin Mass') {
+            guide = g.children[j];
+            break;
+          }
+        }
+      }
+      if (guide) break;
+    }
+    if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
+
+    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+      + _wrapScriptureRefs(_wrapTerms(guide.body))
+      + '<div style="margin-top:var(--space-5)">'
+      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=latin]\');if(c)c.click()" '
+      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + 'Find Latin Mass near you</button>'
+      + '</div></div>';
+
+    _initTermClicks(bodyEl);
+    refs.initRefTaps(bodyEl);
+  },
+  onClose: function() {}
+});
+
 // Wrap Scripture citations in devotional guide HTML with tappable ref spans.
 // Applied after esc() so the text is already safe. Scripture refs contain no HTML chars.
 function _wrapScriptureRefs(html) {
@@ -354,6 +422,18 @@ var DEVOTIONAL_GUIDES = [
 '<p><strong>Gorzkie \u017bale</strong> (pronounced <em>GOSH-kyeh ZAH-leh</em>, meaning \u201cBitter Lamentations\u201d) is a traditional Polish Lenten devotion dating to the early 18th century. It is a sung meditation on the Passion of Christ, structured in three parts that reflect on Christ\u2019s suffering, His trial, and His death on the cross.</p>'
 +'<p>The devotion is typically held on Sunday afternoons during Lent, often followed by Benediction of the Blessed Sacrament. It combines hymns, prayers, and readings in a format unique to the Polish Catholic tradition. Gorzkie \u017bale holds a place in Polish Catholic life similar to the Stations of the Cross in other traditions.</p>'
 +'<p>In Western New England, parishes with Polish heritage continue this devotion as a cherished link between faith and cultural identity. The service is usually about 30\u201340 minutes and is sung partly or entirely in Polish.</p>'
+    },
+    {icon:'',title:'What to Expect at a Latin Mass',findLabel:'Latin Mass',filter:'latin',body:
+'<p>The <strong>Traditional Latin Mass</strong> \u2014 also called the Extraordinary Form, or the Mass according to the 1962 Roman Missal \u2014 is the older form of the Mass celebrated in the Catholic Church for centuries before the liturgical reforms following Vatican II. The prayers are in Latin. The priest faces the altar, in the same direction as the people, a posture called <em>ad orientem</em>. The overall feel is quieter, more formal, and deeply reverent.</p>'
++'<p>If you\u2019re used to the regular Sunday Mass (the Ordinary Form), a few things will feel different. At a Low Mass (the most common weekday form), you may hear no spoken responses from the congregation \u2014 only the altar server responds to the priest. At a Dialogue Mass or Sung Mass, however, the congregation joins in the responses and may sing parts of the liturgy in Latin. Much of the priest\u2019s prayer is said softly or silently. A choir or schola may sing in Latin or Gregorian chant. Communion is received kneeling, on the tongue. A hand missal \u2014 a booklet with the Latin text and English translation side by side \u2014 is your best companion. Most parishes that offer this Mass provide them in the pews.</p>'
++'<p>It\u2019s completely normal to feel a little lost. Many people do their first several times. You don\u2019t need to follow every word. You can pray along in the missal, pray the Rosary quietly, or simply be present. Let the beauty of the liturgy wash over you. No one is watching to see if you turn to the right page.</p>'
++'<details class="devot-expand"><summary>Practical tips for your first time</summary>'
++'<p><strong>Dress:</strong> Many regular attendees dress more formally \u2014 men in collared shirts, women in dresses or skirts, sometimes with a chapel veil. This isn\u2019t a rule. Come as you are. You won\u2019t be turned away for wearing jeans.</p>'
++'<p><strong>Missal:</strong> Look for a red booklet in the pew \u2014 often a <em>1962 Missal</em> or a parish guide. It will have Latin on one side and English on the other. If you can\u2019t find one, ask someone nearby. People are usually happy to help.</p>'
++'<p><strong>Posture:</strong> Stand, kneel, and sit when others do. Communion is received kneeling at the altar rail, on the tongue \u2014 the priest will place the host on your tongue. If you\u2019re not receiving Communion, simply remain in your pew \u2014 there\u2019s no expectation to approach the altar rail.</p>'
++'<p><strong>Length:</strong> A Low Mass (spoken, no singing) runs about 45 minutes to an hour. A High Mass or Solemn High Mass (sung, with incense and more ceremony) can run 75\u201390 minutes.</p>'
++'<p><strong>If you get lost:</strong> Close the missal. Look up. Listen. The Mass is still the Mass \u2014 the same sacrifice of Calvary, the same Real Presence, the same Lord. You belong here.</p>'
++'</details>'
     },
     {icon:'',title:'Stations of the Cross',findLabel:'Stations of the Cross',filter:'lent',body:
 '<p>The Stations of the Cross are 14 moments from Christ\u2019s Passion and death, traditionally prayed by moving through a series of images or carvings placed around the walls of a church. The practice originated as a way for people who could not travel to Jerusalem to walk the Via Dolorosa spiritually.</p>'
