@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (18 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-15 (18 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -78,6 +78,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 
 - **PMD** = Pocket Missal — Devotions Expansion
 - **SLV** = Soul / Visual Language
+- **BT4** = Backlog Triage Round 4
 - **MTR** = More Tab Restructure
 - **PHF** = Pastoral Handoff
 
@@ -351,3 +352,20 @@ Future specs should continue this pattern with new prefixes.
 | PBR-03 | Guided Content Visual Distinction | Queued | P2 |
 | PBR-04 | Prayer Length Indicators | Queued | P3 |
 | PBR-05 | Recently Opened Prayers | Queued | P2 |
+
+### UX_Spec_Backlog_Triage_Round_4.md (BT4 series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-103, IDEA-108, IDEA-109, IDEA-110, IDEA-111, IDEA-113, IDEA-115, IDEA-117, IDEA-118
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_BT4.md
+**Depends on:** None
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| BT4-01 | Exam Opening Prayer Overflow Fix | Queued | P1 |
+| BT4-02 | Prayer Book Duplicate Render Fix | Queued | P1 |
+| BT4-03 | Find Tab Chip Animation Speed Fix | Queued | P1 |
+| BT4-04 | Chaplet Same-Prayer Fade Skip | Queued | P2 |
+| BT4-05 | Practice Tile Border + Concise Labels | Queued | P2 |
+| BT4-06 | Novena List Visual Hierarchy + Sort | Queued | P2 |
+| BT4-07 | Growing Faith Section Collapse Removal | Queued | P2 |
+| BT4-08 | Sacred Font Token Consistency | Queued | P2 |
+| BT4-09 | Text Size x-large (22px) Option | Queued | P2 |

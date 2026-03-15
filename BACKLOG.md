@@ -1401,7 +1401,8 @@ Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PBR.md`
 
 ## IDEA-103 — Fine tab chip animation slow and visually awkward
 **Category:** bug
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-03
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** (none)
@@ -1451,7 +1452,8 @@ The internal presentation of the Prayer Library is functional but visually basic
 
 ## IDEA-108 — Prayer Library: clicking a prayer renders it in-place and incorrectly logs to recents
 **Category:** bug
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-02
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-102, IDEA-107
@@ -1461,7 +1463,8 @@ Clicking any prayer in the Prayer Library immediately renders it both at the cli
 
 ## IDEA-109 — Divine Mercy Chaplet: full-screen fade transition between repetitive steps is excessive
 **Category:** refinement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-04
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-019
@@ -1471,7 +1474,8 @@ In the Divine Mercy Chaplet, progressing through repetitive steps (same prayer r
 
 ## IDEA-110 — Your Practice section tile cards: too verbose and blend into background
 **Category:** refinement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-05
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-069, IDEA-101
@@ -1481,7 +1485,8 @@ The tiles in the Your Practice section do not present well. The Novena tile in p
 
 ## IDEA-111 — Novena list page design rebuild: wall of text, needs visual hierarchy
 **Category:** refinement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-06
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-028, IDEA-055
@@ -1501,7 +1506,8 @@ The Prayer Library should distinguish between guided prayer experiences (Divine 
 
 ## IDEA-113 — Growing Faith section: remove collapsible behavior, keep items collapsed by default
 **Category:** refinement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-07
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-011, IDEA-073
@@ -1521,7 +1527,8 @@ Explore including the Liturgy of the Hours (Divine Office) as a prayer offering 
 
 ## IDEA-115 — Sacred text font should be applied to all prayer snippets throughout the app
 **Category:** refinement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-08
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** (none)
@@ -1541,7 +1548,8 @@ Rather than pinning in-progress novenas to the top of the list (which may be red
 
 ## IDEA-117 — Text size increase/decrease options insufficient: only 3 steps available
 **Category:** enhancement
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-09
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-079
@@ -1551,7 +1559,8 @@ The text size controls currently offer only 3 levels, which is not granular enou
 
 ## IDEA-118 — Examen first page prayer text cuts off and is not scrollable
 **Category:** bug
-**Status:** new
+**Status:** spec-ready
+**Spec ref:** BT4-01
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-034, IDEA-038
