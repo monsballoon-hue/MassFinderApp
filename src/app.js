@@ -254,6 +254,7 @@ window.stationsNext = stations.stationsNext;
 window.stationsPrev = stations.stationsPrev;
 window.stationsGoTo = stations.stationsGoTo;
 window.openNovena = novena.openNovena;
+window.openFirstFriday = more.openFirstFriday;
 window.closeNovena = novena.closeNovena;
 window.novenaSelect = novena.novenaSelect;
 window.novenaResume = novena.novenaResume;
@@ -891,6 +892,18 @@ function _toggleDevPanel() {
     }).join('')
     + '</div></div>';
 
+  // QA Date spoofing — simulate any liturgical day
+  var qaDateLabel = _devState.qaDate || 'today';
+  var qaDateHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">QA Date Spoof</div>'
+    + '<div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap">'
+    + '<input type="date" id="devQADate" value="' + (_devState.qaDate || '') + '" style="padding:4px 8px;border-radius:var(--radius-sm);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-primary);font-size:var(--text-xs);min-height:32px;font-family:var(--font-body)">'
+    + '<button onclick="window._devSetDate(document.getElementById(\'devQADate\').value)" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-semibold);border:1.5px solid var(--color-primary);background:var(--color-primary);color:white;cursor:pointer;min-height:32px">Apply</button>'
+    + '<button onclick="window._devSetDate(null)" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Reset</button>'
+    + '</div>'
+    + '<div style="font-size:10px;color:var(--color-text-tertiary);margin-top:var(--space-1)">Spoofing: <strong>' + qaDateLabel + '</strong></div>'
+    + '</div>';
+
   // Fasting banner override
   var fastingModes = [
     { key: null, label: 'Off' },
@@ -946,6 +959,7 @@ function _toggleDevPanel() {
     + '</div>'
     + featureHtml
     + seasonHtml
+    + qaDateHtml
     + fastingHtml
     + qaHtml
     + notifHtml
@@ -1027,6 +1041,64 @@ window._devSetSeason = function(season) {
   more.renderMore();
   _closeDevPanel();
   _toggleDevPanel();
+};
+
+window._devSetDate = function(dateStr) {
+  var readings = require('./readings.js');
+  var more = require('./more.js');
+  if (!dateStr) {
+    // Reset to real date
+    _devState.qaDate = null;
+    window._litcalCache = null;
+    readings.fetchLiturgicalDay().then(function(events) {
+      readings.setLiturgicalSeason(events);
+      readings.renderSaintCard(events);
+      readings.renderHDOBanner(events);
+      readings.renderFastingBanner(events);
+      more.renderMore();
+    });
+    _closeDevPanel();
+    _toggleDevPanel();
+    return;
+  }
+  _devState.qaDate = dateStr;
+  // Load litcal data for the spoofed date
+  var year = dateStr.split('-')[0];
+  fetch('/data/litcal-' + year + '.json').then(function(r) { return r.json(); }).then(function(litcal) {
+    var entry = litcal[dateStr];
+    if (!entry) {
+      alert('No litcal data for ' + dateStr);
+      return;
+    }
+    // Build a fake events array matching what fetchLiturgicalDay returns
+    var fakeEvents = [entry].map(function(e) {
+      return {
+        event_key: e.key || '',
+        name: e.name || '',
+        grade: e.rank === 'solemnity' ? 7 : e.rank === 'feast' ? 4 : e.rank === 'memorial' ? 3 : e.rank === 'optional' ? 2 : 0,
+        color: [e.color || 'green'],
+        holy_day_of_obligation: false,
+        readings: e.readings || null
+      };
+    });
+    // Set the season from the litcal entry
+    var seasonMap = { LENT: 'lent', ADVENT: 'advent', EASTER: 'easter', EASTER_TRIDUUM: 'lent', CHRISTMAS: 'christmas', ORDINARY_TIME: 'ordinary' };
+    var newSeason = seasonMap[entry.season] || 'ordinary';
+    _devState.season = newSeason;
+    document.documentElement.setAttribute('data-season', newSeason);
+    // Update the litcal cache so seasonal moment picks it up
+    window._litcalCache = { events: fakeEvents, year: parseInt(year) };
+    // Re-render everything
+    readings.setLiturgicalSeason(fakeEvents);
+    readings.renderSaintCard(fakeEvents);
+    readings.renderHDOBanner(fakeEvents);
+    readings.renderFastingBanner(fakeEvents);
+    more.renderMore();
+    _closeDevPanel();
+    _toggleDevPanel();
+  }).catch(function() {
+    alert('Could not load litcal data for year ' + year);
+  });
 };
 
 window._devSetFasting = function(mode) {

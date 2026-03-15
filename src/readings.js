@@ -490,9 +490,24 @@ function renderSaintCard(events) {
     if (otherSaints.length) alsoToday = '<div class="saint-also">Also: ' + otherSaints.join(', ') + '</div>';
   }
 
+  // SOT-02: Liturgical color indicator
+  var colorMap = {
+    purple: { hex: '#6B21A8', dark: '#A855F7', name: 'Purple', meaning: 'Penance & preparation' },
+    red: { hex: '#DC2626', dark: '#EF4444', name: 'Red', meaning: 'Martyrs & the Holy Spirit' },
+    white: { hex: '#94A3B8', dark: '#94A3B8', name: 'White', meaning: 'Joy & purity' },
+    green: { hex: '#16A34A', dark: '#22C55E', name: 'Green', meaning: 'Growth & hope' },
+    rose: { hex: '#DB2777', dark: '#EC4899', name: 'Rose', meaning: 'A brief respite in the penitential season' }
+  };
+  var colorInfo = colorMap[color] || colorMap.green;
+  var colorLine = '<div class="saint-color">'
+    + '<span class="saint-color-dot" style="background:' + colorInfo.hex + '"></span>'
+    + esc(colorInfo.name) + ' \u2014 ' + esc(colorInfo.meaning)
+    + '</div>';
+
   el.innerHTML = '<div class="saint-card" data-lit-color="' + esc(color) + '">'
     + '<div class="saint-feast">' + esc(feastLabel) + '</div>'
     + '<div class="saint-name">' + esc(pick.name) + '</div>'
+    + colorLine
     + alsoToday
     + '<div id="saintVerse"></div>'
     + (typeof window._getDailyPrompt === 'function' ? '<div class="saint-prompt">' + esc(window._getDailyPrompt()) + '</div>' : '')

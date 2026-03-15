@@ -151,7 +151,6 @@ var DEVOTIONAL_GUIDES = [
 +'      <li><strong>December 8</strong> \u2014 Immaculate Conception of the Blessed Virgin Mary</li>'
 +'      <li><strong>December 25</strong> \u2014 Nativity of the Lord (Christmas)</li>'
 +'    </ul>'
-+'    <p>When January 1, August 15, or November 1 falls on a Saturday or Monday, the obligation is typically dispensed by the U.S. bishops. A vigil Mass the evening before fulfills the obligation for any Holy Day.</p>'
 +'  </div>'
 +'</details>'
   },

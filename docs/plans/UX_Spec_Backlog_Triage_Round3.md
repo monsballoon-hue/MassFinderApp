@@ -1,6 +1,6 @@
 # UX Spec: Backlog Triage Round 3
 
-**Created:** 2026-03-14 · **Status:** In progress (24/28 done, Phase 3 remaining: BT3-13, BT3-15, BT3-19, BT3-23)
+**Created:** 2026-03-14 · **Status:** Implemented (28/28 done)
 **Backlog items:** IDEA-023, IDEA-024, IDEA-025, IDEA-026, IDEA-027, IDEA-028, IDEA-029, IDEA-030, IDEA-031, IDEA-033, IDEA-034, IDEA-035, IDEA-036, IDEA-037, IDEA-038, IDEA-039, IDEA-040, IDEA-041, IDEA-042, IDEA-043, IDEA-044, IDEA-045, IDEA-046, IDEA-048, IDEA-049, IDEA-050, IDEA-051, IDEA-052
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT3.md
 

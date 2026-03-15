@@ -323,21 +323,25 @@ At the top of the Saved tab, the church schedule section has text that is too sm
 
 ## IDEA-027 — Alternating row colors for church schedule on Saved tab
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-026
 **Spec ref:** (none)
+**Impl ref:** BT3-19
 
 Consider adding alternating colored rows (zebra striping) to improve scannability, particularly for the church schedule on the Saved tab. This pattern could potentially be applied elsewhere in the app as well.
 
 ## IDEA-028 — Novena tracker card should be elevated when novena is in progress
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-13
 
 When the user has an active but unfinished novena in progress, the Novena tracker card should be visually "lifted" or elevated to draw attention. This would signal that there is an ongoing devotion requiring follow-through.
 
@@ -356,11 +360,13 @@ Intermittently, the bottom navigation bar hosting the four tab buttons loses its
 
 ## IDEA-030 — Rosary opening prayers should be stacked with toggle for full text
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-019, IDEA-020
 **Spec ref:** (none)
+**Impl ref:** BT3-23
 
 The Rosary opening prayers section (Sign of the Cross, Apostles' Creed, Our Father, 3 Hail Marys, Glory Be) should be displayed in a stacked vertical layout rather than inline. Design it to be visually beautiful, and render the full prayer text only when toggled. All prayers should be toggled off (collapsed) by default.
 
@@ -532,11 +538,13 @@ Catechism (CCC) reference pills inside the open Faith Guides drawers on the More
 
 ## IDEA-044 — Remove holy days dispensation footnote from Faith Guides
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-15
 
 Remove the following text from the end of the Holy Days of Obligation drawer content in Faith Guides on the More tab: the paragraph about January 1, August 15, or November 1 falling on Saturday or Monday and the U.S. bishops dispensing the obligation. This footnote is not needed.
 
@@ -643,7 +651,9 @@ The "Update available — Refresh" banner is appearing nearly every time the app
 
 ## IDEA-053 — Monthly Devotion Card: traditional Catholic monthly dedications on More tab
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-09
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-060
@@ -657,7 +667,9 @@ A rotating card on the More tab showing the Church's traditional monthly dedicat
 
 ## IDEA-054 — O Antiphons: Dec 17-23 daily card for the final days of Advent
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-10
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-058
@@ -671,7 +683,9 @@ The seven O Antiphons (O Sapientia, O Adonai, O Radix Jesse, O Clavis David, O O
 
 ## IDEA-055 — Seasonal novena auto-surfacing: promote contextually appropriate novenas
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-03
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-028, IDEA-065, IDEA-066
@@ -685,7 +699,9 @@ The app already has 3 novenas (Divine Mercy, Holy Spirit, St. Joseph) but they s
 
 ## IDEA-056 — Holy Week day-by-day guide: Palm Sunday through Easter Sunday
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-05
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-055, IDEA-061
@@ -699,7 +715,9 @@ During Holy Week (Palm Sunday → Easter Sunday, April 1-5 in 2026), replace or 
 
 ## IDEA-057 — Liturgical color awareness: subtle indicator with explanation
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-02
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-002
@@ -713,7 +731,8 @@ A subtle indicator on the More tab (within or near the liturgical teaser) showin
 
 ## IDEA-058 — Advent Wreath devotion: interactive candle lighting with weekly prayers
 **Category:** new-feature
-**Status:** new
+**Status:** deferred
+**Deferred:** 2026-03-14 — Phase 2, Advent 2026
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-054
@@ -727,7 +746,9 @@ An interactive Advent wreath experience on the More tab during Advent. SVG wreat
 
 ## IDEA-059 — First Friday / First Saturday devotion tracker
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-12
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-041
@@ -741,7 +762,8 @@ Two traditional Catholic devotions that span all seasons: Nine First Fridays (Sa
 
 ## IDEA-060 — Seasonal CCC Spotlight: catechism paragraph tied to the liturgical season
 **Category:** new-feature
-**Status:** new
+**Status:** deferred
+**Deferred:** 2026-03-14 — needs UX refinement, content-for-content's-sake
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-053
@@ -755,7 +777,9 @@ A daily or weekly rotating CCC paragraph thematically tied to the current liturg
 
 ## IDEA-061 — Easter Season Alleluia card and Regina Caeli prayer
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-06
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-056
@@ -769,7 +793,8 @@ During the 50 days of Easter (Easter Sunday → Pentecost), surface a celebrator
 
 ## IDEA-062 — Ember Days awareness: recovering a forgotten Catholic tradition
 **Category:** pie-in-the-sky
-**Status:** new
+**Status:** deferred
+**Deferred:** 2026-03-14 — Phase 3, low priority
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-057
@@ -783,7 +808,8 @@ Ember Days are four sets of three days (Wednesday, Friday, Saturday) occurring n
 
 ## IDEA-063 — Seasonal Scripture Spotlight: weekly thematic passage in --font-prayer
 **Category:** new-feature
-**Status:** new
+**Status:** deferred
+**Deferred:** 2026-03-14 — Phase 3, evaluate after SOT-04
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-060
@@ -797,7 +823,8 @@ A weekly rotating Scripture passage capturing the spiritual essence of the curre
 
 ## IDEA-064 — Marian Consecration countdown and tracker
 **Category:** pie-in-the-sky
-**Status:** new
+**Status:** deferred
+**Deferred:** 2026-03-14 — Phase 4, needs full 33-day tracker
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-053, IDEA-059
@@ -811,7 +838,9 @@ Total Consecration to Jesus through Mary (St. Louis de Montfort) is a 33-day pre
 
 ## IDEA-065 — Pentecost Novena auto-surface: the original novena from Ascension to Pentecost
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-08
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-055
@@ -825,7 +854,9 @@ The Novena to the Holy Spirit (already in the app's prayer data) is the original
 
 ## IDEA-066 — Divine Mercy Sunday experience: dedicated card with chaplet link and indulgence info
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
+**Impl ref:** SOT-07
 **Date logged:** 2026-03-14
 **Source:** research (seasonal-offerings-research.md)
 **Related:** IDEA-055
