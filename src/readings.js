@@ -342,30 +342,6 @@ function fetchReadings() {
           + (hasText ? '<div class="reading-text" id="reading-text-' + i + '">' + formatReadingText(s.text, s.heading) + listenHtml + '</div>' : '')
           + '</div>';
       }).join('');
-
-      // SLV-10: Liturgical day header above readings
-      var litDay = '';
-      var litColor = '';
-      try {
-        if (window._litcalCache && window._litcalCache.events) {
-          var now2 = getNow();
-          var m2 = now2.getMonth() + 1, d2 = now2.getDate();
-          var entry = window._litcalCache.events;
-          if (Array.isArray(entry)) {
-            var td = entry.filter(function(ev) { return ev.month === m2 && ev.day === d2; });
-            if (td.length) {
-              litDay = td[0].name || '';
-              litColor = (td[0].color && td[0].color[0]) || '';
-            }
-          }
-        }
-      } catch (ex) {}
-      if (litDay) {
-        html = '<div class="readings-lit-header" data-lit-color="' + esc(litColor) + '">'
-          + '<div class="readings-lit-day">' + esc(litDay) + '</div>'
-          + '</div>' + html;
-      }
-
       el.innerHTML = html;
 
       // Enhance with BibleGet — staggered 2500ms apart to stay under rate limits
