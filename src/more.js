@@ -40,6 +40,138 @@ function _getRosarySubtitle() {
   return mysteries[today] + ' Mysteries today';
 }
 
+// ── Holy Week Guide Data (SOT-05) ──
+var HOLY_WEEK_GUIDE = {
+  PalmSun: {
+    title: 'Palm Sunday',
+    subtitle: 'The Lord\u2019s entrance into Jerusalem',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 3c0 4-3 7-6 9m7-9c0 4 3 7 6 9M12 3v18"/></svg>',
+    body: '<p>Palm Sunday opens Holy Week with the blessing and procession of palms, recalling Christ\u2019s triumphal entry into Jerusalem. The crowd spread palms and cloaks before Him, crying \u201cHosanna!\u201d Yet the same week would bring His Passion and death.</p>'
+      + '<p>The liturgy includes the longest Gospel reading of the year \u2014 the full Passion narrative. It is a day of joy shadowed by sorrow, inviting us to walk with Christ through the coming days.</p>',
+    action: 'Find Mass near you \u2192',
+    filter: 'weekend'
+  },
+  MonHolyWeek: {
+    title: 'Monday of Holy Week',
+    subtitle: 'The days of preparation deepen',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
+    body: '<p>The early days of Holy Week are marked by intensifying preparation. The Gospel readings recount events leading to the Passion \u2014 the anointing at Bethany, the prediction of betrayal, and Jesus\u2019s final teachings.</p>'
+      + '<p>Many parishes offer additional weekday Masses, Confession times, and Lenten devotions during these days. It is a time for quiet reflection and spiritual readiness.</p>',
+    action: 'Find Mass near you \u2192',
+    searchTerm: 'Mass'
+  },
+  TueHolyWeek: {
+    title: 'Tuesday of Holy Week',
+    subtitle: 'Christ foretells His Passion',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
+    body: '<p>As the Paschal Triduum draws near, the Church\u2019s liturgy becomes more solemn. Tuesday\u2019s Gospel recounts Jesus telling His disciples that one of them will betray Him and that Peter will deny Him three times.</p>'
+      + '<p>These readings invite honest self-examination. The Sacrament of Confession is particularly encouraged during these final days of Lent.</p>',
+    action: 'Find Confession near you \u2192',
+    filter: 'confession'
+  },
+  WedHolyWeek: {
+    title: 'Wednesday of Holy Week',
+    subtitle: 'Judas agrees to betray Jesus',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
+    body: '<p>On this day the Gospel recounts Judas Iscariot going to the chief priests and agreeing to hand Jesus over for thirty pieces of silver. The shadow of the Cross falls heavily over the remaining hours.</p>'
+      + '<p>Wednesday of Holy Week is the last day before the Sacred Paschal Triduum. If you have not yet been to Confession this Lent, today is an important day to seek out the sacrament.</p>',
+    action: 'Find Confession near you \u2192',
+    filter: 'confession'
+  },
+  HolyThurs: {
+    title: 'Holy Thursday',
+    subtitle: 'Mass of the Lord\u2019s Supper tonight',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 15v6M17.5 9c0-3-2.5-6-5.5-6S6.5 6 6.5 9c0 3.5 5.5 6 5.5 6s5.5-2.5 5.5-6z"/></svg>',
+    body: '<p>The Sacred Paschal Triduum begins with the evening Mass of the Lord\u2019s Supper. This liturgy commemorates three gifts Christ gave on the night before He died: the Eucharist, the priesthood, and the commandment of love through the washing of the feet.</p>'
+      + '<p>After Mass, the Blessed Sacrament is carried in procession to the altar of repose, where the faithful keep vigil in prayer \u2014 recalling Christ\u2019s agony in the Garden of Gethsemane. Churches remain open late for this solemn watch.</p>',
+    action: 'Find evening Mass near you \u2192',
+    filter: 'weekend'
+  },
+  GoodFri: {
+    title: 'Good Friday',
+    subtitle: 'The Passion and death of the Lord',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="3" x2="12" y2="21"/><line x1="6" y1="8" x2="18" y2="8"/></svg>',
+    body: '<p>Good Friday is the most solemn day of the Church year. There is no Mass \u2014 the only day this occurs. The afternoon liturgy includes the reading of the Passion according to John, the solemn intercessions, and the veneration of the Cross.</p>'
+      + '<p>It is a day of fasting and complete abstinence from meat. The faithful are invited to observe silence, pray the Stations of the Cross, and enter into the mystery of Christ\u2019s sacrifice for our salvation.</p>',
+    action: 'Find Stations of the Cross \u2192',
+    searchTerm: 'Stations'
+  },
+  EasterVigil: {
+    title: 'Holy Saturday',
+    subtitle: 'The Easter Vigil tonight \u2014 the greatest liturgy of the year',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2c1.5 2.5 3 5 3 7.5a3 3 0 0 1-6 0C9 7 10.5 4.5 12 2z"/><line x1="12" y1="12" x2="12" y2="20"/></svg>',
+    body: '<p>Holy Saturday is a day of profound quiet. The Church waits at the Lord\u2019s tomb. There is no Mass during the day \u2014 the tabernacle stands empty, the altar bare.</p>'
+      + '<p>After nightfall, the Easter Vigil begins with the blessing of the new fire and the lighting of the Paschal Candle. The Church processes from darkness into light, reads the great stories of salvation history, and welcomes new members through Baptism, Confirmation, and First Eucharist. Then the Alleluia, silent since Ash Wednesday, rings out again.</p>',
+    action: 'Find the Easter Vigil near you \u2192',
+    filter: 'weekend'
+  },
+  Easter: {
+    title: 'Easter Sunday',
+    subtitle: 'He is risen! Alleluia!',
+    icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>',
+    body: '<p>\u201cThis is the day the Lord has made; let us rejoice and be glad in it.\u201d The Resurrection of Jesus Christ is the central event of the Christian faith and the foundation of everything the Church believes and proclaims.</p>'
+      + '<p>Easter is not just a day \u2014 it is a season of fifty days, running from today through Pentecost Sunday. The Alleluia returns, the vestments are white and gold, and the Church celebrates with overflowing joy. Attend Mass with your family and enter into the mystery of new life.</p>',
+    action: 'Find Easter Mass near you \u2192',
+    filter: 'weekend'
+  }
+};
+
+// ── Seasonal Moment Zone (SOT-01) ──
+// Priority: 1=day-specific, 2=week-specific, 3=season-specific, 4=month-specific
+// Max 2 visible cards at any time
+function _renderSeasonalMoment(events) {
+  var el = document.getElementById('seasonalMoment');
+  if (!el) return;
+  var esc = require('./utils.js').esc;
+  var switchTab = require('./ui.js').switchTab;
+
+  var candidates = [];
+
+  // SOT-05: Holy Week day-by-day guide
+  if (events && events.length) {
+    for (var i = 0; i < events.length; i++) {
+      var key = events[i].event_key || '';
+      var hw = HOLY_WEEK_GUIDE[key];
+      if (hw) {
+        var actionHtml = '';
+        if (hw.filter) {
+          actionHtml = '<div class="seasonal-card-action" onclick="event.stopPropagation();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=' + hw.filter + ']\');if(c)c.click()">' + hw.action + '</div>';
+        } else if (hw.searchTerm) {
+          actionHtml = '<div class="seasonal-card-action" onclick="event.stopPropagation();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'' + hw.searchTerm + '\';si.dispatchEvent(new Event(\'input\'))}">' + hw.action + '</div>';
+        }
+        var chevSvg = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+        candidates.push({
+          priority: 1,
+          html: '<details class="seasonal-card">'
+            + '<summary>'
+            + '<div class="seasonal-card-icon">' + hw.icon + '</div>'
+            + '<div class="seasonal-card-body">'
+            + '<div class="seasonal-card-title">' + esc(hw.title) + '</div>'
+            + '<div class="seasonal-card-subtitle">' + esc(hw.subtitle) + '</div>'
+            + '</div>'
+            + chevSvg
+            + '</summary>'
+            + '<div class="seasonal-card-expanded">'
+            + hw.body
+            + actionHtml
+            + '</div>'
+            + '</details>'
+        });
+        break; // Only one Holy Week card per day
+      }
+    }
+  }
+
+  // Future: SOT-06 (Easter Alleluia), SOT-07 (Divine Mercy), SOT-08 (Pentecost),
+  // SOT-09 (Monthly Devotion), SOT-10 (O Antiphons) will push candidates here
+
+  // Sort by priority (1 = highest), take top 2
+  candidates.sort(function(a, b) { return a.priority - b.priority; });
+  var top = candidates.slice(0, 2);
+
+  el.innerHTML = top.map(function(c) { return c.html; }).join('');
+}
+
 // ── renderMore ──
 function renderMore() {
   // Lazy requires
@@ -326,6 +458,7 @@ function renderMore() {
     renderFastingBanner(events);
     updateHDOBadge(events);
     renderSaintCard(events);
+    _renderSeasonalMoment(events);
   });
 
   window._moreRendered = true;
