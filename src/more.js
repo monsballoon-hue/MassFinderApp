@@ -162,7 +162,39 @@ function _renderSeasonalMoment(events) {
     }
   }
 
-  // Future: SOT-06 (Easter Alleluia), SOT-07 (Divine Mercy), SOT-08 (Pentecost),
+  // SOT-07: Divine Mercy Sunday (2nd Sunday of Easter)
+  if (events && events.length) {
+    var isDMS = events.some(function(e) { return (e.event_key || '') === 'Easter2'; });
+    if (isDMS) {
+      var dmsChev = '<svg class="seasonal-card-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+      var dmsNovenaNote = '';
+      try {
+        var novTracking = JSON.parse(localStorage.getItem('mf-novena-tracking') || '{}');
+        if (novTracking.divine_mercy) dmsNovenaNote = '<p><strong>Your Divine Mercy Novena concludes today.</strong></p>';
+      } catch (e) {}
+      candidates.push({
+        priority: 1,
+        html: '<details class="seasonal-card">'
+          + '<summary>'
+          + '<div class="seasonal-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>'
+          + '<div class="seasonal-card-body">'
+          + '<div class="seasonal-card-title">Divine Mercy Sunday</div>'
+          + '<div class="seasonal-card-subtitle">Plenary indulgence available today</div>'
+          + '</div>'
+          + dmsChev
+          + '</summary>'
+          + '<div class="seasonal-card-expanded">'
+          + dmsNovenaNote
+          + '<p>On this day, instituted by St. John Paul II in 2000, the Church celebrates God\u2019s infinite mercy. Jesus told St. Faustina: \u201cI desire that the Feast of Mercy be a refuge and shelter for all souls, and especially for poor sinners.\u201d</p>'
+          + '<p>A plenary indulgence is granted to those who, on Divine Mercy Sunday, receive Communion, go to Confession (within about 20 days), pray for the Holy Father\u2019s intentions, and make an act of trust in God\u2019s mercy before the Blessed Sacrament or in prayer.</p>'
+          + '<div class="seasonal-card-action" onclick="event.stopPropagation();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var si=document.getElementById(\'searchInput\');if(si){si.value=\'Mass\';si.dispatchEvent(new Event(\'input\'))}">Find Mass near you \u2192</div>'
+          + '</div>'
+          + '</details>'
+      });
+    }
+  }
+
+  // Future: SOT-06 (Easter Alleluia), SOT-08 (Pentecost),
   // SOT-09 (Monthly Devotion), SOT-10 (O Antiphons) will push candidates here
 
   // Sort by priority (1 = highest), take top 2
@@ -326,6 +358,50 @@ function renderMore() {
     // Enhance novena subtitle with day fractions
     var novSub = _getNovenaSubtitle();
     if (novSub.indexOf('in progress') !== -1) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
+
+    // SOT-03: Seasonal novena auto-surfacing
+    var seasonalNovenaLabel = '';
+    var litEvents = (window._litcalCache && window._litcalCache.events) || [];
+    var todayKeys = litEvents.map(function(e) { return e.event_key || ''; });
+    // Divine Mercy Novena: Good Friday through Divine Mercy Sunday (9 days)
+    var season = document.documentElement.getAttribute('data-season') || 'ordinary';
+    if (season === 'easter' || todayKeys.indexOf('GoodFri') !== -1) {
+      // Check if we're in the 9-day window (Good Friday to Divine Mercy Sunday)
+      var now = new Date();
+      var month = now.getMonth();
+      var day = now.getDate();
+      // Approximate: early April = Divine Mercy window
+      if (todayKeys.indexOf('GoodFri') !== -1) {
+        seasonalNovenaLabel = 'Divine Mercy Novena begins today';
+      } else if (todayKeys.indexOf('Easter2') !== -1) {
+        seasonalNovenaLabel = 'Divine Mercy Novena concludes today';
+      } else if (month === 3 && day >= 3 && day <= 12) {
+        // Rough window — between Good Friday and Divine Mercy Sunday
+        seasonalNovenaLabel = 'Divine Mercy Novena';
+      }
+    }
+    // Holy Spirit Novena: Ascension through Pentecost
+    if (todayKeys.indexOf('Ascension') !== -1) {
+      seasonalNovenaLabel = 'The original novena \u2014 Ascension to Pentecost';
+    } else if (season === 'easter') {
+      var now2 = new Date();
+      if (now2.getMonth() === 4 && now2.getDate() >= 14 && now2.getDate() <= 24) {
+        seasonalNovenaLabel = seasonalNovenaLabel || 'Holy Spirit Novena \u2014 Pentecost approaches';
+      }
+    }
+    // St. Joseph Novena: March 10-19
+    var nowM = new Date();
+    if (nowM.getMonth() === 2 && nowM.getDate() >= 10 && nowM.getDate() <= 19) {
+      seasonalNovenaLabel = seasonalNovenaLabel || 'Novena to St. Joseph \u2014 his feast is March 19';
+    }
+
+    if (seasonalNovenaLabel) {
+      promotedId = 'novena';
+      novSub = seasonalNovenaLabel;
+      ptColors.novena = 'var(--color-accent)';
+      ptBgColors.novena = 'var(--color-accent-pale)';
+      ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
+    }
 
     var ptCards = [
       { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
