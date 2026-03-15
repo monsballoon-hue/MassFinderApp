@@ -894,7 +894,7 @@ function _toggleDevPanel() {
     { key: 'hdoBanner', label: 'HDO Banner (fake)', active: _devState.hdoBanner },
   ];
 
-  var seasons = ['lent', 'advent', 'easter', 'ordinary'];
+  var seasons = ['lent', 'easter', 'advent', 'christmas', 'ordinary'];
   var currentSeason = _devState.season || document.documentElement.getAttribute('data-season') || 'none';
 
   var featureHtml = features.map(function(f) {
