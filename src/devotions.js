@@ -227,7 +227,8 @@ function _initTermClicks(container) {
 
 var DEVOTIONAL_GUIDES = [
   {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/><line x1="12" y1="9" x2="12" y2="12"/><line x1="10.5" y1="10.5" x2="13.5" y2="10.5"/></svg>',title:'The Sunday Obligation',findLabel:'Mass',filter:'weekend',body:
-'<p>Sunday Mass is the heartbeat of Catholic life. It\u2019s the one hour each week where the whole community gathers around the altar to worship God, hear His word, and receive the Eucharist. If you\u2019ve been away for a while, you\u2019re welcome back \u2014 no questions asked.</p>'
+'<div class="devot-glance"><strong>At a glance:</strong> Catholics attend Mass every Sunday or Saturday evening (4 PM or later), and on Holy Days of Obligation. If you\u2019ve been away, you\u2019re welcome back anytime.</div>'
++'<p>Sunday Mass is the heartbeat of Catholic life. It\u2019s the one hour each week where the whole community gathers around the altar to worship God, hear His word, and receive the Eucharist. If you\u2019ve been away for a while, you\u2019re welcome back \u2014 no questions asked.</p>'
 +'<p>The Church teaches that attending Mass on Sundays and Holy Days of Obligation is a serious responsibility for every baptized Catholic. This flows from the Third Commandment \u2014 \u201cRemember to keep holy the Lord\u2019s Day\u201d \u2014 and from the Church\u2019s own precepts (CCC 2180). Sunday is the day of the Resurrection, and the Eucharist is the foundation of the Church\u2019s week.</p>'
 +'<p>The obligation is fulfilled by attending any valid Catholic Mass \u2014 either on Sunday itself or the Saturday evening vigil (typically 4:00 PM or later).</p>'
 +'<details class="conf-exam">'
@@ -260,7 +261,8 @@ var DEVOTIONAL_GUIDES = [
 +'</details>'
   },
   {icon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',title:'How to go to Confession',body:
-'<p>Confession \u2014 also called the Sacrament of Reconciliation \u2014 is how Catholics receive God\u2019s forgiveness for sins committed after Baptism. It is required for mortal sins and strongly recommended for all sins. If you\u2019ve been away for a long time, a gentle priest will be happy to help you through it.</p>'
+'<div class="devot-glance"><strong>At a glance:</strong> Tell the priest your sins. Receive God\u2019s forgiveness. The priest will help you through it \u2014 even if it\u2019s been years.</div>'
++'<p>Confession \u2014 also called the Sacrament of Reconciliation \u2014 is how Catholics receive God\u2019s forgiveness for sins committed after Baptism. It is required for mortal sins and strongly recommended for all sins. If you\u2019ve been away for a long time, a gentle priest will be happy to help you through it.</p>'
 +'<p>The basic steps:</p>'
 +'<ol>'
 +'<li><strong>Examination of conscience</strong> \u2014 Quietly reflect on your actions since your last Confession.</li>'
@@ -401,7 +403,8 @@ var DEVOTIONAL_GUIDES = [
 +'<p>If a parish offers <strong>Perpetual Adoration</strong>, it means the chapel is open 24 hours a day, 7 days a week, kept continuous by volunteers who sign up for hourly slots. Many people find regular Adoration to be the most transformative spiritual practice of their week.</p>'
     ,findLabel:'Adoration',filter:'adoration'},
     {icon:'',title:'Divine Mercy Chaplet',findLabel:'Divine Mercy Chaplet',searchTerm:'divine mercy',body:
-'<p>The Divine Mercy Chaplet is a short prayer given to St. Faustina Kowalska in the 1930s, centered on trust in God\u2019s mercy. It is prayed on ordinary Rosary beads and takes about 10\u201315 minutes.</p>'
+'<div class="devot-glance"><strong>At a glance:</strong> A 10-minute prayer on Rosary beads asking for God\u2019s mercy. Given to St. Faustina in the 1930s. Simple to learn, deeply powerful.</div>'
++'<p>The Divine Mercy Chaplet is a short prayer given to St. Faustina Kowalska in the 1930s, centered on trust in God\u2019s mercy. It is prayed on ordinary Rosary beads and takes about 10\u201315 minutes.</p>'
 +'<p>Begin with one <strong>Our Father</strong>, one <strong>Hail Mary</strong>, and the <strong>Apostles\u2019 Creed</strong>. On each large bead, pray: <em>\u201cEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\u201d</em> On each small bead: <em>\u201cFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\u201d</em> Conclude with: <em>\u201cHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world\u201d</em> \u2014 said three times.</p>'
 +'<p>The traditional time for this prayer is 3:00 PM \u2014 the Hour of Mercy \u2014 marking the time of Christ\u2019s death. Many parishes offer a communal chaplet at this hour during Adoration.</p>'
     },
@@ -421,8 +424,10 @@ var DEVOTIONAL_GUIDES = [
 +'<p>In Western New England, parishes with Polish heritage continue this devotion as a cherished link between faith and cultural identity. The service is usually about 30\u201340 minutes and is sung partly or entirely in Polish.</p>'
     },
     {icon:'',title:'What to Expect at a Latin Mass',findLabel:'Latin Mass',filter:'latin',body:
-'<p>The <strong>Traditional Latin Mass</strong> \u2014 also called the Extraordinary Form, or the Mass according to the 1962 Roman Missal \u2014 is the older form of the Mass celebrated in the Catholic Church for centuries before the liturgical reforms following Vatican II. The prayers are in Latin. The priest faces the altar, in the same direction as the people, a posture called <em>ad orientem</em>. The overall feel is quieter, more formal, and deeply reverent.</p>'
-+'<p>If you\u2019re used to the regular Sunday Mass (the Ordinary Form), a few things will feel different. At a Low Mass (the most common weekday form), you may hear no spoken responses from the congregation \u2014 only the altar server responds to the priest. At a Dialogue Mass or Sung Mass, however, the congregation joins in the responses and may sing parts of the liturgy in Latin. Much of the priest\u2019s prayer is said softly or silently. A choir or schola may sing in Latin or Gregorian chant. Communion is received kneeling, on the tongue. A hand missal \u2014 a booklet with the Latin text and English translation side by side \u2014 is your best companion. Most parishes that offer this Mass provide them in the pews.</p>'
+'<div class="devot-glance"><strong>At a glance:</strong> The older form of the Mass \u2014 in Latin, quieter, deeply reverent. You don\u2019t need to know anything special to attend. Just show up.</div>'
++'<p>The <strong>Traditional Latin Mass</strong> \u2014 also called the Extraordinary Form, or the Mass according to the 1962 Roman Missal \u2014 is the older form of the Mass celebrated in the Catholic Church for centuries before the liturgical reforms following Vatican II. The prayers are in Latin. The priest faces the altar, in the same direction as the people, a posture called <em>ad orientem</em>. The overall feel is quieter, more formal, and deeply reverent.</p>'
++'<p>If you\u2019re used to the regular Sunday Mass (the Ordinary Form), a few things will feel different. Much of the priest\u2019s prayer is said quietly. At a Low Mass, the congregation may not speak at all \u2014 only the altar server responds. At a Sung Mass, the congregation joins in, and a choir may sing in Latin or Gregorian chant.</p>'
++'<p>Communion is received kneeling at the altar rail, on the tongue. A hand missal \u2014 a booklet with Latin and English side by side \u2014 is your best companion. Most parishes that offer this Mass provide them in the pews.</p>'
 +'<p>It\u2019s completely normal to feel a little lost. Many people do their first several times. You don\u2019t need to follow every word. You can pray along in the missal, pray the Rosary quietly, or simply be present. Let the beauty of the liturgy wash over you. No one is watching to see if you turn to the right page.</p>'
 +'<details class="devot-expand"><summary>Practical tips for your first time</summary>'
 +'<p><strong>Dress:</strong> Many regular attendees dress more formally \u2014 men in collared shirts, women in dresses or skirts, sometimes with a chapel veil. This isn\u2019t a rule. Come as you are. You won\u2019t be turned away for wearing jeans.</p>'
@@ -433,7 +438,8 @@ var DEVOTIONAL_GUIDES = [
 +'</details>'
     },
     {icon:'',title:'Stations of the Cross',findLabel:'Stations of the Cross',filter:'lent',body:
-'<p>The Stations of the Cross are 14 moments from Christ\u2019s Passion and death, traditionally prayed by moving through a series of images or carvings placed around the walls of a church. The practice originated as a way for people who could not travel to Jerusalem to walk the Via Dolorosa spiritually.</p>'
+'<div class="devot-glance"><strong>At a glance:</strong> Fourteen stations through Christ\u2019s Passion and death. Prayed especially on Fridays in Lent. About 20\u201330 minutes.</div>'
++'<p>The Stations of the Cross are 14 moments from Christ\u2019s Passion and death, traditionally prayed by moving through a series of images or carvings placed around the walls of a church. The practice originated as a way for people who could not travel to Jerusalem to walk the Via Dolorosa spiritually.</p>'
 +'<ol class="stations-list">'
 +'<li>Jesus is condemned to death</li>'
 +'<li>Jesus takes up His cross</li>'
