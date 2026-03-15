@@ -601,3 +601,7 @@ Future specs should continue this pattern with new prefixes.
 | IPV-05 | Novena: SVG Completion Icon | Queued | P3 |
 | IPV-06 | Examination: Completion Moment | Queued | P2 |
 | IPV-07 | Prayerbook Litany: Intro Screen | Queued | P2 |
+| IPV-08 | Universal Prayer Splash System | Queued | P0 |
+| IPV-09 | Examination: Upgrade to Shared Splash | Queued | P1 |
+| IPV-10 | Lectio Divina: Upgrade to Shared Splash | Queued | P2 |
+| IPV-11 | Chaplet + Stations: Retrofit to Shared Splash | Queued | P2 |

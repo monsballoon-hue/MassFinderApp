@@ -27,17 +27,26 @@ This spec addresses the **visual gaps** in each module. ARC handles the infrastr
 
 ## Module Assessment
 
-### Stations of the Cross — CLOSE (minor polish)
-Already has: splash screen, progress dots, display-font titles, prayer-font text, meditation/prayer surface cards, completion screen, swipe, dark mode. Only needs minor accent refinements.
+### Stations of the Cross — HAS SPLASH (needs retrofit to shared system)
+Has `.stations-intro`: centered, icon, title, text, instruction, Begin button. No gradient, no glow. Uses hardcoded `#8B2252`.
 
-### Novena — SIGNIFICANT GAPS
-Missing: splash screen, section labels on prayer blocks, uses hardcoded green (#1E6B4A), completion screen uses emoji instead of SVG, no swipe between days. Has good prayer text formatting but blocks are visually anonymous.
+### Chaplet — HAS SPLASH (needs retrofit to shared system)
+Has `.chaplet-intro`: centered, cross icon, title, origin, quote, Begin button. No gradient, no glow.
 
-### Examination — ARCHITECTURALLY DIFFERENT
-The examination is a scroll-through checklist, not a step-through prayer. Forcing it into a rosary-like flow would break its purpose. It needs a better completion moment, not a different navigation model. Section accordion + checkboxes are correct for this tool.
+### Examination — HAS SPLASH (most polished, needs extraction to shared system)
+Has `.exam-opening` (line 2952): already the most sophisticated splash — icon with `drop-shadow` glow, button with `box-shadow` glow, dark-mode text shadow. But these visual techniques are trapped in exam-specific CSS that no other module can reuse.
 
-### Prayerbook Litany/Lectio — MODERATE GAPS
-Litany: no intro screen, jumps straight to invocation 1. Progress bar is functional but plain. Lectio: already quite polished (dots, steps, Latin names). Both use borrowed rosary nav buttons which work fine.
+### Novena — NO SPLASH
+Missing entirely. Drops user straight into Day 1 prayer text.
+
+### Prayerbook Litany — NO SPLASH
+Jumps to invocation 1 with no introduction.
+
+### Prayerbook Lectio Divina — PARTIAL
+Has a step-0 intro (title, subtitle, description) but it's rendered as a navigation step, not a proper splash with gradient/glow treatment.
+
+### Rosary — FUNCTIONAL ENTRY (leave as-is)
+Select screen (mystery set picker) serves as the entry experience. It's interactive/functional, not a contemplative splash. Does not need the shared splash treatment.
 
 ---
 
@@ -96,34 +105,27 @@ When a user selects a novena from the list (or deep-links via NPT-01), they go d
 
 Add a splash/intro screen for each novena that renders before the prayer screen. The splash shows for 2 seconds or until the user taps "Begin."
 
-**Screen structure:**
+**Screen structure** (uses shared `.prayer-splash` from IPV-08):
 
 ```html
-<div class="novena-intro">
-  <svg class="novena-intro-icon" viewBox="0 0 24 24" ...>
-    <!-- flame/candle SVG — novena = nine days of prayer, candle is the traditional symbol -->
-  </svg>
-  <h3 class="novena-intro-title">{novena.title}</h3>
-  <p class="novena-intro-subtitle">Nine days of prayer</p>
-  <p class="novena-intro-desc">{novena.description}</p>
-  <button class="novena-begin" onclick="novenaBeginPrayer()">Begin Day {N}</button>
+<div class="prayer-splash">
+  <div class="prayer-splash-icon">
+    <svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5">
+      <!-- candle/flame SVG -->
+      <line x1="12" y1="8" x2="12" y2="30"/>
+      <path d="M12 8C12 8 8 4 8 2.5C8 1.1 9.8 0 12 0C14.2 0 16 1.1 16 2.5C16 4 12 8 12 8Z" fill="currentColor" stroke="none"/>
+    </svg>
+  </div>
+  <h2 class="prayer-splash-title">{novena.title}</h2>
+  <p class="prayer-splash-subtitle">Nine days of prayer</p>
+  <p class="prayer-splash-desc">{novena.description}</p>
+  <button class="prayer-splash-begin" onclick="novenaBeginPrayer()">Begin Day {N}</button>
 </div>
 ```
 
-For novenas with a different day count (St. Andrew Christmas = 25 days), the subtitle should read "25 days of prayer."
+For novenas with a different day count (St. Andrew Christmas = 25 days), the subtitle should read "{N} days of prayer."
 
-**CSS:**
-
-```css
-.novena-intro { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-8) var(--space-4);min-height:60vh;justify-content:center; }
-.novena-intro-icon { color:var(--color-sacred);opacity:0.6;margin-bottom:var(--space-4);width:36px;height:36px; }
-.novena-intro-title { font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2); }
-.novena-intro-subtitle { font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-5); }
-.novena-intro-desc { font-family:var(--font-prayer);font-size:var(--text-sm);font-style:italic;color:var(--color-text-secondary);line-height:1.7;max-width:300px;margin:0 0 var(--space-6); }
-.novena-begin { padding:var(--space-3) var(--space-8);background:var(--color-sacred);color:white;border:none;border-radius:var(--radius-full);font-family:var(--font-body);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;-webkit-tap-highlight-color:transparent; }
-.novena-begin:active { transform:scale(0.97); }
-html[data-theme="dark"] .novena-begin { background:var(--color-sacred); }
-```
+**No module-specific CSS needed** — the shared `.prayer-splash` rules from IPV-08 handle everything.
 
 **Flow change in `src/novena.js`:**
 
@@ -322,30 +324,24 @@ When a user opens a litany (Humility or Trust), they jump immediately to invocat
 
 Add a litany intro screen before step 1.
 
-**Screen structure:**
+**Screen structure** (uses shared `.prayer-splash` from IPV-08):
 
 ```html
-<div class="litany-intro">
-  <svg class="litany-intro-icon" viewBox="0 0 24 24" ...>
-    <!-- small cross or prayer hands SVG -->
-  </svg>
-  <h3 class="litany-intro-title">{litany.title}</h3>
-  <p class="litany-intro-desc">{litany.description || "A guided litany of " + litany.invocations.length + " petitions."}</p>
-  <p class="litany-intro-instruction">Swipe or tap to advance through each petition. Respond aloud when prompted.</p>
-  <button class="litany-begin" onclick="prayerbookLitanyBegin()">Begin</button>
+<div class="prayer-splash">
+  <div class="prayer-splash-icon">
+    <svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5">
+      <line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/>
+    </svg>
+  </div>
+  <h2 class="prayer-splash-title">{litany.title}</h2>
+  <p class="prayer-splash-subtitle">{litany.invocations.length} petitions</p>
+  <p class="prayer-splash-desc">{litany.description || "A guided litany"}</p>
+  <p class="prayer-splash-hint">Swipe or tap to advance. Respond aloud when prompted.</p>
+  <button class="prayer-splash-begin" onclick="prayerbookLitanyBegin()">Begin</button>
 </div>
 ```
 
-**CSS:**
-```css
-.litany-intro { display:flex;flex-direction:column;align-items:center;text-align:center;padding:var(--space-8) var(--space-4);min-height:60vh;justify-content:center; }
-.litany-intro-icon { color:var(--color-sacred);opacity:0.6;margin-bottom:var(--space-4);width:32px;height:32px; }
-.litany-intro-title { font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2); }
-.litany-intro-desc { font-family:var(--font-prayer);font-size:var(--text-sm);font-style:italic;color:var(--color-text-secondary);line-height:1.7;max-width:300px;margin-bottom:var(--space-4); }
-.litany-intro-instruction { font-size:var(--text-xs);color:var(--color-text-tertiary);line-height:1.6;max-width:280px;margin-bottom:var(--space-6); }
-.litany-begin { padding:var(--space-3) var(--space-8);background:var(--color-sacred);color:white;border:none;border-radius:var(--radius-full);font-family:var(--font-body);font-size:var(--text-base);font-weight:var(--weight-semibold);cursor:pointer;min-height:48px;-webkit-tap-highlight-color:transparent; }
-.litany-begin:active { transform:scale(0.97); }
-```
+**No module-specific CSS needed** — shared `.prayer-splash` rules handle everything.
 
 **Flow change in `src/prayerbook.js`:**
 
@@ -363,25 +359,350 @@ Currently `prayerbookOpenLitany(id)` sets `_litanyStep = 0` and `_screen = 'lita
 
 ---
 
+## IPV-08 — Universal Prayer Splash System
+
+**ID:** IPV-08  
+**Category:** enhancement  
+**Priority:** P0 (foundation — implement before all other IPV items)
+
+**Problem:**  
+Six guided modules need splash screens. Each currently either has no splash (novena, litany) or has a bespoke one (chaplet, stations, exam, lectio) with different CSS class names, different visual treatments, and no shared visual DNA. The exam opening already has glow and shadow effects, but they're trapped in `.exam-opening-*` classes that nobody else can use.
+
+Every splash screen should feel like the same invitation from the same app — a moment of centering before prayer begins. Currently they feel like six different apps.
+
+**Fix:**
+
+Define a shared `.prayer-splash` CSS system that provides the universal visual treatment. Module-specific splashes apply `.prayer-splash` as a base alongside their own class for any overrides.
+
+**Shared CSS pattern:**
+
+```css
+/* ── Universal prayer splash ── */
+.prayer-splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-8) var(--space-5);
+  min-height: 60vh;
+  justify-content: center;
+  max-width: 400px;
+  margin: 0 auto;
+  background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--color-sacred) 4%, transparent) 0%, transparent 70%);
+}
+
+.prayer-splash-icon {
+  color: var(--color-sacred);
+  opacity: 0.7;
+  margin-bottom: var(--space-4);
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--color-sacred) 20%, transparent));
+}
+.prayer-splash-icon svg { width: 40px; height: 52px; }
+
+.prayer-splash-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-heading);
+  margin-bottom: var(--space-2);
+  text-shadow: 0 0 40px color-mix(in srgb, var(--color-sacred) 12%, transparent);
+}
+
+.prayer-splash-subtitle {
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  color: var(--color-sacred-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-5);
+}
+
+.prayer-splash-desc {
+  font-family: var(--font-prayer);
+  font-size: var(--text-sm);
+  font-style: italic;
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  max-width: 300px;
+  margin: 0 0 var(--space-4);
+}
+
+.prayer-splash-hint {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary);
+  line-height: 1.6;
+  max-width: 280px;
+  margin-bottom: var(--space-6);
+}
+
+.prayer-splash-begin {
+  padding: var(--space-3) var(--space-8);
+  background: var(--color-sacred);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  cursor: pointer;
+  min-height: 48px;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--color-sacred) 15%, transparent);
+  transition: transform var(--transition-fast);
+}
+.prayer-splash-begin:active { transform: scale(0.97); }
+
+/* Dark mode enhancements — glow intensifies slightly */
+html[data-theme="dark"] .prayer-splash {
+  background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--color-sacred) 5%, transparent) 0%, transparent 70%);
+}
+html[data-theme="dark"] .prayer-splash-icon {
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--color-sacred) 25%, transparent));
+}
+html[data-theme="dark"] .prayer-splash-title {
+  text-shadow: 0 0 50px color-mix(in srgb, var(--color-sacred) 15%, transparent);
+}
+html[data-theme="dark"] .prayer-splash-begin {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--color-sacred) 20%, transparent);
+}
+```
+
+**Visual description for the three demographics:**
+
+- **Dorothy:** The gentle golden glow on the title and cross icon gives the screen warmth and gravity. She knows immediately this is something sacred, not a settings menu. The "Begin" button is large and obvious.
+- **Paul:** The radial gradient and drop-shadow create the kind of subtle depth he'd see in Apple's meditation features. It feels premium without being gaudy.
+- **Sarah:** The single Begin button is the only actionable element. Tap it, start praying.
+
+**HTML template** (modules fill in their content):
+
+```html
+<div class="prayer-splash">
+  <div class="prayer-splash-icon">
+    <svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5">
+      <line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/>
+    </svg>
+  </div>
+  <h2 class="prayer-splash-title">{Module Title}</h2>
+  <p class="prayer-splash-subtitle">{Tagline}</p>
+  <p class="prayer-splash-desc">{Description in prayer font}</p>
+  <p class="prayer-splash-hint">{Duration/instruction hint}</p>
+  <button class="prayer-splash-begin" onclick="{beginFn}">{Begin Label}</button>
+</div>
+```
+
+**Test checklist:**
+- [ ] Radial gradient is barely perceptible in light mode — a warm sacred-gold haze from center
+- [ ] Title has a soft golden text-shadow that doesn't look like a drop shadow — more like a glow behind the letters
+- [ ] Icon has a `drop-shadow` glow, not a hard shadow
+- [ ] Begin button has a subtle surrounding glow
+- [ ] Dark mode: all glows intensify slightly for visibility against dark background
+- [ ] At 375px viewport, nothing overflows or truncates
+- [ ] At "large" text size, layout still holds
+
+---
+
+## IPV-09 — Examination: Upgrade Opening to Shared Splash
+
+**ID:** IPV-09  
+**Category:** refinement  
+**Priority:** P1
+
+**Problem:**  
+The exam's opening screen (`.exam-opening`, line 2952 of `css/app.css`) already has the most sophisticated visual treatment — icon glow, button glow, dark-mode text shadow. But it uses bespoke class names and renders the full opening prayer text inline, making it both a splash and a functional prayer display. It should be refactored to use the shared `.prayer-splash` system while preserving the opening prayer.
+
+**Fix:**
+
+Restructure the exam opening HTML to use `.prayer-splash` classes:
+
+**File:** `src/examination.js`, line ~64–68  
+**Before:**
+```html
+<div class="exam-opening">
+  <div class="exam-opening-icon">SVG</div>
+  <p class="exam-opening-text">{full prayer text}</p>
+  <button class="exam-opening-btn">Begin Examination</button>
+  <p class="exam-opening-hint">A prayerful review...</p>
+</div>
+```
+
+**After:**
+```html
+<div class="prayer-splash">
+  <div class="prayer-splash-icon">SVG</div>
+  <h2 class="prayer-splash-title">Examine Your Conscience</h2>
+  <p class="prayer-splash-subtitle">Prepare for confession</p>
+  <div class="prayer-splash-prayer-text">{full prayer text}</div>
+  <button class="prayer-splash-begin" onclick="window._examBeginReview()">Begin Examination</button>
+  <p class="prayer-splash-hint">About 10–15 minutes. Nothing is saved.</p>
+</div>
+```
+
+The opening prayer text still renders on the splash — this is the centering prayer that prepares the user's heart. But now it sits within the shared visual system with gradient, glow, and consistent typography.
+
+**New CSS for the prayer text block within a splash:**
+
+```css
+.prayer-splash-prayer-text {
+  font-family: var(--font-prayer);
+  font-size: var(--text-base);
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  max-width: 340px;
+  margin-bottom: var(--space-4);
+  max-height: 30vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+```
+
+This preserves the scrollable prayer text from BT4-01 while gaining the splash visual treatment.
+
+**Dead CSS cleanup:** Once retrofitted, the bespoke `.exam-opening-*` rules at lines 2952–2961 become dead CSS. Remove them.
+
+**Dark mode:** Inherits from `.prayer-splash` shared dark rules.
+
+**Test checklist:**
+- [ ] Exam opening shows radial gradient background, icon glow, title glow
+- [ ] Opening prayer text still scrollable (BT4-01 regression check)
+- [ ] "Begin Examination" button has sacred gold glow
+- [ ] Title reads "Examine Your Conscience" (per PZP-01)
+- [ ] Dark mode: enhanced glows visible
+- [ ] Bespoke `.exam-opening-*` CSS removed without visual regression
+
+---
+
+## IPV-10 — Lectio Divina: Upgrade Step-0 to Shared Splash
+
+**ID:** IPV-10  
+**Category:** refinement  
+**Priority:** P2
+
+**Problem:**  
+Lectio Divina's step-0 intro (`_lectioStep === 0` in `src/prayerbook.js`) renders a title, subtitle, description, and gospel reference. It uses `.lectio-step.lectio-intro` and `.lectio-title` classes, which work but have no gradient, no glow, and no visual warmth. It feels like a settings page, not an invitation into contemplative prayer.
+
+**Fix:**
+
+Replace the lectio intro HTML to use `.prayer-splash`:
+
+**Before:**
+```html
+<div class="lectio-step lectio-intro">
+  <h2 class="lectio-title">Lectio Divina</h2>
+  <p class="lectio-subtitle">Sacred Reading</p>
+  <p class="lectio-desc">{description}</p>
+  <p class="lectio-gospel-ref">{gospel ref}</p>
+</div>
+```
+
+**After:**
+```html
+<div class="prayer-splash">
+  <div class="prayer-splash-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+    </svg>
+  </div>
+  <h2 class="prayer-splash-title">Lectio Divina</h2>
+  <p class="prayer-splash-subtitle">Sacred Reading</p>
+  <p class="prayer-splash-desc">{description}</p>
+  <p class="prayer-splash-hint">{gospel ref}</p>
+</div>
+```
+
+The icon is an open book SVG (fitting for sacred reading). The rest maps directly to shared splash slots.
+
+**Test checklist:**
+- [ ] Lectio intro shows gradient, icon glow, title glow
+- [ ] Open book icon renders at correct size
+- [ ] "Begin →" button in footer still works (footer rendering unchanged)
+- [ ] Dark mode: enhanced glows
+- [ ] Back from step 1 returns to list, not re-showing splash
+
+---
+
+## IPV-11 — Retrofit Chaplet + Stations Splash to Shared System
+
+**ID:** IPV-11  
+**Category:** refinement  
+**Priority:** P2
+
+**Problem:**  
+Chaplet and stations have bespoke splash screens with different class names, different visual treatments, and no gradient or glow effects. They should inherit from `.prayer-splash` for uniformity.
+
+**Fix:**
+
+**A. Chaplet intro retrofit:**
+
+**File:** `src/chaplet.js`, in `_renderIntro()` (~line 277–285)  
+Replace `.chaplet-intro` wrapper with `.prayer-splash`, map children to shared classes:
+
+- `.chaplet-intro-cross` → `.prayer-splash-icon`
+- `.chaplet-intro-title` → `.prayer-splash-title`
+- `.chaplet-intro-origin` → `.prayer-splash-subtitle`
+- `.chaplet-intro-quote` → `.prayer-splash-desc` (the Faustina quote)
+- `.chaplet-intro-ref` → kept as a child within `.prayer-splash-desc` (attribution)
+- `.chaplet-begin` → `.prayer-splash-begin`
+
+The chaplet quote and Faustina attribution are unique to this splash. These render within `.prayer-splash-desc` as a blockquote or with a small cite tag — the shared system accommodates extra content.
+
+**B. Stations intro retrofit:**
+
+**File:** `src/stations.js`, in `_renderIntro()` (~line 194–204)  
+Replace `.stations-intro` wrapper with `.prayer-splash`, map children:
+
+- `.stations-intro-icon` → `.prayer-splash-icon`
+- `.stations-intro-title` → `.prayer-splash-title`
+- `.stations-intro-text` → `.prayer-splash-desc`
+- `.stations-intro-instruction` → `.prayer-splash-hint`
+- Footer Begin button unchanged
+
+**C. Dead CSS cleanup:**
+
+After retrofit, these module-specific intro rules become dead CSS:
+- Lines 1831–1838: `.chaplet-intro-*` rules (8 rules)
+- Lines 1849–1852: dark mode overrides for chaplet intro (4 rules)
+- Lines 2661–2665: `.stations-intro-*` rules (5 rules)
+
+Remove them. The shared `.prayer-splash` rules replace all of them.
+
+**Test checklist:**
+- [ ] Chaplet splash shows radial gradient, cross icon with glow, title with glow, Faustina quote, Begin button with glow
+- [ ] Stations splash shows gradient, cross icon with glow, title with glow, description, instruction hint
+- [ ] Both splashes visually match novena and exam splashes (unified feel)
+- [ ] Dark mode: enhanced glows on both
+- [ ] No bespoke `.chaplet-intro-*` or `.stations-intro-*` CSS remains
+- [ ] Chaplet quote text doesn't truncate on small screens
+
+---
+
 ## Summary
 
 | ID | Title | Priority | Module | Scope |
 |----|-------|----------|--------|-------|
+| **IPV-08** | **Universal prayer splash system** | **P0** | **css/app.css** | **Shared CSS foundation** |
 | IPV-01 | Stations: accent color variable | P3 | stations CSS | 15 hex replacements |
-| IPV-02 | Novena: splash screen | P1 | novena.js + CSS | New screen + flow change |
+| IPV-02 | Novena: splash screen | P1 | novena.js + CSS | New screen using `.prayer-splash` |
 | IPV-03 | Novena: section labels | P2 | novena.js + CSS | 4 label additions |
 | IPV-04 | Novena: sacred color token | P2 | novena CSS | 1 hex replacement |
 | IPV-05 | Novena: SVG completion icon | P3 | novena.js + CSS | 1 emoji → SVG |
 | IPV-06 | Examination: completion moment | P2 | examination.js + CSS | New completion screen |
-| IPV-07 | Prayerbook litany: intro screen | P2 | prayerbook.js + CSS | New screen + flow change |
+| IPV-07 | Prayerbook litany: intro screen | P2 | prayerbook.js + CSS | New screen using `.prayer-splash` |
+| **IPV-09** | **Examination: upgrade to shared splash** | **P1** | **examination.js + CSS** | **Retrofit + dead CSS removal** |
+| **IPV-10** | **Lectio Divina: upgrade to shared splash** | **P2** | **prayerbook.js + CSS** | **Retrofit step-0** |
+| **IPV-11** | **Chaplet + stations: retrofit to shared splash** | **P2** | **chaplet.js + stations.js + CSS** | **Retrofit + dead CSS removal** |
 
 ## Implementation order
 
-1. **IPV-04** + **IPV-05** (novena quick fixes — can land immediately)
-2. **IPV-03** (novena section labels — small, high impact)
-3. **IPV-02** (novena splash — requires flow change, benefits from ARC crossfade)
-4. **IPV-07** (litany intro — similar pattern to IPV-02)
-5. **IPV-06** (examination completion — touches exam flow)
-6. **IPV-01** (stations color variable — lowest priority, cleanup)
+1. **IPV-08** (shared splash CSS — foundation, must land first)
+2. **IPV-04** + **IPV-05** (novena quick fixes)
+3. **IPV-03** (novena section labels)
+4. **IPV-02** (novena splash using shared system)
+5. **IPV-09** (exam opening retrofit to shared system)
+6. **IPV-07** (litany splash using shared system)
+7. **IPV-10** (lectio splash upgrade)
+8. **IPV-11** (chaplet + stations retrofit)
+9. **IPV-06** (exam completion moment)
+10. **IPV-01** (stations color variable — cleanup)
 
-**Note on ARC dependency:** IPV-02 and IPV-07 add new screens with "Begin" buttons. If ARC has landed, the crossfade transition will be automatic via `prayerCore.crossfade()`. If ARC hasn't landed yet, these items can still be implemented with the module's existing `_transitionTo()` function — the visual improvement is the splash screen itself, not the transition.
+**Note on ARC dependency:** IPV-08 (the shared CSS) has zero dependency on ARC. IPV-02, IPV-07, and the retrofits in IPV-09/10/11 benefit from ARC's crossfade but work standalone. Ship the visual foundation now; the infrastructure can land before or after.
