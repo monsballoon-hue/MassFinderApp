@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (20 specs implemented, 0 in-progress, 3 queued)
+**Last updated:** 2026-03-15 (20 specs implemented, 0 in-progress, 4 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -422,3 +422,15 @@ Future specs should continue this pattern with new prefixes.
 | OBW-06 | Standalone Detection & Step Array | Queued | P1 |
 | OBW-07 | Dismiss Behavior & Persistence | Queued | P1 |
 | OBW-08 | Desktop & Tablet Adaptation | Queued | P2 |
+
+### UX_Spec_Contextual_Filter_Hints.md (CLH series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-120, IDEA-121, IDEA-122
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_CLH.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| CLH-01 | Generalize Filter Hints to Data-Driven System | Queued | P1 |
+| CLH-02 | Register Adoration Guide as Reader Module | Queued | P1 |
+| CLH-03 | Adoration Filter Hint | Queued | P2 |
+| CLH-04 | Fix Dismiss Button Touch Target (44pt) | Queued | P1 |
+| CLH-05 | Latin Filter Hint (Placeholder — Needs Content) | Queued | P3 |

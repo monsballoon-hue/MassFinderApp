@@ -1604,3 +1604,33 @@ The opening prayer on the first page of the Examination of Conscience is being c
 **Spec ref:** (none)
 
 The Rosary and Divine Mercy Chaplet currently offer a full-screen immersive render experience. Every other prayer tool should also have this option — no exceptions. The full-screen mode creates an immersive, distraction-free prayer environment and should be a universal feature across all prayer tools (Stations of the Cross, Examen, Novenas, Prayerbook prayers, Lectio Divina, Litanies, etc.).
+
+## IDEA-120 — Generalize filter hint system and fix dismiss touch target
+**Category:** refinement
+**Status:** queued
+**Date logged:** 2026-03-15
+**Source:** UX & Design evaluation
+**Related:** IDEA-076 (confession hint, done)
+**Spec ref:** CLH-01, CLH-04
+
+The Find tab has two hardcoded hint divs (confessionHint, spanishHint) with parallel rendering logic. Each new filter hint requires a new div, new JS block, and new sessionStorage key. Replace with a single data-driven filterHint container and config map. Also fixes dismiss button touch target from 28×28 to 44×44 (Apple HIG compliance — Dorothy can't reliably hit the current × button).
+
+## IDEA-121 — Adoration filter hint with reader module deep link
+**Category:** enhancement
+**Status:** queued
+**Date logged:** 2026-03-15
+**Source:** UX & Design evaluation
+**Related:** IDEA-120, IDEA-076
+**Spec ref:** CLH-02, CLH-03
+
+When the Adoration chip is active on Find tab, there is no context for someone who doesn't know what Eucharistic Adoration is. The guide exists in devotions.js but is only reachable via More → Faith Guides → Devotions → Eucharistic Adoration (4 taps, requires knowing it exists). Register the Adoration guide as a reader module (like confession-guide) and add a contextual hint: "New to Adoration? What to expect ›" that opens the guide in the reader overlay. Session-scoped dismissal.
+
+## IDEA-122 — Latin Mass filter hint (needs content first)
+**Category:** new-feature
+**Status:** blocked
+**Date logged:** 2026-03-15
+**Source:** UX & Design evaluation
+**Related:** IDEA-120, IDEA-121
+**Spec ref:** CLH-05
+
+When the Latin chip is active, results show parishes with Latin Mass but no context for what to expect. Unlike Adoration and Confession, there is no Latin Mass guide content — only a glossary tooltip. Needs a "What to expect at a Latin Mass" guide written first (→ Content & Voice), then reader module registration and hint config entry. Infrastructure is ready via CLH-01.
