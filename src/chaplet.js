@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var prayerCore = require('./prayer-core.js');
 function _t(item, field) { return utils.getPrayerText(item, field); }
 function _prayerText(p) { return (typeof p === 'object' && p) ? _t(p, 'text') : (p || ''); }
 
@@ -13,9 +14,8 @@ var _decade = 0;        // 0-4
 var _bead = 0;          // 0 = large bead, 1-10 = small beads
 var _openingStep = 0;   // 0-3 (sign of cross, our father, hail mary, creed)
 var _closingRep = 0;    // 0-2 (three repetitions of "Holy God...")
-var _wakeLock = null;
-var _touchStartX = 0;
-var _touchStartY = 0;
+var _swipeTeardown = null;
+var _visHandler = null;
 var _prevScreen = null;
 var _prevBead = -1;
 
@@ -35,15 +35,19 @@ reader.registerModule('chaplet', {
       _openingStep = 0;
       _closingRep = 0;
       _render();
-      _acquireWakeLock();
-      document.addEventListener('visibilitychange', _handleVisibility);
-      _initSwipe();
+      prayerCore.wakeLock.acquire();
+      _visHandler = prayerCore.wakeLock.onVisibility('chaplet');
+      document.addEventListener('visibilitychange', _visHandler);
+      _swipeTeardown = prayerCore.initSwipe(
+        function() { if (_screen !== 'intro') chapletNext(); },
+        function() { if (_screen !== 'intro') chapletPrev(); }
+      );
     });
   },
   onClose: function() {
-    _releaseWakeLock();
-    document.removeEventListener('visibilitychange', _handleVisibility);
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_visHandler) document.removeEventListener('visibilitychange', _visHandler);
+    if (_swipeTeardown) _swipeTeardown();
   }
 });
 
@@ -54,31 +58,11 @@ function _load() {
     .then(function(d) { _data = d; _chaplet = d.chaplet; return d; });
 }
 
-// ── Wake Lock ──
-function _acquireWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  navigator.wakeLock.request('screen').then(function(lock) {
-    _wakeLock = lock;
-    lock.addEventListener('release', function() { _wakeLock = null; });
-  }).catch(function() {});
-}
-
-function _releaseWakeLock() {
-  if (_wakeLock) { _wakeLock.release(); _wakeLock = null; }
-}
-
-function _handleVisibility() {
-  var cur = reader.getCurrent();
-  if (document.visibilityState === 'visible' && cur && cur.mode === 'chaplet') {
-    _acquireWakeLock();
-  }
-}
-
-// ── Format prayer text ──
+// Wake lock, fmtPrayer, crossfade, swipe extracted to prayer-core.js (ARC-04)
 function _fmtPrayer(text) {
   if (!text) return '';
   if (typeof text === 'object' && text.text) text = _prayerText(text);
-  return utils.esc(text).replace(/\r\n/g, '\n').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+  return prayerCore.fmtPrayer(text);
 }
 
 // ── Open / Close ──
@@ -126,14 +110,7 @@ function chapletNext() {
       _screen = 'final';
     }
   } else if (_screen === 'final') {
-    // Log completion
-    try {
-      var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      log.push({ type: 'chaplet', date: new Date().toISOString().slice(0, 10) });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
-    } catch (e) {}
+    prayerCore.logCompletion('chaplet');
     _haptic.confirm();
     closeChaplet();
     return;
@@ -212,48 +189,8 @@ function chapletPrev() {
   _transitionTo(function() { _render(); });
 }
 
-// ── Crossfade transition ──
-function _transitionTo(renderFn) {
-  var body = document.getElementById('readerBody');
-  if (!body) { renderFn(); return; }
-  body.style.transition = 'opacity 150ms ease';
-  body.style.opacity = '0';
-  setTimeout(function() {
-    renderFn();
-    if (body) body.scrollTop = 0;
-    body.style.transition = 'opacity 200ms ease';
-    body.style.opacity = '1';
-  }, 150);
-}
-
-// ── Swipe gesture ──
-function _initSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.addEventListener('touchstart', _onTouchStart, { passive: true });
-  body.addEventListener('touchend', _onTouchEnd, { passive: true });
-}
-
-function _teardownSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.removeEventListener('touchstart', _onTouchStart);
-  body.removeEventListener('touchend', _onTouchEnd);
-}
-
-function _onTouchStart(e) {
-  _touchStartX = e.changedTouches[0].clientX;
-  _touchStartY = e.changedTouches[0].clientY;
-}
-
-function _onTouchEnd(e) {
-  var dx = e.changedTouches[0].clientX - _touchStartX;
-  var dy = e.changedTouches[0].clientY - _touchStartY;
-  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-  if (_screen === 'intro') return;
-  if (dx < 0) chapletNext();
-  else chapletPrev();
-}
+// Crossfade + swipe now via prayer-core.js
+var _transitionTo = prayerCore.crossfade;
 
 // ── Render dispatcher ──
 function _render() {

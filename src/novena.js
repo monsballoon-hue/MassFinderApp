@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var prayerCore = require('./prayer-core.js');
 
 // NPT-02: Liturgical season → novena suggestions
 var NOVENA_SEASONS = [
@@ -19,8 +20,7 @@ var _novenas = null;      // all novena definitions
 var _active = null;       // currently selected novena object
 var _activeId = null;     // novena ID string
 var _currentDay = 0;      // 0-indexed (day 1 = index 0)
-var _screen = 'select';   // 'select' | 'prayer' | 'complete'
-var _wakeLock = null;
+var _screen = 'select';   // 'select' | 'intro' | 'prayer' | 'complete'
 
 // ── Reader module registration ──
 reader.registerModule('novena', {
@@ -40,11 +40,11 @@ reader.registerModule('novena', {
         _screen = 'select';
         _render();
       }
-      _acquireWakeLock();
+      prayerCore.wakeLock.acquire();
     });
   },
   onClose: function() {
-    _releaseWakeLock();
+    prayerCore.wakeLock.release();
   }
 });
 
@@ -55,24 +55,8 @@ function _load() {
     .then(function(d) { _data = d; return d; });
 }
 
-// ── Wake Lock ──
-function _acquireWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  navigator.wakeLock.request('screen').then(function(lock) {
-    _wakeLock = lock;
-    lock.addEventListener('release', function() { _wakeLock = null; });
-  }).catch(function() {});
-}
-
-function _releaseWakeLock() {
-  if (_wakeLock) { _wakeLock.release(); _wakeLock = null; }
-}
-
-// ── Format prayer text (line breaks → HTML) ──
-function _fmtPrayer(text) {
-  if (!text) return '';
-  return utils.esc(text).replace(/\r\n/g, '\n').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-}
+// Wake lock + fmtPrayer extracted to prayer-core.js (ARC-06)
+var _fmtPrayer = prayerCore.fmtPrayer;
 
 // ── Multi-novena localStorage tracking ──
 function _migrateOldTracking() {
@@ -375,13 +359,7 @@ function novenaMarkDay() {
   // Check if all days complete
   var totalDays = _active.days.length;
   if (tracking.completedDays.length >= totalDays) {
-    try {
-      var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      log.push({ type: 'novena', date: new Date().toISOString().slice(0, 10), novena: _activeId });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
-    } catch (e) {}
+    prayerCore.logCompletion('novena', { novena: _activeId });
     _clearTracking(_activeId);
     _screen = 'complete';
   }

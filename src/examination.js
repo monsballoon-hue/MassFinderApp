@@ -7,6 +7,7 @@ var refs = require('./refs.js');
 var ui = require('./ui.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var prayerCore = require('./prayer-core.js');
 
 // ── State ──
 var _examData = null;
@@ -295,16 +296,12 @@ function examScrollToSummary() {
     setTimeout(function() { summary.classList.remove('exam-summary--revealed'); }, 1500);
   }
   _haptic();
-  // Log examination review
+  // Log examination review (deduplicated — max once per day)
   try {
-    var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-    var today = new Date().toISOString().slice(0, 10);
-    var alreadyLogged = log.some(function(e) { return e.type === 'examination' && e.date === today; });
-    if (!alreadyLogged) {
-      log.push({ type: 'examination', date: today });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
+    var _log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var _today = new Date().toISOString().slice(0, 10);
+    if (!_log.some(function(e) { return e.type === 'examination' && e.date === _today; })) {
+      prayerCore.logCompletion('examination');
     }
   } catch (e) {}
 }
@@ -642,16 +639,12 @@ function examGoToSection(n) {
 function examViewSummary() {
   _haptic();
   _renderSummaryScreen();
-  // Log examination review
+  // Log examination review (deduplicated — max once per day)
   try {
-    var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-    var today = new Date().toISOString().slice(0, 10);
-    var alreadyLogged = log.some(function(e) { return e.type === 'examination' && e.date === today; });
-    if (!alreadyLogged) {
-      log.push({ type: 'examination', date: today });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
+    var _log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
+    var _today = new Date().toISOString().slice(0, 10);
+    if (!_log.some(function(e) { return e.type === 'examination' && e.date === _today; })) {
+      prayerCore.logCompletion('examination');
     }
   } catch (e) {}
 }
