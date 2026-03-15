@@ -529,6 +529,53 @@ html { font-size:17px; }
 /* Tap ring — JS-positioned on .highlight element */
 .ig-tap-ring { position:absolute;width:44px;height:44px;border:3px solid #007AFF;border-radius:50%;animation:ig-ring 1.5s infinite;pointer-events:none; }
 @keyframes ig-ring { 0%{transform:scale(0.8);opacity:0.8} 50%{transform:scale(1.3);opacity:0.2} 100%{transform:scale(0.8);opacity:0.8} }
+/* IGM-01: Safari URL bar */
+.ig-safari-urlbar { display:flex;align-items:center;gap:6px;background:white;border-radius:10px;padding:6px 10px;margin-bottom:6px;font-size:11px;color:#666; }
+.ig-safari-domain { flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+.ig-safari-lock { flex-shrink:0;opacity:0.5; }
+/* IGM-02: iOS share sheet rebuild */
+.ig-sheet-ios { background:#f2f2f7;border-radius:12px 12px 0 0;overflow:hidden; }
+.ig-sheet-hdr { display:flex;align-items:center;gap:8px;padding:12px 12px 8px; }
+.ig-sheet-app-icon { width:32px;height:32px;background:var(--color-primary);color:var(--color-accent);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;flex-shrink:0; }
+.ig-sheet-hdr-text { min-width:0; }
+.ig-sheet-hdr-title { font-size:11px;font-weight:600;color:#222;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.ig-sheet-hdr-domain { font-size:10px;color:#888; }
+.ig-sheet-targets { display:flex;gap:10px;padding:8px 12px;border-top:1px solid #ddd;border-bottom:1px solid #ddd; }
+.ig-sheet-target { display:flex;flex-direction:column;align-items:center;gap:4px;font-size:8px;color:#666; }
+.ig-target-circle { width:36px;height:36px;background:#e0e0e0;border-radius:50%; }
+.ig-sheet-actions { display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid #ddd; }
+.ig-sheet-action { display:flex;flex-direction:column;align-items:center;gap:4px;font-size:8px;color:#666;text-align:center;line-height:1.2; }
+.ig-action-circle { width:36px;height:36px;background:#e0e0e0;border-radius:50%; }
+.ig-sheet-group { background:white;border-radius:10px;margin:6px 8px;overflow:hidden; }
+.ig-sheet-group .ig-sheet-row { border-bottom:1px solid #f0f0f0; }
+.ig-sheet-group .ig-sheet-row:last-child { border-bottom:none; }
+/* IGM-03: Chrome bar */
+.ig-chrome-bar { display:flex;align-items:center;gap:6px;padding:4px 6px; }
+.ig-chrome-circle { width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#666;background:#e0e0e0;border-radius:50%;flex-shrink:0; }
+.ig-chrome-circle.highlight { background:rgba(0,122,255,0.15);color:#007AFF; }
+.ig-chrome-circle.dim { opacity:0.5; }
+.ig-chrome-url { flex:1;background:#e8e8ed;border-radius:16px;padding:6px 10px;font-size:10px;color:#666;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
+/* IGM-04/05: Chrome menu */
+.ig-chrome-menu { position:absolute;bottom:48px;left:12px;right:12px;background:#2c2c2e;border-radius:14px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:2; }
+.ig-chrome-menu-item { display:flex;align-items:center;gap:8px;padding:10px 14px;font-size:12px;color:#fff;border-bottom:1px solid #3a3a3c; }
+.ig-chrome-menu-item.dim { opacity:0.4; }
+.ig-chrome-menu-item.highlight { opacity:1;background:rgba(0,122,255,0.15);color:#64ACFF; }
+.ig-chrome-menu-sep { height:6px;background:#1c1c1e; }
+.ig-chrome-menu-footer { display:flex;border-top:1px solid #3a3a3c; }
+.ig-chrome-footer-btn { flex:1;text-align:center;padding:10px 0;font-size:11px;font-weight:600;color:#fff;opacity:0.5; }
+.ig-chrome-footer-btn + .ig-chrome-footer-btn { border-left:1px solid #3a3a3c; }
+/* IGM dark mode for share sheet */
+.dark .ig-sheet-ios { background:#1c1c1e; }
+.dark .ig-sheet-hdr-title { color:#fff; }
+.dark .ig-sheet-hdr-domain { color:#8e8e93; }
+.dark .ig-sheet-targets,.dark .ig-sheet-actions { border-color:#38383a; }
+.dark .ig-target-circle,.dark .ig-action-circle { background:#3a3a3c; }
+.dark .ig-sheet-target,.dark .ig-sheet-action { color:#aaa; }
+.dark .ig-sheet-group { background:#2c2c2e; }
+.dark .ig-sheet-group .ig-sheet-row { color:#ddd;border-color:#38383a; }
+.dark .ig-safari-urlbar { background:#2c2c2e;color:#aaa; }
+.dark .ig-chrome-circle { background:#3a3a3c; }
+.dark .ig-chrome-url { background:#2c2c2e;color:#aaa; }
 
 /* CARDS */
 .card-list { max-width: var(--max-width); margin: 0 auto; padding: var(--space-2) var(--space-4); display: flex; flex-direction: column; gap: var(--space-3); }

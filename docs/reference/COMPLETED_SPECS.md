@@ -509,15 +509,15 @@ Future specs should continue this pattern with new prefixes.
 | CON-38 | Visual Pattern Reference (defers to AGC series) | Done |
 
 ### UX_Spec_Install_Guide_Mockups.md (IGM series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-136
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_IGM.md
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| IGM-01 | Safari Toolbar Layout (share icon position) | Queued | P1 |
-| IGM-02 | Safari Share Sheet Multi-Section Rebuild | Queued | P1 |
-| IGM-03 | Chrome Bottom Bar Layout | Queued | P1 |
-| IGM-04 | Chrome ⋯ Menu Content (wrong items) | Queued | P1 |
-| IGM-05 | Chrome 4-Step Flow (was 3) | Queued | P1 |
-| IGM-06 | Caption Text Fidelity | Queued | P2 |
-| IGM-07 | Share Sheet Header App Icon + Title | Queued | P2 |
+| IGM-01 | Safari Toolbar Layout (share icon position) | Done | P1 |
+| IGM-02 | Safari Share Sheet Multi-Section Rebuild | Done | P1 |
+| IGM-03 | Chrome Bottom Bar Layout | Done | P1 |
+| IGM-04 | Chrome ⋯ Menu Content (wrong items) | Done | P1 |
+| IGM-05 | Chrome 4-Step Flow (was 3) | Done | P1 |
+| IGM-06 | Caption Text Fidelity | Done | P2 |
+| IGM-07 | Share Sheet Header App Icon + Title | Done | P2 |

@@ -1824,7 +1824,10 @@ The Prayer Library has a z-index bug where the search bar overlaps or underlaps 
 
 ## IDEA-136 — Install guide phone mockups don't match real iOS Safari or Chrome UI
 **Category:** bug
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** IGM-01 through IGM-07
+**Implemented:** 2026-03-15 via IGM series — rebuilt Safari toolbar + share sheet, Chrome 4-step flow with menu, updated captions
 **Date logged:** 2026-03-15
 **Source:** screenshot comparison (IMG_0517–IMG_0523)
 **Related:** (none)
