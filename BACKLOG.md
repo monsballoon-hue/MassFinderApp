@@ -1646,7 +1646,10 @@ When the Latin chip is active, results show parishes with Latin Mass but no cont
 
 ## IDEA-123 — Onboarding overlay should delay and render over a blurred Find tab, not replace the screen
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** FVX-01
+**Implemented:** 2026-03-15 via FVX-01 — Moved onboarding trigger to post-render with 800ms delay; replaced solid bg with backdrop-filter blur(12px)
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-076
@@ -1660,7 +1663,10 @@ The onboarding overlay currently fires at `src/app.js:902` during init, before p
 
 ## IDEA-124 — Heart tip card ("tap ♡ to favorite") rendering logic is too simplistic
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** FVX-02
+**Implemented:** 2026-03-15 via FVX-02 — State-aware tip card with mf-had-fav, mf-ob-just-done, mf-onboarding-complete gates
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-001
@@ -1680,7 +1686,10 @@ The tip card at `src/render.js:299` renders if `!localStorage.getItem('mf-welcom
 
 ## IDEA-125 — Liturgical calendar daily card needs more visual draw than bare name + chevron
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** FVX-03
+**Implemented:** 2026-03-15 via FVX-03 — Added liturgical color dot, rank label for feasts/solemnities, teaser line with chevron
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** (none)

@@ -144,6 +144,7 @@ function _dismissOb() {
   var overlay = document.getElementById('onboardOverlay');
   if (!overlay) return;
   try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+  try { sessionStorage.setItem('mf-ob-just-done', '1'); } catch (e) {}
   if (typeof haptics !== 'undefined' && haptics.light) haptics.light();
   overlay.classList.remove('open');
   overlay.classList.add('dismissing');
@@ -710,13 +711,20 @@ function _renderDailyStrip(events) {
   });
   if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
+  var gradeLabels = { 4: 'Feast', 5: 'Feast of the Lord', 6: 'Solemnity', 7: 'Solemnity' };
+  var gradeLabel = '';
+  if (pick.grade >= 4) gradeLabel = gradeLabels[pick.grade] || '';
+  if (pick.holy_day_of_obligation) gradeLabel = gradeLabel ? gradeLabel + ' \u00b7 Holy Day' : 'Holy Day of Obligation';
+
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
+    + '<span class="daily-card-color" style="background:' + colorHex + '" aria-label="Liturgical color: ' + color + '"></span>'
     + '<div class="daily-card-text">'
+    + (gradeLabel ? '<div class="daily-card-rank">' + utils.esc(gradeLabel) + '</div>' : '')
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
     + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
+    + '<div class="daily-card-teaser">Readings & saint of the day<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg></div>'
     + '</div>'
-    + '<span class="daily-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></span>'
     + '</div>'
     + '</div>';
 }
@@ -892,19 +900,6 @@ async function init() {
   data.loadFav();
   data.migrateFavorites();
 
-  // OBW: Show onboarding for genuinely new users only
-  var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
-  if (_isNewUser) {
-    var _hasExistingData = localStorage.getItem('mf-fav') ||
-      localStorage.getItem('mf-theme') ||
-      state._lastVisit;
-    if (_hasExistingData) {
-      try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
-    } else {
-      _showOnboarding();
-    }
-  }
-
   try {
     // Load parish data from static JSON
     var controller = new AbortController();
@@ -960,6 +955,19 @@ async function init() {
     if (['today', 'weekend'].includes(sm)) state.currentSort = 'next_service';
     ui.updateSortLabel(); location_.initLocation(); data.filterChurches(); render.renderCards();
     _renderWelcomeBanner();
+
+    // FVX-01: Show onboarding post-render with delay so cards paint first
+    var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
+    if (_isNewUser) {
+      var _hasExistingData = localStorage.getItem('mf-fav') ||
+        localStorage.getItem('mf-theme') ||
+        state._lastVisit;
+      if (_hasExistingData) {
+        try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+      } else {
+        setTimeout(function() { _showOnboarding(); }, 800);
+      }
+    }
 
     // More tab badge — show dot when daily content hasn't been seen today (Change 12)
     var moreLastSeen = localStorage.getItem('mf-more-seen');
