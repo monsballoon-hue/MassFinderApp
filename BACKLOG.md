@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-103 →
-**Total items:** 102
+**ID sequence:** IDEA-117 →
+**Total items:** 116
 
 ---
 
@@ -1398,3 +1398,143 @@ Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PBR.md`
 **Estimated effort:** 1.5-2 hours
 **Dependencies:** Implement after PMV (IDEA-101)
 **Audience fit:** Dorothy gets recents and quick access. Marcus gets length cues. Sarah skips the sacred pause for quick lookups.
+
+## IDEA-103 — Fine tab chip animation slow and visually awkward
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+The animation that fills in the filter tab chips on the Fine tab is noticeably slow. This appears to be tied to the splash screen used for Seasons. The animated fill-in effect looks weird in this context and probably should not be animated in that way — it feels sluggish and unpolished.
+
+## IDEA-104 — Expand Spanish language support to all prayers in the Prayer Library
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-097, IDEA-098, IDEA-099, IDEA-100
+**Spec ref:** (none)
+
+All prayers inside the Prayer Library need Spanish language support. Currently Spanish translations exist only within specific prayer tools. The full Prayer Library catalog should render in Spanish when the user's language setting is set to Spanish.
+
+## IDEA-105 — Prayer Book search bar should be sticky with category-based quick filters
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-102
+**Spec ref:** (none)
+
+Inside the Prayer Book, the search bar persists as you scroll but content scrolls underneath it. It should be sticky to the top of the view. Additionally, quick filters should be added alongside the search bar that are category-based (e.g., Marian, Penitential, Devotional) rather than individual prayer-based.
+
+## IDEA-106 — Prayer tool splash screens render intro text in hardcoded English
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-097, IDEA-104
+**Spec ref:** (none)
+
+For all prayer tools that support alternative languages (currently Spanish, with more planned), the splash screen that appears when initializing the tool includes a prayer or text blurb that is hardcoded in English. This intro text needs to be dynamically rendered based on the language set in Settings, matching the behavior of the prayer content within the tool itself.
+
+## IDEA-107 — Prayer Library UI/UX overhaul: design is too basic and uninspiring
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-102, IDEA-105
+**Spec ref:** (none)
+
+The internal presentation of the Prayer Library is functional but visually basic and uninspiring. Prayers are categorized but the rendering is plain. Needs a more dynamic, beautiful design treatment — improved search (fuzzy search), quick filters for language switching, and an overall UI/UX uplift that feels inspiring rather than purely utilitarian.
+
+## IDEA-108 — Prayer Library: clicking a prayer renders it in-place and incorrectly logs to recents
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-102, IDEA-107
+**Spec ref:** (none)
+
+Clicking any prayer in the Prayer Library immediately renders it both at the click location and in the Recent tab at the top. The prayer should only render where clicked. Recent prayers should be tracked separately and surfaced via a Recent drawer or chip filter without auto-rendering. Additionally, a star/favorite feature should be added so users can bookmark prayers for quick access.
+
+## IDEA-109 — Divine Mercy Chaplet: full-screen fade transition between repetitive steps is excessive
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-019
+**Spec ref:** (none)
+
+In the Divine Mercy Chaplet, progressing through repetitive steps (same prayer repeated) causes the entire screen to fade out and fade back in. Since only the progress indicator is changing, the full-page transition is jarring and unnecessary. Only the text and progress elements should update — the page frame should remain stable. A subtle progress indication beyond the progress button would help confirm advancement.
+
+## IDEA-110 — Your Practice section tile cards: too verbose and blend into background
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-069, IDEA-101
+**Spec ref:** (none)
+
+The tiles in the Your Practice section do not present well. The Novena tile in particular has too much text explaining the original novena, making it verbose. Content rendered within tiles needs to be concise. The tile surfaces also need more clearly delineated boundaries — they currently blend into the background without enough visual distinction.
+
+## IDEA-111 — Novena list page design rebuild: wall of text, needs visual hierarchy
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-028, IDEA-055
+**Spec ref:** (none)
+
+After the splash screen, the page listing all novenas with progress at the top is essentially a wall of text. It needs to be broken up with better visual hierarchy — more color, clearer delineation between entries. In-progress novenas should be dynamically sorted to the top. Currently, in-progress novenas only have a slightly increased border and everything is sorted alphabetically with no prioritization.
+
+## IDEA-112 — Prayer Library: guided prayers should be visually elevated above static text prayers
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-102, IDEA-107
+**Spec ref:** (none)
+
+The Prayer Library should distinguish between guided prayer experiences (Divine Mercy Chaplet, Rosary, Stations, etc.) and static text prayers. Guided prayers offer a fundamentally different experience and should bubble to the top of the list or be presented with a visually pronounced treatment compared to plain text prayers.
+
+## IDEA-113 — Growing Faith section: remove collapsible behavior, keep items collapsed by default
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-011, IDEA-073
+**Spec ref:** (none)
+
+The Growing Faith section should not have a collapsible feature at the section level. Individual items within should be closed by default, but the ability to collapse the entire section down to just the section header is not useful and looks bad when collapsed. The section should always remain open.
+
+## IDEA-114 — Add Liturgy of the Hours as a prayer offering
+**Category:** new-feature
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-019
+**Spec ref:** (none)
+
+Explore including the Liturgy of the Hours (Divine Office) as a prayer offering within the app. Multiple devout and faithful users have expressed interest in praying the Hours regularly. This would be a significant content addition requiring research into data sources, licensing, and the daily rotating structure of the Office.
+
+## IDEA-115 — Sacred text font should be applied to all prayer snippets throughout the app
+**Category:** refinement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** (none)
+**Spec ref:** (none)
+
+Anywhere in the app where snippets of prayers are rendered, the text should use the sacred text font (--font-prayer) and be visually differentiated from surrounding UI text. This gives prayer content a more ethereal, reverent quality and helps users immediately distinguish sacred text from functional app copy. Audit all surfaces where prayer text appears and ensure consistent font treatment.
+
+## IDEA-116 — Novena list: dynamic sorting by liturgical calendar relevance instead of pinning in-progress
+**Category:** enhancement
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** voice
+**Related:** IDEA-055, IDEA-111
+**Spec ref:** (none)
+
+Rather than pinning in-progress novenas to the top of the list (which may be redundant given the progress tracker above that links directly into the novena), consider dynamically sorting based on liturgical calendar relevance. For example, around St. Patrick's Day, the St. Patrick novena should surface at the top with styling indicating it is contextually relevant to the current moment in the liturgical year. This makes the list feel alive and seasonally aware.
