@@ -239,24 +239,33 @@ function prayerbookLitanyNext() {
   if (_litanyStep < _litany.invocations.length - 1) {
     _litanyStep++;
   } else {
-    // Show closing
-    _litanyStep = _litany.invocations.length; // past last = closing
+    _litanyStep = _litany.invocations.length;
   }
   _haptic();
-  _transitionTo(function() { _render(); });
+  var body = document.getElementById('readerBody');
+  var footer = document.getElementById('readerFooter');
+  if (body && footer) {
+    _transitionTo(function() { _renderLitany(body, footer); });
+  }
 }
 
 function prayerbookLitanyPrev() {
   if (_litanyStep > 0) {
     _litanyStep--;
+    _haptic();
+    var body = document.getElementById('readerBody');
+    var footer = document.getElementById('readerFooter');
+    if (body && footer) {
+      _transitionTo(function() { _renderLitany(body, footer); });
+    }
   } else {
     // Back to list
     _screen = 'list';
     _releaseWakeLock();
     _teardownSwipe();
+    _haptic();
+    _transitionTo(function() { _render(); });
   }
-  _haptic();
-  _transitionTo(function() { _render(); });
 }
 
 function prayerbookLitanyClose() {
@@ -514,16 +523,18 @@ function _renderPrayerRow(prayer) {
     if (wc <= 40) lengthLabel = '<span class="prayerbook-length">brief</span>';
     else if (wc > 100) lengthLabel = '<span class="prayerbook-length">long</span>';
   }
+  var isFav = _favorites.indexOf(prayer.id) >= 0;
   var html = '<div class="prayerbook-row' + (isOpen ? ' prayerbook-row--open' : '') + '" id="prayer-' + utils.esc(prayer.id) + '">';
-  html += '<button class="prayerbook-row-header" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">';
+  html += '<div class="prayerbook-row-header">';
+  html += '<button class="prayerbook-row-tap" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">';
   html += '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>';
   html += lengthLabel;
-  var isFav = _favorites.indexOf(prayer.id) >= 0;
+  html += '<svg class="prayerbook-chevron' + (isOpen ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
+  html += '</button>';
   html += '<button class="prayerbook-fav-btn" onclick="event.stopPropagation();prayerbookToggleFav(\'' + utils.esc(prayer.id) + '\')" aria-label="' + (isFav ? 'Remove from favorites' : 'Add to favorites') + '">'
     + '<svg class="prayerbook-fav-icon' + (isFav ? ' prayerbook-fav-icon--active' : '') + '" viewBox="0 0 24 24" width="16" height="16"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
     + '</button>';
-  html += '<svg class="prayerbook-chevron' + (isOpen ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
-  html += '</button>';
+  html += '</div>';
 
   if (isOpen && prayer.text) {
     html += '<div class="prayerbook-text">' + _formatPrayerText(_t(prayer, 'text')) + '</div>';
