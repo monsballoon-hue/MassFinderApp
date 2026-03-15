@@ -588,20 +588,19 @@ Future specs should continue this pattern with new prefixes.
 | ARC-09 | Update MODULE_MAP.md | Queued |
 
 ### UX_Spec_Immersive_Prayer_Visual.md (IPV series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-119
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_IPV.md
-**Depends on:** ARC series (infrastructure); can be implemented standalone with existing module crossfade functions
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| IPV-01 | Stations: Accent Color Variable | Queued | P3 |
-| IPV-02 | Novena: Splash Screen | Queued | P1 |
-| IPV-03 | Novena: Section Labels on Prayer Blocks | Queued | P2 |
-| IPV-04 | Novena: Sacred Color Token | Queued | P2 |
-| IPV-05 | Novena: SVG Completion Icon | Queued | P3 |
-| IPV-06 | Examination: Completion Moment | Queued | P2 |
-| IPV-07 | Prayerbook Litany: Intro Screen | Queued | P2 |
-| IPV-08 | Universal Prayer Splash System | Queued | P0 |
-| IPV-09 | Examination: Upgrade to Shared Splash | Queued | P1 |
-| IPV-10 | Lectio Divina: Upgrade to Shared Splash | Queued | P2 |
-| IPV-11 | Chaplet + Stations: Retrofit to Shared Splash | Queued | P2 |
+| IPV-01 | Stations: Accent Color Variable | Done | P3 |
+| IPV-02 | Novena: Splash Screen | Done | P1 |
+| IPV-03 | Novena: Section Labels on Prayer Blocks | Done | P2 |
+| IPV-04 | Novena: Sacred Color Token | Done | P2 |
+| IPV-05 | Novena: SVG Completion Icon | Done | P3 |
+| IPV-06 | Examination: Completion Moment | Done | P2 |
+| IPV-07 | Prayerbook Litany: Intro Screen | Done | P2 |
+| IPV-08 | Universal Prayer Splash System | Done | P0 |
+| IPV-09 | Examination: Upgrade to Shared Splash | Done | P1 |
+| IPV-10 | Lectio Divina: Upgrade to Shared Splash | Done | P2 |
+| IPV-11 | Chaplet + Stations: Retrofit to Shared Splash | Done | P2 |

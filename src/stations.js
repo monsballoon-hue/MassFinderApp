@@ -196,11 +196,11 @@ function _render() {
 function _renderIntro(title, body, footer) {
   title.textContent = 'Stations of the Cross';
   snippet.dismissSnippet();
-  body.innerHTML = '<div class="stations-intro">'
-    + '<div class="stations-intro-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="48" height="64"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
-    + '<h3 class="stations-intro-title">The Way of the Cross</h3>'
-    + '<p class="stations-intro-text">Walk with Jesus on His journey to Calvary through 14 stations of prayer and meditation.</p>'
-    + '<p class="stations-intro-instruction">At each station, we pause to reflect on Christ\u2019s suffering and offer our prayers. This guided devotion takes about 15\u201320 minutes.</p>'
+  body.innerHTML = '<div class="prayer-splash">'
+    + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
+    + '<h2 class="prayer-splash-title">The Way of the Cross</h2>'
+    + '<p class="prayer-splash-desc">Walk with Jesus on His journey to Calvary through 14 stations of prayer and meditation.</p>'
+    + '<p class="prayer-splash-hint">At each station, we pause to reflect on Christ\u2019s suffering and offer our prayers. This guided devotion takes about 15\u201320 minutes.</p>'
     + '</div>';
   footer.innerHTML = '<div style="display:flex"><button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button></div>';
 }

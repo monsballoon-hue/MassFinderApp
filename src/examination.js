@@ -60,12 +60,15 @@ reader.registerModule('examination', {
       _expanded['cmd-1'] = true;
       _haptic();
 
-      // Show opening prayer as a centering moment — no progress bar, no scroll
-      bodyEl.innerHTML = '<div class="exam-opening">'
-        + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
-        + '<p class="exam-opening-text">' + _esc(_t(d.prayers.prayer_before, 'text')) + '</p>'
-        + '<button class="exam-opening-btn" onclick="window._examBeginReview()">' + ((localStorage.getItem('mf-prayer-lang') === 'es') ? 'Comenzar Examen' : 'Begin Examination') + '</button>'
-        + '<p class="exam-opening-hint">' + ((localStorage.getItem('mf-prayer-lang') === 'es') ? 'Un examen de conciencia guiado, secci\u00f3n por secci\u00f3n. Unos 10\u201315 minutos. No se guarda nada.' : 'A prayerful review of conscience, section by section. About 10\u201315 minutes. Nothing is saved.') + '</p>'
+      // IPV-09: Opening uses shared prayer-splash system
+      var _isEs = localStorage.getItem('mf-prayer-lang') === 'es';
+      bodyEl.innerHTML = '<div class="prayer-splash">'
+        + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
+        + '<h2 class="prayer-splash-title">' + (_isEs ? 'Examen de Conciencia' : 'Examine Your Conscience') + '</h2>'
+        + '<p class="prayer-splash-subtitle">' + (_isEs ? 'Preparaci\u00f3n para la confesi\u00f3n' : 'Prepare for confession') + '</p>'
+        + '<div class="prayer-splash-prayer-text">' + _esc(_t(d.prayers.prayer_before, 'text')) + '</div>'
+        + '<button class="prayer-splash-begin" onclick="window._examBeginReview()">' + (_isEs ? 'Comenzar Examen' : 'Begin Examination') + '</button>'
+        + '<p class="prayer-splash-hint">' + (_isEs ? 'Unos 10\u201315 minutos. No se guarda nada.' : 'About 10\u201315 minutes. Nothing is saved.') + '</p>'
         + '</div>';
 
       window._examBeginReview = function() {
@@ -837,23 +840,20 @@ function _showExitConfirm(count) {
 function examMarkConfession() {
   localStorage.setItem('mf-last-confession', String(Date.now()));
   _haptic();
-  var _l = (localStorage.getItem('mf-prayer-lang') === 'es');
-  var todayLabel = (_l ? 'Última Confesión: ' : 'Last Confession: ') + (_l ? 'Hoy' : 'Today');
-  var status = document.querySelector('.exam-tracker-status');
-  if (status) {
-    status.textContent = todayLabel;
-  } else {
-    var tracker = document.querySelector('.exam-tracker');
-    if (tracker) {
-      var div = document.createElement('div');
-      div.className = 'exam-tracker-status';
-      div.textContent = todayLabel;
-      tracker.insertBefore(div, tracker.firstChild);
-    }
-  }
-  var btn = document.querySelector('.exam-tracker-btn');
-  if (btn) { btn.classList.add('confirmed'); setTimeout(function() { btn.classList.remove('confirmed'); }, 1200); }
   _updateMoreTabTracker();
+  // IPV-06: Show completion moment
+  var bodyEl = document.getElementById('readerBody');
+  var footerEl = document.getElementById('readerFooter');
+  if (bodyEl) {
+    bodyEl.innerHTML = '<div class="exam-complete-screen">'
+      + '<div class="exam-complete-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
+      + '<h3 class="exam-complete-title">Go in Peace</h3>'
+      + '<p class="exam-complete-quote">\u201CYour sins are forgiven. Your faith has saved you; go in peace.\u201D</p>'
+      + '<p class="exam-complete-ref">\u2014 Luke 7:48, 50</p>'
+      + '<button class="exam-complete-btn" onclick="closeExamination()">Return to MassFinder</button>'
+      + '</div>';
+  }
+  if (footerEl) footerEl.style.display = 'none';
 }
 
 // ── Update More tab confession tracker ──

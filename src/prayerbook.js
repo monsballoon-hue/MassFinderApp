@@ -159,7 +159,7 @@ function prayerbookOpenLitany(litanyId) {
     if (litanies[i].id === litanyId) { _litany = litanies[i]; break; }
   }
   if (!_litany) return;
-  _litanyStep = 0;
+  _litanyStep = -1;
   _screen = 'litany';
   _acquireWakeLock();
   _initSwipe();
@@ -502,6 +502,20 @@ function _renderLitany(body, footer) {
   var total = _litany.invocations.length;
   var isClosing = _litanyStep >= total;
 
+  // IPV-07: Intro screen
+  if (_litanyStep === -1) {
+    body.innerHTML = '<div class="prayer-splash">'
+      + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
+      + '<h2 class="prayer-splash-title">' + utils.esc(_t(_litany, 'title')) + '</h2>'
+      + '<p class="prayer-splash-subtitle">' + total + ' petitions</p>'
+      + '<p class="prayer-splash-desc">' + utils.esc(_litany.description || 'A guided litany') + '</p>'
+      + '<p class="prayer-splash-hint">Swipe or tap to advance. Respond aloud when prompted.</p>'
+      + '<button class="prayer-splash-begin" onclick="prayerbookLitanyBegin()">Begin</button>'
+      + '</div>';
+    footer.style.display = 'none';
+    return;
+  }
+
   if (isClosing) {
     // Closing screen
     body.innerHTML = '<div class="litany-step">'
@@ -535,11 +549,12 @@ function _renderLectio(body, footer) {
   if (_lectioStep === 0) {
     // Intro screen
     var gospelRef = _lectioGospel ? _lectioGospel.ref || 'Today\u2019s Gospel' : '';
-    body.innerHTML = '<div class="lectio-step lectio-intro">'
-      + '<h2 class="lectio-title">Lectio Divina</h2>'
-      + '<p class="lectio-subtitle">Sacred Reading</p>'
-      + '<p class="lectio-desc">' + utils.esc(_data.lectio.description) + '</p>'
-      + (gospelRef ? '<p class="lectio-gospel-ref">' + utils.esc(gospelRef) + '</p>' : '')
+    body.innerHTML = '<div class="prayer-splash">'
+      + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>'
+      + '<h2 class="prayer-splash-title">Lectio Divina</h2>'
+      + '<p class="prayer-splash-subtitle">Sacred Reading</p>'
+      + '<p class="prayer-splash-desc">' + utils.esc(_data.lectio.description) + '</p>'
+      + (gospelRef ? '<p class="prayer-splash-hint">' + utils.esc(gospelRef) + '</p>' : '')
       + '</div>';
     footer.style.display = '';
     footer.innerHTML = '<div style="display:flex;gap:var(--space-3)">'
@@ -594,8 +609,15 @@ function _renderLectio(body, footer) {
   }
 }
 
+function prayerbookLitanyBegin() {
+  _litanyStep = 0;
+  _haptic();
+  _render();
+}
+
 module.exports = {
   openPrayerBook: openPrayerBook,
+  prayerbookLitanyBegin: prayerbookLitanyBegin,
   closePrayerBook: closePrayerBook,
   prayerbookSearch: prayerbookSearch,
   prayerbookToggle: prayerbookToggle,

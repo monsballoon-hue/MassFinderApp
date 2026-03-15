@@ -1613,7 +1613,10 @@ The opening prayer on the first page of the Examination of Conscience is being c
 
 ## IDEA-119 — All prayer tools must offer full-screen immersive render mode
 **Category:** enhancement
-**Status:** queued
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** IPV-01 through IPV-11
+**Implemented:** 2026-03-15 via IPV series — universal prayer-splash CSS, novena/exam/litany/lectio/chaplet/stations retrofitted to shared system
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-019, IDEA-020

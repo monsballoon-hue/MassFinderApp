@@ -140,6 +140,7 @@ function _render() {
   var footer = document.getElementById('readerFooter');
   footer.style.display = '';
   if (_screen === 'select') _renderSelect(title, body, footer);
+  else if (_screen === 'intro') _renderIntro(title, body, footer);
   else if (_screen === 'prayer') _renderPrayer(title, body, footer);
   else if (_screen === 'complete') _renderComplete(title, body, footer);
 }
@@ -269,10 +270,10 @@ function _renderPrayer(title, body, footer) {
     + '<div class="novena-day-num">Day ' + dayNum + ' of ' + totalDays + '</div>'
     + (dayData.title ? '<h3 class="novena-day-title">' + utils.esc(dayData.title) + '</h3>' : '')
     + (dayData.intention ? '<div class="novena-intention"><span class="novena-intention-label">Intention:</span> ' + utils.esc(dayData.intention) + '</div>' : '')
-    + (dayData.meditation ? '<div class="novena-day-meditation"><p>' + _fmtPrayer(dayData.meditation) + '</p></div>' : '')
-    + '<div class="novena-day-prayer"><p>' + _fmtPrayer(dayData.prayer) + '</p></div>'
-    + (dayData.response ? '<div class="novena-day-response"><div class="novena-resp-label">Response</div><p>' + _fmtPrayer(dayData.response) + '</p></div>' : '')
-    + (dayData.closing_prayer ? '<div class="novena-day-closing"><p>' + _fmtPrayer(dayData.closing_prayer) + '</p></div>' : '')
+    + (dayData.meditation ? '<div class="novena-day-meditation"><div class="novena-block-label">Meditation</div><p>' + _fmtPrayer(dayData.meditation) + '</p></div>' : '')
+    + '<div class="novena-day-prayer"><div class="novena-block-label">Prayer</div><p>' + _fmtPrayer(dayData.prayer) + '</p></div>'
+    + (dayData.response ? '<div class="novena-day-response"><div class="novena-block-label">Response</div><p>' + _fmtPrayer(dayData.response) + '</p></div>' : '')
+    + (dayData.closing_prayer ? '<div class="novena-day-closing"><div class="novena-block-label">Closing Prayer</div><p>' + _fmtPrayer(dayData.closing_prayer) + '</p></div>' : '')
     + '</div>';
 
   var alreadyToday = _alreadyPrayedToday(tracking) && !isCompleted;
@@ -296,7 +297,7 @@ function _renderComplete(title, body, footer) {
   footer.style.display = '';
   footer.innerHTML = '<button class="novena-nav-close-btn" onclick="closeNovena()">Amen</button>';
   body.innerHTML = '<div class="novena-complete-screen">'
-    + '<div class="novena-complete-icon">\u2665</div>'
+    + '<div class="novena-complete-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
     + '<h3 class="novena-complete-title">Novena Complete</h3>'
     + '<p class="novena-complete-quote">\u201CAsk and it will be given to you; seek and you will find; knock and the door will be opened to you.\u201D</p>'
     + '<p class="novena-complete-ref">\u2014 Matthew 7:7</p>'
@@ -359,8 +360,26 @@ function _selectNovena(id) {
     _setTracking(id, { startDate: today, completedDays: [] });
     _currentDay = 0;
   }
-  _screen = 'prayer';
+  _screen = 'intro';
   _render();
+}
+
+// ── Render: Intro splash screen ──
+function _renderIntro(title, body, footer) {
+  title.textContent = utils.esc(_active.title);
+  footer.innerHTML = '';
+  footer.style.display = 'none';
+  var totalDays = _active.days.length;
+  var dayNum = _currentDay + 1;
+  var daysLabel = totalDays + ' days of prayer';
+
+  body.innerHTML = '<div class="prayer-splash">'
+    + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="8" x2="12" y2="30"/><path d="M12 8C12 8 8 4 8 2.5C8 1.1 9.8 0 12 0C14.2 0 16 1.1 16 2.5C16 4 12 8 12 8Z" fill="currentColor" stroke="none"/></svg></div>'
+    + '<h2 class="prayer-splash-title">' + utils.esc(_active.title) + '</h2>'
+    + '<p class="prayer-splash-subtitle">' + daysLabel + '</p>'
+    + '<p class="prayer-splash-desc">' + utils.esc(_active.description) + '</p>'
+    + '<button class="prayer-splash-begin" onclick="novenaBeginPrayer()">Begin Day ' + dayNum + '</button>'
+    + '</div>';
 }
 
 function novenaResume() {
@@ -397,8 +416,14 @@ function _getTotalDays(novenaId) {
   return nov ? nov.days.length : 9;
 }
 
+function novenaBeginPrayer() {
+  _screen = 'prayer';
+  _render();
+}
+
 module.exports = {
   openNovena: openNovena,
+  novenaBeginPrayer: novenaBeginPrayer,
   closeNovena: closeNovena,
   novenaSelect: novenaSelect,
   novenaResume: novenaResume,
