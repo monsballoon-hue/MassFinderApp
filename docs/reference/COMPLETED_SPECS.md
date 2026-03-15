@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (16 specs implemented, 0 in-progress, 1 queued)
+**Last updated:** 2026-03-15 (17 specs implemented, 0 in-progress, 0 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -299,17 +299,17 @@ Future specs should continue this pattern with new prefixes.
 | MTR-07 | Devotional Guide Count When Collapsed | Done | P3 |
 
 ### UX_Spec_Pastoral_Handoff.md (PHF series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Source:** Pastoral Advisor (Fr. Mike) handoff
 **Backlog items:** IDEA-074 through IDEA-080
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PHF.md
 **Depends on:** Reader system (implemented), Devotional guides (implemented)
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| PHF-01 | Confession Guide — Reader Module Registration | Queued | P1 |
-| PHF-01a | Confession Guide Nudge in Detail Panel | Queued | P1 |
-| PHF-01b | Confession Guide Hint on Find Tab Filter | Queued | P2 |
-| PHF-02a | Reader Close Button — 44pt Touch Target | Queued | P1 |
-| PHF-02b | Persistent Swipe Hint in Rosary Footer | Queued | P2 |
-| PHF-02c | Prayer Text Size Boost at Large Setting | Queued | P2 |
-| PHF-02d | Reader Overlay Continuity Cue | Queued | P3 |
+| PHF-01 | Confession Guide — Reader Module Registration | Done | P1 |
+| PHF-01a | Confession Guide Nudge in Detail Panel | Done | P1 |
+| PHF-01b | Confession Guide Hint on Find Tab Filter | Done | P2 |
+| PHF-02a | Reader Close Button — 44pt Touch Target | Done | P1 |
+| PHF-02b | Persistent Swipe Hint in Rosary Footer | Done | P2 |
+| PHF-02c | Prayer Text Size Boost at Large Setting | Done | P2 |
+| PHF-02d | Reader Overlay Continuity Cue | Done | P3 |

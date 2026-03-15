@@ -254,6 +254,7 @@ window.prayerbookLitanyClose = prayerbook.prayerbookLitanyClose;
 window.prayerbookLectioNext = prayerbook.prayerbookLectioNext;
 window.prayerbookLectioPrev = prayerbook.prayerbookLectioPrev;
 window.openExamination = examination.openExamination;
+window.openConfessionGuide = function() { readerOpen('confession-guide'); };
 window.closeExamination = examination.closeExamination;
 window.examToggleSection = examination.examToggleSection;
 window.examMarkConfession = examination.examMarkConfession;

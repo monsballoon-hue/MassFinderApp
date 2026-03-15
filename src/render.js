@@ -125,6 +125,21 @@ function renderCards() {
     ? '<button class="quick-filter-clear" onclick="applyQuickFilter(\'all\')">' + utils.esc(_filterLabel) + ' \u00d7</button>' : '';
   document.getElementById('resultsCount').innerHTML = _countText + (_clearHtml && _countText ? ' ' : '') + _clearHtml;
 
+  // PHF-01b: Confession guide hint when confession filter active
+  var confHint = document.getElementById('confessionHint');
+  if (confHint) {
+    if (state.currentFilter === 'confession' && !sessionStorage.getItem('mf-conf-hint-dismissed')) {
+      confHint.style.display = '';
+      confHint.innerHTML = '<div class="confession-hint-inner">'
+        + '<span>Not sure what to expect?</span>'
+        + '<span class="confession-hint-link" onclick="openConfessionGuide()">How Confession works \u203A</span>'
+        + '<button class="confession-hint-dismiss" onclick="this.parentElement.parentElement.style.display=\'none\';sessionStorage.setItem(\'mf-conf-hint-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+        + '</div>';
+    } else {
+      confHint.style.display = 'none';
+    }
+  }
+
   // No-results state with guided recovery
   if (!shown) {
     var recoveryHtml = '';
@@ -748,7 +763,11 @@ function openDetail(id, trapFocus, releaseFocus) {
           + '<div class="schedule-next-available-day">Next: ' + utils.esc(nextConf.dayLabel) + '</div>'
           + '</div>';
       }
-      bodyInner = nextConfHtml + renderSched(svcs, locL, ml, sec.types, _curDay);
+      bodyInner = nextConfHtml + renderSched(svcs, locL, ml, sec.types, _curDay)
+        + '<div class="conf-guide-nudge" onclick="openConfessionGuide()">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>'
+        + 'First time in a while? <span class="conf-guide-nudge-link">What to expect \u203A</span>'
+        + '</div>';
     } else if (sec.k === 'ador') {
       // DC-20: Perpetual Adoration special card
       var perpSvcs = svcs.filter(function(s) { return s.type === 'perpetual_adoration'; });

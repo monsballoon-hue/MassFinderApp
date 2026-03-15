@@ -1,11 +1,21 @@
 # UX Spec: Pastoral Handoff — Kevin & Dorothy (PHF series)
 
 **Created:** 2026-03-15
-**Status:** Queued
+**Status:** Implemented
 **Source:** Pastoral Advisor (Fr. Mike) handoff, 2026-03-15
-**Backlog items:** IDEA-074 through IDEA-079
+**Backlog items:** IDEA-074 through IDEA-080
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_PHF.md
 **Depends on:** Reader system (implemented), devotions.js (implemented), render.js detail panel (implemented)
+
+| ID | Title | Status |
+|----|-------|--------|
+| PHF-01 | Confession Guide — Reader Module Registration | done |
+| PHF-01a | Confession Guide Nudge in Detail Panel | done |
+| PHF-01b | Confession Guide Hint on Find Tab Filter | done |
+| PHF-02a | Reader Close Button — 44pt Touch Target | done |
+| PHF-02b | Persistent Swipe Hint in Rosary Footer | done |
+| PHF-02c | Prayer Text Size Boost at Large Setting | done |
+| PHF-02d | Reader Overlay Continuity Cue | done |
 
 ---
 
@@ -516,3 +526,20 @@ Items 1–4 should be done as a group. Items 5–7 can be cherry-picked.
 > "The best parish experiences work the same way — the usher who hands you a hymnal open to the right page, the sign outside the confessional that says what to expect. Nobody has to ask. The help is just *there*."
 
 Every item in this spec follows that principle. The confession guide appears where Kevin is already looking. The close button is big enough for Dorothy's fingers. The swipe hint stays visible. The text is large enough to read at arm's length. Nobody has to ask for help. The help is just there.
+
+---
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:**
+  - `src/devotions.js` — registered confession-guide reader module with term/CCC/Scripture wiring, defensive index check, and Find Confession button
+  - `src/app.js` — added `window.openConfessionGuide` binding
+  - `src/render.js` — added confession nudge HTML after confession schedule in detail panel; added confession hint logic in renderCards() for Find tab
+  - `src/rosary.js` — removed one-time swipe hint block and `_swipeHintShown` variable; added persistent swipe cue to `_navHtml()`
+  - `css/app.css` — enlarged `.reader-close-btn` from 30px to 44px; added `.conf-guide-nudge` styles with dark mode; added `.confession-hint` styles with dark mode; added `.rosary-nav-swipe-cue`; added prayer text size boost rules for `[data-text-size="large"]`; added `.reader-overlay::after` continuity cue
+  - `index.html` — added `#confessionHint` slot between results-info and pullIndicator
+- **Approach:** Followed spec implementation order exactly. Confession guide registered as reader module in devotions.js (same file as the guide data) with defensive index check for DEVOTIONAL_GUIDES stability. Detail panel nudge appended after confession schedule bodyInner. Find tab hint uses sessionStorage for per-session dismissal. Reader close button is a single CSS value change (30→44). Swipe hint replaced temporary pattern with persistent footer cue. Text boost scoped to `[data-text-size="large"] .reader-body` selectors. Continuity cue uses the alternative `::after` approach (3px line, not wordmark) to avoid back-button overlap.
+- **Deviations from spec:** None
+- **Known issues:** None observed

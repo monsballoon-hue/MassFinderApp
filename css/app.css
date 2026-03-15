@@ -2074,7 +2074,7 @@ html[data-theme="dark"] .fasting-banner--full { border-color:color-mix(in srgb, 
 .reader-back-btn { display:flex;align-items:center;gap:var(--space-1);background:none;border:none;color:var(--color-primary);cursor:pointer;padding:var(--space-1);-webkit-tap-highlight-color:transparent;flex-shrink:0; }
 .reader-back-label { font-size:var(--text-xs);font-weight:var(--weight-medium);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis; }
 .reader-title { flex:1;text-align:center;font-family:var(--font-display);font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-secondary);letter-spacing:0.02em; }
-.reader-close-btn { width:30px;height:30px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
+.reader-close-btn { width:44px;height:44px;border-radius:50%;background:rgba(142,142,147,0.12);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);flex-shrink:0;transition:background 0.15s;-webkit-tap-highlight-color:transparent; }
 .reader-close-btn:active { background:rgba(142,142,147,0.24); }
 .reader-header-extra { flex-shrink:0;border-bottom:0.5px solid var(--color-border-light);background:rgba(248,246,241,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);padding:0 var(--space-4); }
 .reader-body { flex:1;overflow-y:auto;-webkit-overflow-scrolling:auto;touch-action:pan-y;padding:var(--space-5) var(--space-5) var(--space-8);overscroll-behavior:contain; }
@@ -2093,6 +2093,36 @@ html[data-theme="dark"] .reader-header { background:rgba(26,28,34,0.85);border-b
 html[data-theme="dark"] .reader-close-btn { background:rgba(142,142,147,0.2); }
 html[data-theme="dark"] .reader-header-extra { background:rgba(26,28,34,0.85);border-bottom-color:var(--color-border); }
 html[data-theme="dark"] .reader-footer { border-top-color:var(--color-border); }
+/* PHF-01a: Confession guide nudge inside Sacraments accordion */
+.conf-guide-nudge { display:flex;align-items:center;gap:var(--space-2);margin-top:var(--space-4);padding:var(--space-3) var(--space-4);background:color-mix(in srgb, var(--color-info) 5%, transparent);border:1px solid color-mix(in srgb, var(--color-info) 12%, transparent);border-radius:var(--radius-md);font-size:var(--text-sm);color:var(--color-text-secondary);cursor:pointer;-webkit-tap-highlight-color:transparent;min-height:44px;transition:background 0.15s; }
+.conf-guide-nudge:active { background:color-mix(in srgb, var(--color-info) 10%, transparent); }
+.conf-guide-nudge svg { color:var(--color-info); }
+.conf-guide-nudge-link { color:var(--color-info);font-weight:var(--weight-semibold); }
+html[data-theme="dark"] .conf-guide-nudge { background:color-mix(in srgb, var(--color-info) 6%, transparent);border-color:color-mix(in srgb, var(--color-info) 10%, transparent); }
+
+/* PHF-01b: Confession guide hint on Find tab */
+.confession-hint { padding:0 var(--space-4); }
+.confession-hint-inner { display:flex;align-items:center;gap:var(--space-2);padding:var(--space-2) var(--space-3);background:color-mix(in srgb, var(--color-info) 4%, transparent);border-radius:var(--radius-sm);font-size:var(--text-xs);color:var(--color-text-secondary);margin-bottom:var(--space-2); }
+.confession-hint-link { color:var(--color-info);font-weight:var(--weight-semibold);cursor:pointer;white-space:nowrap; }
+.confession-hint-dismiss { margin-left:auto;background:none;border:none;color:var(--color-text-tertiary);font-size:var(--text-xs);cursor:pointer;padding:var(--space-1);min-width:28px;min-height:28px;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent; }
+html[data-theme="dark"] .confession-hint-inner { background:color-mix(in srgb, var(--color-info) 5%, transparent); }
+
+/* PHF-02b: Persistent swipe cue in rosary footer */
+.rosary-nav-swipe-cue { text-align:center;font-size:var(--text-xs);color:var(--color-text-tertiary);padding-top:var(--space-2);opacity:0.5;letter-spacing:0.02em; }
+
+/* PHF-02c: Prayer text boost at large text size inside reader */
+[data-text-size="large"] .reader-body .rosary-prayer-text,
+[data-text-size="large"] .reader-body .chaplet-prayer-text,
+[data-text-size="large"] .reader-body .stations-meditation-text,
+[data-text-size="large"] .reader-body .stations-prayer-text { font-size:calc(var(--text-base) + 2px);line-height:1.9; }
+[data-text-size="large"] .reader-body .rosary-mystery-meditation { font-size:calc(var(--text-sm) + 2px); }
+[data-text-size="large"] .reader-body .rosary-mystery-title { font-size:calc(var(--text-2xl) + 2px); }
+[data-text-size="large"] .reader-body .exam-section-body { font-size:calc(var(--text-base) + 2px);line-height:1.9; }
+
+/* PHF-02d: Subtle continuity cue at bottom of reader overlay */
+.reader-overlay::after { content:'';position:fixed;bottom:0;left:0;right:0;height:3px;background:var(--color-primary);opacity:0.15;pointer-events:none;z-index:1; }
+html[data-theme="dark"] .reader-overlay::after { opacity:0.1; }
+
 /* PTR-01: Prevent iOS scroll bleed-through when reader is open */
 body.reader-open { overflow:hidden;position:fixed;width:100%;top:0;left:0; }
 /* PTR-02: Desktop — full-screen backdrop + centered card */
