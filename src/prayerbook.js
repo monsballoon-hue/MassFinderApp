@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+function _t(item, field) { return utils.getPrayerText(item, field); }
 
 // ── State ──
 var _data = null;        // full prayerbook.json
@@ -357,7 +358,7 @@ function _renderList() {
     // Category view
     _data.categories.forEach(function(cat) {
       html += '<div class="prayerbook-category">';
-      html += '<h3 class="prayerbook-category-title">' + utils.esc(cat.title) + '</h3>';
+      html += '<h3 class="prayerbook-category-title">' + utils.esc(_t(cat, 'title')) + '</h3>';
       cat.prayers.forEach(function(p) {
         html += _renderPrayerRow(p);
       });
@@ -370,7 +371,7 @@ function _renderList() {
       html += '<h3 class="prayerbook-category-title">Guided Litanies</h3>';
       _data.litanies.forEach(function(lit) {
         html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLitany(\'' + utils.esc(lit.id) + '\')">'
-          + '<span class="prayerbook-row-title">' + utils.esc(lit.title) + '</span>'
+          + '<span class="prayerbook-row-title">' + utils.esc(_t(lit, 'title')) + '</span>'
           + '<span class="prayerbook-guided-badge">Guided</span>'
           + '</button>';
       });
@@ -405,13 +406,13 @@ function _renderList() {
 function _renderPrayerRow(prayer) {
   if (prayer.type === 'litany') {
     return '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLitany(\'' + utils.esc(prayer.id) + '\')">'
-      + '<span class="prayerbook-row-title">' + utils.esc(prayer.title) + '</span>'
+      + '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>'
       + '<span class="prayerbook-guided-badge">Guided</span>'
       + '</button>';
   }
   if (prayer.type === 'lectio') {
     return '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLectio()">'
-      + '<span class="prayerbook-row-title">' + utils.esc(prayer.title) + '</span>'
+      + '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>'
       + '<span class="prayerbook-guided-badge">Guided</span>'
       + '</button>';
   }
@@ -419,12 +420,12 @@ function _renderPrayerRow(prayer) {
   var isOpen = _openPrayerId === prayer.id;
   var html = '<div class="prayerbook-row' + (isOpen ? ' prayerbook-row--open' : '') + '" id="prayer-' + utils.esc(prayer.id) + '">';
   html += '<button class="prayerbook-row-header" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">';
-  html += '<span class="prayerbook-row-title">' + utils.esc(prayer.title) + '</span>';
+  html += '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>';
   html += '<svg class="prayerbook-chevron' + (isOpen ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   html += '</button>';
 
   if (isOpen && prayer.text) {
-    html += '<div class="prayerbook-text">' + _formatPrayerText(prayer.text) + '</div>';
+    html += '<div class="prayerbook-text">' + _formatPrayerText(_t(prayer, 'text')) + '</div>';
   }
 
   html += '</div>';
@@ -452,8 +453,8 @@ function _renderLitany(body, footer) {
     body.innerHTML = '<div class="litany-step">'
       + '<div class="litany-counter">' + (_litanyStep + 1) + ' of ' + total + '</div>'
       + '<div class="litany-progress"><div class="litany-progress-fill" style="width:' + pct + '%"></div></div>'
-      + '<div class="litany-invocation">' + utils.esc(inv.petition) + '</div>'
-      + '<div class="litany-response">' + utils.esc(inv.response) + '</div>'
+      + '<div class="litany-invocation">' + utils.esc(_t(inv, 'petition')) + '</div>'
+      + '<div class="litany-response">' + utils.esc(_t(inv, 'response')) + '</div>'
       + '</div>';
     footer.style.display = '';
     footer.innerHTML = '<div style="display:flex;gap:var(--space-3)">'
@@ -515,8 +516,8 @@ function _renderLectio(body, footer) {
     body.innerHTML = '<div class="lectio-step">'
       + dotsHtml
       + '<div class="lectio-label">' + utils.esc(step.latin) + '</div>'
-      + '<h3 class="lectio-english">' + utils.esc(step.english) + '</h3>'
-      + '<p class="lectio-instruction">' + utils.esc(step.instruction) + '</p>'
+      + '<h3 class="lectio-english">' + utils.esc(_t(step, 'english')) + '</h3>'
+      + '<p class="lectio-instruction">' + utils.esc(_t(step, 'instruction')) + '</p>'
       + contentHtml
       + '</div>';
 

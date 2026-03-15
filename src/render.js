@@ -140,6 +140,23 @@ function renderCards() {
     }
   }
 
+  // I18N: Spanish prayer language hint when Spanish filter active
+  var spanishHint = document.getElementById('spanishHint');
+  if (spanishHint) {
+    var isSpanishFilter = state.currentFilter === 'spanish';
+    var alreadySpanish = localStorage.getItem('mf-prayer-lang') === 'es';
+    if (isSpanishFilter && !alreadySpanish && !sessionStorage.getItem('mf-spanish-hint-dismissed')) {
+      spanishHint.style.display = '';
+      spanishHint.innerHTML = '<div class="confession-hint-inner">'
+        + '<span>Prayers available in Spanish</span>'
+        + '<span class="confession-hint-link" onclick="openSettings()">Set prayer language \u203A</span>'
+        + '<button class="confession-hint-dismiss" onclick="this.parentElement.parentElement.style.display=\'none\';sessionStorage.setItem(\'mf-spanish-hint-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+        + '</div>';
+    } else {
+      spanishHint.style.display = 'none';
+    }
+  }
+
   // No-results state with guided recovery
   if (!shown) {
     var recoveryHtml = '';

@@ -43,6 +43,7 @@ var explore = require('./explore.js');
 var settings = require('./settings.js');
 var reader = require('./reader.js');
 var sacredPause = require('./sacred-pause.js');
+window._sacredPause = sacredPause;
 
 var state = data.state;
 
@@ -960,6 +961,24 @@ function _toggleDevPanel() {
     + '<button onclick="window._devSeed(\'clear-prayer\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Clear Prayer Data</button>'
     + '</div></div>';
 
+  // Sacred Pause testing
+  var pauseHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Sacred Pause</div>'
+    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap">'
+    + '<button onclick="window._sacredPause && window._sacredPause.show({label:\'A NEW SEASON\',title:\'The Season of Lent\',message:\'Return to Me with your whole heart.\',timeout:4000})" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Season Pause</button>'
+    + '<button onclick="window._sacredPause && window._sacredPause.show({title:\'The Holy Rosary\',message:\'In the name of the Father,\\nand of the Son,\\nand of the Holy Spirit. Amen.\',timeout:2500})" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-secondary);cursor:pointer;min-height:32px">Prayer Pause</button>'
+    + '<button onclick="sessionStorage.clear();localStorage.removeItem(\'mf-pause-solemn\');alert(\'Pause guards cleared\')" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid var(--color-border);background:var(--color-surface);color:var(--color-text-tertiary);cursor:pointer;min-height:32px">Clear Guards</button>'
+    + '</div></div>';
+
+  // Prayer language quick toggle
+  var pLang = localStorage.getItem('mf-prayer-lang') || 'en';
+  var langHtml = '<div style="padding:var(--space-3) 0;border-bottom:1px solid var(--color-border-light)">'
+    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Prayer Language</div>'
+    + '<div style="display:flex;gap:var(--space-2)">'
+    + '<button onclick="localStorage.setItem(\'mf-prayer-lang\',\'en\');window._closeDevPanel();window._devTap&&(_devTaps=0);_toggleDevPanel()" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid ' + (pLang === 'en' ? 'var(--color-primary)' : 'var(--color-border)') + ';background:' + (pLang === 'en' ? 'var(--color-primary)' : 'var(--color-surface)') + ';color:' + (pLang === 'en' ? 'white' : 'var(--color-text-secondary)') + ';cursor:pointer;min-height:32px">English</button>'
+    + '<button onclick="localStorage.setItem(\'mf-prayer-lang\',\'es\');window._closeDevPanel();window._devTap&&(_devTaps=0);_toggleDevPanel()" style="padding:4px 12px;border-radius:var(--radius-full);font-size:var(--text-xs);font-weight:var(--weight-medium);border:1.5px solid ' + (pLang === 'es' ? 'var(--color-primary)' : 'var(--color-border)') + ';background:' + (pLang === 'es' ? 'var(--color-primary)' : 'var(--color-surface)') + ';color:' + (pLang === 'es' ? 'white' : 'var(--color-text-secondary)') + ';cursor:pointer;min-height:32px">Espa\u00F1ol</button>'
+    + '</div></div>';
+
   // Notification testing
   var notifPerm = ('Notification' in window) ? Notification.permission : 'unsupported';
   var notifEnabled = localStorage.getItem('mf-notifications') === 'enabled';
@@ -984,6 +1003,8 @@ function _toggleDevPanel() {
     + qaHtml
     + notifHtml
     + seedHtml
+    + pauseHtml
+    + langHtml
     + resetHtml;
 
   document.body.appendChild(panel);

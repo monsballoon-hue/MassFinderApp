@@ -2,6 +2,8 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+function _t(item, field) { return utils.getPrayerText(item, field); }
+function _prayerText(p) { return (typeof p === 'object' && p) ? _t(p, 'text') : (p || ''); }
 
 // ── State ──
 var _data = null;       // full prayers.json
@@ -234,7 +236,7 @@ function _renderIntro(title, body, footer) {
   body.innerHTML = '<div class="chaplet-intro">'
     + '<svg class="chaplet-intro-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="52"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
     + '<h2 class="chaplet-intro-title">The Divine Mercy Chaplet</h2>'
-    + '<p class="chaplet-intro-origin">' + utils.esc(_chaplet.origin) + '</p>'
+    + '<p class="chaplet-intro-origin">' + utils.esc(_t(_chaplet, 'origin')) + '</p>'
     + '<blockquote class="chaplet-intro-quote">'
     + '<p>\u201C' + utils.esc(_chaplet.quote.text) + '\u201D</p>'
     + '<cite class="chaplet-intro-ref">\u2014 ' + utils.esc(_chaplet.quote.ref) + '</cite>'
@@ -249,7 +251,7 @@ function _renderOpening(title, body, footer) {
   var prayerIds = _chaplet.opening;
   var names = ['Sign of the Cross', 'Our Father', 'Hail Mary', 'Apostles\' Creed'];
   var prayerKey = prayerIds[_openingStep];
-  var prayerText = _data.prayers[prayerKey] || '';
+  var prayerText = _prayerText(_data.prayers[prayerKey]);
 
   body.innerHTML = '<div class="chaplet-prayer">'
     + '<div class="chaplet-decade-label">Opening \u00b7 ' + (_openingStep + 1) + ' of 4</div>'
@@ -269,7 +271,7 @@ function _renderDecade(title, body, footer) {
   title.textContent = 'Divine Mercy Chaplet';
 
   var isLargeBead = (_bead === 0);
-  var prayerText = isLargeBead ? _chaplet.decade_large : _chaplet.decade_small;
+  var prayerText = isLargeBead ? _prayerText(_chaplet.decade_large) : _prayerText(_chaplet.decade_small);
   var beadLabel = isLargeBead
     ? 'Large Bead'
     : 'Bead ' + _bead + ' of 10';
@@ -292,7 +294,7 @@ function _renderClosing(title, body, footer) {
 
   body.innerHTML = '<div class="chaplet-prayer">'
     + '<div class="chaplet-decade-label">Closing \u00b7 ' + (_closingRep + 1) + ' of 3</div>'
-    + '<div class="chaplet-prayer-text"><p>' + _fmtPrayer(_chaplet.closing) + '</p></div>'
+    + '<div class="chaplet-prayer-text"><p>' + _fmtPrayer(_prayerText(_chaplet.closing)) + '</p></div>'
     + '</div>';
 
   footer.style.display = '';
@@ -308,7 +310,7 @@ function _renderFinal(title, body, footer) {
 
   body.innerHTML = '<div class="chaplet-prayer chaplet-final">'
     + '<svg class="chaplet-final-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="52"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
-    + '<div class="chaplet-prayer-text"><p>' + _fmtPrayer(_chaplet.optional_closing) + '</p></div>'
+    + '<div class="chaplet-prayer-text"><p>' + _fmtPrayer(_prayerText(_chaplet.optional_closing)) + '</p></div>'
     + '</div>';
 
   footer.style.display = '';
