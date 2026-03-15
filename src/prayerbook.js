@@ -234,14 +234,47 @@ function _onTouchEnd(e) {
 }
 
 // ── Litany navigation ──
+function _litanyDirectUpdate() {
+  var total = _litany.invocations.length;
+  var body = document.getElementById('readerBody');
+  if (!body) return false;
+  var counter = body.querySelector('.litany-counter');
+  var fill = body.querySelector('.litany-progress-fill');
+  var inv = body.querySelector('.litany-invocation');
+  var resp = body.querySelector('.litany-response');
+  if (!counter || !fill || !inv || !resp) return false;
+  var step = _litany.invocations[_litanyStep];
+  var pct = Math.round(((_litanyStep + 1) / total) * 100);
+  counter.textContent = (_litanyStep + 1) + ' of ' + total;
+  fill.style.width = pct + '%';
+  inv.textContent = _t(step, 'petition');
+  resp.textContent = _t(step, 'response');
+  // Update footer buttons
+  var footer = document.getElementById('readerFooter');
+  if (footer) {
+    footer.innerHTML = '<div style="display:flex;gap:var(--space-3)">'
+      + '<button class="rosary-nav-btn rosary-nav-secondary" onclick="prayerbookLitanyPrev()">' + (_litanyStep === 0 ? '\u2190 Back' : '\u2190 Prev') + '</button>'
+      + '<button class="rosary-nav-btn rosary-nav-primary" onclick="prayerbookLitanyNext()">' + (_litanyStep < total - 1 ? 'Continue \u2192' : 'Closing \u2192') + '</button>'
+      + '</div>';
+  }
+  return true;
+}
+
 function prayerbookLitanyNext() {
   if (!_litany) return;
-  if (_litanyStep < _litany.invocations.length - 1) {
+  var wasStep = _litanyStep;
+  var total = _litany.invocations.length;
+  if (_litanyStep < total - 1) {
     _litanyStep++;
   } else {
-    _litanyStep = _litany.invocations.length;
+    _litanyStep = total;
   }
   _haptic();
+  // Direct DOM update for invocation-to-invocation (no flash)
+  if (wasStep >= 0 && wasStep < total && _litanyStep >= 0 && _litanyStep < total) {
+    if (_litanyDirectUpdate()) return;
+  }
+  // Full render for intro→invocation or invocation→closing transitions
   var body = document.getElementById('readerBody');
   var footer = document.getElementById('readerFooter');
   if (body && footer) {
@@ -250,9 +283,15 @@ function prayerbookLitanyNext() {
 }
 
 function prayerbookLitanyPrev() {
+  var total = _litany ? _litany.invocations.length : 0;
   if (_litanyStep > 0) {
+    var wasStep = _litanyStep;
     _litanyStep--;
     _haptic();
+    // Direct DOM update for invocation-to-invocation
+    if (wasStep > 0 && wasStep < total && _litanyStep >= 0 && _litanyStep < total) {
+      if (_litanyDirectUpdate()) return;
+    }
     var body = document.getElementById('readerBody');
     var footer = document.getElementById('readerFooter');
     if (body && footer) {
@@ -354,9 +393,15 @@ function _renderList() {
 
   var html = '<div class="prayerbook-list">';
 
-  // PLR-02: Category filter chips (non-search only)
+  // Search input — always first, sticks to top
+  html += '<div class="prayerbook-search">'
+    + '<input type="search" class="prayerbook-search-input" placeholder="Search prayers\u2026"'
+    + ' value="' + utils.esc(_searchQuery) + '"'
+    + ' oninput="prayerbookSearch(this.value)"'
+    + ' autocomplete="off" autocorrect="off" spellcheck="false">';
+
+  // PLR-02: Category filter chips (inside sticky search container, non-search only)
   if (!_searchQuery) {
-    html += '<div class="prayerbook-intro">Your companion for daily prayer</div>';
     var _chipDefs = [
       { id: 'essential', label: 'Essential' },
       { id: 'morning_evening', label: 'Daily' },
@@ -373,14 +418,7 @@ function _renderList() {
     });
     html += '</div>';
   }
-
-  // Search input
-  html += '<div class="prayerbook-search">'
-    + '<input type="search" class="prayerbook-search-input" placeholder="Search prayers\u2026"'
-    + ' value="' + utils.esc(_searchQuery) + '"'
-    + ' oninput="prayerbookSearch(this.value)"'
-    + ' autocomplete="off" autocorrect="off" spellcheck="false">'
-    + '</div>';
+  html += '</div>';
 
   if (_searchQuery) {
     // Flat search results
