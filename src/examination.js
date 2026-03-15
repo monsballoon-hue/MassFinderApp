@@ -60,19 +60,33 @@ reader.registerModule('examination', {
       _expanded['cmd-1'] = true;
       _haptic();
 
-      // IPV-09: Opening uses shared prayer-splash system
+      // IPV-09: Splash screen (like other prayer tools)
       var _isEs = localStorage.getItem('mf-prayer-lang') === 'es';
       bodyEl.innerHTML = '<div class="prayer-splash">'
         + '<div class="prayer-splash-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
         + '<h2 class="prayer-splash-title">' + (_isEs ? 'Examen de Conciencia' : 'Examine Your Conscience') + '</h2>'
         + '<p class="prayer-splash-subtitle">' + (_isEs ? 'Preparaci\u00f3n para la confesi\u00f3n' : 'Prepare for confession') + '</p>'
-        + '<div class="prayer-splash-prayer-text">' + _esc(_t(d.prayers.prayer_before, 'text')) + '</div>'
-        + '<button class="prayer-splash-begin" onclick="window._examBeginReview()">' + (_isEs ? 'Comenzar Examen' : 'Begin Examination') + '</button>'
         + '<p class="prayer-splash-hint">' + (_isEs ? 'Unos 10\u201315 minutos. No se guarda nada.' : 'About 10\u201315 minutes. Nothing is saved.') + '</p>'
+        + '<button class="prayer-splash-begin" onclick="window._examShowPrayer()">Begin</button>'
         + '</div>';
+
+      // Opening prayer screen — centering moment before the checklist
+      window._examShowPrayer = function() {
+        delete window._examShowPrayer;
+        _haptic();
+        bodyEl.innerHTML = '<div class="exam-prayer-screen">'
+          + '<div class="exam-prayer-text">' + _esc(_t(d.prayers.prayer_before, 'text')) + '</div>'
+          + '</div>';
+        var ft = document.getElementById('readerFooter');
+        if (ft) {
+          ft.style.display = '';
+          ft.innerHTML = '<div style="display:flex"><button class="rosary-nav-btn rosary-nav-primary" onclick="window._examBeginReview()" style="background:var(--color-sacred)">' + (_isEs ? 'Comenzar Examen' : 'Begin Examination') + '</button></div>';
+        }
+      };
 
       window._examBeginReview = function() {
         delete window._examBeginReview;
+        delete window._examShowPrayer;
         _haptic();
         _initSectionFlow(d);
       };
