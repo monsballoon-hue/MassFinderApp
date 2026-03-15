@@ -619,9 +619,9 @@ html[data-theme="dark"] .first-use-tip { border-color:var(--color-border-light);
 .no-results p { font-size: var(--text-sm); color: var(--color-text-tertiary); }
 
 /* DETAIL PANEL */
-.detail-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(26,30,38,0.4); opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease-out); }
+.detail-backdrop { position: fixed; inset: 0; z-index: var(--z-detail-backdrop); background: rgba(26,30,38,0.4); opacity: 0; pointer-events: none; transition: opacity 0.3s var(--ease-out); }
 .detail-backdrop.open { opacity: 1; pointer-events: auto; }
-.detail-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: 1001; background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 92vh; max-height: 92dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateY(100%); transition: transform 0.35s var(--ease-out); box-shadow: var(--shadow-elevated); overscroll-behavior: contain; }
+.detail-panel { position: fixed; bottom: 0; left: 0; right: 0; z-index: var(--z-detail-panel); background: var(--color-surface); border-radius: var(--radius-lg) var(--radius-lg) 0 0; max-height: 92vh; max-height: 92dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; transform: translateY(100%); transition: transform 0.35s var(--ease-out); box-shadow: var(--shadow-elevated); overscroll-behavior: contain; }
 .detail-panel.open { transform: translateY(0); }
 @media (min-width: 768px) { .detail-panel { left: 50%; right: auto; width: 100%; max-width: var(--max-width); transform: translate(-50%, 100%); } .detail-panel.open { transform: translate(-50%, 0); } }
 .detail-handle { display: flex; justify-content: center; padding: var(--space-4) 0 var(--space-2); position: sticky; top: 0; background: var(--color-surface); z-index: 2; border-radius: var(--radius-lg) var(--radius-lg) 0 0; cursor: grab; }
