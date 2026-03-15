@@ -1624,10 +1624,11 @@ html[data-theme="dark"] .library-teaser { border-color:var(--color-border); }
 /* SEASONAL MOMENT ZONE (SOT-01) */
 #seasonalMoment:empty { display:none; }
 #seasonalMoment { padding:var(--space-2) 0; }
-.seasonal-card { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-left:3px solid var(--color-accent);border-radius:var(--radius-md);cursor:pointer;min-height:48px;-webkit-tap-highlight-color:transparent;transition:box-shadow 0.15s;list-style:none; }
+.seasonal-card { background:var(--color-surface);border:1px solid var(--color-border-light);border-left:3px solid var(--color-accent);border-radius:var(--radius-md);overflow:hidden;-webkit-tap-highlight-color:transparent;transition:box-shadow 0.15s; }
 .seasonal-card + .seasonal-card { margin-top:var(--space-2); }
-.seasonal-card:active { transform:scale(0.98); }
-.seasonal-card::-webkit-details-marker { display:none; }
+.seasonal-card summary { display:flex;align-items:center;gap:var(--space-3);padding:var(--space-3) var(--space-4);cursor:pointer;list-style:none;min-height:48px; }
+.seasonal-card summary::-webkit-details-marker { display:none; }
+.seasonal-card summary:active { transform:scale(0.98); }
 .seasonal-card-icon { width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--color-accent-pale);color:var(--color-accent); }
 .seasonal-card-icon svg { width:18px;height:18px; }
 .seasonal-card-body { flex:1;min-width:0; }
