@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-088 →
-**Total items:** 87
+**ID sequence:** IDEA-091 →
+**Total items:** 90
 
 ---
 
@@ -1064,6 +1064,7 @@ When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental m
 
 **Implemented:** 2026-03-15 via PHF-02d — added 3px primary-colored line at bottom edge of reader overlay
 
+<<<<<<< HEAD
 ## IDEA-081 — App rebrand: evaluate "Sacristy" as replacement for "MassFinder"
 **Category:** research
 **Status:** done
@@ -1152,3 +1153,42 @@ Draft and send an introductory email to the Diocese of Springfield communication
 
 **Estimated effort:** 1 hour (draft + send)
 **Dependencies:** IDEA-082, IDEA-083, IDEA-084 (app must be rebranded and presentable first)
+
+## IDEA-088 — Pastoral note for Q31 (suicide) in examination of conscience
+**Category:** enhancement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item C1
+**Related:** (none)
+**Spec ref:** CFR1
+**Impl ref:** CFR1-01/02/03
+
+Q31 ("Have I contemplated or attempted suicide?") needs a compassionate pastoral note displayed when tapped or flagged. Must include 988 Suicide & Crisis Lifeline and CCC §2283 on God's mercy.
+
+**Implemented:** 2026-03-15 via CFR1 — pastoral note with 988 link and CCC §2283 quote appears on Q31 check/uncheck
+
+## IDEA-089 — Rephrase Q39 ("disordered sexual desires")
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item C2
+**Related:** (none)
+**Spec ref:** (none)
+
+"Have I acted on disordered sexual desires?" (CCC §2357–2359) rephrased to Church teaching framing.
+
+## IDEA-090 — Seasonal Rosary mystery for Sunday
+**Category:** enhancement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15, item R3 follow-up
+**Related:** (none)
+**Spec ref:** CFR2
+**Impl ref:** CFR2-01/02/03
+
+RVM §38 Sunday mystery varies by liturgical season (Joyful in Advent/Christmas, Sorrowful in Lent, Glorious in Easter/Ordinary Time).
+
+**Implemented:** 2026-03-15 via CFR2 — added getLiturgicalSeason() utility and seasonal Sunday override in _todaySet()
