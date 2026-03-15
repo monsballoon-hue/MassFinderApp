@@ -404,7 +404,7 @@ function _renderOpening(title, body, footer) {
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Opening Prayers</h3>'
     + (_condensedMode
-      ? '<div class="rosary-condensed-summary">Sign of the Cross \u00b7 Apostles\' Creed \u00b7 Our Father \u00b7 3 Hail Marys \u00b7 Glory Be</div>'
+      ? '<div class="rosary-condensed-summary">Sign of the Cross<br>Apostles\' Creed<br>Our Father<br>3 Hail Marys<br>Glory Be</div>'
       : _prayerBlockCollapsible('Sign of the Cross', p.sign_of_cross)
         + _prayerBlockCollapsible('Apostles\' Creed', p.apostles_creed)
         + _prayerBlockCollapsible('Our Father', p.our_father)
@@ -509,7 +509,7 @@ function _renderClosing(title, body, footer) {
     + '<div class="rosary-prayers">'
     + '<h3 class="rosary-section-title">Closing Prayers</h3>'
     + (_condensedMode
-      ? '<div class="rosary-condensed-summary">Hail, Holy Queen \u00b7 Sign of the Cross</div>'
+      ? '<div class="rosary-condensed-summary">Hail, Holy Queen<br>Sign of the Cross</div>'
       : _prayerBlock('Hail, Holy Queen', p.hail_holy_queen)
         + _prayerBlock('Sign of the Cross', p.sign_of_cross))
     + '</div>';

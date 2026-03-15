@@ -10,6 +10,7 @@ var MAX_PER_SESSION = 2;
 function show(opts) {
   if (!opts || !opts.title) return false;
   if (_active) return false;
+  if (localStorage.getItem('mf-sacred-pause') === 'off') return false;
   if (_sessionCount >= MAX_PER_SESSION) return false;
 
   // Storage guard

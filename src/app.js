@@ -477,6 +477,7 @@ window.toggleSettingNotif = settings.toggleSettingNotif;
 window.setSettingRosary = settings.setSettingRosary;
 window.setSettingPrayerLang = settings.setSettingPrayerLang;
 window.toggleSettingConf = settings.toggleSettingConf;
+window.toggleSettingPause = settings.toggleSettingPause;
 window.settingsClearPrayer = settings.settingsClearPrayer;
 window.settingsClearSaved = settings.settingsClearSaved;
 window.settingsClearAll = settings.settingsClearAll;

@@ -74,6 +74,7 @@ function _render() {
     + '<button class="settings-seg-btn' + (rosaryPref === 'manual' ? ' active' : '') + '" onclick="setSettingRosary(\'manual\')">Manual</button>'
     + '</div></div>'
     + _toggleRow('Confession Date Tracking', 'settingsConfToggle', confTracking, 'toggleSettingConf()')
+    + _toggleRow('Sacred Pause (prayer splash)', 'settingsPauseToggle', localStorage.getItem('mf-sacred-pause') !== 'off', 'toggleSettingPause()')
     + '</div>';
 
   // ── Privacy ──
@@ -177,6 +178,12 @@ function toggleSettingConf() {
   _render();
 }
 
+function toggleSettingPause() {
+  var cur = localStorage.getItem('mf-sacred-pause') !== 'off';
+  localStorage.setItem('mf-sacred-pause', cur ? 'off' : 'on');
+  _render();
+}
+
 function settingsClearPrayer() {
   if (!confirm('Clear all prayer activity data? This includes rosary history, novena progress, and examination records.')) return;
   localStorage.removeItem('mf-prayer-log');
@@ -218,6 +225,7 @@ module.exports = {
   setSettingRosary: setSettingRosary,
   setSettingPrayerLang: setSettingPrayerLang,
   toggleSettingConf: toggleSettingConf,
+  toggleSettingPause: toggleSettingPause,
   settingsClearPrayer: settingsClearPrayer,
   settingsClearSaved: settingsClearSaved,
   settingsClearAll: settingsClearAll

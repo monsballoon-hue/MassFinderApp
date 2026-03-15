@@ -201,8 +201,9 @@ function _renderIntro(title, body, footer) {
     + '<h2 class="prayer-splash-title">The Way of the Cross</h2>'
     + '<p class="prayer-splash-desc">Walk with Jesus on His journey to Calvary through 14 stations of prayer and meditation.</p>'
     + '<p class="prayer-splash-hint">At each station, we pause to reflect on Christ\u2019s suffering and offer our prayers. This guided devotion takes about 15\u201320 minutes.</p>'
+    + '<button class="prayer-splash-begin" onclick="stationsNext()">Begin</button>'
     + '</div>';
-  footer.innerHTML = '<div style="display:flex"><button class="stations-nav-btn stations-nav-primary" onclick="stationsNext()">Begin \u2192</button></div>';
+  footer.style.display = 'none';
 }
 
 // ── Render: Station prayer screen ──
