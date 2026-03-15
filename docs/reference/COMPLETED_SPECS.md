@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-14 (14 specs implemented, 0 in-progress, 0 queued)
+**Last updated:** 2026-03-14 (14 specs implemented, 0 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -75,6 +75,9 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **PMG** = Pocket Missal — Grid Restructure
 - **PMB** = Pocket Missal — Prayer Book
 - **PMD** = Pocket Missal — Devotions Expansion
+
+- **PMD** = Pocket Missal — Devotions Expansion
+- **SLV** = Soul / Visual Language
 
 Future specs should continue this pattern with new prefixes.
 
@@ -263,3 +266,17 @@ Future specs should continue this pattern with new prefixes.
 | PMD-06 | Angelus / Regina Caeli — Seasonal Moment Candidate | Done | P3 |
 | PMD-07 | Seasonal Card Cross-Links to New Tools | Done | P3 |
 | PMD-08 | Dark Mode Parity | Done | P1 |
+
+### UX_Spec_Soul_Visual_Language.md (SLV series)
+**Created:** 2026-03-14 · **Status:** Queued
+**Backlog items:** New (visual soul & warmth initiative — not from existing backlog)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_SLV.md
+**Depends on:** None (builds on existing seasonal infrastructure)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| SLV-01 | Season Transition Moment (CSS transition + interstitial overlay) | Queued | P1 |
+| SLV-02 | Typography with a Voice (drop cap, small-caps LORD, warm shadow, letter-spacing) | Queued | P1 |
+| SLV-03 | Candlelight Halo (sacred glow signature on key cards) | Queued | P1 |
+| SLV-04 | Season as Emotional Temperature (timing token shifts per season) | Queued | P2 |
+| SLV-05 | Warm Sacred Surfaces (targeted surface warmth on sacred cards) | Queued | P2 |
+| SLV-06 | Intentional Asymmetry (saint card padding) | Queued | P3 |
