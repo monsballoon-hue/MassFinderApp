@@ -168,7 +168,7 @@ function renderCards() {
     if (data.hasAdv()) {
       recoveryHtml += '<button class="no-results-action" onclick="clearAdvancedFilters();filterChurches();renderCards()">Clear all filters</button>';
     }
-    el.innerHTML = '<div class="no-results"><h3>No churches found</h3><p>Try a different search term or filter.</p><div class="no-results-actions">' + recoveryHtml + '</div></div>';
+    el.innerHTML = '<div class="no-results"><h3>No matches found</h3><p>Try a broader search, or check your filters.</p><div class="no-results-actions">' + recoveryHtml + '</div></div>';
     return;
   }
 
@@ -335,7 +335,7 @@ function renderCards() {
 
   // FT-13: Sparse message — inline below cards when Today filter has few results
   if (state.currentFilter === 'today' && shown > 0 && shown < 10) {
-    el.innerHTML += '<div class="sparse-msg-inline">Fewer services on weekdays \u2014 <button onclick="document.querySelector(\'[data-filter=weekend]\').click()">try This Weekend</button> for Sunday Mass times.</div>';
+    el.innerHTML += '<div class="sparse-msg-inline">Weekday schedules are lighter. <button onclick="document.querySelector(\'[data-filter=weekend]\').click()">Tap This Weekend</button> to see Sunday Mass times.</div>';
   }
 }
 

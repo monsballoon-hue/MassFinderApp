@@ -707,23 +707,23 @@ function _renderLanding() {
 
   html += '<button class="explore-source-card" onclick="_exploreCCCLanding()">'
     + '<div class="explore-source-title">Catechism (CCC)</div>'
-    + '<div class="explore-source-sub">2,865 paragraphs</div>'
+    + '<div class="explore-source-subtitle">The Church\u2019s teaching in 2,865 paragraphs</div>'
     + '</button>';
   html += '<button class="explore-source-card" onclick="_exploreBibleLanding()">'
     + '<div class="explore-source-title">Sacred Scripture</div>'
-    + '<div class="explore-source-sub">73 books \u00b7 DRB &amp; CPDV</div>'
+    + '<div class="explore-source-subtitle">Douay-Rheims &amp; CPDV with cross-references</div>'
     + '</button>';
   html += '<button class="explore-source-card" onclick="_exploreBaltLanding()">'
     + '<div class="explore-source-title">Baltimore Catechism</div>'
-    + '<div class="explore-source-sub">220 questions &amp; answers</div>'
+    + '<div class="explore-source-subtitle">The faith in question-and-answer form</div>'
     + '</button>';
   html += '<button class="explore-source-card" onclick="_exploreSummaLanding()">'
     + '<div class="explore-source-title">Summa Theologica</div>'
-    + '<div class="explore-source-sub">366 curated articles</div>'
+    + '<div class="explore-source-subtitle">St. Thomas Aquinas</div>'
     + '</button>';
   html += '<button class="explore-source-card" onclick="_exploreLectionaryLanding()">'
     + '<div class="explore-source-title">Lectionary</div>'
-    + '<div class="explore-source-sub">Sunday &amp; feast readings</div>'
+    + '<div class="explore-source-subtitle">Sunday and daily readings index</div>'
     + '</button>';
   html += '</div>';
 

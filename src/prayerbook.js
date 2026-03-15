@@ -332,8 +332,9 @@ function _renderList() {
 
   var html = '<div class="prayerbook-list">';
 
-  // PBR-02: Quick access pills (non-search only)
+  // CON-18: Prayer book intro line + PBR-02: Quick access pills (non-search only)
   if (!_searchQuery) {
+    html += '<div class="prayerbook-intro">Your companion for daily prayer</div>';
     var quickIds = ['sign_of_cross', 'our_father', 'hail_mary', 'glory_be', 'act_of_contrition_traditional'];
     html += '<div class="prayerbook-quick">';
     quickIds.forEach(function(id) {

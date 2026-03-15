@@ -94,7 +94,9 @@ function _render() {
   html += '<div class="settings-group settings-about">'
     + '<div class="settings-group-title">About</div>'
     + '<div class="settings-about-block">'
-    + '<p class="settings-about-text">Open source. <a href="https://github.com/monsballoon-hue/MassFinderApp" target="_blank" rel="noopener" style="color:var(--color-primary);text-decoration:none;font-weight:var(--weight-semibold)">View on GitHub \u2192</a></p>'
+    + '<p class="settings-about-text">MassFinder helps you find Mass, Confession, Adoration, and other services at 93 parishes across Western New England.</p>'
+    + '<p class="settings-about-text">A personal stewardship project \u2014 built and maintained by a Catholic layperson. Free, open source, and not affiliated with any diocese.</p>'
+    + '<p class="settings-about-text"><a href="https://github.com/monsballoon-hue/MassFinderApp" target="_blank" rel="noopener" style="color:var(--color-primary);text-decoration:none;font-weight:var(--weight-semibold)">View on GitHub \u2192</a></p>'
     + '</div>'
     + (lastUpdated ? '<div class="settings-about-row" style="margin-top:var(--space-3);font-size:var(--text-xs);color:var(--color-text-tertiary)">Parish data updated ' + esc(lastUpdated) + '</div>' : '')
     + '</div>';

@@ -188,15 +188,15 @@ function renderFastingBanner(events) {
     el.innerHTML = '<div class="fasting-banner fasting-banner--full">'
       + '<div class="fasting-banner-text">'
       + '<div class="fasting-banner-title">Day of Fasting &amp; Abstinence</div>'
-      + '<div class="fasting-banner-desc">Ages 18\u201359 fast (one full meal). Ages 14+ abstain from meat.</div>'
+      + '<div class="fasting-banner-desc">Ages 18\u201359: one full meal, two smaller meals that together don\u2019t equal the full meal. Ages 14+: no meat today.</div>'
       + '</div>'
       + _fastingDismissBtn
       + '</div>';
   } else if (isLentFriday) {
     el.innerHTML = '<div class="fasting-banner">'
       + '<div class="fasting-banner-text">'
-      + '<div class="fasting-banner-title">Day of Abstinence</div>'
-      + '<div class="fasting-banner-desc">Ages 14+ abstain from meat today.</div>'
+      + '<div class="fasting-banner-title">Friday Abstinence</div>'
+      + '<div class="fasting-banner-desc">Ages 14 and older abstain from meat today.</div>'
       + '</div>'
       + _fastingDismissBtn
       + '</div>';

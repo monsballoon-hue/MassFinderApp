@@ -23,7 +23,7 @@ var _prevBead = -1;
 reader.registerModule('chaplet', {
   getTitle: function() { return 'Divine Mercy Chaplet'; },
   render: function(params, bodyEl, footerEl) {
-    bodyEl.innerHTML = '<div class="chaplet-loading"><div class="rosary-loading-spinner"></div><p>Loading\u2026</p></div>';
+    bodyEl.innerHTML = '<div class="chaplet-loading"><div class="rosary-loading-spinner"></div><p>Preparing your prayer\u2026</p></div>';
     footerEl.style.display = 'none';
     footerEl.innerHTML = '';
 
@@ -277,6 +277,7 @@ function _renderIntro(title, body, footer) {
   body.innerHTML = '<div class="chaplet-intro">'
     + '<svg class="chaplet-intro-cross" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="52"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
     + '<h2 class="chaplet-intro-title">The Divine Mercy Chaplet</h2>'
+    + '<p class="chaplet-intro-desc">A short prayer of trust in God\u2019s mercy, given to St. Faustina Kowalska. Prayed on rosary beads. About 10\u201315 minutes.</p>'
     + '<p class="chaplet-intro-origin">' + utils.esc(_t(_chaplet, 'origin')) + '</p>'
     + '<blockquote class="chaplet-intro-quote">'
     + '<p>\u201C' + utils.esc(_chaplet.quote.text) + '\u201D</p>'
