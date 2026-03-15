@@ -16,6 +16,7 @@
 | `data.js` | 234 | config, utils | State management: `state` object, `filterChurches()`, `sortChurches()`, `parishesToChurches()`, `toggleFav()` |
 | `haptics.js` | 30 | none | Shared haptic feedback function. |
 | `ccc-data.js` | 38 | none | Shared lazy-loader for CCC paragraph data. |
+| `prayer-core.js` | 120 | utils | Shared prayer infrastructure: `wakeLock`, `fmtPrayer()`, `crossfade()`, `initSwipe()`, `logCompletion()`, `navHtml()`, `scrollTop()`. Imported by all prayer tool modules. |
 | `refs.js` | 77 | none | Renders tappable CCC and Scripture reference spans. `renderRef()`, `initRefTaps()`. |
 
 ## Tab Rendering

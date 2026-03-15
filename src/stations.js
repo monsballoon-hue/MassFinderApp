@@ -3,15 +3,15 @@ var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
 var snippet = require('./snippet.js');
+var prayerCore = require('./prayer-core.js');
 function _t(item, field) { return utils.getPrayerText(item, field); }
 
 // ── State ──
 var _data = null;
 var _station = 0;        // 0-13 (current station index)
 var _screen = 'intro';   // 'intro' | 'station' | 'closing'
-var _wakeLock = null;
-var _touchStartX = 0;
-var _touchStartY = 0;
+var _swipeTeardown = null;
+var _visHandler = null;
 var _swipeHintShown = false;
 
 // ── Reader module registration ──
@@ -30,15 +30,19 @@ reader.registerModule('stations', {
         _station = 0;
       }
       _render();
-      _acquireWakeLock();
-      document.addEventListener('visibilitychange', _handleVisibility);
-      _initSwipe();
+      prayerCore.wakeLock.acquire();
+      _visHandler = prayerCore.wakeLock.onVisibility('stations');
+      document.addEventListener('visibilitychange', _visHandler);
+      _swipeTeardown = prayerCore.initSwipe(
+        function() { if (_screen !== 'intro') stationsNext(); },
+        function() { if (_screen !== 'intro') stationsPrev(); }
+      );
     });
   },
   onClose: function() {
-    _releaseWakeLock();
-    document.removeEventListener('visibilitychange', _handleVisibility);
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_visHandler) document.removeEventListener('visibilitychange', _visHandler);
+    if (_swipeTeardown) _swipeTeardown();
   }
 });
 
@@ -49,32 +53,8 @@ function _load() {
     .then(function(d) { _data = d; return d; });
 }
 
-// ── Wake Lock (UX-05) ──
-function _acquireWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  navigator.wakeLock.request('screen').then(function(lock) {
-    _wakeLock = lock;
-    lock.addEventListener('release', function() { _wakeLock = null; });
-  }).catch(function() {});
-}
-
-function _releaseWakeLock() {
-  if (_wakeLock) { _wakeLock.release(); _wakeLock = null; }
-}
-
-function _handleVisibility() {
-  var cur = reader.getCurrent();
-  if (document.visibilityState === 'visible' && cur && cur.mode === 'stations') {
-    _acquireWakeLock();
-  }
-}
-
-// ── Format prayer text (line breaks → HTML) ──
-function _fmtPrayer(text) {
-  if (!text) return '';
-  if (typeof text === 'object' && text.text) text = _prayerText(text);
-  return utils.esc(text).replace(/\r\n/g, '\n').replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-}
+// Wake lock, fmtPrayer, crossfade, swipe extracted to prayer-core.js (ARC-05)
+var _fmtPrayer = prayerCore.fmtPrayer;
 
 // ── Open Stations ──
 function openStations() {
@@ -95,14 +75,7 @@ function stationsNext() {
     if (_station < 13) { _station++; }
     else { _screen = 'closing'; }
   } else if (_screen === 'closing') {
-    // Log completion
-    try {
-      var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      log.push({ type: 'stations', date: new Date().toISOString().slice(0, 10) });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
-    } catch (e) {}
+    prayerCore.logCompletion('stations');
     _renderComplete();
     _haptic.confirm();
     return;
@@ -133,54 +106,8 @@ function stationsGoTo(idx) {
   _scrollTop();
 }
 
-// ── Scroll to top of body ──
-function _scrollTop() {
-  var b = document.getElementById('readerBody');
-  if (b) b.scrollTop = 0;
-}
-
-// ── Crossfade transition ──
-function _transitionTo(renderFn) {
-  var body = document.getElementById('readerBody');
-  if (!body) { renderFn(); return; }
-  body.style.transition = 'opacity 150ms ease';
-  body.style.opacity = '0';
-  setTimeout(function() {
-    renderFn();
-    _scrollTop();
-    body.style.transition = 'opacity 200ms ease';
-    body.style.opacity = '1';
-  }, 150);
-}
-
-// ── Swipe gesture for station navigation ──
-function _initSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.addEventListener('touchstart', _onTouchStart, { passive: true });
-  body.addEventListener('touchend', _onTouchEnd, { passive: true });
-}
-
-function _teardownSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.removeEventListener('touchstart', _onTouchStart);
-  body.removeEventListener('touchend', _onTouchEnd);
-}
-
-function _onTouchStart(e) {
-  _touchStartX = e.changedTouches[0].clientX;
-  _touchStartY = e.changedTouches[0].clientY;
-}
-
-function _onTouchEnd(e) {
-  var dx = e.changedTouches[0].clientX - _touchStartX;
-  var dy = e.changedTouches[0].clientY - _touchStartY;
-  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-  if (_screen === 'intro') return;
-  if (dx < 0) stationsNext();
-  else stationsPrev();
-}
+var _scrollTop = prayerCore.scrollTop;
+var _transitionTo = prayerCore.crossfade;
 
 // ── Render dispatcher ──
 function _render() {

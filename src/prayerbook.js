@@ -2,6 +2,7 @@
 var utils = require('./utils.js');
 var _haptic = require('./haptics.js');
 var reader = require('./reader.js');
+var prayerCore = require('./prayer-core.js');
 function _t(item, field) { return utils.getPrayerText(item, field); }
 
 // ── State ──
@@ -9,7 +10,7 @@ var _data = null;        // full prayerbook.json
 var _screen = 'list';    // 'list' | 'litany' | 'lectio'
 var _searchQuery = '';
 var _openPrayerId = null; // currently expanded prayer
-var _wakeLock = null;
+var _swipeTeardown = null;
 
 // PLR-02: Category filters
 var _activeFilters = [];
@@ -26,8 +27,6 @@ function _saveFavorites() {
 // Litany step-through state
 var _litany = null;       // current litany object
 var _litanyStep = 0;      // current invocation index
-var _touchStartX = 0;
-var _touchStartY = 0;
 
 // Lectio Divina state
 var _lectioStep = 0;      // 0=intro, 1-4 = four movements
@@ -56,8 +55,8 @@ reader.registerModule('prayerbook', {
     });
   },
   onClose: function() {
-    _releaseWakeLock();
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_swipeTeardown) _swipeTeardown();
   }
 });
 
@@ -69,17 +68,7 @@ function _load() {
 }
 
 // ── Wake Lock (for litany/lectio) ──
-function _acquireWakeLock() {
-  if (!('wakeLock' in navigator)) return;
-  navigator.wakeLock.request('screen').then(function(lock) {
-    _wakeLock = lock;
-    lock.addEventListener('release', function() { _wakeLock = null; });
-  }).catch(function() {});
-}
-
-function _releaseWakeLock() {
-  if (_wakeLock) { _wakeLock.release(); _wakeLock = null; }
-}
+// Wake lock + swipe extracted to prayer-core.js (ARC-07)
 
 // ── Open / Close ──
 function openPrayerBook(prayerId) {
@@ -175,8 +164,8 @@ function prayerbookOpenLitany(litanyId) {
   if (!_litany) return;
   _litanyStep = -1;
   _screen = 'litany';
-  _acquireWakeLock();
-  _initSwipe();
+  prayerCore.wakeLock.acquire();
+  _setupSwipe();
   _render();
   _haptic();
 }
@@ -186,8 +175,8 @@ function prayerbookOpenLectio() {
   _lectioStep = 0;
   _lectioGospel = null;
   _screen = 'lectio';
-  _acquireWakeLock();
-  _initSwipe();
+  prayerCore.wakeLock.acquire();
+  _setupSwipe();
 
   // Try to get today's Gospel from readings module
   try {
@@ -202,36 +191,18 @@ function prayerbookOpenLectio() {
 }
 
 // ── Swipe gesture ──
-function _initSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.addEventListener('touchstart', _onTouchStart, { passive: true });
-  body.addEventListener('touchend', _onTouchEnd, { passive: true });
-}
-
-function _teardownSwipe() {
-  var body = document.getElementById('readerBody');
-  if (!body) return;
-  body.removeEventListener('touchstart', _onTouchStart);
-  body.removeEventListener('touchend', _onTouchEnd);
-}
-
-function _onTouchStart(e) {
-  _touchStartX = e.changedTouches[0].clientX;
-  _touchStartY = e.changedTouches[0].clientY;
-}
-
-function _onTouchEnd(e) {
-  var dx = e.changedTouches[0].clientX - _touchStartX;
-  var dy = e.changedTouches[0].clientY - _touchStartY;
-  if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-  if (_screen === 'litany') {
-    if (dx < 0) prayerbookLitanyNext();
-    else prayerbookLitanyPrev();
-  } else if (_screen === 'lectio') {
-    if (dx < 0) prayerbookLectioNext();
-    else prayerbookLectioPrev();
-  }
+// Swipe uses prayer-core but with screen-specific routing
+function _setupSwipe() {
+  _swipeTeardown = prayerCore.initSwipe(
+    function() {
+      if (_screen === 'litany') prayerbookLitanyNext();
+      else if (_screen === 'lectio') prayerbookLectioNext();
+    },
+    function() {
+      if (_screen === 'litany') prayerbookLitanyPrev();
+      else if (_screen === 'lectio') prayerbookLectioPrev();
+    }
+  );
 }
 
 // ── Litany navigation ──
@@ -301,8 +272,8 @@ function prayerbookLitanyPrev() {
   } else {
     // Back to list
     _screen = 'list';
-    _releaseWakeLock();
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_swipeTeardown) _swipeTeardown();
     _haptic();
     _transitionTo(function() { _render(); });
   }
@@ -310,8 +281,8 @@ function prayerbookLitanyPrev() {
 
 function prayerbookLitanyClose() {
   _screen = 'list';
-  _releaseWakeLock();
-  _teardownSwipe();
+  prayerCore.wakeLock.release();
+  if (_swipeTeardown) _swipeTeardown();
   _render();
   _haptic();
 }
@@ -324,16 +295,10 @@ function prayerbookLectioNext() {
     _transitionTo(function() { _render(); });
   } else {
     // Complete — log and close
-    try {
-      var log = JSON.parse(localStorage.getItem('mf-prayer-log') || '[]');
-      log.push({ type: 'lectio', date: new Date().toISOString().slice(0, 10) });
-      var cutoff = new Date(Date.now() - 90 * 86400000).toISOString().slice(0, 10);
-      log = log.filter(function(e) { return e.date >= cutoff; });
-      localStorage.setItem('mf-prayer-log', JSON.stringify(log));
-    } catch (e) {}
+    prayerCore.logCompletion('lectio');
     _screen = 'list';
-    _releaseWakeLock();
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_swipeTeardown) _swipeTeardown();
     _haptic.confirm();
     _render();
   }
@@ -346,8 +311,8 @@ function prayerbookLectioPrev() {
     _transitionTo(function() { _render(); });
   } else {
     _screen = 'list';
-    _releaseWakeLock();
-    _teardownSwipe();
+    prayerCore.wakeLock.release();
+    if (_swipeTeardown) _swipeTeardown();
     _haptic();
     _render();
   }
