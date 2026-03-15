@@ -1916,18 +1916,7 @@ body { transition: background 1.5s ease-in-out; }
 :root[data-season="easter"] body   { background:linear-gradient(180deg, #F8F7F4 0%, #F8F7F2 100%); }
 :root[data-season="christmas"] body{ background:linear-gradient(180deg, #F8F7F4 0%, #F8F7F2 100%); }
 
-/* LITURGICAL SEASON — accent bar below header */
-/* LITURGICAL COLOR BAR (UX-06) — 3px accent bar under header, pure CSS */
-.top-header { position:relative; }
-.top-header::after { content:'';position:absolute;bottom:0;left:0;right:0;height:0;transition:height var(--transition-fast); }
-:root[data-season="lent"] .top-header::after     { height:3px;background:linear-gradient(90deg, transparent 0%, var(--color-accent) 20%, var(--color-accent) 80%, transparent 100%); }
-:root[data-season="advent"] .top-header::after   { height:3px;background:linear-gradient(90deg, transparent 0%, var(--color-accent) 20%, var(--color-accent) 80%, transparent 100%); }
-:root[data-season="easter"] .top-header::after   { height:3px;background:linear-gradient(90deg, transparent 0%, var(--color-accent-pale) 15%, var(--color-accent) 50%, var(--color-accent-pale) 85%, transparent 100%); }
-:root[data-season="christmas"] .top-header::after{ height:3px;background:linear-gradient(90deg, transparent 0%, var(--color-accent-pale) 15%, var(--color-accent) 50%, var(--color-accent-pale) 85%, transparent 100%); }
-:root[data-season="ordinary"] .top-header::after { height:3px;background:linear-gradient(90deg, transparent 0%, var(--color-accent) 20%, var(--color-accent) 80%, transparent 100%); }
-html[data-theme="dark"] .top-header::after       { background:linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-accent) 60%, transparent) 20%, color-mix(in srgb, var(--color-accent) 60%, transparent) 80%, transparent 100%); }
-html[data-theme="dark"][data-season="easter"] .top-header::after,
-html[data-theme="dark"][data-season="christmas"] .top-header::after{ background:linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--color-accent-pale) 40%, transparent) 15%, color-mix(in srgb, var(--color-accent) 60%, transparent) 50%, color-mix(in srgb, var(--color-accent-pale) 40%, transparent) 85%, transparent 100%); }
+/* LITURGICAL SEASON — header accent bar removed (season expresses via body gradient, card accents, transitions) */
 
 /* SLV-01: Season transition interstitial overlay */
 .season-overlay {
