@@ -210,7 +210,7 @@ Future specs should continue this pattern with new prefixes.
 | SOT-01 | Seasonal Moment Container (max 2-card zone) | Done | P1 |
 | SOT-02 | Liturgical Color Indicator in Saint Card (IDEA-057) | Done | P1 |
 | SOT-03 | Novena Auto-Surfacing in Prayer Tools Grid (IDEA-055) | Done | P1 |
-| SOT-04 | Seasonal CCC Spotlight in dailyFormation Slot (IDEA-060) | Done | P2 |
+| SOT-04 | Seasonal CCC Spotlight in dailyFormation Slot (IDEA-060) | Deferred | P2 |
 | SOT-05 | Holy Week Day-by-Day Guide (IDEA-056) | Done | P1 |
 | SOT-06 | Easter Alleluia + Regina Caeli (IDEA-061) | Done | P1 |
 | SOT-07 | Divine Mercy Sunday Experience (IDEA-066) | Done | P1 |

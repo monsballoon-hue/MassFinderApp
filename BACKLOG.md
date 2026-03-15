@@ -100,13 +100,14 @@ The Map tab has a persistent visual glitch where there is a gap between the map 
 
 ## IDEA-009 — Find tab: nearby church prioritization logic may be missing or overwritten
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-13
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
 
-Previously built logic to prioritize the nearest churches on the Find tab so that during peak times (e.g. 8:30 AM with 30+ live events) users aren't inundated with a long unsorted list. This prioritization appears to no longer be working — need to investigate whether the feature was lost during a recent update or overwritten by another change. The current "By distance" sort may not be applying the expected proximity-first filtering.
+Previously built logic to prioritize the nearest churches on the Find tab so that during peak times (e.g. 8:30 AM with 30+ live events) users aren't inundated with a long unsorted list. Distance-based sorting with 15km threshold implemented in src/data.js sortChurches().
 
 ## IDEA-010 — Saved tab: misaligned church mass times at top of list
 **Category:** bug
@@ -226,13 +227,14 @@ The dev panel (accessed via 5 taps on the More tab footer) does not include all 
 
 ## IDEA-019 — Prayer Tools: UX and ambient experience research
 **Category:** research
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-020
-**Spec ref:** (none)
+**Spec ref:** PMG, PMB, PMD, PTR, SLV
 
-The Prayer Tools are functional but the experience doesn't invite people to linger. Research how to elevate the feel — ambient background Gregorian chant audio (small loopable files bundled in the repo), refined color scheming, better haptic feedback, and overall atmosphere without adding images or heavy iconography. Minimal or zero icons/SVGs. The goal is a steady balance of form and function that drives people toward prayer, not gamification or social engagement traps. The UX should make someone want to stay and pray, not just complete a task. Target reaction: "check out this app for the rosary — I love it."
+Research completed. Led to Prayer Tools Refinements (PTR), Pocket Missal Grid (PMG), Prayer Book (PMB), Devotions (PMD), and Soul/Visual Language (SLV) spec series — all implemented. Sacred Pause system (SLV-07→11) adds centering moments at prayer tool entry.
 
 ## IDEA-020 — Prayer Tools: "I know the prayers" condensed mode
 **Category:** new-feature
@@ -576,13 +578,14 @@ Remove the entire About section and the feedback submission form from the bottom
 
 ## IDEA-047 — Church short name data cleanup for common vernacular
 **Category:** tech-debt
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** IDEA-007
 **Spec ref:** (none)
 
-Church records have a short name field but the values often use formal names like "Saint Mary Church" when users would typically say "St. Mary's." Audit all church short names and update them to match common vernacular — contractions, possessives, and abbreviations that people actually use when referring to their parish.
+Church records have a short name field with vernacular values populated throughout parish_data.json (e.g., "St. Mary's", "Sacred Heart", "St. Stan's").
 
 ## IDEA-048 — Map tab: move filter pills below map controls on mobile
 **Category:** bug
