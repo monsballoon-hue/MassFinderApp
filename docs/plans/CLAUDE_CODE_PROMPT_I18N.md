@@ -1,10 +1,10 @@
 # Claude Code Prompt — I18N (Prayer Content Localization Phase 1)
 
-**Spec:** `docs/plans/UX_Spec_Prayer_Localization_Phase1.md`
+**Spec:** `docs/plans/UX_Spec_Prayer_Localization.md`
 **Scope:** `data/examination.json`, `src/examination.js`, `src/settings.js`, `src/utils.js`, `src/app.js`
 **Do NOT modify:** `src/rosary.js`, `src/stations.js`, `src/chaplet.js`, `src/prayerbook.js`, `data/prayers.json`, `data/prayerbook.json`, `css/app.css`, build scripts, or modules not listed above
 
-**Read the full spec first:** `docs/plans/UX_Spec_Prayer_Localization_Phase1.md`
+**Read the full spec first:** `docs/plans/UX_Spec_Prayer_Localization.md`
 
 ---
 
