@@ -1295,11 +1295,11 @@ Research evaluated three data model options for adding Spanish (and future Polis
 
 ## IDEA-097 — Phase 1: Spanish Examination of Conscience
 **Category:** new-feature
-**Status:** new
+**Status:** spec-ready
 **Date logged:** 2026-03-15
 **Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
 **Related:** IDEA-096, IDEA-098
-**Spec ref:** (none)
+**Spec ref:** I18N (docs/plans/CLAUDE_CODE_PROMPT_I18N.md)
 
 Add `text_es` fields to examination.json for all translatable strings: 66 examination questions, 3 prayers (Prayer Before Confession, Act of Contrition, Thanksgiving), 6 how-to-confess steps, 10 commandment titles + precepts header. Total ~80 strings. Source USCCB-approved Acto de Contrición and Oración Antes de la Confesión. Build shared `getPrayerText(item, field)` helper. Update examination.js render paths to use helper. Add prayer language picker to Settings (localStorage `prayerLang`, default `en`). Recruit bilingual Catholic reviewer from Spanish-Mass parish community.
 
