@@ -315,10 +315,15 @@ function renderCards() {
   }
 
   // FT-05: First-use tip card — after first card for new visitors
-  if (!localStorage.getItem('mf-welcome-dismissed') && cards.length >= 2) {
+  var _tipShouldShow = cards.length >= 2
+    && !localStorage.getItem('mf-had-fav')
+    && !localStorage.getItem('mf-welcome-dismissed')
+    && !sessionStorage.getItem('mf-ob-just-done')
+    && localStorage.getItem('mf-onboarding-complete');
+  if (_tipShouldShow) {
     var tipCard = '<div class="first-use-tip" id="firstUseTip">'
       + '<span>Tap \u2661 to favorite a church \u2014 build your own custom schedule and track Mass times, events, and happenings at your parishes.</span>'
-      + '<button onclick="this.parentElement.remove();localStorage.setItem(\'mf-welcome-dismissed\',\'1\')" aria-label="Dismiss">\u2715</button>'
+      + '<button onclick="this.parentElement.remove();localStorage.setItem(\'mf-had-fav\',\'1\')" aria-label="Dismiss">\u2715</button>'
       + '</div>';
     cards.splice(1, 0, tipCard);
   }

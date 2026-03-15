@@ -63,6 +63,11 @@ var OB_CONTENT_STEPS = [
     icon: '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="6" x2="12" y2="14"/><line x1="8" y1="10" x2="16" y2="10"/></svg>',
     headline: 'Pray, learn, and grow',
     subtitle: 'Guided Rosary, daily readings, the Catechism, and more\u2009\u2014\u2009all in your pocket.'
+  },
+  {
+    icon: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>',
+    headline: 'Make it yours',
+    subtitle: 'Adjust text size, switch to dark mode, or choose your prayer language. English and Spanish available.'
   }
 ];
 
@@ -144,6 +149,7 @@ function _dismissOb() {
   var overlay = document.getElementById('onboardOverlay');
   if (!overlay) return;
   try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+  try { sessionStorage.setItem('mf-ob-just-done', '1'); } catch (e) {}
   if (typeof haptics !== 'undefined' && haptics.light) haptics.light();
   overlay.classList.remove('open');
   overlay.classList.add('dismissing');
@@ -710,13 +716,20 @@ function _renderDailyStrip(events) {
   });
   if (tomorrowHDO.length) secondary = 'Tomorrow: ' + tomorrowHDO[0].name + ' (Holy Day)';
 
+  var gradeLabels = { 4: 'Feast', 5: 'Feast of the Lord', 6: 'Solemnity', 7: 'Solemnity' };
+  var gradeLabel = '';
+  if (pick.grade >= 4) gradeLabel = gradeLabels[pick.grade] || '';
+  if (pick.holy_day_of_obligation) gradeLabel = gradeLabel ? gradeLabel + ' \u00b7 Holy Day' : 'Holy Day of Obligation';
+
   el.innerHTML = '<div class="daily-card" onclick="switchTab(\'panelMore\',document.querySelector(\'[data-tab=panelMore]\'))">'
     + '<div class="daily-card-row">'
+    + '<span class="daily-card-color" style="background:' + colorHex + '" aria-label="Liturgical color: ' + color + '"></span>'
     + '<div class="daily-card-text">'
+    + (gradeLabel ? '<div class="daily-card-rank">' + utils.esc(gradeLabel) + '</div>' : '')
     + '<div class="daily-card-name">' + utils.esc(pick.name) + '</div>'
     + (secondary ? '<div class="daily-card-secondary">' + utils.esc(secondary) + '</div>' : '')
+    + '<div class="daily-card-teaser">Readings & saint of the day<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><polyline points="9 18 15 12 9 6"/></svg></div>'
     + '</div>'
-    + '<span class="daily-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><polyline points="9 18 15 12 9 6"/></svg></span>'
     + '</div>'
     + '</div>';
 }
@@ -892,19 +905,6 @@ async function init() {
   data.loadFav();
   data.migrateFavorites();
 
-  // OBW: Show onboarding for genuinely new users only
-  var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
-  if (_isNewUser) {
-    var _hasExistingData = localStorage.getItem('mf-fav') ||
-      localStorage.getItem('mf-theme') ||
-      state._lastVisit;
-    if (_hasExistingData) {
-      try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
-    } else {
-      _showOnboarding();
-    }
-  }
-
   try {
     // Load parish data from static JSON
     var controller = new AbortController();
@@ -960,6 +960,19 @@ async function init() {
     if (['today', 'weekend'].includes(sm)) state.currentSort = 'next_service';
     ui.updateSortLabel(); location_.initLocation(); data.filterChurches(); render.renderCards();
     _renderWelcomeBanner();
+
+    // FVX-01: Show onboarding post-render with delay so cards paint first
+    var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
+    if (_isNewUser) {
+      var _hasExistingData = localStorage.getItem('mf-fav') ||
+        localStorage.getItem('mf-theme') ||
+        state._lastVisit;
+      if (_hasExistingData) {
+        try { localStorage.setItem('mf-onboarding-complete', '1'); } catch (e) {}
+      } else {
+        setTimeout(function() { _showOnboarding(); }, 800);
+      }
+    }
 
     // More tab badge — show dot when daily content hasn't been seen today (Change 12)
     var moreLastSeen = localStorage.getItem('mf-more-seen');

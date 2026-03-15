@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 4 queued)
+**Last updated:** 2026-03-15 (28 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -463,10 +463,10 @@ Future specs should continue this pattern with new prefixes.
 > **Note:** CON-30 + CON-31 shipped as part of CLH-05 implementation.
 
 ### UX_Spec_First_Visit_Experience.md (FVX series)
-**Created:** 2026-03-15 · **Status:** Queued  
+**Created:** 2026-03-15 · **Status:** Implemented
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_FVX.md
 | ID | Title | Status |
 |----|-------|--------|
-| FVX-01 | Onboarding Delay + Blur Backdrop | Queued |
-| FVX-02 | Tip Card State-Aware Rendering Rules | Queued |
-| FVX-03 | Daily Card Liturgical Enhancement | Queued |
+| FVX-01 | Onboarding Delay + Blur Backdrop | Done |
+| FVX-02 | Tip Card State-Aware Rendering Rules | Done |
+| FVX-03 | Daily Card Liturgical Enhancement | Done |

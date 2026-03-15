@@ -50,7 +50,10 @@ function isFav(id) { return state.favorites.includes(id); }
 function toggleFav(id, ev) {
   if (ev) { ev.stopPropagation(); ev.preventDefault(); }
   if (isFav(id)) state.favorites = state.favorites.filter(function(f) { return f !== id; });
-  else state.favorites.push(id);
+  else {
+    state.favorites.push(id);
+    try { localStorage.setItem('mf-had-fav', '1'); } catch (e) {}
+  }
   saveFav();
   // Re-render cards (circular dep — caller in app.js wires this)
   if (state._onFavToggle) state._onFavToggle(id);
