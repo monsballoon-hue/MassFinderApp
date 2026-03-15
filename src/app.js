@@ -893,7 +893,7 @@ async function init() {
   // OBW: Show onboarding for genuinely new users only
   var _isNewUser = !localStorage.getItem('mf-onboarding-complete');
   if (_isNewUser) {
-    var _hasExistingData = localStorage.getItem('mf-favorites') ||
+    var _hasExistingData = localStorage.getItem('mf-fav') ||
       localStorage.getItem('mf-theme') ||
       state._lastVisit;
     if (_hasExistingData) {

@@ -2035,7 +2035,7 @@ html[data-theme="dark"][data-season="christmas"] .sacred-pause { background:line
 html[data-theme="dark"][data-season="ordinary"] .sacred-pause { background:linear-gradient(180deg, var(--color-bg) 0%, #1A1E1A 100%); }
 
 /* ── OBW: First-Launch Onboarding Walkthrough ── */
-.ob-overlay { position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.4s ease, background 0.8s ease; }
+.ob-overlay { position:fixed;inset:0;z-index:9999;background:var(--color-bg);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.4s ease, background 0.8s ease; }
 .ob-overlay.open { opacity:1; }
 .ob-overlay.dismissing { opacity:0;transition:opacity 0.5s ease;pointer-events:none; }
 /* Per-step gradient shift — warm gold → rose → navy → green */
