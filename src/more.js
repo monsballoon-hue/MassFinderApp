@@ -101,62 +101,131 @@ reader.registerModule('firstfriday', {
   onClose: function() {}
 });
 
+var _ffTab = 'friday';
+
 function _renderFirstFriday(bodyEl) {
   var st = _getFirstFridayState();
   var fridays = st.fridays || [];
   var saturdays = st.saturdays || [];
-
-  var friDots = '';
-  for (var i = 0; i < 9; i++) {
-    var done = i < fridays.length;
-    friDots += '<div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;'
-      + (done ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
-      + '">' + (i + 1) + '</div>';
-  }
-  var satDots = '';
-  for (var j = 0; j < 5; j++) {
-    var sDone = j < saturdays.length;
-    satDots += '<div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;'
-      + (sDone ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
-      + '">' + (j + 1) + '</div>';
-  }
-
-  var nf = _getNextFirstFriday();
-  var ns = _getNextFirstSaturday();
   var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+  // Tab bar
+  var tabBar = '<div style="display:flex;gap:0;margin-bottom:var(--space-4);border-bottom:2px solid var(--color-border-light)">'
+    + '<button onclick="window._ffSwitchTab(\'friday\')" style="flex:1;padding:var(--space-3);font-size:var(--text-sm);font-weight:var(--weight-semibold);border:none;background:none;cursor:pointer;border-bottom:2px solid ' + (_ffTab === 'friday' ? 'var(--color-sacred)' : 'transparent') + ';color:' + (_ffTab === 'friday' ? 'var(--color-sacred-text)' : 'var(--color-text-tertiary)') + ';margin-bottom:-2px">First Friday</button>'
+    + '<button onclick="window._ffSwitchTab(\'saturday\')" style="flex:1;padding:var(--space-3);font-size:var(--text-sm);font-weight:var(--weight-semibold);border:none;background:none;cursor:pointer;border-bottom:2px solid ' + (_ffTab === 'saturday' ? 'var(--color-sacred)' : 'transparent') + ';color:' + (_ffTab === 'saturday' ? 'var(--color-sacred-text)' : 'var(--color-text-tertiary)') + ';margin-bottom:-2px">First Saturday</button>'
+    + '</div>';
+
+  var content = '';
+
+  if (_ffTab === 'friday') {
+    var friDots = '';
+    for (var i = 0; i < 9; i++) {
+      var done = i < fridays.length;
+      friDots += '<div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;'
+        + (done ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
+        + '">' + (i + 1) + '</div>';
+    }
+    var nf = _getNextFirstFriday();
+    content = '<div style="border-left:3px solid var(--color-sacred);padding-left:var(--space-4);margin-bottom:var(--space-4)">'
+      + '<div style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2)">Nine First Fridays</div>'
+      + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-3)">Devotion to the Sacred Heart of Jesus</div>'
+      + '</div>'
+
+      // Progress
+      + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-4);justify-content:center">' + friDots + '</div>'
+      + (fridays.length >= 9
+        ? '<div style="text-align:center;font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold);margin-bottom:var(--space-4)">All nine First Fridays complete \u2714</div>'
+        : '<div style="text-align:center;font-size:var(--text-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-4)">Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate() + '</div>')
+
+      // Description
+      + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;margin-bottom:var(--space-4)">'
+      + '<p style="margin-bottom:var(--space-3)">Attend Mass and receive Holy Communion on nine consecutive first Fridays of the month, in reparation for offenses against the Sacred Heart of Jesus.</p>'
+      + '<p style="margin-bottom:var(--space-3)">Jesus revealed to St. Margaret Mary Alacoque twelve promises for those who practice this devotion, including: \u201cI will give them all the graces necessary for their state of life\u201d and \u201cI will be their refuge during life and especially at the hour of death.\u201d</p>'
+      + '<p><strong style="color:var(--color-text-primary)">Requirements:</strong> Attend Mass, receive Communion in a state of grace, and offer reparation to the Sacred Heart on the first Friday of nine consecutive months.</p>'
+      + '</div>'
+
+      // Prayer
+      + '<details style="margin-bottom:var(--space-4)">'
+      + '<summary style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;list-style:none;font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);-webkit-tap-highlight-color:transparent">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" style="flex-shrink:0;color:var(--color-sacred)"><polyline points="6 9 12 15 18 9"/></svg>'
+      + 'Act of Reparation to the Sacred Heart</summary>'
+      + '<div style="padding:var(--space-4);font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.85;border:1px solid var(--color-border-light);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md)">'
+      + '<p style="margin-bottom:var(--space-3)">Most sweet Jesus, whose overflowing charity for men is requited by so much forgetfulness, negligence and contempt, behold us prostrate before Thee, eager to repair by a special act of homage the cruel indifference and injuries to which Thy loving Heart is everywhere subjected.</p>'
+      + '<p style="margin-bottom:var(--space-3)">Mindful, alas! that we ourselves have had a share in such great indignities, which we now deplore from the depths of our hearts, we humbly ask Thy pardon and declare our readiness to atone by voluntary expiation, not only for our own personal offenses, but also for the sins of those who, straying far from the path of salvation, refuse in their obstinate infidelity to follow Thee, their Shepherd and Leader, or, renouncing the promises of their Baptism, have cast off the sweet yoke of Thy law.</p>'
+      + '<p>We are now resolved to expiate each and every deplorable outrage committed against Thee; we are now determined to make amends for the manifold offenses against Christian modesty in unbecoming dress and behavior, for all the foul seductions laid to ensnare the feet of the innocent, for the frequent violations of Sundays and holy days, and the shocking blasphemies uttered against Thee and Thy Saints. We offer Thee in reparation our prayers and sacrifices, and unite them to those of our Blessed Mother and all the Saints. Amen.</p>'
+      + '</div></details>'
+
+      // Log button
+      + (fridays.length < 9
+        ? '<button onclick="window._logFirstFriday()" style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px;margin-bottom:var(--space-3)">Log This Month\u2019s First Friday \u2714</button>'
+        : '')
+      + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))" style="display:block;width:100%;padding:var(--space-3);background:none;border:1.5px solid var(--color-primary);color:var(--color-primary);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">Find Mass near you</button>';
+
+  } else {
+    var satDots = '';
+    for (var j = 0; j < 5; j++) {
+      var sDone = j < saturdays.length;
+      satDots += '<div style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;'
+        + (sDone ? 'background:var(--color-sacred);color:white;border:2px solid var(--color-sacred)' : 'background:transparent;color:var(--color-text-tertiary);border:2px solid var(--color-border)')
+        + '">' + (j + 1) + '</div>';
+    }
+    var ns = _getNextFirstSaturday();
+    content = '<div style="border-left:3px solid var(--color-sacred);padding-left:var(--space-4);margin-bottom:var(--space-4)">'
+      + '<div style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2)">Five First Saturdays</div>'
+      + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-3)">Devotion to the Immaculate Heart of Mary</div>'
+      + '</div>'
+
+      // Progress
+      + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-4);justify-content:center">' + satDots + '</div>'
+      + (saturdays.length >= 5
+        ? '<div style="text-align:center;font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold);margin-bottom:var(--space-4)">All five First Saturdays complete \u2714</div>'
+        : '<div style="text-align:center;font-size:var(--text-xs);color:var(--color-text-tertiary);margin-bottom:var(--space-4)">Next First Saturday: ' + months[ns.getMonth()] + ' ' + ns.getDate() + '</div>')
+
+      // Description
+      + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75;margin-bottom:var(--space-4)">'
+      + '<p style="margin-bottom:var(--space-3)">Our Lady of F\u00e1tima asked that on five consecutive first Saturdays, the faithful make reparation to her Immaculate Heart for the blasphemies and ingratitude of men.</p>'
+      + '<p style="margin-bottom:var(--space-3)">She promised: \u201cI will assist at the hour of death with the graces necessary for salvation all those who, on the first Saturday of five consecutive months, go to Confession, receive Holy Communion, pray five decades of the Rosary, and keep me company for 15 minutes while meditating on the mysteries of the Rosary.\u201d</p>'
+      + '<p><strong style="color:var(--color-text-primary)">Requirements each First Saturday:</strong></p>'
+      + '<ol style="padding-left:var(--space-5);margin-top:var(--space-2)">'
+      + '<li style="margin-bottom:var(--space-2)">Go to Confession (within 8 days before or after)</li>'
+      + '<li style="margin-bottom:var(--space-2)">Receive Holy Communion</li>'
+      + '<li style="margin-bottom:var(--space-2)">Pray five decades of the Rosary</li>'
+      + '<li>Meditate for 15 minutes on the mysteries of the Rosary</li>'
+      + '</ol>'
+      + '</div>'
+
+      // Prayer — Fatima Prayer
+      + '<details style="margin-bottom:var(--space-4)">'
+      + '<summary style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;list-style:none;font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-text-primary);-webkit-tap-highlight-color:transparent">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" style="flex-shrink:0;color:var(--color-sacred)"><polyline points="6 9 12 15 18 9"/></svg>'
+      + 'Prayer to the Immaculate Heart of Mary</summary>'
+      + '<div style="padding:var(--space-4);font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.85;border:1px solid var(--color-border-light);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md)">'
+      + '<p style="margin-bottom:var(--space-3)">O Most Holy Virgin Mary, tender Mother of men, to fulfill the desires of the Sacred Heart of Jesus and the request of the Vicar of Your Son on earth, we consecrate ourselves and our families to your Sorrowful and Immaculate Heart, O Queen of the Most Holy Rosary.</p>'
+      + '<p style="margin-bottom:var(--space-3)">Please accept our consecration, dearest Mother, and use us as you wish to accomplish your designs in the world. O Immaculate Heart of Mary, Queen of Heaven and earth, rule over us and teach us how to make the Heart of Jesus reign and triumph in us and around us, as it has reigned and triumphed in you. Amen.</p>'
+      + '</div></details>'
+
+      // Rosary link
+      + '<details style="margin-bottom:var(--space-4)">'
+      + '<summary style="display:flex;align-items:center;gap:var(--space-2);padding:var(--space-3) var(--space-4);background:var(--color-surface);border:1px solid var(--color-border-light);border-radius:var(--radius-md);cursor:pointer;list-style:none;font-size:var(--text-sm);font-weight:var(--weight-semibold);color:var(--color-primary);-webkit-tap-highlight-color:transparent">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>'
+      + 'Pray the Rosary (required)</summary>'
+      + '<div style="padding:var(--space-4);border:1px solid var(--color-border-light);border-top:none;border-radius:0 0 var(--radius-md) var(--radius-md);text-align:center">'
+      + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);margin-bottom:var(--space-3)">Pray five decades of the Rosary as part of your First Saturday devotion.</div>'
+      + '<button onclick="readerClose();openRosary()" style="padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Open Guided Rosary</button>'
+      + '</div></details>'
+
+      // Log button
+      + (saturdays.length < 5
+        ? '<button onclick="window._logFirstSaturday()" style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px;margin-bottom:var(--space-3)">Log This Month\u2019s First Saturday \u2714</button>'
+        : '')
+      + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))" style="display:block;width:100%;padding:var(--space-3);background:none;border:1.5px solid var(--color-primary);color:var(--color-primary);border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">Find Mass near you</button>';
+  }
+
   bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto">'
-    + '<div style="text-align:center;margin-bottom:var(--space-5)">'
-    + '<div style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;color:var(--color-heading);margin-bottom:var(--space-2)">First Friday &amp; First Saturday</div>'
-    + '<div style="font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5">Two devotions of reparation to the Sacred Heart of Jesus and the Immaculate Heart of Mary.</div>'
-    + '</div>'
-
-    + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
-    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Nine First Fridays</div>'
-    + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">Attend Mass and receive Communion on nine consecutive first Fridays in reparation to the Sacred Heart. Jesus promised St. Margaret Mary: \u201cI will give them all the graces necessary for their state of life.\u201d</div>'
-    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-3)">' + friDots + '</div>'
-    + (fridays.length >= 9
-      ? '<div style="font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold)">Complete \u2714</div>'
-      : '<div style="font-size:var(--text-xs);color:var(--color-text-tertiary)">Next First Friday: ' + months[nf.getMonth()] + ' ' + nf.getDate() + '</div>'
-        + '<button onclick="window._logFirstFriday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Friday \u2714</button>')
-    + '</div>'
-
-    + '<div style="background:var(--color-surface);border-radius:var(--radius-md);padding:var(--space-4);margin-bottom:var(--space-3);border-left:3px solid var(--color-sacred)">'
-    + '<div style="font-size:var(--text-xs);font-weight:var(--weight-semibold);color:var(--color-sacred-text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:var(--space-2)">Five First Saturdays</div>'
-    + '<div style="font-family:var(--font-prayer);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.6;margin-bottom:var(--space-3)">On five consecutive first Saturdays, go to Confession (within 8 days), receive Communion, pray five decades of the Rosary, and meditate for 15 minutes on the mysteries. Our Lady of F\u00e1tima promised special protection at the hour of death.</div>'
-    + '<div style="display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:var(--space-3)">' + satDots + '</div>'
-    + (saturdays.length >= 5
-      ? '<div style="font-size:var(--text-sm);color:var(--color-verified);font-weight:var(--weight-semibold)">Complete \u2714</div>'
-      : '<div style="font-size:var(--text-xs);color:var(--color-text-tertiary)">Next First Saturday: ' + months[ns.getMonth()] + ' ' + ns.getDate() + '</div>'
-        + '<button onclick="window._logFirstSaturday()" style="margin-top:var(--space-3);padding:var(--space-2) var(--space-4);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-full);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:36px">Log First Saturday \u2714</button>')
-    + '</div>'
-
-    + '<div style="text-align:center;padding:var(--space-4) 0">'
-    + '<button onclick="window._resetFirstFriday()" style="font-size:var(--text-xs);color:var(--color-text-tertiary);background:none;border:none;cursor:pointer">Reset progress</button>'
-    + '</div>'
-
-    + '<div style="text-align:center;padding-bottom:var(--space-4)">'
-    + '<button onclick="readerClose();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))" style="padding:var(--space-3) var(--space-5);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">Find Mass near you</button>'
+    + tabBar
+    + content
+    + '<div style="text-align:center;padding:var(--space-5) 0 var(--space-2)">'
+    + '<button onclick="window._resetFirstFriday()" style="font-size:var(--text-xs);color:var(--color-text-tertiary);background:none;border:none;cursor:pointer">Reset all progress</button>'
     + '</div>'
     + '</div>';
 }
@@ -213,7 +282,21 @@ window._logFirstSaturday = function() {
   }
 };
 
+window._ffSwitchTab = function(tab) {
+  _ffTab = tab;
+  _renderFirstFriday(document.getElementById('readerBody'));
+};
+
 window._resetFirstFriday = function() {
+  if (!window._ffResetConfirm) {
+    window._ffResetConfirm = true;
+    var btn = event.target;
+    btn.textContent = 'Tap again to confirm reset';
+    btn.style.color = 'var(--color-error)';
+    setTimeout(function() { window._ffResetConfirm = false; if (btn) { btn.textContent = 'Reset all progress'; btn.style.color = ''; } }, 3000);
+    return;
+  }
+  window._ffResetConfirm = false;
   localStorage.removeItem('mf-first-friday');
   var haptics = require('./haptics.js');
   haptics.confirm();
