@@ -495,8 +495,8 @@ function renderMore() {
     }
   })();
 
-  // SOT-04: Seasonal CCC Spotlight — repurpose dailyFormation slot
-  _renderSeasonalCCC();
+  // SOT-04: Seasonal CCC Spotlight — deferred, needs UX refinement
+  // _renderSeasonalCCC();
 
   // Prayer Tools grid
   var exam = require('./examination.js');
