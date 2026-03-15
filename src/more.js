@@ -34,25 +34,44 @@ function _getNovenaSubtitle() {
   return 'Guided prayer tracking';
 }
 
-// PMG-04: Resolve tier swaps — when a secondary card is promoted, swap it into primary
-function _resolveCardTiers(cards, promotedId) {
-  var primary = cards.filter(function(c) { return c.tier === 1; });
-  var secondary = cards.filter(function(c) { return c.tier === 2; });
+// Resolve card tiers: 3 sticky primary + 1 dynamic 4th slot
+var STICKY_IDS = { prayerbook: true, rosary: true, examination: true };
+function _resolveCardTiers(cards, promotedId, contextToday) {
+  var sticky = [];
+  var dynamic = [];
+  cards.forEach(function(c) {
+    if (STICKY_IDS[c.id]) sticky.push(c);
+    else dynamic.push(c);
+  });
 
-  // If a secondary card is promoted, swap it with the last primary card
-  if (promotedId) {
-    var secIdx = -1;
-    for (var i = 0; i < secondary.length; i++) {
-      if (secondary[i].id === promotedId) { secIdx = i; break; }
-    }
-    if (secIdx >= 0 && primary.length >= 2) {
-      var swapped = secondary.splice(secIdx, 1)[0];
-      var bumped = primary.pop();
-      primary.push(swapped);
-      secondary.unshift(bumped);
-    }
+  // Pick 4th primary card: promoted card wins, else default to chaplet
+  var fourthCard = null;
+  var secondary = [];
+  dynamic.forEach(function(c) {
+    if (!fourthCard && promotedId && c.id === promotedId) fourthCard = c;
+    else secondary.push(c);
+  });
+  if (!fourthCard) {
+    // Default: chaplet fills the 4th slot
+    secondary = [];
+    dynamic.forEach(function(c) {
+      if (!fourthCard && c.id === 'chaplet') fourthCard = c;
+      else secondary.push(c);
+    });
   }
 
+  // Sort secondary: contextual cards first
+  if (contextToday && contextToday.length) {
+    secondary.sort(function(a, b) {
+      var aIdx = contextToday.indexOf(a.id);
+      var bIdx = contextToday.indexOf(b.id);
+      var aCtx = aIdx !== -1 ? aIdx : 999;
+      var bCtx = bIdx !== -1 ? bIdx : 999;
+      return aCtx - bCtx;
+    });
+  }
+
+  var primary = sticky.concat(fourthCard ? [fourthCard] : []);
   return { primary: primary, secondary: secondary };
 }
 
@@ -824,7 +843,7 @@ function renderMore() {
     c.services.forEach(function(s) { if (s.language) langCount.add(s.language); });
   });
 
-  // -- PWA INSTALL CARD --
+  // -- PWA INSTALL BANNER (compact) --
   (function() {
     var slot = document.getElementById('moreInstallCard');
     if (!slot) return;
@@ -836,66 +855,14 @@ function renderMore() {
     var dismissUntil = localStorage.getItem('mf-install-dismiss-until');
     if (dismissUntil && new Date().toISOString().slice(0, 10) < dismissUntil) return;
 
-    var ua = navigator.userAgent || '';
-    var isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    var isCriOS = /CriOS/.test(ua);
-    var isAndroid = /Android/.test(ua);
-
-    var stepsHtml = '';
-    if (isIOS && !isCriOS) {
-      stepsHtml = '<div class="install-steps">'
-        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap the <strong>Share</strong> button <svg class="install-inline-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M5 10l7-7 7 7"/><path d="M5 17h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1v-2a1 1 0 011-1z"/></svg> at the bottom of your screen</div></div>'
-        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Scroll down and tap <strong>Add to Home Screen</strong></div></div>'
-        + '<div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">Tap <strong>Add</strong> in the top right</div></div>'
-        + '</div>';
-    } else if (isIOS && isCriOS) {
-      stepsHtml = '<div class="install-steps">'
-        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap the <strong>\u22EF</strong> menu in the top right</div></div>'
-        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Tap <strong>Add to Home Screen</strong></div></div>'
-        + '<div class="install-step"><div class="install-step-num">3</div><div class="install-step-text">Tap <strong>Add</strong> to confirm</div></div>'
-        + '</div>';
-    } else if (isAndroid) {
-      stepsHtml = '<div class="install-steps">'
-        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Tap <strong>Install</strong> below, or tap the <strong>\u22EE</strong> menu at the top right</div></div>'
-        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Tap <strong>Add to Home Screen</strong> or <strong>Install App</strong></div></div>'
-        + '</div>';
-    } else {
-      stepsHtml = '<div class="install-steps">'
-        + '<div class="install-step"><div class="install-step-num">1</div><div class="install-step-text">Look for the install icon <strong>\u2B07</strong> in your browser\'s address bar</div></div>'
-        + '<div class="install-step"><div class="install-step-num">2</div><div class="install-step-text">Click <strong>Install</strong> when prompted</div></div>'
-        + '</div>';
-    }
-
-    var androidBtn = (isAndroid && window._deferredInstallPrompt)
-      ? '<button class="install-btn" id="micInstallBtn">Install MassFinder</button>'
-      : '';
-
-    slot.innerHTML = '<div class="install-card" id="moreInstallCardInner">'
-      + '<button class="install-close" onclick="dismissInstallCard()" aria-label="Dismiss">\u2715</button>'
-      + '<div class="install-header">'
-      + '<div class="install-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="24" height="24"><path d="M12 18v-12"/><path d="M5 12l7 7 7-7"/><rect x="3" y="20" width="18" height="2" rx="1"/></svg></div>'
-      + '<div>'
-      + '<div class="install-title">Add MassFinder to your home screen</div>'
-      + '<div class="install-subtitle">Open it like any app \u2014 instant access, no browser needed</div>'
-      + '</div>'
-      + '</div>'
-      + stepsHtml
-      + '<div class="install-guide-link" onclick="openInstallGuide()">Show me how \u2192</div>'
-      + androidBtn
+    slot.innerHTML = '<div class="install-banner" id="moreInstallCardInner">'
+      + '<svg class="install-banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><path d="M12 18v-12"/><path d="M5 12l7 7 7-7"/><rect x="3" y="20" width="18" height="2" rx="1"/></svg>'
+      + '<span class="install-banner-text">Add to Home Screen</span>'
+      + '<button class="install-banner-action" onclick="openInstallGuide()">How</button>'
+      + '<button class="install-banner-close" onclick="dismissInstallCard()" aria-label="Dismiss">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M18 6L6 18M6 6l12 12"/></svg>'
+      + '</button>'
       + '</div>';
-
-    if (isAndroid && window._deferredInstallPrompt) {
-      var btn = document.getElementById('micInstallBtn');
-      if (btn) {
-        btn.addEventListener('click', function() {
-          window._deferredInstallPrompt.prompt();
-          window._deferredInstallPrompt.userChoice.then(function() {
-            window._deferredInstallPrompt = null;
-            dismissInstallCard();
-          });
-        });
-      }
-    }
   })();
 
   // SOT-04: Seasonal CCC Spotlight — deferred, needs UX refinement
@@ -944,7 +911,7 @@ function renderMore() {
       chaplet: 'var(--color-sacred-pale)'
     };
 
-    // EMT-03-B: Contextual "today" highlight
+    // Contextual promotion — determines 4th primary slot from dynamic pool
     var promotedId = '';
     var novSub = _getNovenaSubtitle();
     var novenaActive = novSub.indexOf('Day') === 0 || novSub.indexOf('in progress') !== -1;
@@ -952,13 +919,9 @@ function renderMore() {
       promotedId = 'novena';
     } else if (isLentSeason()) {
       promotedId = 'stations';
-    } else if (new Date().getDay() === 5) {
-      promotedId = 'rosary';
-    } else if (confStatus && confStatus.daysAgo > 30) {
-      promotedId = 'examination';
     }
 
-    // PMD-03: 3 PM promotion for chaplet (lower priority than above)
+    // 3 PM promotion for chaplet
     if (!promotedId) {
       var nowH = new Date().getHours();
       var nowM = new Date().getMinutes();
@@ -1043,18 +1006,25 @@ function renderMore() {
       ptSubtitleClass.firstfriday = 'prayer-tool-subtitle--active';
     }
 
+    // Build contextual relevance list for secondary sorting
+    var contextToday = [];
+    if (novenaActive || seasonalNovenaLabel) contextToday.push('novena');
+    if (isLentSeason()) contextToday.push('stations');
+    if (chapletSub === 'The Hour of Mercy') contextToday.push('chaplet');
+    if (ffIsNear && ffHasStreak) contextToday.push('firstfriday');
+
     var ptCards = [
-      { id: 'prayerbook', title: 'Prayer Book', subtitle: '31 essential prayers', action: 'openPrayerBook()', active: true, tier: 1 },
-      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true, tier: 1 },
-      { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: chapletSub, action: 'openChaplet()', active: true, tier: 1 },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true, tier: 1 },
-      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true, tier: 2 },
-      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true, tier: 2 },
-      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true, tier: 2 }
+      { id: 'prayerbook', title: 'Prayer Book', subtitle: '31 essential prayers', action: 'openPrayerBook()', active: true },
+      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
+      { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: chapletSub, action: 'openChaplet()', active: true },
+      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
+      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true },
+      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true }
     ];
 
-    // PMG-04: Resolve tier swaps — promoted secondary cards swap into primary
-    var resolved = _resolveCardTiers(ptCards, promotedId);
+    // Resolve tiers: 3 sticky + 1 dynamic 4th + contextual secondary sort
+    var resolved = _resolveCardTiers(ptCards, promotedId, contextToday);
 
     // Render primary cards (tier 1) — vertical layout
     ptGrid.innerHTML = resolved.primary.map(function(c) {
@@ -1224,7 +1194,7 @@ function renderMore() {
   var footer = document.getElementById('moreFooter');
   if (footer) {
     footer.innerHTML = '<div class="more-footer-links">'
-      + '<div class="more-footer-link more-footer-link--disabled"><span>Weekly Email</span><span class="more-footer-soon">Coming soon</span></div>'
+      + '<div class="more-footer-link more-footer-link--disabled"><span>Weekly Parish Bulletin</span><span class="more-footer-soon">Coming soon</span></div>'
       + '<button class="more-footer-link" onclick="openSettings()"><span>Settings</span><span class="more-footer-chevron">\u203A</span></button>'
       + '</div>'
       + '<div onclick="window._devTap && window._devTap()" style="cursor:default" class="more-version">MassFinder v2</div>';
