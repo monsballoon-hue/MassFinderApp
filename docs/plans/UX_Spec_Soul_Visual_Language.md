@@ -1,10 +1,19 @@
 # UX Spec — Soul & Visual Language (SLV Series)
 
 **Created:** 2026-03-14
-**Status:** Queued
+**Status:** Implemented
 **Prefix:** SLV (Soul / Visual Language)
 **Claude Code prompt:** `docs/plans/CLAUDE_CODE_PROMPT_SLV.md`
 **Branch:** `content-additions`
+
+| Item | Title | Status |
+|------|-------|--------|
+| SLV-01 | Season Transition Moment | done |
+| SLV-02 | Typography with a Voice | done |
+| SLV-03 | Candlelight Halo | done |
+| SLV-04 | Season as Emotional Temperature | done |
+| SLV-05 | Warm Sacred Surfaces | done |
+| SLV-06 | Intentional Asymmetry | done |
 
 ---
 
@@ -709,3 +718,24 @@ SLV-06 (Asymmetry) — fully independent
 4. SLV-04 (Timing — test after interstitial is working)
 5. SLV-05 (Surfaces — enhances glow)
 6. SLV-06 (Asymmetry — polish pass, do last)
+
+---
+
+## Implementation Notes — All SLV Items
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done (all 6 items)
+- **Files changed:**
+  - `css/app.css` — Added `@property` registrations for accent color animation, `:root` transition for accent properties, per-element fallback transitions, body seasonal gradient transition. Migrated all `.top-header::after` seasonal rules from hardcoded hex to `var(--color-accent)` / `color-mix()`. Added `--shadow-sacred-glow` and `--color-surface-sacred` tokens (both light/dark). Applied sacred glow to saint-card, formation-card, promoted prayer-tool-card, reader-header::after. Applied sacred surface to formation-card and daily-card. Added season transition interstitial overlay CSS (`.season-overlay` + seasonal background gradients + dark mode). Added SLV-04 seasonal timing overrides (Lent/Advent +30/+50ms contemplative, Easter/Christmas spring ease). Added SLV-02 typography: drop cap on first reading paragraph, `.sc` small-caps class, `.saint-name` letter-spacing, dark mode warm text-shadow on reader/reading/CCC bodies. Saint card padding changed to asymmetric (16/16/20/20). Promoted card hover preserves glow.
+  - `src/readings.js` — SLV-01 Part C: season transition interstitial in `setLiturgicalSeason()` — checks `mf-last-season` localStorage, shows overlay with season name/message, auto-dismiss 4s, tap-dismiss, respects `_devSkipSeasonOverlay` flag. SLV-02: LORD→small-caps regex applied after BibleGet HTML build before caching.
+  - `src/app.js` — Added `window._devSkipSeasonOverlay = true` in `_devSetSeason()` to prevent interstitial during dev panel season switching.
+  - `src/bible.js` — SLV-02: LORD→small-caps regex applied before `bodyEl.innerHTML = html` assignment.
+- **Approach:** Followed spec implementation order (SLV-01→03→02→04→05→06). Used `@property` CSS registration for accent color transitions with per-element fallback for older Safari. Dark mode header bar consolidated to single `color-mix()` rule instead of 5 per-season rules (Easter/Christmas gets separate gradient). Season interstitial creates DOM element dynamically, no HTML template needed. Drop cap targets `.reading-text` children (where daily readings actually render) rather than `.reader-body` (which isn't used for readings). LORD regex applied at BibleGet cache point to catch all verse types and persist small-caps in localStorage cache.
+- **Deviations from spec:**
+  - SLV-01 Part B: Dark mode header bars consolidated into 2 rules (1 generic + 1 Easter/Christmas) instead of 5 per-season rules, since `var(--color-accent)` already shifts with season.
+  - SLV-02 Part A: Drop cap targets `.reading-text > .reading-verse:first-child::first-letter` etc. instead of `.reader-body[data-content="readings"]` because daily readings render in `#readingsContent` on the More tab, not in the reader overlay.
+  - SLV-02 Part B: `.reader-title` already had `letter-spacing: 0.02em` — kept as-is since it's close to the spec's 0.015em.
+  - SLV-05: Saint card already uses a functionally equivalent gradient — left as-is per spec's own note that `[data-lit-color]` variants override.
+- **Known issues:** None observed.

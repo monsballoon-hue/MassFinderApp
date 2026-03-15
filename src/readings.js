@@ -42,6 +42,55 @@ function setLiturgicalSeason(events) {
     else if (s === 'EASTER' || s === 'EASTER_SEASON') season = 'easter';
     else if (s === 'CHRISTMAS') season = 'christmas';
   }
+  // SLV-01: Season transition interstitial
+  var lastSeason = null;
+  try { lastSeason = localStorage.getItem('mf-last-season'); } catch (e) {}
+
+  if (lastSeason && lastSeason !== season && !window._devSkipSeasonOverlay) {
+    var seasonNames = {
+      advent: 'The Season of Advent',
+      christmas: 'The Christmas Season',
+      lent: 'The Season of Lent',
+      easter: 'The Easter Season',
+      ordinary: 'Ordinary Time'
+    };
+    var seasonMessages = {
+      advent: 'A time of joyful waiting and preparation.',
+      christmas: 'The Word was made flesh, and dwelt among us.',
+      lent: 'Return to Me with your whole heart.',
+      easter: 'He is risen. Alleluia!',
+      ordinary: 'Growing in grace, day by day.'
+    };
+    var overlayEl = document.getElementById('seasonTransition');
+    if (!overlayEl) {
+      overlayEl = document.createElement('div');
+      overlayEl.id = 'seasonTransition';
+      document.body.insertBefore(overlayEl, document.body.firstChild);
+    }
+    overlayEl.className = 'season-overlay';
+    overlayEl.innerHTML = '<div class="season-overlay-content">'
+      + '<div class="season-overlay-label">A NEW SEASON</div>'
+      + '<div class="season-overlay-name">' + (seasonNames[season] || season) + '</div>'
+      + '<div class="season-overlay-message">' + (seasonMessages[season] || '') + '</div>'
+      + '</div>';
+
+    var dismissed = false;
+    var autoTimer;
+    function dismissOverlay() {
+      if (dismissed) return;
+      dismissed = true;
+      clearTimeout(autoTimer);
+      overlayEl.classList.add('dismissing');
+      setTimeout(function() { if (overlayEl.parentNode) overlayEl.parentNode.removeChild(overlayEl); }, 800);
+    }
+    overlayEl.addEventListener('click', dismissOverlay);
+    autoTimer = setTimeout(dismissOverlay, 4000);
+  }
+  window._devSkipSeasonOverlay = false;
+
+  // Always persist current season
+  try { localStorage.setItem('mf-last-season', season); } catch (e) {}
+
   document.documentElement.setAttribute('data-season', season);
   var morePanel = document.getElementById('panelMore');
   if (morePanel) morePanel.setAttribute('data-season', season);
@@ -620,6 +669,8 @@ function enhanceWithBibleGet(textEl, ref, fallbackText, heading, isPsalm) {
       html += renderProseVerses(data.results);
       if (conclusion) html += '<span class="reading-conclusion">' + esc(conclusion) + '</span>';
     }
+    // SLV-02: LORD → small-caps (typographic convention)
+    html = html.replace(/\bLORD\b/g, '<span class="sc">LORD</span>');
     textEl.innerHTML = html;
     try { localStorage.setItem(cacheKey, html); } catch (e) { /* noop */ }
   })
