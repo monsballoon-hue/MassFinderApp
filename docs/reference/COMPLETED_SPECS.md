@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 3 queued)
+**Last updated:** 2026-03-15 (27 specs implemented, 0 in-progress, 4 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
