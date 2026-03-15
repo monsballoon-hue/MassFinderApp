@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (21 specs implemented, 0 in-progress, 4 queued)
+**Last updated:** 2026-03-15 (21 specs implemented, 0 in-progress, 6 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -433,7 +433,7 @@ Future specs should continue this pattern with new prefixes.
 | CLH-02 | Register Adoration Guide as Reader Module | Queued | P1 |
 | CLH-03 | Adoration Filter Hint | Queued | P2 |
 | CLH-04 | Fix Dismiss Button Touch Target (44pt) | Queued | P1 |
-| CLH-05 | Latin Filter Hint (Placeholder — Needs Content) | Queued | P3 |
+| CLH-05 | Latin Filter Hint (Placeholder — Needs Content) | Content Ready (CON-31) | P3 |
 
 ### Content_Spec_LatinMass.md (CON-30)
 **Created:** 2026-03-15 · **Status:** Awaiting Catholic Review
@@ -441,4 +441,12 @@ Future specs should continue this pattern with new prefixes.
 |----|-------|--------|
 | CON-30 | What to Expect at a Latin Mass — devotional guide | Awaiting Review |
 
-> **Note:** CON-30 content also provides the text needed for CLH-05 (Latin Filter Hint).
+### Content_Spec_LatinFilterHint.md (CON-31)
+**Created:** 2026-03-15 · **Status:** Awaiting Catholic Review (ships with CON-30)
+| ID | Title | Status |
+|----|-------|--------|
+| CON-31a | Latin filter hint copy ("Attending Latin Mass? What to expect ›") | Awaiting Review |
+| CON-31b | Reader overlay title | Awaiting Review |
+| CON-31c | CTA button text ("Find Latin Mass near you") | Awaiting Review |
+
+> **Note:** CON-30 + CON-31 together complete the content needed for CLH-05 (Latin Filter Hint). Engineering implementation requires CLH-01 (generalized hint system) first.
