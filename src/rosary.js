@@ -15,7 +15,6 @@ var _wakeLock = null;
 var _touchStartX = 0;
 var _touchStartY = 0;
 var _longPressTimer = null;
-var _swipeHintShown = false;
 var _beadsByDecade = [0, 0, 0, 0, 0]; // per-decade bead counts
 var _hasInteracted = false;  // PTR-06-A: hide bead hint after first tap
 var _condensedMode = false;  // FGP-04: Mysteries Only mode
@@ -445,16 +444,6 @@ function _renderDecade(title, body, footer) {
   footer.style.display = '';
   footer.innerHTML = _navHtml(prevLabel, nextLabel);
 
-  // Swipe hint (show once)
-  if (!_swipeHintShown) {
-    _swipeHintShown = true;
-    var hintEl = document.createElement('div');
-    hintEl.className = 'rosary-swipe-hint';
-    hintEl.textContent = 'Swipe left or right to navigate';
-    body.appendChild(hintEl);
-    setTimeout(function() { if (hintEl.parentNode) hintEl.remove(); }, 3000);
-  }
-
   // Attach bead handlers to full section (RC-01: bigger tap target)
   var hmSection = document.querySelector('.rosary-hm-section');
   if (hmSection) {
@@ -551,7 +540,8 @@ function _navHtml(prevLabel, nextLabel) {
   return '<div style="display:flex;gap:var(--space-3)">'
     + '<button class="rosary-nav-btn rosary-nav-secondary" onclick="rosaryPrev()">' + prevLabel + '</button>'
     + '<button class="rosary-nav-btn rosary-nav-primary" onclick="rosaryNext()">' + nextLabel + '</button>'
-    + '</div>';
+    + '</div>'
+    + '<div class="rosary-nav-swipe-cue">\u2190 swipe to navigate \u2192</div>';
 }
 
 // FGP-04: Toggle condensed mode

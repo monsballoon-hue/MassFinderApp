@@ -78,6 +78,7 @@ if (location.hostname === 'massfinder.vercel.app') {
       <span id="sortLabel">By name</span>
     </button>
   </div>
+  <div id="confessionHint" class="confession-hint" style="display:none"></div>
 
   <div id="pullIndicator" class="pull-indicator"><div class="pull-indicator-inner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="7 13 12 18 17 13"/><line x1="12" y1="18" x2="12" y2="6"/></svg><span id="pullText">Pull to refresh</span></div></div>
   <div id="cardList" class="card-list" role="list" aria-label="Churches">
@@ -116,36 +117,46 @@ if (location.hostname === 'massfinder.vercel.app') {
     <!-- HOLY DAY OF OBLIGATION BANNER — shown day-of and day-before -->
     <div id="hdoBanner"></div>
 
-    <!-- Saint/celebration card -->
-    <div class="more-section more-section--tight" id="saintSection">
-      <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
+    <!-- ZONE 1: TODAY — the daily briefing -->
+    <div class="more-zone more-zone--today">
+      <div class="more-section more-section--tight" id="saintSection">
+        <div id="saintOfDayCard"><div class="saint-card"><div class="saint-feast" style="color:var(--color-text-tertiary)">Loading today's celebration…</div></div></div>
+      </div>
+      <div class="more-section more-section--tight" id="seasonalMoment"></div>
+      <div class="more-section more-section--zone-inner" id="readingsSection">
+        <h2 class="more-section-title more-section-title--today">Today's Readings</h2>
+        <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
+      </div>
     </div>
 
-    <!-- SEASONAL MOMENT — max 2 curated cards based on liturgical calendar (SOT-01) -->
-    <div class="more-section more-section--tight" id="seasonalMoment"></div>
+    <!-- ZONE SEAM -->
+    <div class="more-zone-seam" aria-hidden="true"></div>
 
-    <!-- DAILY READINGS — THE WORD (EMT-02-A: moved above prayer tools) -->
-    <div class="more-section" id="readingsSection">
-      <h2 class="more-section-title">Today's Readings</h2>
-      <div id="readingsContent"><p class="reading-loading">Loading today's readings…</p></div>
+    <!-- ZONE 2: PRACTICE — prayer tools -->
+    <div class="more-zone more-zone--practice">
+      <div class="more-section more-section--zone-inner" id="prayerToolsSection">
+        <h2 class="more-section-title more-section-title--practice">Prayer &amp; Devotion</h2>
+        <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
+        <div id="prayerToolsSecondaryWrap"></div>
+      </div>
+      <div id="dailyFormation" class="more-section more-section--tight" style="display:none"></div>
     </div>
 
-    <!-- PRAYER TOOLS — THE PRACTICE -->
-    <div class="more-section more-section--tight" id="prayerToolsSection">
-      <h2 class="more-section-title">Prayer &amp; Devotion</h2>
-      <div class="prayer-tools-grid" id="prayerToolsGrid"></div>
-      <div class="prayer-tools-secondary" id="prayerToolsSecondary"></div>
-      <div id="libraryTeaser"></div>
-    </div>
+    <!-- Library teaser — bridges Practice and Go Deeper -->
+    <div id="libraryTeaser"></div>
 
-    <!-- DAILY FORMATION — combined Baltimore Q&A + Summa -->
-    <div id="dailyFormation" class="more-section more-section--tight" style="display:none"></div>
+    <!-- ZONE SEAM -->
+    <div class="more-zone-seam" aria-hidden="true"></div>
 
-    <!-- DEVOTIONAL GUIDES -->
-    <div class="more-section">
-      <h2 class="more-section-title">Grow in Faith</h2>
-      <div id="devotionalCards"></div>
-    </div>
+    <!-- ZONE 3: GO DEEPER — reference library -->
+    <details class="more-zone more-zone--deeper" id="deeperZone">
+      <summary class="more-zone-deeper-toggle">
+        <h2 class="more-section-title more-section-title--deeper">Grow in Faith</h2>
+        <span class="more-zone-deeper-count" id="deeperCount"></span>
+        <svg class="more-zone-deeper-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </summary>
+      <div class="more-zone-deeper-body" id="devotionalCards"></div>
+    </details>
 
     <!-- PWA INSTALL CARD — after Faith Guides -->
     <div id="moreInstallCard"></div>

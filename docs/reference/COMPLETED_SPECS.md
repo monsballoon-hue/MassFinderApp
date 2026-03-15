@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (15 specs implemented, 0 in-progress, 1 queued)
+**Last updated:** 2026-03-15 (17 specs implemented, 0 in-progress, 1 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -78,6 +78,8 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 
 - **PMD** = Pocket Missal — Devotions Expansion
 - **SLV** = Soul / Visual Language
+- **MTR** = More Tab Restructure
+- **PHF** = Pastoral Handoff
 
 Future specs should continue this pattern with new prefixes.
 
@@ -280,6 +282,37 @@ Future specs should continue this pattern with new prefixes.
 | SLV-04 | Season as Emotional Temperature (timing token shifts per season) | Done | P2 |
 | SLV-05 | Warm Sacred Surfaces (targeted surface warmth on sacred cards) | Done | P2 |
 | SLV-06 | Intentional Asymmetry (saint card padding) | Done | P3 |
+
+### UX_Spec_More_Tab_Restructure.md (MTR series)
+**Created:** 2026-03-15 · **Status:** Implemented
+**Backlog items:** New (content architecture — not from existing backlog)
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_MTR.md
+**Depends on:** SOT, PMG, PMB, PMD (all implemented)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| MTR-01 | Zone Container Architecture | Done | P1 |
+| MTR-02 | Section Title Typography Differentiation | Done | P2 |
+| MTR-03 | Secondary Prayer Tools Progressive Disclosure | Done | P2 |
+| MTR-04 | Reading Entries Compact Mode | Done | P3 |
+| MTR-05 | Library Teaser Repositioned | Done | P3 |
+| MTR-06 | Zone 1 Internal Spacing Refinement | Done | P2 |
+| MTR-07 | Devotional Guide Count When Collapsed | Done | P3 |
+
+### UX_Spec_Pastoral_Handoff.md (PHF series)
+**Created:** 2026-03-15 · **Status:** Implemented
+**Source:** Pastoral Advisor (Fr. Mike) handoff
+**Backlog items:** IDEA-074 through IDEA-080
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_PHF.md
+**Depends on:** Reader system (implemented), Devotional guides (implemented)
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| PHF-01 | Confession Guide — Reader Module Registration | Done | P1 |
+| PHF-01a | Confession Guide Nudge in Detail Panel | Done | P1 |
+| PHF-01b | Confession Guide Hint on Find Tab Filter | Done | P2 |
+| PHF-02a | Reader Close Button — 44pt Touch Target | Done | P1 |
+| PHF-02b | Persistent Swipe Hint in Rosary Footer | Done | P2 |
+| PHF-02c | Prayer Text Size Boost at Large Setting | Done | P2 |
+| PHF-02d | Reader Overlay Continuity Cue | Done | P3 |
 
 ### UX_Spec_Sacred_Pause_System.md (SLV series addendum)
 **Created:** 2026-03-15 · **Status:** Queued

@@ -4,9 +4,9 @@
 
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
-**Last updated:** 2026-03-14
-**ID sequence:** IDEA-067 →
-**Total items:** 66
+**Last updated:** 2026-03-15
+**ID sequence:** IDEA-081 →
+**Total items:** 80
 
 ---
 
@@ -867,3 +867,199 @@ The Second Sunday of Easter is Divine Mercy Sunday (already in litcal data as "E
 **Estimated effort:** 1.5 hours
 **Dependencies:** Litcal data (exists), devotions data (exists)
 **Audience fit:** Divine Mercy Sunday has become one of the most popular Catholic observances, especially among younger adults. High resonance.
+
+## IDEA-067 — More tab: uniform visual treatment across all content zones
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-011, IDEA-024
+**Spec ref:** MTR-01
+**Impl ref:** MTR-01
+
+The More tab has grown to 20+ interactive elements across 10 content zones (saint card, seasonal moment, readings, prayer tools, devotional guides, etc.) all sharing identical visual DNA — same card background, same border-bottom separators, same section title typography. Users cannot build spatial memory of where things live. The tab needs restructuring into three visually distinct zones: "Today" (daily briefing), "Practice" (prayer tools), and "Go Deeper" (reference library).
+
+**Implemented:** 2026-03-15 via MTR-01 — restructured More tab into three visually distinct zone containers with zone seams and collapsible Go Deeper section
+
+## IDEA-068 — More tab section titles all use same typography
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-02
+**Impl ref:** MTR-02
+
+"Today's Readings," "Prayer & Devotion," and "Grow in Faith" all use identical `.more-section-title` styling. No visual hierarchy between daily content, practice tools, and reference material. Each zone should use differentiated typography.
+
+**Implemented:** 2026-03-15 via MTR-02 — added three title modifier classes with sacred, UI, and muted treatments
+
+## IDEA-069 — Prayer tools secondary row adds cognitive load for elderly users
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-03
+**Impl ref:** MTR-03
+
+The prayer tools grid shows all 7 interactive items at once (4 primary + 3 secondary). The secondary row (Stations, Novena Tracker, First Friday) is advanced/niche content that adds cognitive load. Should be behind a "More tools" progressive disclosure by default, with bypass when a card is contextually promoted.
+
+**Implemented:** 2026-03-15 via MTR-03 — secondary tools wrapped in disclosure toggle, promoted cards bypass
+
+## IDEA-070 — Reading entries take too much vertical space inside Today zone
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-04
+**Impl ref:** MTR-04
+
+Each reading entry takes ~52px vertical. With 4-5 entries, readings consume ~250px before expansion. Inside the warm "Today" container, tighter spacing would better serve the briefing intent.
+
+**Implemented:** 2026-03-15 via MTR-04 — tighter padding and smaller headings for reading entries inside Today zone
+
+## IDEA-071 — Library teaser positioned as a prayer tool instead of a reference bridge
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-05
+**Impl ref:** MTR-05
+
+The "Catholic Library — coming soon" teaser sits inside the prayer tools section, feeling like another prayer tool. It's actually a future Zone 3 (reference) asset. Repositioning it between the Practice and Go Deeper zones would better telegraph what's coming.
+
+**Implemented:** 2026-03-15 via MTR-05 — moved libraryTeaser between Zone 2 and Zone 3
+
+## IDEA-072 — More tab Today zone needs internal spacing without border-bottom lines
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067
+**Spec ref:** MTR-06
+**Impl ref:** MTR-06
+
+Inside the "Today" zone, the saint card, seasonal moment, and readings need breathing room. Pure spacing plus a faint sacred-tinted separator (not the generic border-light) should replace the current border-bottom treatment.
+
+**Implemented:** 2026-03-15 via MTR-06 — added scoped spacing and sacred-tinted border-top for readings section
+
+## IDEA-073 — Collapsed Grow in Faith section gives no signal of what's inside
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** UX audit
+**Related:** IDEA-067, IDEA-011
+**Spec ref:** MTR-07
+**Impl ref:** MTR-07
+
+When the "Go Deeper" section is collapsed (MTR-01), users see only "Grow in Faith" and a chevron with no indication of content depth. A count badge ("4 guides") would signal what's available without requiring expansion.
+
+**Implemented:** 2026-03-15 via MTR-07 — count badge shows guide count after seasonal filtering
+
+## IDEA-074 — Confession guide not discoverable from confession times
+**Category:** enhancement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-011
+**Spec ref:** PHF-01
+**Impl ref:** PHF-01
+
+The "How to Go to Confession" guide lives exclusively on the More tab's Grow in Faith section. Kevin (42, returning after 15 years) finds confession times via the Confession chip → church detail → Sacraments accordion, but there is zero path to the guide that would give him confidence. Register the confession guide as a reader module so it can be opened from anywhere.
+
+**Implemented:** 2026-03-15 via PHF-01 — registered confession guide as reader module with term/CCC/Scripture wiring and Find Confession button
+
+## IDEA-075 — Detail panel Sacraments accordion has no link to confession guide
+**Category:** enhancement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-074
+**Spec ref:** PHF-01a
+**Impl ref:** PHF-01a
+
+When a user opens the Sacraments accordion on a church detail card showing confession times, there is no contextual link to the confession guide. Add a gentle nudge: "First time in a while? What to expect ›" below the confession schedule. Non-intrusive — a lifelong Catholic ignores it, a returning Catholic taps it.
+
+**Implemented:** 2026-03-15 via PHF-01a — added nudge card below confession schedule in detail panel
+
+## IDEA-076 — Find tab confession filter shows no help for returning Catholics
+**Category:** enhancement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-074, IDEA-075
+**Spec ref:** PHF-01b
+**Impl ref:** PHF-01b
+
+When the Confession filter chip is active on the Find tab, results show churches with times but no indication that a guide exists. Add a dismissible one-line hint: "Not sure what to expect? How Confession works ›". Session-scoped dismissal via sessionStorage.
+
+**Implemented:** 2026-03-15 via PHF-01b — added session-scoped confession hint below Find tab filter chips
+
+## IDEA-077 — Reader close button below 44pt minimum touch target
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-029
+**Spec ref:** PHF-02a
+**Impl ref:** PHF-02a
+
+The .reader-close-btn is 30×30px with a 16×16px SVG icon. This is the only way to exit any prayer tool. Apple HIG minimum is 44×44pt. Dorothy (78, daily Mass) cannot reliably hit a 30px target. She is trapped in the overlay. Increase to 44×44px.
+
+**Implemented:** 2026-03-15 via PHF-02a — close button enlarged from 30px to 44px
+
+## IDEA-078 — Rosary swipe hint disappears after first interaction
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-019, IDEA-030
+**Spec ref:** PHF-02b
+**Impl ref:** PHF-02b
+
+The rosary swipe hint shows once and vanishes permanently after the first interaction. If Dorothy accidentally swipes past a decade, she has no reminder that swiping right goes back. Replace the temporary hint with a persistent subtle cue ("← swipe to navigate →") in the footer below the Previous/Next buttons.
+
+**Implemented:** 2026-03-15 via PHF-02b — replaced one-time hint with persistent swipe cue in nav footer
+
+## IDEA-079 — Prayer text too small at "large" setting for arm's-length reading
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-023, IDEA-026
+**Spec ref:** PHF-02c
+**Impl ref:** PHF-02c
+
+At [data-text-size="large"], root is 19px. Rosary prayer text computes to ~19px Georgia. For a 78-year-old reading at arm's length on a 6.1" iPhone, this may not be sufficient. Add a +2px reader-specific boost when large text is active, giving ~21px prayer text inside the reader overlay without affecting the rest of the app.
+
+**Implemented:** 2026-03-15 via PHF-02c — added +2px boost for prayer text in reader at large text size
+
+## IDEA-080 — Reader overlay has no continuity cue when tab bar disappears
+**Category:** refinement
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Pastoral advisor handoff (Fr. Mike)
+**Related:** IDEA-029
+**Spec ref:** PHF-02d
+**Impl ref:** PHF-02d
+
+When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental model ("tabs = how I move around") breaks. Consider a subtle continuity cue — either a faint wordmark or a 3px colored line at the bottom edge where the tab bar was. Lowest priority item — may be unnecessary if PHF-02a (bigger close button) resolves the confusion.
+
+**Implemented:** 2026-03-15 via PHF-02d — added 3px primary-colored line at bottom edge of reader overlay

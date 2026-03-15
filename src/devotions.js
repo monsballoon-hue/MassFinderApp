@@ -3,6 +3,48 @@ var utils = require('./utils.js');
 var esc = utils.esc;
 var refs = require('./refs.js');
 
+// PHF-01: Confession Guide reader module — accessible from any tab
+var reader = require('./reader.js');
+reader.registerModule('confession-guide', {
+  getTitle: function() { return 'How to Go to Confession'; },
+  render: function(params, bodyEl, footerEl) {
+    footerEl.style.display = 'none';
+    var guide = DEVOTIONAL_GUIDES[1];
+    if (!guide || guide.title !== 'How to go to Confession') {
+      // Defensive: search by title if index changed
+      for (var i = 0; i < DEVOTIONAL_GUIDES.length; i++) {
+        if (DEVOTIONAL_GUIDES[i].title === 'How to go to Confession') { guide = DEVOTIONAL_GUIDES[i]; break; }
+      }
+      if (!guide) { bodyEl.innerHTML = '<p>Guide not found.</p>'; return; }
+    }
+
+    bodyEl.innerHTML = '<div style="max-width:540px;margin:0 auto;font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.75">'
+      + _wrapScriptureRefs(_wrapTerms(guide.body))
+      + '<div style="margin-top:var(--space-5)">'
+      + '<button onclick="readerClose();closeAllPanels();switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'));var c=document.querySelector(\'[data-filter=confession]\');if(c)c.click()" '
+      + 'style="display:block;width:100%;padding:var(--space-3);background:var(--color-primary);color:white;border:none;border-radius:var(--radius-md);font-size:var(--text-sm);font-weight:var(--weight-semibold);cursor:pointer;min-height:44px">'
+      + 'Find Confession near you</button>'
+      + '</div></div>';
+
+    _initTermClicks(bodyEl);
+    refs.initRefTaps(bodyEl);
+    var snippet = require('./snippet.js');
+    bodyEl.querySelectorAll('.ccc-ref').forEach(function(el) {
+      var numMatch = el.textContent.trim().match(/CCC\s*(\d+)/);
+      if (!numMatch) return;
+      el.classList.add('ref-tap', 'ref-tap--ccc');
+      el.setAttribute('role', 'button');
+      el.setAttribute('tabindex', '0');
+      el.addEventListener('click', function(ev) {
+        ev.stopPropagation();
+        ev.preventDefault();
+        snippet.showSnippet('ccc', numMatch[1], el);
+      });
+    });
+  },
+  onClose: function() {}
+});
+
 // Wrap Scripture citations in devotional guide HTML with tappable ref spans.
 // Applied after esc() so the text is already safe. Scripture refs contain no HTML chars.
 function _wrapScriptureRefs(html) {
