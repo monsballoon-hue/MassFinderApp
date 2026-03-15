@@ -1295,7 +1295,10 @@ Research evaluated three data model options for adding Spanish (and future Polis
 
 ## IDEA-097 — Phase 1: Spanish Examination of Conscience
 **Category:** new-feature
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** I18N-01 through I18N-15
+**Implemented:** 2026-03-15 via I18N Phase 1 — Spanish exam translations + shared getPrayerText() helper
 **Date logged:** 2026-03-15
 **Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
 **Related:** IDEA-096, IDEA-098
@@ -1309,7 +1312,9 @@ Add `text_es` fields to examination.json for all translatable strings: 66 examin
 
 ## IDEA-098 — Phase 2: Spanish Rosary core prayers and mysteries
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Implemented:** 2026-03-15 via I18N Phases 2-4 — Spanish Rosary prayers + mysteries translated
 **Date logged:** 2026-03-15
 **Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
 **Related:** IDEA-096, IDEA-097
@@ -1323,7 +1328,9 @@ Add `text_es` fields to prayers.json for: 7 core prayers (Padre Nuestro, Ave Mar
 
 ## IDEA-099 — Phase 3: Spanish Stations of the Cross and Chaplet
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Implemented:** 2026-03-15 via I18N Phases 2-4 — Spanish Stations + Chaplet translations
 **Date logged:** 2026-03-15
 **Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
 **Related:** IDEA-096, IDEA-098
@@ -1337,7 +1344,9 @@ Add `text_es` fields to prayers.json for: 14 stations × (title + verse + respon
 
 ## IDEA-100 — Phase 4: Spanish Prayerbook common prayers
 **Category:** new-feature
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
+**Implemented:** 2026-03-15 via I18N Phases 2-4 — Spanish prayerbook translations
 **Date logged:** 2026-03-15
 **Source:** Pastoral advisor handoff (Fr. Mike), IDEA-096 research
 **Related:** IDEA-096, IDEA-097
@@ -1351,7 +1360,10 @@ Add `text_es` fields to prayerbook.json for standalone prayers across 5 categori
 
 ## IDEA-101 — Prayer tools grid restructure
 **Category:** enhancement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** PMV-02, PMV-03, PMV-04, PMV-07
+**Implemented:** 2026-03-15 via PMV series — fixed 2x2 grid, prayer book gateway, practice tracker, contextual promotion
 **Date logged:** 2026-03-15
 **Source:** UX evaluation
 **Related:** IDEA-067, IDEA-068, IDEA-069
@@ -1378,7 +1390,10 @@ Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PMV.md`
 
 ## IDEA-102 — Prayer Book internal UX: quick access, guided distinction, recents
 **Category:** enhancement
-**Status:** spec-ready
+**Status:** done
+**Completed:** 2026-03-15
+**Impl ref:** PBR-01, PBR-02, PBR-03, PBR-04, PBR-05
+**Implemented:** 2026-03-15 via PBR series — removed sacred pause, quick access pills, guided distinction, length indicators, recents
 **Date logged:** 2026-03-15
 **Source:** UX evaluation
 **Related:** IDEA-101, IDEA-019
