@@ -271,41 +271,53 @@ The liturgical day teaser's Lenten counter displays "Day X of 45" but the actual
 
 ## IDEA-023 — Find tab sorting text too small for elderly users
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-17
+**Implemented:** 2026-03-14 via BT3-17 — increased sort label font size for accessibility
 
 The sorting label text at the top of the Find tab is too small. An elderly user would likely struggle to read it. Increase the font size significantly to improve accessibility for older users.
 
 ## IDEA-024 — Abstinence banner on More tab is redundant with Find tab teaser
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-002, IDEA-003
 **Spec ref:** (none)
+**Impl ref:** BT3-11
+**Implemented:** 2026-03-14 via BT3-11 — removed fasting banner from More tab
 
 The abstinence banner displayed on the More tab is redundant because the same information is already conveyed by the liturgical teaser card on the Find tab. Remove the More tab abstinence banner to reduce duplication.
 
 ## IDEA-025 — Remove special formatting for Gospel reading on More tab
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-004
 **Spec ref:** (none)
+**Impl ref:** BT3-12
+**Implemented:** 2026-03-14 via BT3-12 — removed Gospel formatting differentiation
 
 The Gospel reading under Readings of the Day on the More tab has special formatting or coloring to differentiate it from other readings. This is unnecessary and clashes visually. Remove the distinct styling so all readings render consistently.
 
 ## IDEA-026 — Saved tab schedule section font too small
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-010
 **Spec ref:** (none)
+**Impl ref:** BT3-18
+**Implemented:** 2026-03-14 via BT3-18 — increased Saved tab schedule font sizes
 
 At the top of the Saved tab, the church schedule section has text that is too small — both the section labels and the times/days. All text in this area needs to be larger for readability, especially for elderly users.
 
@@ -331,11 +343,14 @@ When the user has an active but unfinished novena in progress, the Novena tracke
 
 ## IDEA-029 — Bottom nav bar occasionally scrolls with page content
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** screenshot
 **Related:** IDEA-008
 **Spec ref:** (none)
+**Impl ref:** BT3-22
+**Implemented:** 2026-03-14 via BT3-22 — fixed bottom nav positioning
 
 Intermittently, the bottom navigation bar hosting the four tab buttons loses its fixed/sticky positioning and begins scrolling with the page content. The trigger is unknown and the bug is not consistently reproducible. Screenshot attached showing the nav bar displaced from its expected position.
 
@@ -351,11 +366,14 @@ The Rosary opening prayers section (Sign of the Cross, Apostles' Creed, Our Fath
 
 ## IDEA-031 — Remove drawer collapse and TLM option from Faith Guides on More tab
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-011
 **Spec ref:** (none)
+**Impl ref:** BT3-14
+**Implemented:** 2026-03-14 via BT3-14 — removed Faith Guides collapse toggle and TLM option
 
 Two changes to Faith Guides on the More tab: (1) Remove the ability for users to collapse the Faith Guides drawer — it should always remain open. (2) Remove the Traditional Latin Mass option from Faith Guides entirely; it is no longer wanted.
 
@@ -371,111 +389,144 @@ The meditation prompt on the liturgical calendar (top of More tab) is typically 
 
 ## IDEA-033 — Examination of conscience subheader should say "confession" not "reconciliation"
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-01
+**Implemented:** 2026-03-14 via BT3-01 — changed exam subtitle from "reconciliation" to "confession"
 
 The subheader on the Examination of Conscience module currently reads "Prepare for reconciliation." It should be changed to "Prepare for confession" to match the more commonly used term among the target audience.
 
 ## IDEA-034 — Examination of conscience tooltip text nearly illegible
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-03, BT3-09
+**Implemented:** 2026-03-14 via BT3-03, BT3-09 — tooltip replaced with full-screen modal, text made legible
 
 The tooltip in the top-right corner of the Examination of Conscience explaining how to use the module is extremely small and nearly illegible. This needs to be displayed much more prominently to accommodate elderly users. Consider an alternative to a tiny tooltip.
 
 ## IDEA-035 — Examination of conscience: unclear that selections are being logged
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** IDEA-034
 **Spec ref:** (none)
+**Impl ref:** BT3-04
+**Implemented:** 2026-03-14 via BT3-04 — made selection logging more visually prominent
 
 As a user runs through the Examination of Conscience, there is a counter at the bottom center tracking logged notes, but it is not obvious that tapping items is cataloging them for later review. A first-time user would not know their actions are being recorded. Need a more prominent indication that selections are saved for review at the end and that everything is wiped after confession is completed. This should not be buried in a tooltip.
 
 ## IDEA-036 — Examination of conscience header text not centered
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-02
+**Implemented:** 2026-03-14 via BT3-02 — centered exam header text
 
 The "Examination of Conscience" header text at the top of the Examination of Conscience module is not horizontally centered. Align it to center.
 
 ## IDEA-037 — Examination of conscience tooltip item #1 is inaccurate
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-034
 **Spec ref:** (none)
+**Impl ref:** BT3-03
+**Implemented:** 2026-03-14 via BT3-03 — fixed inaccurate tooltip wording
 
 Item number one in the Examination of Conscience tooltip references "the questions above," which is inaccurate in context. It should instead say something like "the questions within this module, page by page" or similar phrasing that accurately describes where the questions are located.
 
 ## IDEA-038 — Examination of conscience tooltip should be full-screen to avoid scrolling
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-034, IDEA-037
 **Spec ref:** (none)
+**Impl ref:** BT3-03, BT3-10
+**Implemented:** 2026-03-14 via BT3-03, BT3-10 — tooltip converted to full-screen modal
 
 Items one through six of the Examination of Conscience tooltip are visible without scrolling, but a small amount of additional content requires scrolling. Since it is nearly all visible already, make the tooltip a full-screen modal so users can see everything at once without any scrolling.
 
 ## IDEA-039 — Remove "Prayers" header above Act of Contrition in Examination of Conscience
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-05
+**Implemented:** 2026-03-14 via BT3-05 — removed "Prayers" label from exam final page
 
 On the last page of the Examination of Conscience module, there is a "Prayers" header rendered above the Act of Contrition. Remove this header — it is unnecessary.
 
 ## IDEA-040 — Style Thanksgiving prayer to match Act of Contrition on exam final page
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** IDEA-039
 **Spec ref:** (none)
+**Impl ref:** BT3-06
+**Implemented:** 2026-03-14 via BT3-06 — unified Thanksgiving prayer styling with Act of Contrition
 
 On the final page of the Examination of Conscience, the Thanksgiving prayer after confession should be centered (both header and body) to match the Act of Contrition above it. Remove the white box container around the Thanksgiving prayer, add a simple light divider between the two prayers, and apply consistent styling and font centering to both. They should look visually unified but distinct via the divider.
 
 ## IDEA-041 — Confession logged feedback: move tracking to module button, not popup
 **Category:** enhancement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** IDEA-035
 **Spec ref:** (none)
+**Impl ref:** BT3-07
+**Implemented:** 2026-03-14 via BT3-07 — moved confession tracker feedback to module button
 
 Clicking "I received confession/reconciliation today" currently shows a popup saying "Last confession: today," which is redundant since the user just clicked it. If confession date is being tracked, the indicator belongs on the module button on the More tab, not inside the module. Render a visual confirmation effect on click, but be careful not to imply that confession content is being saved — only the date is recorded.
 
 ## IDEA-042 — Exam of conscience final page: too many redundant exit paths
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** IDEA-041
 **Spec ref:** (none)
+**Impl ref:** BT3-08
+**Implemented:** 2026-03-14 via BT3-08 — consolidated redundant exit paths on exam final page
 
 The final page of the Examination of Conscience offers three ways to exit: (1) a link to the Find tab to find confession, (2) a "Return to MassFinder" CTA going to the More tab, and (3) a redundant "Done" button that duplicates the Return CTA. There is also a back button. After clicking "I received reconciliation," evaluate whether the back button should still render. Consolidate the exit options to reduce confusion.
 
 ## IDEA-043 — Catechism reference pills not rendering text snippets in Faith Guides
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-006, IDEA-021
 **Spec ref:** (none)
+**Impl ref:** BT3-24
+**Implemented:** 2026-03-14 via BT3-24 — fixed CCC pills rendering in Faith Guides
 
 Catechism (CCC) reference pills inside the open Faith Guides drawers on the More tab are not rendering their associated text snippets. Tapping a pill should display the relevant catechism excerpt but nothing appears.
 
@@ -491,21 +542,27 @@ Remove the following text from the end of the Holy Days of Obligation drawer con
 
 ## IDEA-045 — Faith Guides active guide coloring unreadable in dark mode
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-011
 **Spec ref:** (none)
+**Impl ref:** BT3-16
+**Implemented:** 2026-03-14 via BT3-16 — fixed Faith Guides dark mode coloring
 
 On the More tab, the coloring used to indicate which Faith Guide is currently active/selected breaks in dark mode. The text becomes unreadable against the background. Needs a dark-mode-compatible color treatment.
 
 ## IDEA-046 — Remove About section and feedback form from Settings page
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-25
+**Implemented:** 2026-03-14 via BT3-25 — removed About section from Settings
 
 Remove the entire About section and the feedback submission form from the bottom of the Settings page. Keep the GitHub link — only remove the About content and feedback form.
 
@@ -521,50 +578,65 @@ Church records have a short name field but the values often use formal names lik
 
 ## IDEA-048 — Map tab: move filter pills below map controls on mobile
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-008, IDEA-017
 **Spec ref:** (none)
+**Impl ref:** BT3-26
+**Implemented:** 2026-03-14 via BT3-26 — moved map chips to bottom on mobile
 
 On mobile, the filter pills on the Map tab need to be moved to the bottom of the screen, just above the sticky universal bottom tab selector. They currently conflict with the zoom and location buttons in the top-left and top-right corners of the map.
 
 ## IDEA-049 — Find tab filter pills: swipe too sensitive, triggers page refresh
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-20
+**Implemented:** 2026-03-14 via BT3-20 — fixed chip bar swipe triggering page refresh
 
 When swiping left or right on the filter pills at the top of the Find tab, it is very easy to inadvertently trigger a page refresh. The refresh causes unintended re-rendering. Reduce the swipe sensitivity or adjust the gesture handling so horizontal swipes on the pills do not trigger the pull-to-refresh behavior.
 
 ## IDEA-050 — Church detail bulletin and website links should open in external browser
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-27
+**Implemented:** 2026-03-14 via BT3-27 — detail links now open in external browser
 
 Clicking on the bulletin or website link on a church detail page opens the URL within the app itself rather than in the user's dedicated mobile browser. These external links should open in the system browser (Safari, Chrome, etc.) so users get full browser functionality and can navigate back to the app cleanly.
 
 ## IDEA-051 — Young Catholic event cards on Find tab need subtler design treatment
 **Category:** refinement
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** voice
 **Related:** (none)
 **Spec ref:** (none)
+**Impl ref:** BT3-21
+**Implemented:** 2026-03-14 via BT3-21 — made YC cards subtler
 
 The Young Catholic church cards on the Find tab are styled too differently from the standard church cards. They should match the regular card design but include a subtle flair or indicator that distinguishes them as young adult event cards. The current treatment is over the top — dial it back to something that fits within the existing card system while still being identifiable.
 
 ## IDEA-052 — PWA update banner appearing too frequently without actual updates
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-14
 **Date logged:** 2026-03-14
 **Source:** typed
 **Related:** IDEA-001
 **Spec ref:** (none)
+**Impl ref:** BT3-28
+**Implemented:** 2026-03-14 via BT3-28 — added PWA banner session guard
 
 The "Update available — Refresh" banner is appearing nearly every time the app is opened, even when no new code has been pushed. The service worker update check is triggering false positives. Ensure the update banner only displays when there is a genuine new deployment, not on routine app opens.
