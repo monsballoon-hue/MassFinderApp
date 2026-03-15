@@ -5,8 +5,8 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-091 →
-**Total items:** 90
+**ID sequence:** IDEA-096 →
+**Total items:** 95
 
 ---
 
@@ -263,13 +263,17 @@ Tapping a CCC (Catechism) reference pill within the Examen tool is incorrectly t
 
 ## IDEA-022 — Lenten counter shows incorrect 45-day total; consider removing tracker
 **Category:** bug
-**Status:** new
+**Status:** done
+**Completed:** 2026-03-15
 **Date logged:** 2026-03-13
 **Source:** typed
 **Related:** IDEA-002
 **Spec ref:** (none)
+**Impl ref:** SLV, MTR
 
 The liturgical day teaser's Lenten counter displays "Day X of 45" but the actual length of Lent is not 45 days. Beyond the incorrect number, the day-tracking format itself may gamify Lent in a way that conflicts with the spirit of the season. Leaning toward removing the "Day X of Y" counter entirely rather than fixing the count.
+
+**Implemented:** 2026-03-15 — Lenten day counter removed entirely during SLV/MTR restructure. Liturgical teaser no longer renders a day-of-season tracker.
 
 ## IDEA-023 — Find tab sorting text too small for elderly users
 **Category:** refinement
@@ -1067,7 +1071,6 @@ When the reader overlay opens, the bottom tab bar disappears. Dorothy's mental m
 
 **Implemented:** 2026-03-15 via PHF-02d — added 3px primary-colored line at bottom edge of reader overlay
 
-<<<<<<< HEAD
 ## IDEA-081 — App rebrand: evaluate "Sacristy" as replacement for "MassFinder"
 **Category:** research
 **Status:** done
@@ -1195,3 +1198,73 @@ Q31 ("Have I contemplated or attempted suicide?") needs a compassionate pastoral
 RVM §38 Sunday mystery varies by liturgical season (Joyful in Advent/Christmas, Sorrowful in Lent, Glorious in Easter/Ordinary Time).
 
 **Implemented:** 2026-03-15 via CFR2 — added getLiturgicalSeason() utility and seasonal Sunday override in _todaySet()
+
+## IDEA-091 — Examination CCC reference corrections and commandment remapping
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15
+**Related:** IDEA-034, IDEA-088
+**Spec ref:** CFR1
+**Impl ref:** 5f1a04e
+
+Q30 CCC ref corrected from §2267 (death penalty) to §2242 (obedience to civil authority). Q5 added §2088 (sins against faith) alongside existing §2471. Q58 (sloth/acedia, §2094) moved from 10th to 1st Commandment. Q59 (gluttony, §2290) moved from 10th to 5th Commandment. Act of Contrition replaced with Baltimore Catechism version to match devotions.js confession guide.
+
+**Implemented:** 2026-03-15 via commit 5f1a04e — examination.json corrections across 5 questions + Act of Contrition swap
+
+## IDEA-092 — Vigil mass cutoff corrected from 2:00 PM to 4:00 PM
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15
+**Related:** IDEA-007
+**Spec ref:** (none)
+**Impl ref:** 975b195
+
+Saturday vigil Mass cutoff in TERMINOLOGY.md, DATA_STANDARDS.md, and ANTI_PATTERNS.md was set at 2:00 PM with no canonical basis. Corrected to 4:00 PM to match U.S. diocesan practice and the app's own devotions.js content. Newman Catholic Center (Amherst) Saturday 9:00 AM Mass reclassified from sunday_mass to daily_mass — clearly not a vigil at any cutoff.
+
+**Implemented:** 2026-03-15 via commit 975b195 — docs + parish_data.json corrections
+
+## IDEA-093 — Catechism §2267 updated to 2018 revised text on death penalty
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15
+**Related:** IDEA-091
+**Spec ref:** (none)
+**Impl ref:** 5f1a04e
+
+The catechism.json entry for §2267 contained the pre-2018 text on the death penalty. Replaced with the 2018 revised text per Vatican Rescriptum ex Audientia SS.mi, which declares the death penalty "inadmissible." This is the current official Catechism text.
+
+**Implemented:** 2026-03-15 via commit 5f1a04e — catechism.json §2267 updated
+
+## IDEA-094 — Prayer content fixes: typo, formatting, mislabeled prayer, line endings
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** Catholic Fidelity Review 2026-03-15
+**Related:** IDEA-090
+**Spec ref:** (none)
+**Impl ref:** 38c4039
+
+Fixed "amoung" → "among" typo in Joyful mysteries Visitation meditation. Removed stray \r\n\r\n in Station 3 meditation. Sunday Rosary mystery corrected from Joyful → Glorious per Rosarium Virginis Mariae §38. Replaced mislabeled Jesus Prayer with actual Rite of Penance Act of Contrition. Normalized all \r\n → \n line endings across prayers.json.
+
+**Implemented:** 2026-03-15 via commit 38c4039 — prayers.json corrections
+
+## IDEA-095 — Sacred Pause and reader overlay integration bugs
+**Category:** bug
+**Status:** done
+**Completed:** 2026-03-15
+**Date logged:** 2026-03-15
+**Source:** typed
+**Related:** IDEA-074, IDEA-077
+**Spec ref:** SLV-07
+**Impl ref:** b37519b, cc0105b, 48cb802, 06b29b2
+
+Five related bugs fixed in rapid succession during Sacred Pause / PHF integration: (1) Sacred pause started with fade-in, exposing reader slide-up behind it — changed to full opacity on entry. (2) CSS animation overriding dismiss transition — added animation:none to .dismissing class. (3) Detail panel z-index (1001) blocked reader overlay (1000) — switched to CSS variable at 501. (4) Confession guide readerOpen reference undefined — corrected to reader.readerOpen. (5) Detail panel stayed open behind Find tab when tapping "Find Confession" from guide — added closeAllPanels() call. SLV-10 readings liturgical day header also reverted as redundant with saint card.
+
+**Implemented:** 2026-03-15 via commits b37519b, cc0105b, 48cb802, 06b29b2
