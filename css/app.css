@@ -2679,6 +2679,13 @@ html[data-theme="dark"] .novena-complete-new-btn { background:rgba(255,255,255,0
 .exam-q-text { font-size:var(--text-base);line-height:1.6;color:var(--color-text-secondary); }
 .exam-q-ref { align-self:flex-start; }
 .exam-q-ref .ref-tap { display:inline-block;min-height:32px;line-height:32px;padding:0 var(--space-3); }
+/* CFR1: Pastoral note for Q31 */
+.exam-pastoral-note { margin:var(--space-2) 0 var(--space-3) calc(28px + var(--space-3));padding:var(--space-3);border-left:3px solid var(--color-accent);background:color-mix(in srgb, var(--color-accent) 6%, transparent);border-radius:0 var(--radius-sm) var(--radius-sm) 0; }
+.exam-pastoral-support { font-family:var(--font-body);font-size:var(--text-sm);color:var(--color-text-secondary);line-height:1.5;margin:0 0 var(--space-2) 0; }
+.exam-pastoral-link { color:var(--color-accent);font-weight:var(--weight-semibold);text-decoration:underline; }
+.exam-pastoral-quote { font-family:var(--font-prayer);font-size:var(--text-sm);font-style:italic;color:var(--color-text-secondary);line-height:1.5;margin:0; }
+.exam-pastoral-cite { font-style:normal;font-family:var(--font-body);font-size:var(--text-xs);color:var(--color-text-tertiary); }
+html[data-theme="dark"] .exam-pastoral-note { background:color-mix(in srgb, var(--color-accent) 8%, transparent); }
 .exam-q-noted { display:inline-block;font-size:var(--text-xs);color:var(--color-verified);font-weight:var(--weight-semibold);margin-left:var(--space-2);white-space:nowrap; }
 .exam-expand-hint { font-size:var(--text-xs);color:var(--color-text-tertiary);text-align:center;margin-bottom:var(--space-2);font-style:italic; }
 

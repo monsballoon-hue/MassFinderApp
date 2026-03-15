@@ -77,14 +77,25 @@ function _load() {
     .then(function(d) { _data = d; return d; });
 }
 
-// ── Day-based mystery selection (with Lent override) ──
+// ── Day-based mystery selection (with seasonal overrides) ──
 function _todaySet() {
   if (!_data) return 'Joyful';
   var days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
   var today = days[new Date().getDay()];
   var set = _data.dayMysteries[today] || 'Joyful';
-  // During Lent, Sorrowful is traditional on days that would otherwise be Joyful
-  if (utils.isLentSeason() && set === 'Joyful' && today !== 'saturday') {
+  var season = utils.getLiturgicalSeason();
+
+  // RVM §38: Sunday mystery varies by liturgical season
+  if (today === 'sunday' && season) {
+    if (season === 'ADVENT' || season === 'CHRISTMAS') {
+      set = 'Joyful';
+    } else if (season === 'LENT' || season === 'HOLY_WEEK') {
+      set = 'Sorrowful';
+    }
+  }
+
+  // Non-Sunday Lent override: Joyful → Sorrowful except Saturday
+  if (today !== 'sunday' && utils.isLentSeason() && set === 'Joyful' && today !== 'saturday') {
     set = 'Sorrowful';
   }
   return set;
@@ -344,14 +355,19 @@ function _renderSelect(title, body, footer) {
   var todaySet = _todaySet();
   var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var dayName = days[new Date().getDay()];
-  var isLent = utils.isLentSeason();
+  var season = utils.getLiturgicalSeason();
+  var seasonLabel = '';
+  if (season === 'ADVENT') seasonLabel = 'Advent Season';
+  else if (season === 'CHRISTMAS') seasonLabel = 'Christmas Season';
+  else if (season === 'LENT' || season === 'HOLY_WEEK') seasonLabel = 'Lenten Season';
+  else if (season === 'EASTER' || season === 'EASTER_SEASON') seasonLabel = 'Easter Season';
 
   snippet.dismissSnippet();
   body.innerHTML = '<div class="rosary-select">'
     + '<div class="rosary-select-intro">'
     + '<svg class="rosary-cross-svg" viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg>'
     + '<p class="rosary-select-day">' + dayName + '</p>'
-    + (isLent ? '<p class="rosary-select-season">Lenten Season</p>' : '')
+    + (seasonLabel ? '<p class="rosary-select-season">' + seasonLabel + '</p>' : '')
     + '<p class="rosary-select-rec">The traditional mysteries for today<br><span class="rosary-select-set-name">' + todaySet + ' Mysteries</span></p>'
     + '</div>'
     + '<button class="rosary-begin-btn" onclick="rosarySelectSet(\'' + todaySet + '\')" style="--set-color:' + (SET_META[todaySet] || {}).color + '">'
