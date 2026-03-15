@@ -557,7 +557,7 @@ function _renderSeasonalMoment(events) {
           + '</summary>'
           + '<div class="seasonal-card-expanded">'
           + '<p>After Christ ascended into heaven, the Apostles and the Blessed Virgin Mary gathered in the Upper Room and prayed together for nine days. On the tenth day \u2014 Pentecost \u2014 the Holy Spirit descended upon them in tongues of fire. This was the first novena.</p>'
-          + '<p>The Church invites the faithful to pray the Novena to the Holy Spirit during these nine days, asking for a fresh outpouring of the Spirit\u2019s gifts in our own lives.</p>'
+          + '<p>The Church invites you to pray the Novena to the Holy Spirit during these nine days, asking for a fresh outpouring of the Spirit\u2019s gifts in our own lives.</p>'
           + '<div class="seasonal-card-action" onclick="event.stopPropagation();openNovena()">Start the Holy Spirit Novena \u2192</div>'
           + '</div>'
           + '</details>'
@@ -628,18 +628,18 @@ function _renderSeasonalMoment(events) {
 
   // SOT-09: Monthly Devotion Card (lowest priority — fills empty slots)
   var MONTHLY_DEVOTIONS = [
-    { month: 0, title: 'January: The Holy Name of Jesus', subtitle: 'Devotion to the Sacred Name', body: '<p>January is dedicated to the Holy Name of Jesus. The feast of the Holy Name (January 3) celebrates the Name above all names, at which \u201cevery knee should bend\u201d (Philippians 2:10). The faithful are encouraged to invoke the Holy Name with reverence throughout this month.</p>' },
-    { month: 1, title: 'February: The Holy Family', subtitle: 'Patron of families and home life', body: '<p>February is dedicated to the Holy Family of Jesus, Mary, and Joseph. The faithful are invited to pray for the sanctification of family life and to look to the Holy Family as a model of love, obedience, and faithfulness in the domestic church.</p>' },
-    { month: 2, title: 'March: Month of St. Joseph', subtitle: 'Patron of the Universal Church', body: '<p>March is dedicated to St. Joseph, foster father of Jesus and patron of the Universal Church. His feast day falls on March 19. The faithful are encouraged to seek his intercession for workers, fathers, and those facing difficult decisions.</p>', action: 'Pray the St. Joseph Novena \u2192', actionFn: 'openNovena()' },
-    { month: 3, title: 'April: Month of the Eucharist', subtitle: 'The source and summit of the Christian life', body: '<p>April is dedicated to devotion to the Blessed Sacrament. The Eucharist is \u201cthe source and summit of the Christian life\u201d (<span class="ccc-ref">CCC 1324</span>). The faithful are encouraged to attend Mass, visit the Blessed Sacrament, and deepen their understanding of this central mystery.</p>' },
-    { month: 4, title: 'May: Month of Mary', subtitle: 'Queen of the Most Holy Rosary', body: '<p>May is dedicated to the Blessed Virgin Mary. The faithful are invited to pray the Rosary daily, participate in May Crowning devotions, and entrust themselves to Our Lady\u2019s intercession.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
-    { month: 5, title: 'June: The Sacred Heart of Jesus', subtitle: 'Devotion to Christ\u2019s infinite love', body: '<p>June is dedicated to the Sacred Heart of Jesus, whose feast falls on the Friday after Corpus Christi. This devotion centers on Christ\u2019s boundless love for humanity, symbolized by His heart aflame. The faithful are encouraged to make acts of reparation and to consecrate themselves to the Sacred Heart.</p>' },
-    { month: 6, title: 'July: The Precious Blood', subtitle: 'The price of our redemption', body: '<p>July is dedicated to the Precious Blood of Jesus, shed for the salvation of the world. The faithful are invited to meditate on the sacrifice of Calvary and to receive the Eucharist with renewed gratitude for the gift of redemption.</p>' },
-    { month: 7, title: 'August: The Immaculate Heart of Mary', subtitle: 'A heart united perfectly to Christ', body: '<p>August is dedicated to the Immaculate Heart of Mary, whose memorial falls on the Saturday after the Sacred Heart. The faithful are invited to entrust their lives to her maternal care and to imitate her perfect union with her Son.</p>' },
-    { month: 8, title: 'September: Our Lady of Sorrows', subtitle: 'The Seven Sorrows of the Blessed Mother', body: '<p>September is dedicated to Our Lady of Sorrows, whose memorial falls on September 15. The faithful are encouraged to meditate on the seven sorrows Mary endured \u2014 from Simeon\u2019s prophecy to the burial of Jesus \u2014 and to unite their own sufferings with hers.</p>' },
-    { month: 9, title: 'October: Month of the Rosary', subtitle: 'The prayer that shaped history', body: '<p>October is dedicated to the Most Holy Rosary. The feast of Our Lady of the Rosary falls on October 7. The faithful are encouraged to pray the Rosary daily, either alone or with family, and to meditate on the mysteries of Christ\u2019s life.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
-    { month: 10, title: 'November: The Holy Souls', subtitle: 'Remembering the faithful departed', body: '<p>November is dedicated to the Holy Souls in Purgatory. The month begins with All Saints\u2019 Day (November 1) and All Souls\u2019 Day (November 2). The faithful are encouraged to pray for the dead, offer Masses for their intentions, and visit cemeteries in a spirit of hope in the resurrection.</p>' },
-    { month: 11, title: 'December: The Immaculate Conception', subtitle: 'Preparing for the coming of Christ', body: '<p>December is dedicated to the Immaculate Conception of the Blessed Virgin Mary, whose solemnity falls on December 8 and is a Holy Day of Obligation. As Advent unfolds, the Church looks to Mary\u2019s \u201cyes\u201d as the model of faith and readiness for the Lord\u2019s coming.</p>' }
+    { month: 0, title: 'January: The Holy Name of Jesus', subtitle: 'Devotion to the Sacred Name', body: '<p>January is dedicated to the Holy Name of Jesus. The feast of the Holy Name (January 3) celebrates the Name above all names, at which \u201cevery knee should bend\u201d (Philippians 2:10). You are encouraged to invoke the Holy Name with reverence throughout this month.</p>', action: 'Find Mass near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"))' },
+    { month: 1, title: 'February: The Holy Family', subtitle: 'Patron of families and home life', body: '<p>February is dedicated to the Holy Family of Jesus, Mary, and Joseph. You are invited to pray for the sanctification of family life and to look to the Holy Family as a model of love, obedience, and faithfulness in the domestic church.</p><p>The Holy Family feast (the Sunday after Christmas) is the anchor of this devotion. Pray for your own family \u2014 for patience, forgiveness, and the grace to love as Jesus, Mary, and Joseph loved.</p>' },
+    { month: 2, title: 'March: Month of St. Joseph', subtitle: 'Patron of the Universal Church', body: '<p>March is dedicated to St. Joseph, foster father of Jesus and patron of the Universal Church. His feast day falls on March 19. You are encouraged to seek his intercession for workers, fathers, and those facing difficult decisions.</p>', action: 'Pray the St. Joseph Novena \u2192', actionFn: 'openNovena()' },
+    { month: 3, title: 'April: Month of the Eucharist', subtitle: 'The source and summit of the Christian life', body: '<p>April is dedicated to devotion to the Blessed Sacrament. The Eucharist is \u201cthe source and summit of the Christian life\u201d (<span class="ccc-ref">CCC 1324</span>). You are encouraged to attend Mass, visit the Blessed Sacrament, and deepen your understanding of this central mystery.</p>', action: 'Find Adoration near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"));document.querySelector("[data-filter=adoration]")&&document.querySelector("[data-filter=adoration]").click()' },
+    { month: 4, title: 'May: Month of Mary', subtitle: 'Queen of the Most Holy Rosary', body: '<p>May is dedicated to the Blessed Virgin Mary. You are invited to pray the Rosary daily, participate in May Crowning devotions, and entrust themselves to Our Lady\u2019s intercession.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
+    { month: 5, title: 'June: The Sacred Heart of Jesus', subtitle: 'Devotion to Christ\u2019s infinite love', body: '<p>June is dedicated to the Sacred Heart of Jesus, whose feast falls on the Friday after Corpus Christi. This devotion centers on Christ\u2019s boundless love for humanity, symbolized by His heart aflame. You are encouraged to make acts of reparation and to consecrate yourself to the Sacred Heart.</p>', action: 'First Friday Tracker \u2192', actionFn: 'openFirstFriday()' },
+    { month: 6, title: 'July: The Precious Blood', subtitle: 'The price of our redemption', body: '<p>July is dedicated to the Precious Blood of Jesus, shed for the salvation of the world. You are invited to meditate on the sacrifice of Calvary and to receive the Eucharist with renewed gratitude for the gift of redemption.</p><p>The feast of the Most Precious Blood was long celebrated on July 1. Though no longer on the universal calendar, many parishes and religious communities maintain the devotion. Consider attending an extra weekday Mass this month in gratitude for the gift of redemption.</p>' },
+    { month: 7, title: 'August: The Immaculate Heart of Mary', subtitle: 'A heart united perfectly to Christ', body: '<p>August is dedicated to the Immaculate Heart of Mary, whose memorial falls on the Saturday after the Sacred Heart. You are invited to entrust your life to her maternal care and to imitate her perfect union with her Son.</p><p>The Five First Saturdays devotion, requested by Our Lady of F\u00e1tima, is centered on reparation to the Immaculate Heart. If you haven\u2019t started, this month is a natural time to begin.</p>', action: 'First Saturday Tracker \u2192', actionFn: 'openFirstFriday()' },
+    { month: 8, title: 'September: Our Lady of Sorrows', subtitle: 'The Seven Sorrows of the Blessed Mother', body: '<p>September is dedicated to Our Lady of Sorrows, whose memorial falls on September 15. You are encouraged to meditate on the seven sorrows Mary endured \u2014 from Simeon\u2019s prophecy to the burial of Jesus \u2014 and to unite your own sufferings with hers.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
+    { month: 9, title: 'October: Month of the Rosary', subtitle: 'The prayer that shaped history', body: '<p>October is dedicated to the Most Holy Rosary. The feast of Our Lady of the Rosary falls on October 7. You are encouraged to pray the Rosary daily, either alone or with family, and to meditate on the mysteries of Christ\u2019s life.</p>', action: 'Pray the Rosary \u2192', actionFn: 'openRosary()' },
+    { month: 10, title: 'November: The Holy Souls', subtitle: 'Remembering the faithful departed', body: '<p>November is dedicated to the Holy Souls in Purgatory. The month begins with All Saints\u2019 Day (November 1) and All Souls\u2019 Day (November 2). You are encouraged to pray for the dead, offer Masses for their intentions, and visit cemeteries in a spirit of hope in the resurrection.</p>', action: 'Find Mass near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"))' },
+    { month: 11, title: 'December: The Immaculate Conception', subtitle: 'Preparing for the coming of Christ', body: '<p>December is dedicated to the Immaculate Conception of the Blessed Virgin Mary, whose solemnity falls on December 8 and is a Holy Day of Obligation. As Advent unfolds, the Church looks to Mary\u2019s \u201cyes\u201d as the model of faith and readiness for the Lord\u2019s coming.</p>', action: 'Find Mass near you \u2192', actionFn: 'switchTab("panelFind",document.querySelector("[data-tab=panelFind]"))' }
   ];
   var nowMonth = new Date().getMonth();
   var md = MONTHLY_DEVOTIONS[nowMonth];
@@ -926,7 +926,7 @@ function renderMore() {
         + '<div class="prayerbook-gateway-icon">' + ptIcons.prayerbook + '</div>'
         + '<div class="prayerbook-gateway-body">'
         + '<div class="prayerbook-gateway-title">Prayer Book</div>'
-        + '<div class="prayerbook-gateway-subtitle">31 prayers \u00b7 Guided litanies \u00b7 Lectio Divina</div>'
+        + '<div class="prayerbook-gateway-subtitle">Common prayers \u00b7 Guided litanies \u00b7 Lectio Divina</div>'
         + '</div>'
         + '<svg class="prayerbook-gateway-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
         + '</div>';
@@ -976,13 +976,13 @@ function renderMore() {
     // EMT-05: Library teaser — standalone card below grid
     var libTeaser = document.getElementById('libraryTeaser');
     if (libTeaser) {
-      libTeaser.innerHTML = '<div class="library-teaser">'
+      libTeaser.innerHTML = '<div class="library-teaser" onclick="openExplore()" role="button" tabindex="0">'
         + '<div class="prayer-tool-icon" style="background:var(--color-surface-hover);color:var(--color-text-secondary)">'
         + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15z"/></svg>'
         + '</div>'
         + '<div class="prayer-tool-body">'
         + '<div class="prayer-tool-title">Catholic Library</div>'
-        + '<div class="prayer-tool-subtitle">Bible, Catechism & Catholic classics \u2014 coming soon</div>'
+        + '<div class="prayer-tool-subtitle">Bible, Catechism, Baltimore Catechism & Summa</div>'
         + '</div>'
         + '</div>';
     }
@@ -1076,10 +1076,9 @@ function renderMore() {
   var footer = document.getElementById('moreFooter');
   if (footer) {
     footer.innerHTML = '<div class="more-footer-links">'
-      + '<div class="more-footer-link more-footer-link--disabled"><span>Weekly Parish Bulletin</span><span class="more-footer-soon">Coming soon</span></div>'
       + '<button class="more-footer-link" onclick="openSettings()"><span>Settings</span><span class="more-footer-chevron">\u203A</span></button>'
       + '</div>'
-      + '<div onclick="window._devTap && window._devTap()" style="cursor:default" class="more-version">MassFinder v2</div>';
+      + '<div onclick="window._devTap && window._devTap()" style="cursor:default" class="more-version">MassFinder \u00b7 A Catholic stewardship project</div>';
   }
 
   // Trigger readings and saint card fetches

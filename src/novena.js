@@ -219,6 +219,7 @@ function _renderSelect(title, body, footer) {
     html += '</button>';
   });
   if (!shownAvailable && !shownContinue) {
+    html += '<div class="novena-intro">A novena is nine days of prayer for a specific intention. Choose one below to begin.</div>';
     html += '<div class="novena-list-label">Available Novenas</div>';
   }
   html += '<div class="novena-more-note">Have a novena suggestion? <a href="mailto:massfinderapp@gmail.com?subject=Novena%20Request" class="novena-more-link">Let us know</a></div>';

@@ -72,10 +72,10 @@ function verifyOk(ok) {
     subject: 'MassFinder \u2713 Times Confirmed: ' + church,
     message: 'A visitor confirmed the schedule for ' + church + ' looks correct.\n\nAction: "Yes, these times look right!"\nParish: ' + church + '\nSubmitted: ' + new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
   }).then(function() {
-    thanks.textContent = 'Thank you for helping keep MassFinder accurate! God bless.';
+    thanks.textContent = 'Thank you \u2014 your help keeps MassFinder accurate';
   }).catch(function(e) {
     console.warn('Verify email failed:', e);
-    thanks.textContent = 'Could not send \u2014 please check your connection and try again.';
+    thanks.textContent = 'Could not send \u2014 check your connection and try again';
     thanks.style.color = 'var(--color-error)';
   });
 }
@@ -107,10 +107,10 @@ function submitCorrection() {
   thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026'; thanks.style.color = '';
   web3submit({ subject: 'MassFinder Correction [' + category + ']: ' + church, church: church, category: category, message: msg, email: email || '(not provided)' })
   .then(function() {
-    thanks.textContent = 'Thank you! We\u2019ll review your correction.';
+    thanks.textContent = 'Thank you \u2014 we\u2019ll review your correction';
   }).catch(function(e) {
     console.warn('Correction email failed:', e);
-    thanks.textContent = 'Could not send \u2014 please check your connection and try again.';
+    thanks.textContent = 'Could not send \u2014 check your connection and try again';
     thanks.style.color = 'var(--color-error)';
   });
 }
@@ -142,10 +142,10 @@ function submitMoreCorrection() {
   thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026'; thanks.style.color = '';
   web3submit({ subject: 'MassFinder Correction [' + category + ']: ' + (church || 'General'), church: church || '(general)', category: category, message: msg, email: email || '(not provided)' })
   .then(function() {
-    thanks.textContent = 'Thank you! We\u2019ll review your correction.';
+    thanks.textContent = 'Thank you \u2014 we\u2019ll review your correction';
   }).catch(function(e) {
     console.warn('More correction email failed:', e);
-    thanks.textContent = 'Could not send \u2014 please check your connection and try again.';
+    thanks.textContent = 'Could not send \u2014 check your connection and try again';
     thanks.style.color = 'var(--color-error)';
   });
 }
@@ -169,10 +169,10 @@ function submitFeedback() {
   thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026'; thanks.style.color = '';
   web3submit({ subject: 'MassFinder Feedback [' + _fbType + ']', feedback_type: _fbType, message: msg, email: email || '(not provided)', from_name: 'MassFinder Feedback' })
   .then(function() {
-    thanks.textContent = 'Thank you \u2014 your feedback means a lot. God bless!';
+    thanks.textContent = 'Thank you \u2014 your feedback means a lot';
   }).catch(function(e) {
     console.warn('Feedback email failed:', e);
-    thanks.textContent = 'Could not send \u2014 please check your connection and try again.';
+    thanks.textContent = 'Could not send \u2014 check your connection and try again';
     thanks.style.color = 'var(--color-error)';
   });
 }
@@ -188,7 +188,7 @@ function submitSettingsContact() {
   document.querySelector('.settings-contact-btn').disabled = true;
   thanks.style.display = 'block'; thanks.textContent = 'Sending\u2026';
   web3submit({ subject: 'MassFinder Update [Settings]', message: msg, email: email || '(not provided)' })
-    .then(function() { thanks.textContent = 'Got it \u2014 thank you!'; })
+    .then(function() { thanks.textContent = 'Got it \u2014 thank you'; })
     .catch(function() {
       thanks.style.color = 'var(--color-error)'; thanks.textContent = 'Could not send \u2014 check your connection and try again.';
       document.getElementById('settingsContactMsg').disabled = false;

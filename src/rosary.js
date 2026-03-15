@@ -24,10 +24,10 @@ var _condensedMode = false;  // FGP-04: Mysteries Only mode
 try { _condensedMode = localStorage.getItem('mf-rosary-condensed') === '1'; } catch(e) {}
 
 var SET_META = {
-  Joyful:    { color: '#4A90D9', desc: 'Monday & Saturday' },
-  Sorrowful: { color: '#C0392B', desc: 'Tuesday & Friday' },
-  Glorious:  { color: '#D4A017', desc: 'Wednesday & Sunday' },
-  Luminous:  { color: '#27AE60', desc: 'Thursday' }
+  Joyful:    { color: '#4A90D9', desc: 'Monday & Saturday', subtitle: 'Christ\u2019s birth and childhood' },
+  Sorrowful: { color: '#C0392B', desc: 'Tuesday & Friday', subtitle: 'His suffering and death' },
+  Glorious:  { color: '#D4A017', desc: 'Wednesday & Sunday', subtitle: 'His resurrection and glory' },
+  Luminous:  { color: '#27AE60', desc: 'Thursday', subtitle: 'His public ministry' }
 };
 
 var SET_QUOTES = {
@@ -41,7 +41,7 @@ var SET_QUOTES = {
 reader.registerModule('rosary', {
   getTitle: function() { return 'The Holy Rosary'; },
   render: function(params, bodyEl, footerEl) {
-    bodyEl.innerHTML = '<div class="rosary-loading"><div class="rosary-loading-spinner"></div><p>Loading prayers\u2026</p></div>';
+    bodyEl.innerHTML = '<div class="rosary-loading"><div class="rosary-loading-spinner"></div><p>Preparing your rosary\u2026</p></div>';
     footerEl.style.display = 'none';
     footerEl.innerHTML = '';
 
@@ -383,6 +383,7 @@ function _renderSelect(title, body, footer) {
       if (s === todaySet) return ''; // already shown above
       return '<button class="rosary-set-btn" onclick="rosarySelectSet(\'' + s + '\')" style="--set-color:' + (meta.color || '#666') + '">'
         + '<span class="rosary-set-name">' + s + '</span>'
+        + '<div class="rosary-mystery-desc">' + (meta.subtitle || '') + '</div>'
         + '<span class="rosary-set-day">' + (meta.desc || '') + '</span>'
         + '</button>';
     }).join('')

@@ -280,9 +280,9 @@ function renderSaved() {
   if (!favChurches.length) {
     el.innerHTML = '<div class="saved-empty">'
       + '<div class="saved-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>'
-      + '<h3>Your parish dashboard</h3>'
-      + '<p>Build your own custom church schedule. Favorite your parishes and track Mass times, events, and community happenings \u2014 all in one place.</p>'
-      + '<p class="saved-empty-hint">Tap \u2661 on any church to add it to your dashboard.</p>'
+      + '<h3>Your parishes</h3>'
+      + '<p>Save your parishes here. You\u2019ll see today\u2019s schedule, upcoming services, and events at a glance.</p>'
+      + '<p class="saved-empty-hint">Tap \u2661 on any church to add it here.</p>'
       + '<button class="saved-empty-btn" onclick="switchTab(\'panelFind\',document.querySelector(\'[data-tab=panelFind]\'))">Browse churches</button>'
       + '</div>';
     return;
@@ -558,11 +558,19 @@ function renderSaved() {
     else if (hour < 17) greeting = 'Good afternoon';
     else greeting = 'Good evening';
 
-    // SPEC-005-D: Show season label for named seasons, suppress during Ordinary Time
+    // SPEC-005-D: Show season label for named seasons; CON-25: monthly devotion during Ordinary Time
+    var MONTH_DEVOTIONS_SHORT = [
+      'Month of the Holy Name', 'Month of the Holy Family', 'Month of St. Joseph',
+      'Month of the Eucharist', 'Month of Mary', 'Month of the Sacred Heart',
+      'Month of the Precious Blood', 'Month of the Immaculate Heart', 'Month of Our Lady of Sorrows',
+      'Month of the Rosary', 'Month of the Holy Souls', 'Month of the Immaculate Conception'
+    ];
     var seasonLabels = { lent: 'Lenten Season', advent: 'Advent Season', christmas: 'Christmas Season', easter: 'Easter Season' };
     var curSeason = document.documentElement.getAttribute('data-season') || 'ordinary';
     // SFD-06-A: Merge greeting + season onto single line
-    var seasonInline = seasonLabels[curSeason] ? ' <span class="saved-header-season">\u00b7 ' + seasonLabels[curSeason] + '</span>' : '';
+    var seasonInline = seasonLabels[curSeason]
+      ? ' <span class="saved-header-season">\u00b7 ' + seasonLabels[curSeason] + '</span>'
+      : (curSeason === 'ordinary' ? ' <span class="saved-header-season">\u00b7 ' + MONTH_DEVOTIONS_SHORT[now.getMonth()] + '</span>' : '');
 
     headerEl.innerHTML = '<h2>' + greeting + seasonInline + '</h2>';
   }

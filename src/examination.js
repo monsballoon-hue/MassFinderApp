@@ -54,7 +54,7 @@ reader.registerModule('examination', {
     footerEl.style.display = 'none';
     footerEl.innerHTML = '';
 
-    bodyEl.innerHTML = '<div class="exam-loading" style="text-align:center;padding:var(--space-8);color:var(--color-text-tertiary)">Preparing examination\u2026</div>';
+    bodyEl.innerHTML = '<div class="exam-loading" style="text-align:center;padding:var(--space-8);color:var(--color-text-tertiary)">Preparing your examination\u2026</div>';
 
     _loadData(function(d) {
       _expanded['cmd-1'] = true;
@@ -65,6 +65,7 @@ reader.registerModule('examination', {
         + '<div class="exam-opening-icon"><svg viewBox="0 0 24 32" fill="none" stroke="currentColor" stroke-width="1.5" width="36" height="48"><line x1="12" y1="2" x2="12" y2="30"/><line x1="4" y1="10" x2="20" y2="10"/></svg></div>'
         + '<p class="exam-opening-text">' + _esc(_t(d.prayers.prayer_before, 'text')) + '</p>'
         + '<button class="exam-opening-btn" onclick="window._examBeginReview()">' + ((localStorage.getItem('mf-prayer-lang') === 'es') ? 'Comenzar Examen' : 'Begin Examination') + '</button>'
+        + '<p class="exam-opening-hint">' + ((localStorage.getItem('mf-prayer-lang') === 'es') ? 'Un examen de conciencia guiado, secci\u00f3n por secci\u00f3n. Unos 10\u201315 minutos. No se guarda nada.' : 'A prayerful review of conscience, section by section. About 10\u201315 minutes. Nothing is saved.') + '</p>'
         + '</div>';
 
       window._examBeginReview = function() {
