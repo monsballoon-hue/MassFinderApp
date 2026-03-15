@@ -16,6 +16,8 @@ var _closingRep = 0;    // 0-2 (three repetitions of "Holy God...")
 var _wakeLock = null;
 var _touchStartX = 0;
 var _touchStartY = 0;
+var _prevScreen = null;
+var _prevBead = -1;
 
 // ── Reader module registration ──
 reader.registerModule('chaplet', {
@@ -89,6 +91,9 @@ function closeChaplet() {
 
 // ── Navigation ──
 function chapletNext() {
+  var wasDecade = _screen === 'decade';
+  var wasBead = _bead;
+  var wasDecadeIdx = _decade;
   if (_screen === 'intro') {
     _screen = 'opening';
     _openingStep = 0;
@@ -133,10 +138,29 @@ function chapletNext() {
     return;
   }
   _haptic();
+  // BT4-04: Skip crossfade for same-decade small bead advances
+  var sameDecade = wasDecade && _screen === 'decade' && wasDecadeIdx === _decade && wasBead > 0 && _bead > 0;
+  if (sameDecade) {
+    var body = document.getElementById('readerBody');
+    if (body) {
+      var label = body.querySelector('.chaplet-decade-label');
+      if (label) label.textContent = 'Decade ' + (_decade + 1) + ' of 5 \u00b7 Bead ' + _bead + ' of 10';
+      var dots = body.querySelectorAll('.chaplet-bead');
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('done', 'active');
+        if (i + 1 < _bead) dots[i].classList.add('done');
+        else if (i + 1 === _bead) dots[i].classList.add('active');
+      }
+    }
+    return;
+  }
   _transitionTo(function() { _render(); });
 }
 
 function chapletPrev() {
+  var wasDecade = _screen === 'decade';
+  var wasBead = _bead;
+  var wasDecadeIdx = _decade;
   if (_screen === 'final') {
     _screen = 'closing';
     _closingRep = 2;
@@ -168,6 +192,22 @@ function chapletPrev() {
     }
   }
   _haptic();
+  // BT4-04: Skip crossfade for same-decade small bead retreats
+  var sameDecade = wasDecade && _screen === 'decade' && wasDecadeIdx === _decade && wasBead > 0 && _bead > 0;
+  if (sameDecade) {
+    var body = document.getElementById('readerBody');
+    if (body) {
+      var label = body.querySelector('.chaplet-decade-label');
+      if (label) label.textContent = 'Decade ' + (_decade + 1) + ' of 5 \u00b7 Bead ' + _bead + ' of 10';
+      var dots = body.querySelectorAll('.chaplet-bead');
+      for (var i = 0; i < dots.length; i++) {
+        dots[i].classList.remove('done', 'active');
+        if (i + 1 < _bead) dots[i].classList.add('done');
+        else if (i + 1 === _bead) dots[i].classList.add('active');
+      }
+    }
+    return;
+  }
   _transitionTo(function() { _render(); });
 }
 

@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (18 specs implemented, 0 in-progress, 3 queued)
+**Last updated:** 2026-03-15 (19 specs implemented, 0 in-progress, 2 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -354,18 +354,18 @@ Future specs should continue this pattern with new prefixes.
 | PBR-05 | Recently Opened Prayers | Queued | P2 |
 
 ### UX_Spec_Backlog_Triage_Round_4.md (BT4 series)
-**Created:** 2026-03-15 · **Status:** Queued
+**Created:** 2026-03-15 · **Status:** Implemented
 **Backlog items:** IDEA-103, IDEA-108, IDEA-109, IDEA-110, IDEA-111, IDEA-113, IDEA-115, IDEA-117, IDEA-118
 **Claude Code prompt:** CLAUDE_CODE_PROMPT_BT4.md
 **Depends on:** None
 | ID | Title | Status | Priority |
 |----|-------|--------|----------|
-| BT4-01 | Exam Opening Prayer Overflow Fix | Queued | P1 |
-| BT4-02 | Prayer Book Duplicate Render Fix | Queued | P1 |
-| BT4-03 | Find Tab Chip Animation Speed Fix | Queued | P1 |
-| BT4-04 | Chaplet Same-Prayer Fade Skip | Queued | P2 |
-| BT4-05 | Practice Tile Border + Concise Labels | Queued | P2 |
-| BT4-06 | Novena List Visual Hierarchy + Sort | Queued | P2 |
-| BT4-07 | Growing Faith Section Collapse Removal | Queued | P2 |
-| BT4-08 | Sacred Font Token Consistency | Queued | P2 |
-| BT4-09 | Text Size x-large (22px) Option | Queued | P2 |
+| BT4-01 | Exam Opening Prayer Overflow Fix | Done | P1 |
+| BT4-02 | Prayer Book Duplicate Render Fix | Done | P1 |
+| BT4-03 | Find Tab Chip Animation Speed Fix | Done | P1 |
+| BT4-04 | Chaplet Same-Prayer Fade Skip | Done | P2 |
+| BT4-05 | Practice Tile Border + Concise Labels | Done | P2 |
+| BT4-06 | Novena List Visual Hierarchy + Sort | Done | P2 |
+| BT4-07 | Growing Faith Section Collapse Removal | Done | P2 |
+| BT4-08 | Sacred Font Token Consistency | Done | P2 |
+| BT4-09 | Text Size x-large (22px) Option | Done | P2 |

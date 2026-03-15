@@ -1401,8 +1401,11 @@ Claude Code prompt: `docs/plans/CLAUDE_CODE_PROMPT_PBR.md`
 
 ## IDEA-103 — Fine tab chip animation slow and visually awkward
 **Category:** bug
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-03
+**Completed:** 2026-03-15
+**Impl ref:** BT4-03
+**Implemented:** 2026-03-15 via BT4-03 — Removed .chip.active from SLV-01 1.5s transition selector; chips now use their own 150ms transition
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** (none)
@@ -1452,8 +1455,11 @@ The internal presentation of the Prayer Library is functional but visually basic
 
 ## IDEA-108 — Prayer Library: clicking a prayer renders it in-place and incorrectly logs to recents
 **Category:** bug
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-02
+**Completed:** 2026-03-15
+**Impl ref:** BT4-02
+**Implemented:** 2026-03-15 via BT4-02 — Recents section now skipped during render when a prayer is expanded; updates on next full render only
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-102, IDEA-107
@@ -1463,8 +1469,11 @@ Clicking any prayer in the Prayer Library immediately renders it both at the cli
 
 ## IDEA-109 — Divine Mercy Chaplet: full-screen fade transition between repetitive steps is excessive
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-04
+**Completed:** 2026-03-15
+**Impl ref:** BT4-04
+**Implemented:** 2026-03-15 via BT4-04 — Same-decade small bead advances now update counter/dots directly without crossfade
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-019
@@ -1474,8 +1483,11 @@ In the Divine Mercy Chaplet, progressing through repetitive steps (same prayer r
 
 ## IDEA-110 — Your Practice section tile cards: too verbose and blend into background
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-05
+**Completed:** 2026-03-15
+**Impl ref:** BT4-05
+**Implemented:** 2026-03-15 via BT4-05 — Practice tiles now have border definition; novena subtitle shows progress-first label
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-069, IDEA-101
@@ -1485,8 +1497,11 @@ The tiles in the Your Practice section do not present well. The Novena tile in p
 
 ## IDEA-111 — Novena list page design rebuild: wall of text, needs visual hierarchy
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-06
+**Completed:** 2026-03-15
+**Impl ref:** BT4-06
+**Implemented:** 2026-03-15 via BT4-06 — In-progress novenas sorted to top with section labels; sacred border+bg on active items; descriptions clamped to 2 lines
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-028, IDEA-055
@@ -1506,8 +1521,11 @@ The Prayer Library should distinguish between guided prayer experiences (Divine 
 
 ## IDEA-113 — Growing Faith section: remove collapsible behavior, keep items collapsed by default
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-07
+**Completed:** 2026-03-15
+**Impl ref:** BT4-07
+**Implemented:** 2026-03-15 via BT4-07 — Replaced details/summary with always-visible div; removed toggle listener and chevron
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** IDEA-011, IDEA-073
@@ -1527,8 +1545,11 @@ Explore including the Liturgy of the Hours (Divine Office) as a prayer offering 
 
 ## IDEA-115 — Sacred text font should be applied to all prayer snippets throughout the app
 **Category:** refinement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-08
+**Completed:** 2026-03-15
+**Impl ref:** BT4-08
+**Implemented:** 2026-03-15 via BT4-08 — Replaced 7 hardcoded Georgia font stacks with var(--font-prayer); added blockquote rule for faith guide prayer text
 **Date logged:** 2026-03-15
 **Source:** voice
 **Related:** (none)
@@ -1548,8 +1569,11 @@ Rather than pinning in-progress novenas to the top of the list (which may be red
 
 ## IDEA-117 — Text size increase/decrease options insufficient: only 3 steps available
 **Category:** enhancement
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-09
+**Completed:** 2026-03-15
+**Impl ref:** BT4-09
+**Implemented:** 2026-03-15 via BT4-09 — Added x-large (22px) text size option; extended PHF-02c reader boost to x-large
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-079
@@ -1559,8 +1583,11 @@ The text size controls currently offer only 3 levels, which is not granular enou
 
 ## IDEA-118 — Examen first page prayer text cuts off and is not scrollable
 **Category:** bug
-**Status:** spec-ready
+**Status:** done
 **Spec ref:** BT4-01
+**Completed:** 2026-03-15
+**Impl ref:** BT4-01
+**Implemented:** 2026-03-15 via BT4-01 — Replaced overflow:hidden+mask-image with overflow-y:auto for scrollable prayer text
 **Date logged:** 2026-03-15
 **Source:** typed
 **Related:** IDEA-034, IDEA-038

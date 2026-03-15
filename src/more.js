@@ -950,7 +950,8 @@ function renderMore() {
       if (nowM2.getMonth() === 2 && nowM2.getDate() >= 10 && nowM2.getDate() <= 19) {
         seasonalNovenaLabel = seasonalNovenaLabel || 'Novena to St. Joseph \u2014 his feast is March 19';
       }
-      if (seasonalNovenaLabel) { novSub = seasonalNovenaLabel; ctx.novenaActive = true; }
+      if (seasonalNovenaLabel && !ctx.novenaActive) { novSub = seasonalNovenaLabel; ctx.novenaActive = true; }
+      var novLabel = ctx.novenaActive ? novSub : 'Start a novena';
 
       var novenaActiveClass = ctx.novenaActive ? ' practice-card--active' : '';
       var ffActiveClass = ctx.ffActive ? ' practice-card--active' : '';
@@ -961,7 +962,7 @@ function renderMore() {
         + '<div class="practice-card-icon">' + ptIcons.novena + '</div>'
         + '<div class="practice-card-body">'
         + '<div class="practice-card-title">Novenas</div>'
-        + '<div class="practice-card-subtitle">' + esc(novSub || 'Guided prayer tracking') + '</div>'
+        + '<div class="practice-card-subtitle">' + esc(novLabel) + '</div>'
         + '</div></div>'
         + '<div class="practice-card' + ffActiveClass + '" onclick="openFirstFriday()" role="button" tabindex="0">'
         + '<div class="practice-card-icon">' + ptIcons.firstfriday + '</div>'
@@ -1061,19 +1062,9 @@ function renderMore() {
     });
   }
 
-  // MTR-01: Zone 3 open/close memory + count badge
+  // MTR-07: Count badge
   var deeperZone = document.getElementById('deeperZone');
   if (deeperZone) {
-    var deeperPref = localStorage.getItem('mf-deeper-open');
-    if (deeperPref === 'false') {
-      deeperZone.removeAttribute('open');
-    } else {
-      deeperZone.setAttribute('open', '');
-    }
-    deeperZone.addEventListener('toggle', function() {
-      localStorage.setItem('mf-deeper-open', deeperZone.open ? 'true' : 'false');
-    });
-    // MTR-07: Count badge
     var countEl = document.getElementById('deeperCount');
     if (countEl && devotEl) {
       var guideCount = devotEl.querySelectorAll('.devot-card:not(.devot-sub)').length;

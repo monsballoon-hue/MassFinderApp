@@ -384,10 +384,10 @@ function _renderList() {
       });
     }
   } else {
-    // PBR-05: Recently opened prayers
+    // PBR-05: Recently opened prayers (skip when a prayer is expanded to avoid duplicate render)
     var recentIds = [];
     try { recentIds = JSON.parse(localStorage.getItem('mf-prayerbook-recent') || '[]'); } catch (e) {}
-    if (recentIds.length) {
+    if (recentIds.length && !_openPrayerId) {
       var recentPrayers = [];
       recentIds.forEach(function(rid) {
         _data.categories.forEach(function(cat) {

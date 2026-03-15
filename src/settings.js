@@ -54,6 +54,7 @@ function _render() {
     + '<button class="settings-seg-btn settings-seg-sm' + (curSize === 'small' ? ' active' : '') + '" onclick="setSettingSize(\'small\')">A</button>'
     + '<button class="settings-seg-btn' + (curSize === 'default' ? ' active' : '') + '" onclick="setSettingSize(\'default\')">A</button>'
     + '<button class="settings-seg-btn settings-seg-lg' + (curSize === 'large' ? ' active' : '') + '" onclick="setSettingSize(\'large\')">A</button>'
+    + '<button class="settings-seg-btn settings-seg-xl' + (curSize === 'x-large' ? ' active' : '') + '" onclick="setSettingSize(\'x-large\')">A</button>'
     + '</div></div>'
     + '</div>';
 

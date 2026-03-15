@@ -190,11 +190,26 @@ function _renderSelect(title, body, footer) {
     html += '</div>';
   }
 
-  // All novenas list
-  html += '<div class="novena-list-label">Available Novenas</div>';
+  // All novenas list — in-progress first, then alphabetical
   var allTracking = _getAllTracking();
-  _novenas.forEach(function(n) {
+  var sorted = _novenas.slice().sort(function(a, b) {
+    var aActive = !!allTracking[a.id];
+    var bActive = !!allTracking[b.id];
+    if (aActive !== bActive) return aActive ? -1 : 1;
+    return a.title.localeCompare(b.title);
+  });
+  var shownContinue = false;
+  var shownAvailable = false;
+  sorted.forEach(function(n) {
     var isActive = !!allTracking[n.id];
+    if (isActive && !shownContinue) {
+      html += '<div class="novena-list-label">Continue Praying</div>';
+      shownContinue = true;
+    }
+    if (!isActive && !shownAvailable) {
+      html += '<div class="novena-list-label">Available Novenas</div>';
+      shownAvailable = true;
+    }
     html += '<button class="novena-list-item' + (isActive ? ' active' : '') + '" onclick="novenaSelect(\'' + n.id + '\')">';
     html += '<div class="novena-list-item-body">';
     html += '<div class="novena-list-title">' + utils.esc(n.title) + '</div>';
@@ -203,6 +218,9 @@ function _renderSelect(title, body, footer) {
     html += '<span class="novena-list-chevron">\u203A</span>';
     html += '</button>';
   });
+  if (!shownAvailable && !shownContinue) {
+    html += '<div class="novena-list-label">Available Novenas</div>';
+  }
   html += '<div class="novena-more-note">Have a novena suggestion? <a href="mailto:massfinderapp@gmail.com?subject=Novena%20Request" class="novena-more-link">Let us know</a></div>';
   html += '</div>';
   body.innerHTML = html;

@@ -6,6 +6,17 @@
 **Scope:** Visual bugs, interaction refinements, typography consistency, accessibility
 **Demographics:** Dorothy (72), Paul (25), Sarah (45)
 
+### Status Summary
+- BT4-01 — Exam Opening Prayer Overflow — **done**
+- BT4-02 — Prayer Book Duplicate Render — **done**
+- BT4-03 — Find Tab Chip Animation — **done**
+- BT4-04 — Chaplet Same-Prayer Fade Skip — **done**
+- BT4-05 — Practice Tile Refinements — **done**
+- BT4-06 — Novena List Visual Hierarchy — **done**
+- BT4-07 — Growing Faith Collapse Removal — **done**
+- BT4-08 — Sacred Font Token Consistency — **done**
+- BT4-09 — Text Size x-large — **done**
+
 ---
 
 ## BT4-01 — Exam Opening Prayer Overflow (IDEA-118)
@@ -44,6 +55,15 @@
 - [ ] Dark mode: prayer text remains readable while scrolling
 - [ ] Long prayer text (Spanish translation future-proofing) doesn't break layout
 
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** css/app.css line 2788 — replaced overflow:hidden + mask-image gradient with overflow-y:auto + -webkit-overflow-scrolling:touch
+- **Approach:** CSS-only fix. Removed the mask-image that was fading out the bottom 20% of prayer text, and replaced overflow:hidden with overflow-y:auto so the text can scroll. The flex:1;min-height:0 constraint still governs height.
+- **Deviations from spec:** None
+- **Known issues:** None observed
+
 ---
 
 ## BT4-02 — Prayer Book Renders Prayer In-Place and in Recents Simultaneously (IDEA-108)
@@ -69,6 +89,15 @@
 - [ ] Recently Opened section updates on next prayer book open, not during current expansion
 - [ ] Collapsing a prayer and re-opening prayer book shows correct recents
 - [ ] localStorage `mf-prayerbook-recent` tracks correctly (max 3)
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** src/prayerbook.js line 390 — added `&& !_openPrayerId` guard to recents rendering
+- **Approach:** When a prayer is expanded (_openPrayerId is set), the recents section is skipped during _renderList(). Recents still track in localStorage, but the visual section only renders when no prayer is currently open. On next full render (prayer collapsed or prayer book reopened), recents display correctly.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -109,6 +138,15 @@
 - [ ] Season color transitions on saint-card and formation-card still animate at 1.5s
 - [ ] Chip active state renders correctly in both light and dark mode
 - [ ] Map tab chip overlay also responds instantly (shares `.chip` class)
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** css/app.css line 141 — removed `.chip.active` from the SLV-01 fallback selector
+- **Approach:** Removed .chip.active from the comma-separated selector that applied 1.5s season transitions. The chip's own `transition: all var(--transition-fast)` (150ms) now governs chip interactions. Saint-card and formation-card retain the 1.5s transition.
+- **Deviations from spec:** None
+- **Known issues:** None observed
 
 ---
 
@@ -154,6 +192,15 @@ _transitionTo(function() { _render(); });
 - [ ] Haptic feedback still fires on same-prayer advances
 - [ ] Swipe navigation handles same-prayer detection correctly
 
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** src/chaplet.js — added _prevScreen/_prevBead vars (line 18-19), modified chapletNext() and chapletPrev() with same-decade detection
+- **Approach:** Before state mutation, capture wasDecade/wasBead/wasDecadeIdx. After mutation, check if both old and new states are within the same decade with small beads (bead > 0). If so, directly update the decade label text and bead dot classes without triggering _transitionTo(). Applied to both chapletNext() and chapletPrev() for consistency. Full crossfade preserved for large bead, decade transitions, opening/closing.
+- **Deviations from spec:** Also applied optimization to chapletPrev() (spec only mentioned chapletNext). This prevents jarring crossfade when swiping backward through beads too.
+- **Known issues:** None observed
+
 ---
 
 ## BT4-05 — Practice Tiles Verbose and Low Contrast (IDEA-110)
@@ -197,6 +244,15 @@ _transitionTo(function() { _render(); });
 - [ ] First Friday tile subtitle remains concise
 - [ ] Tiles are visually distinct from zone background in both themes
 - [ ] Active state (`.practice-card--active`) still renders with sacred colors
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** css/app.css line 1570 — changed background to var(--color-surface) + added border; line 1579 — added border-color to dark override; src/more.js line 953-964 — seasonal label no longer overrides progress when novena is active; idle shows "Start a novena"
+- **Approach:** CSS: swapped surface-hover bg for surface + border:1px solid var(--color-border-light). Dark mode adds border-color:var(--color-border). JS: when novena is actively tracked, the progress label ("Day X of Y") takes priority over seasonal labels. Seasonal labels only show when no novena is in progress. When idle, subtitle shows "Start a novena" instead of "Guided prayer tracking".
+- **Deviations from spec:** Kept seasonal labels visible when there's no active tracking (they serve as useful prompts to start a novena).
+- **Known issues:** None observed
 
 ---
 
@@ -250,6 +306,15 @@ _transitionTo(function() { _render(); });
 - [ ] Descriptions truncated at 2 lines
 - [ ] Hardcoded #1E6B4A replaced with var(--color-sacred)
 - [ ] Dark mode: warm tint visible on active items
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** src/novena.js lines 194-215 — sorted novenas with in-progress first + section labels; css/app.css line 2581 — sacred border-left+background on active items; line 2584 — description clamped to 2 lines; line 2650 — dark mode active item override
+- **Approach:** Sorted _novenas array copy by active status then alphabetically. Added "Continue Praying" and "Available Novenas" section labels with transition detection. Replaced hardcoded #1E6B4A with var(--color-sacred). Added border-left:3px accent and color-mix background. Description font reduced to text-sm and clamped with -webkit-line-clamp:2.
+- **Deviations from spec:** Used color-mix() for background tint instead of var(--color-surface-sacred) to avoid needing a new token.
+- **Known issues:** None observed
 
 ---
 
@@ -305,6 +370,15 @@ _transitionTo(function() { _render(); });
 - [ ] localStorage `mf-deeper-open` key can be ignored (no need to clean up — harmless orphan)
 - [ ] Zone seam above section still renders
 
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** index.html lines 154-161 — replaced details/summary with div/div; src/more.js lines 1064-1075 — removed toggle listener and localStorage logic, kept MTR-07 count badge; css/app.css lines 1511-1516 — replaced toggle/chevron styles with header styles
+- **Approach:** Converted details/summary to plain divs. Removed chevron SVG. Removed toggle event listener and localStorage mf-deeper-open logic. Kept the count badge (MTR-07) rendering. Replaced .more-zone-deeper-toggle CSS with .more-zone-deeper-header (same flexbox layout minus cursor:pointer and list-style).
+- **Deviations from spec:** None
+- **Known issues:** None observed
+
 ---
 
 ## BT4-08 — Sacred Font Token Consistency (IDEA-115)
@@ -341,6 +415,15 @@ _transitionTo(function() { _render(); });
 - [ ] Faith guide prayer paragraphs (Act of Contrition, etc.) render in Georgia
 - [ ] Non-prayer instructional text in guides remains in Source Sans
 - [ ] No font FOUT or fallback flash on any surface
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** css/app.css — replaced 7 hardcoded Georgia,'Playfair Display',serif stacks with var(--font-prayer) in novena section; added .devot-body blockquote rule after line 1907
+- **Approach:** Used replace_all to swap all Georgia font stack occurrences in CSS with var(--font-prayer). Added a new rule for .devot-body blockquote to apply --font-prayer with italic style and 1.8 line-height, targeting prayer text in faith guide expanded content.
+- **Deviations from spec:** Used CSS-only blockquote approach rather than data-level annotation, which is simpler and covers existing prayer content without requiring devotions.js changes.
+- **Known issues:** None observed
 
 ---
 
@@ -408,6 +491,15 @@ _transitionTo(function() { _render(); });
 - [ ] Layout doesn't break at 22px root (check chip bar, cards, detail panel, nav bar)
 - [ ] Setting persists via localStorage across app restarts
 - [ ] Active button indicator correct for all 4 states
+
+### Implementation Notes
+
+- **Date:** 2026-03-15
+- **Status:** done
+- **Files changed:** css/app.css line 367 — changed small from 16px to 15px, added x-large at 22px; lines 2113-2119 — extended PHF-02c reader boost selectors to include x-large; line 3234 — added .settings-seg-xl style; src/settings.js line 57 — added 4th button for x-large
+- **Approach:** Added [data-text-size="x-large"] { font-size:22px } rule. Duplicated all PHF-02c reader boost selectors (rosary-prayer-text, chaplet-prayer-text, stations text, mystery meditation/title, exam-section-body) to also fire at x-large. Added 4th settings button with settings-seg-xl class (21px font-size). setSettingSize() already handles arbitrary size strings, so no core logic changes needed.
+- **Deviations from spec:** None
+- **Known issues:** None observed. Layout should be regression-tested at 22px root on all views.
 
 ---
 
