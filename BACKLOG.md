@@ -5,7 +5,7 @@
 > This file is the single source of truth for all work items. Claude.ai Inbox adds new entries on main. Claude Code marks items done on working branches. Status updates merge to main via PR.
 
 **Last updated:** 2026-03-15
-**ID sequence:** IDEA-136 →
+**ID sequence:** IDEA-138 →
 **Total items:** 135
 
 ---
@@ -1821,3 +1821,29 @@ Daily Readings text currently includes line numbers, which were originally inten
 **Spec ref:** (none)
 
 The Prayer Library has a z-index bug where the search bar overlaps or underlaps other elements incorrectly during scroll. Beyond the z-index fix, the Prayer Library needs a total revamp of its structure, layout, and functionality. Desired additions include bookmarks/favorites, recent prayers, and a more intentional information architecture. This is a broader redesign effort encompassing IDEA-102, IDEA-105, and IDEA-107.
+
+## IDEA-136 — Install guide phone mockups don't match real iOS Safari or Chrome UI
+**Category:** bug
+**Status:** spec-ready
+**Date logged:** 2026-03-15
+**Source:** screenshot comparison (IMG_0517–IMG_0523)
+**Related:** (none)
+**Spec ref:** IGM series (docs/plans/UX_Spec_Install_Guide_Mockups.md)
+
+The CSS-drawn phone mockups in `src/install-guide.js` have critical fidelity problems vs. real iOS. Safari toolbar layout is wrong (share icon in wrong position). Safari share sheet is a flat list; real iOS is multi-section with icon rows, action circles, and grouped lists. Chrome bottom bar copies Safari's layout instead of Chrome's actual single-row bar. Chrome flow shows "Add to Home Screen" in the ⋯ menu where it doesn't exist — user must tap Share first, then find ATHS in the iOS system share sheet. Chrome needs 4 steps not 3. Dorothy follows these literally and gets stuck. 7 spec items, all in install-guide.js + css/app.css.
+
+**Estimated effort:** 2-3 hours
+**Dependencies:** none
+
+## IDEA-137 — Onboarding dot count discrepancy: Safari shows 4 dots, Chrome shows 5
+**Category:** bug
+**Status:** new
+**Date logged:** 2026-03-15
+**Source:** screenshot comparison (IMG_0517 vs IMG_0520)
+**Related:** IDEA-123, IDEA-136
+**Spec ref:** (none)
+
+Safari onboarding screenshot (IMG_0517) shows 4 pagination dots. Chrome onboarding screenshot (IMG_0520) shows 5 dots. Code at `src/app.js:178-182` appends the install step for ALL non-standalone browsers (`window.matchMedia('(display-mode: standalone)')` or `window.navigator.standalone`). Both Safari and Chrome are non-standalone contexts and should show 5 steps (4 content + 1 install). Safari may be incorrectly triggering `navigator.standalone === true` — needs investigation.
+
+**Estimated effort:** 30 min investigation
+**Dependencies:** none

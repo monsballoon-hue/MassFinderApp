@@ -1,6 +1,6 @@
 # MassFinder — Spec Sheet Index
 
-**Last updated:** 2026-03-15 (30 specs implemented, 0 in-progress, 2 queued)
+**Last updated:** 2026-03-15 (30 specs implemented, 0 in-progress, 3 queued)
 
 > **Freshness rule:** After each implementation session, update the status of items below. Check `docs/plans/` in the repo for the latest spec files.
 
@@ -81,6 +81,7 @@ Spec IDs use a 3-letter prefix + 2-digit number:
 - **BT4** = Backlog Triage Round 4
 - **MTR** = More Tab Restructure
 - **PHF** = Pastoral Handoff
+- **IGM** = Install Guide Mockups
 
 Future specs should continue this pattern with new prefixes.
 
@@ -506,3 +507,17 @@ Future specs should continue this pattern with new prefixes.
 | CON-36 | At a Glance — Stations of the Cross | Done |
 | CON-37 | TLM Guide — Paragraph Restructure | Done |
 | CON-38 | Visual Pattern Reference (defers to AGC series) | Done |
+
+### UX_Spec_Install_Guide_Mockups.md (IGM series)
+**Created:** 2026-03-15 · **Status:** Queued
+**Backlog items:** IDEA-136
+**Claude Code prompt:** CLAUDE_CODE_PROMPT_IGM.md
+| ID | Title | Status | Priority |
+|----|-------|--------|----------|
+| IGM-01 | Safari Toolbar Layout (share icon position) | Queued | P1 |
+| IGM-02 | Safari Share Sheet Multi-Section Rebuild | Queued | P1 |
+| IGM-03 | Chrome Bottom Bar Layout | Queued | P1 |
+| IGM-04 | Chrome ⋯ Menu Content (wrong items) | Queued | P1 |
+| IGM-05 | Chrome 4-Step Flow (was 3) | Queued | P1 |
+| IGM-06 | Caption Text Fidelity | Queued | P2 |
+| IGM-07 | Share Sheet Header App Icon + Title | Queued | P2 |
