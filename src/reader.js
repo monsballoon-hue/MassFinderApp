@@ -74,7 +74,7 @@ function readerOpen(mode, params) {
   if (isNewOpen) {
     // SLV-08: Prayer tool entry pause (non-blocking)
     var _sacredPause = require('./sacred-pause.js');
-    var PRAYER_MODES = { rosary: 1, chaplet: 1, stations: 1, novena: 1, prayerbook: 1 };
+    var PRAYER_MODES = { rosary: 1, chaplet: 1, stations: 1, novena: 1 };
     if (PRAYER_MODES[mode]) {
       _sacredPause.show({
         title: mod.getTitle ? mod.getTitle(params) : '',

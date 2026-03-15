@@ -34,45 +34,23 @@ function _getNovenaSubtitle() {
   return 'Guided prayer tracking';
 }
 
-// Resolve card tiers: 3 sticky primary + 1 dynamic 4th slot
-var STICKY_IDS = { prayerbook: true, rosary: true, examination: true };
-function _resolveCardTiers(cards, promotedId, contextToday) {
-  var sticky = [];
-  var dynamic = [];
-  cards.forEach(function(c) {
-    if (STICKY_IDS[c.id]) sticky.push(c);
-    else dynamic.push(c);
-  });
-
-  // Pick 4th primary card: promoted card wins, else default to chaplet
-  var fourthCard = null;
-  var secondary = [];
-  dynamic.forEach(function(c) {
-    if (!fourthCard && promotedId && c.id === promotedId) fourthCard = c;
-    else secondary.push(c);
-  });
-  if (!fourthCard) {
-    // Default: chaplet fills the 4th slot
-    secondary = [];
-    dynamic.forEach(function(c) {
-      if (!fourthCard && c.id === 'chaplet') fourthCard = c;
-      else secondary.push(c);
-    });
-  }
-
-  // Sort secondary: contextual cards first
-  if (contextToday && contextToday.length) {
-    secondary.sort(function(a, b) {
-      var aIdx = contextToday.indexOf(a.id);
-      var bIdx = contextToday.indexOf(b.id);
-      var aCtx = aIdx !== -1 ? aIdx : 999;
-      var bCtx = bIdx !== -1 ? bIdx : 999;
-      return aCtx - bCtx;
-    });
-  }
-
-  var primary = sticky.concat(fourthCard ? [fourthCard] : []);
-  return { primary: primary, secondary: secondary };
+// PMV-07: Contextual state for visual emphasis (no position changes)
+var GUIDED_IDS = { rosary: true, chaplet: true, examination: true, stations: true };
+function _getContextualState() {
+  var ctx = {};
+  ctx.stationsLent = isLentSeason();
+  var nowH = new Date().getHours();
+  var nowM = new Date().getMinutes();
+  ctx.chapletHourOfMercy = (nowH === 14 && nowM >= 30) || nowH === 15;
+  var confStatus = require('./examination.js').getConfessionStatus();
+  ctx.examRecent = confStatus && confStatus.daysAgo <= 7;
+  ctx.examNudge = confStatus && confStatus.daysAgo > 30;
+  ctx.novenaLabel = _getNovenaSubtitle();
+  ctx.novenaActive = ctx.novenaLabel.indexOf('Day') === 0 || ctx.novenaLabel.indexOf('in progress') !== -1;
+  var ffSub = _getFirstFridaySubtitle();
+  ctx.ffLabel = ffSub.text;
+  ctx.ffActive = ffSub.active;
+  return ctx;
 }
 
 // PMD-03: Chaplet subtitle with Hour of Mercy logic
@@ -911,174 +889,87 @@ function renderMore() {
       chaplet: 'var(--color-sacred-pale)'
     };
 
-    // Contextual promotion — determines 4th primary slot from dynamic pool
-    var promotedId = '';
-    var novSub = _getNovenaSubtitle();
-    var novenaActive = novSub.indexOf('Day') === 0 || novSub.indexOf('in progress') !== -1;
-    if (novenaActive) {
-      promotedId = 'novena';
-    } else if (isLentSeason()) {
-      promotedId = 'stations';
-    }
+    // PMV-07: Get contextual state (visual emphasis only)
+    var ctx = _getContextualState();
 
-    // 3 PM promotion for chaplet
-    if (!promotedId) {
-      var nowH = new Date().getHours();
-      var nowM = new Date().getMinutes();
-      if ((nowH === 14 && nowM >= 30) || nowH === 15) {
-        promotedId = 'chaplet';
-      }
-    }
-
-    // EMT-03-C: Active progress subtitle styling
+    // PMV-02: Fixed guided prayer grid (4 cards, fixed order, visual-only promotion)
     var chapletSub = _getChapletSubtitle();
-    var ptSubtitleClass = {
-      rosary: '',
-      examination: confStatus && confStatus.daysAgo <= 7 ? 'prayer-tool-subtitle--active' : (confStatus && confStatus.daysAgo > 30 ? 'prayer-tool-subtitle--nudge' : ''),
-      stations: '',
-      novena: '',
-      chaplet: chapletSub === 'The Hour of Mercy' ? 'prayer-tool-subtitle--active' : ''
-    };
-    // Enhance novena subtitle with active styling
-    if (novenaActive) ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
-
-    // SOT-03: Seasonal novena auto-surfacing
-    var seasonalNovenaLabel = '';
-    var litEvents = (window._litcalCache && window._litcalCache.events) || [];
-    var todayKeys = litEvents.map(function(e) { return e.event_key || ''; });
-    // Divine Mercy Novena: Good Friday through Divine Mercy Sunday (9 days)
-    var season = document.documentElement.getAttribute('data-season') || 'ordinary';
-    if (season === 'easter' || todayKeys.indexOf('GoodFri') !== -1) {
-      // Check if we're in the 9-day window (Good Friday to Divine Mercy Sunday)
-      var now = new Date();
-      var month = now.getMonth();
-      var day = now.getDate();
-      // Approximate: early April = Divine Mercy window
-      if (todayKeys.indexOf('GoodFri') !== -1) {
-        seasonalNovenaLabel = 'Divine Mercy Novena begins today';
-      } else if (todayKeys.indexOf('Easter2') !== -1) {
-        seasonalNovenaLabel = 'Divine Mercy Novena concludes today';
-      } else if (month === 3 && day >= 3 && day <= 12) {
-        // Rough window — between Good Friday and Divine Mercy Sunday
-        seasonalNovenaLabel = 'Divine Mercy Novena';
-      }
-    }
-    // Holy Spirit Novena: Ascension through Pentecost
-    if (todayKeys.indexOf('Ascension') !== -1) {
-      seasonalNovenaLabel = 'The original novena \u2014 Ascension to Pentecost';
-    } else if (season === 'easter') {
-      var now2 = new Date();
-      if (now2.getMonth() === 4 && now2.getDate() >= 14 && now2.getDate() <= 24) {
-        seasonalNovenaLabel = seasonalNovenaLabel || 'Holy Spirit Novena \u2014 Pentecost approaches';
-      }
-    }
-    // St. Joseph Novena: March 10-19
-    var nowM = new Date();
-    if (nowM.getMonth() === 2 && nowM.getDate() >= 10 && nowM.getDate() <= 19) {
-      seasonalNovenaLabel = seasonalNovenaLabel || 'Novena to St. Joseph \u2014 his feast is March 19';
-    }
-
-    if (seasonalNovenaLabel) {
-      promotedId = 'novena';
-      novSub = seasonalNovenaLabel;
-      ptColors.novena = 'var(--color-accent)';
-      ptBgColors.novena = 'var(--color-accent-pale)';
-      ptSubtitleClass.novena = 'prayer-tool-subtitle--active';
-    }
-
-    // SOT-12: First Friday/Saturday subtitle + near-date promotion
-    var ffSub = _getFirstFridaySubtitle();
-    ptSubtitleClass.firstfriday = ffSub.active ? 'prayer-tool-subtitle--active' : '';
-    var ffState = _getFirstFridayState();
-    var ffHasStreak = (ffState.fridays && ffState.fridays.length > 0) || (ffState.saturdays && ffState.saturdays.length > 0);
-    var nowFF = new Date();
-    var nfDate = _getNextFirstFriday();
-    var nsDate = _getNextFirstSaturday();
-    var daysToFri = Math.ceil((nfDate - nowFF) / (24 * 60 * 60 * 1000));
-    var daysToSat = Math.ceil((nsDate - nowFF) / (24 * 60 * 60 * 1000));
-    var ffIsNear = daysToFri <= 1 || daysToSat <= 1;
-    if (ffIsNear && ffHasStreak && !promotedId) {
-      promotedId = 'firstfriday';
-      if (daysToFri === 0) ffSub = { text: 'First Friday is today \u2014 attend Mass', active: true };
-      else if (daysToFri === 1) ffSub = { text: 'First Friday is tomorrow', active: true };
-      else if (daysToSat === 0) ffSub = { text: 'First Saturday is today', active: true };
-      else if (daysToSat === 1) ffSub = { text: 'First Saturday is tomorrow', active: true };
-      ptSubtitleClass.firstfriday = 'prayer-tool-subtitle--active';
-    }
-
-    // Build contextual relevance list for secondary sorting
-    var contextToday = [];
-    if (novenaActive || seasonalNovenaLabel) contextToday.push('novena');
-    if (isLentSeason()) contextToday.push('stations');
-    if (chapletSub === 'The Hour of Mercy') contextToday.push('chaplet');
-    if (ffIsNear && ffHasStreak) contextToday.push('firstfriday');
-
-    var ptCards = [
-      { id: 'prayerbook', title: 'Prayer Book', subtitle: '31 essential prayers', action: 'openPrayerBook()', active: true },
-      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()', active: true },
-      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()', active: true },
-      { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: chapletSub, action: 'openChaplet()', active: true },
-      { id: 'stations', title: 'Stations of the Cross', subtitle: isLentSeason() ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()', active: true },
-      { id: 'novena', title: 'Novena Tracker', subtitle: novSub, action: 'openNovena()', active: true },
-      { id: 'firstfriday', title: 'First Friday & Saturday', subtitle: ffSub.text, action: 'openFirstFriday()', active: true }
+    var guidedCards = [
+      { id: 'rosary', title: 'Guided Rosary', subtitle: _getRosarySubtitle(), action: 'openRosary()' },
+      { id: 'chaplet', title: 'Divine Mercy Chaplet', subtitle: ctx.chapletHourOfMercy ? 'The Hour of Mercy' : chapletSub, action: 'openChaplet()' },
+      { id: 'examination', title: 'Examination of Conscience', subtitle: confLabel || 'Prepare for confession', action: 'openExamination()' },
+      { id: 'stations', title: 'Stations of the Cross', subtitle: ctx.stationsLent ? 'Lenten devotion' : '14 stations of prayer', action: 'openStations()' }
     ];
 
-    // Resolve tiers: 3 sticky + 1 dynamic 4th + contextual secondary sort
-    var resolved = _resolveCardTiers(ptCards, promotedId, contextToday);
-
-    // Render primary cards (tier 1) — vertical layout
-    ptGrid.innerHTML = resolved.primary.map(function(c) {
-      var isPromoted = c.id === promotedId;
-      var iconHtml = ptIcons[c.id]
-        ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
-        : '';
-      var subClass = 'prayer-tool-subtitle' + (ptSubtitleClass[c.id] ? ' ' + ptSubtitleClass[c.id] : '');
-      return '<div class="prayer-tool-card prayer-tool-card--primary' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
-        + ' onclick="' + c.action + '" role="button" tabindex="0"'
-        + (isPromoted ? ' style="border-left-color:' + ptColors[c.id] + '"' : '')
-        + '>'
+    ptGrid.innerHTML = guidedCards.map(function(c) {
+      // Visual emphasis only — never reorder
+      var iconBg = ptBgColors[c.id] || 'var(--color-sacred-pale)';
+      var iconColor = ptColors[c.id] || 'var(--color-sacred)';
+      if (c.id === 'stations' && ctx.stationsLent) { iconColor = 'var(--color-accent)'; iconBg = 'var(--color-accent-pale)'; }
+      var subClass = 'prayer-tool-subtitle';
+      if (c.id === 'chaplet' && ctx.chapletHourOfMercy) subClass += ' prayer-tool-subtitle--active';
+      if (c.id === 'examination' && ctx.examRecent) subClass += ' prayer-tool-subtitle--active';
+      if (c.id === 'examination' && ctx.examNudge) subClass += ' prayer-tool-subtitle--nudge';
+      var iconHtml = ptIcons[c.id] ? '<div class="prayer-tool-icon" style="background:' + iconBg + ';color:' + iconColor + '">' + ptIcons[c.id] + '</div>' : '';
+      return '<div class="prayer-tool-card prayer-tool-card--primary" onclick="' + c.action + '" role="button" tabindex="0">'
         + iconHtml
         + '<div class="prayer-tool-body">'
         + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
         + '<div class="' + subClass + '">' + esc(c.subtitle) + '</div>'
-        + '</div>'
-        + '</div>';
+        + '</div></div>';
     }).join('');
 
-    // MTR-03: Secondary tools progressive disclosure
-    var ptSecWrap = document.getElementById('prayerToolsSecondaryWrap');
-    if (ptSecWrap && resolved.secondary.length > 0) {
-      var hasPromotedInSec = resolved.secondary.some(function(c) { return c.id === promotedId; });
+    // PMV-03: Prayer Book gateway card
+    var pbGateway = document.getElementById('prayerBookGateway');
+    if (pbGateway) {
+      pbGateway.innerHTML = '<div class="prayerbook-gateway" onclick="openPrayerBook()" role="button" tabindex="0">'
+        + '<div class="prayerbook-gateway-icon">' + ptIcons.prayerbook + '</div>'
+        + '<div class="prayerbook-gateway-body">'
+        + '<div class="prayerbook-gateway-title">Prayer Book</div>'
+        + '<div class="prayerbook-gateway-subtitle">31 prayers \u00b7 Guided litanies \u00b7 Lectio Divina</div>'
+        + '</div>'
+        + '<svg class="prayerbook-gateway-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>'
+        + '</div>';
+    }
 
-      var secHtml = resolved.secondary.map(function(c) {
-        var isPromoted = c.id === promotedId;
-        var iconHtml = ptIcons[c.id]
-          ? '<div class="prayer-tool-icon" style="background:' + ptBgColors[c.id] + ';color:' + ptColors[c.id] + '">' + ptIcons[c.id] + '</div>'
-          : '';
-        var subClass = 'prayer-tool-subtitle' + (ptSubtitleClass[c.id] ? ' ' + ptSubtitleClass[c.id] : '');
-        return '<div class="prayer-tool-card prayer-tool-card--secondary' + (isPromoted ? ' prayer-tool-card--promoted' : '') + '"'
-          + ' onclick="' + c.action + '" role="button" tabindex="0"'
-          + (isPromoted ? ' style="border-left-color:' + ptColors[c.id] + '"' : '')
-          + '>'
-          + iconHtml
-          + '<div class="prayer-tool-body">'
-          + '<div class="prayer-tool-title">' + esc(c.title) + '</div>'
-          + '<div class="' + subClass + '">' + esc(c.subtitle) + '</div>'
-          + '</div>'
-          + '</div>';
-      }).join('');
-
-      if (hasPromotedInSec || resolved.secondary.length <= 1) {
-        ptSecWrap.innerHTML = '<div class="prayer-tools-secondary">' + secHtml + '</div>';
-      } else {
-        ptSecWrap.innerHTML = '<details class="prayer-tools-more" id="ptMoreTools">'
-          + '<summary class="prayer-tools-more-toggle">'
-          + '<span>More tools</span>'
-          + '<svg class="prayer-tools-more-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><polyline points="6 9 12 15 18 9"/></svg>'
-          + '</summary>'
-          + '<div class="prayer-tools-secondary" style="margin-top:var(--space-2)">' + secHtml + '</div>'
-          + '</details>';
+    // PMV-04: Practice strip (Novenas + First Friday)
+    var practiceStrip = document.getElementById('practiceStrip');
+    if (practiceStrip) {
+      // Seasonal novena override
+      var novSub = ctx.novenaLabel;
+      var seasonalNovenaLabel = '';
+      var litEvents = (window._litcalCache && window._litcalCache.events) || [];
+      var todayKeys = litEvents.map(function(e) { return e.event_key || ''; });
+      var season = document.documentElement.getAttribute('data-season') || 'ordinary';
+      if (season === 'easter' || todayKeys.indexOf('GoodFri') !== -1) {
+        if (todayKeys.indexOf('GoodFri') !== -1) seasonalNovenaLabel = 'Divine Mercy Novena begins today';
+        else if (todayKeys.indexOf('Easter2') !== -1) seasonalNovenaLabel = 'Divine Mercy Novena concludes today';
       }
+      if (todayKeys.indexOf('Ascension') !== -1) seasonalNovenaLabel = 'The original novena \u2014 Ascension to Pentecost';
+      var nowM2 = new Date();
+      if (nowM2.getMonth() === 2 && nowM2.getDate() >= 10 && nowM2.getDate() <= 19) {
+        seasonalNovenaLabel = seasonalNovenaLabel || 'Novena to St. Joseph \u2014 his feast is March 19';
+      }
+      if (seasonalNovenaLabel) { novSub = seasonalNovenaLabel; ctx.novenaActive = true; }
+
+      var novenaActiveClass = ctx.novenaActive ? ' practice-card--active' : '';
+      var ffActiveClass = ctx.ffActive ? ' practice-card--active' : '';
+
+      practiceStrip.innerHTML = '<div class="practice-strip-label">Your Practice</div>'
+        + '<div class="practice-strip">'
+        + '<div class="practice-card' + novenaActiveClass + '" onclick="openNovena()" role="button" tabindex="0">'
+        + '<div class="practice-card-icon">' + ptIcons.novena + '</div>'
+        + '<div class="practice-card-body">'
+        + '<div class="practice-card-title">Novenas</div>'
+        + '<div class="practice-card-subtitle">' + esc(novSub || 'Guided prayer tracking') + '</div>'
+        + '</div></div>'
+        + '<div class="practice-card' + ffActiveClass + '" onclick="openFirstFriday()" role="button" tabindex="0">'
+        + '<div class="practice-card-icon">' + ptIcons.firstfriday + '</div>'
+        + '<div class="practice-card-body">'
+        + '<div class="practice-card-title">First Fri & Sat</div>'
+        + '<div class="practice-card-subtitle">' + esc(ctx.ffLabel || 'Track devotion') + '</div>'
+        + '</div></div>'
+        + '</div>';
     }
 
     // EMT-05: Library teaser — standalone card below grid

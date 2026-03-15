@@ -128,12 +128,24 @@ function _matchesSearch(prayer) {
   return false;
 }
 
+// PBR-05: Track recently opened prayers
+function _trackRecent(prayerId) {
+  try {
+    var recent = JSON.parse(localStorage.getItem('mf-prayerbook-recent') || '[]');
+    recent = recent.filter(function(id) { return id !== prayerId; });
+    recent.unshift(prayerId);
+    if (recent.length > 3) recent = recent.slice(0, 3);
+    localStorage.setItem('mf-prayerbook-recent', JSON.stringify(recent));
+  } catch (e) {}
+}
+
 // ── Toggle expand/collapse ──
 function prayerbookToggle(prayerId) {
   if (_openPrayerId === prayerId) {
     _openPrayerId = null;
   } else {
     _openPrayerId = prayerId;
+    _trackRecent(prayerId);
   }
   _renderList();
   _haptic();
@@ -320,6 +332,23 @@ function _renderList() {
 
   var html = '<div class="prayerbook-list">';
 
+  // PBR-02: Quick access pills (non-search only)
+  if (!_searchQuery) {
+    var quickIds = ['sign_of_cross', 'our_father', 'hail_mary', 'glory_be', 'act_of_contrition_traditional'];
+    html += '<div class="prayerbook-quick">';
+    quickIds.forEach(function(id) {
+      var prayer = null;
+      _data.categories.forEach(function(cat) {
+        cat.prayers.forEach(function(p) { if (p.id === id) prayer = p; });
+      });
+      if (prayer) {
+        html += '<button class="prayerbook-quick-pill" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">'
+          + utils.esc(_t(prayer, 'title')) + '</button>';
+      }
+    });
+    html += '</div>';
+  }
+
   // Search input
   html += '<div class="prayerbook-search">'
     + '<input type="search" class="prayerbook-search-input" placeholder="Search prayers\u2026"'
@@ -355,6 +384,24 @@ function _renderList() {
       });
     }
   } else {
+    // PBR-05: Recently opened prayers
+    var recentIds = [];
+    try { recentIds = JSON.parse(localStorage.getItem('mf-prayerbook-recent') || '[]'); } catch (e) {}
+    if (recentIds.length) {
+      var recentPrayers = [];
+      recentIds.forEach(function(rid) {
+        _data.categories.forEach(function(cat) {
+          cat.prayers.forEach(function(p) { if (p.id === rid) recentPrayers.push(p); });
+        });
+      });
+      if (recentPrayers.length) {
+        html += '<div class="prayerbook-category">';
+        html += '<h3 class="prayerbook-category-title">Recent</h3>';
+        recentPrayers.forEach(function(p) { html += _renderPrayerRow(p); });
+        html += '</div>';
+      }
+    }
+
     // Category view
     _data.categories.forEach(function(cat) {
       html += '<div class="prayerbook-category">';
@@ -365,27 +412,35 @@ function _renderList() {
       html += '</div>';
     });
 
-    // Litanies section
-    if (_data.litanies && _data.litanies.length) {
-      html += '<div class="prayerbook-category">';
-      html += '<h3 class="prayerbook-category-title">Guided Litanies</h3>';
-      _data.litanies.forEach(function(lit) {
-        html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLitany(\'' + utils.esc(lit.id) + '\')">'
-          + '<span class="prayerbook-row-title">' + utils.esc(_t(lit, 'title')) + '</span>'
+    // PBR-03: Guided section divider
+    var hasGuided = (_data.litanies && _data.litanies.length) || _data.lectio;
+    if (hasGuided) {
+      html += '<div class="prayerbook-guided-section">';
+
+      // Litanies section
+      if (_data.litanies && _data.litanies.length) {
+        html += '<div class="prayerbook-category">';
+        html += '<h3 class="prayerbook-category-title">Guided Litanies</h3>';
+        _data.litanies.forEach(function(lit) {
+          html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLitany(\'' + utils.esc(lit.id) + '\')">'
+            + '<span class="prayerbook-row-title">' + utils.esc(_t(lit, 'title')) + '</span>'
+            + '<span class="prayerbook-guided-badge">Guided</span>'
+            + '</button>';
+        });
+        html += '</div>';
+      }
+
+      // Lectio Divina
+      if (_data.lectio) {
+        html += '<div class="prayerbook-category">';
+        html += '<h3 class="prayerbook-category-title">Contemplative</h3>';
+        html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLectio()">'
+          + '<span class="prayerbook-row-title">' + utils.esc(_data.lectio.title) + '</span>'
           + '<span class="prayerbook-guided-badge">Guided</span>'
           + '</button>';
-      });
-      html += '</div>';
-    }
+        html += '</div>';
+      }
 
-    // Lectio Divina
-    if (_data.lectio) {
-      html += '<div class="prayerbook-category">';
-      html += '<h3 class="prayerbook-category-title">Contemplative</h3>';
-      html += '<button class="prayerbook-row prayerbook-row--guided" onclick="prayerbookOpenLectio()">'
-        + '<span class="prayerbook-row-title">' + utils.esc(_data.lectio.title) + '</span>'
-        + '<span class="prayerbook-guided-badge">Guided</span>'
-        + '</button>';
       html += '</div>';
     }
   }
@@ -418,9 +473,17 @@ function _renderPrayerRow(prayer) {
   }
 
   var isOpen = _openPrayerId === prayer.id;
+  // PBR-04: Length indicator
+  var lengthLabel = '';
+  if (!isOpen && prayer.text) {
+    var wc = _t(prayer, 'text').split(/\s+/).length;
+    if (wc <= 40) lengthLabel = '<span class="prayerbook-length">brief</span>';
+    else if (wc > 100) lengthLabel = '<span class="prayerbook-length">long</span>';
+  }
   var html = '<div class="prayerbook-row' + (isOpen ? ' prayerbook-row--open' : '') + '" id="prayer-' + utils.esc(prayer.id) + '">';
   html += '<button class="prayerbook-row-header" onclick="prayerbookToggle(\'' + utils.esc(prayer.id) + '\')">';
   html += '<span class="prayerbook-row-title">' + utils.esc(_t(prayer, 'title')) + '</span>';
+  html += lengthLabel;
   html += '<svg class="prayerbook-chevron' + (isOpen ? ' open' : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>';
   html += '</button>';
 
